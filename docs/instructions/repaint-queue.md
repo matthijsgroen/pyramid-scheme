@@ -424,6 +424,911 @@ The last nine are the house's own kinds, new with its activities ([themed-rooms.
 banquet table and the bed are two cells across, so their frame is landscape three by two; the harp and the
 potted tree stand a cell taller, so theirs is portrait two by five.
 
+## Temple — twenty-six
+
+The priest's existing props, repainted for the rank's pale alabaster floor. A clean temple: ebony, black
+granite, dark cedar, lapis and blue faience, satin dyed deep blue, each its own thing in its own colours.
+Silver is the rank's metal and comes back as a rim, a band, a nail head or an inlaid line, never as a tint
+over the set ([visual-direction.md](../game-design/visual-direction.md)). `expert-plain.png` is cut from
+its floor, `art/masters/surfaces/expert-floor.webp`, and every scaffold's shadow is rendered against it.
+
+Each reuses the geometry its tile already ships with, so the scaffold lines are `art/rebuild.sh`'s with the
+new floor, except the two patron shrines, which take `--contents=standing`: a god stands in the naos
+rather than being painted over Bes. The imports carry no `--brightness` or `--saturation`: those are
+measured against the new floor with `yarn tile-stats` once the return is in.
+
+**Every body colour here is a hex, and every one is DARK.** The floor is the lightest of the five ranks
+(L\* 69 after the night) and `--land` wants the object's mean 25 L\* below it: a body no lighter than
+L\* 44, with pale things (alabaster, linen, bone, natron) kept to small accents. So the satin is dyed lapis,
+the canopic jars are blue faience rather than alabaster, the papyrus sits in dyed cases, and the stone is
+black or dark blue-grey granite. Each scaffold's `--colour` is the entry's body hex: a repaint keeps the
+scaffold's value, and `tierPalette.expert.prop`, #a7b2be, is lighter than the floor.
+
+**Render each scaffold before attaching it.** The previews in `~/tile-previews` were rendered at the old
+grey; the handed-over render is the entry's own `scaffold` arguments through
+`yarn render-prop --primitive=<prim> … --out=~/tile-previews/<name>-expert.png`, with `--context=1.04x0.74`
+added for the pool alone.
+
+A wall item (`--slot=wall`: niche, sconce, the wall shrines, the veil, the stela, the tally board) is not
+held to the floor rule. `--land` measures and prints its step off the wall face, #6b7c8f at L\* 51, and
+imports it: it is judged by eye on the wall, `art/masters/surfaces/expert-wall-face.webp`, because a wall
+item reads by its own internal contrast — a dark frame round a lapis recess — not by its mean.
+
+### `expert/niche` — an offering niche, ebony doors cord-sealed
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/niche-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: an offering niche in a wall, SHUT. The frame around the opening is the SURROUND — jambs,
+lintel and sill; filling the opening are two DOORS; the bar across them is a CORD, and the small lump
+where it crosses the seam is a clay SEAL.
+
+The surround is dark blue-grey granite, crisp and dressed, with a thin silver line inset round its inner
+edge and a row of small sunk hieroglyphs filled with lapis along the lintel. The doors are EBONY, near
+black, their grain just visible, each with two silver nail heads. The cord is pale undyed linen and the
+seal is red-brown clay: the only pale and warm things on it, and they must read.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold niche --contents=sealed --shear=0.5 --width=448 --height=224 --colour=#33302c --sun=0
+yarn import-tile art/masters/props/expert/niche.webp --tier=expert --name=niche --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+```
+
+### `expert/sconce` — a silver lamp hung on chains from an ebony bracket
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/sconce-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a sconce on a wall. The upright plate at the left is fixed to the WALL; the bar reaching right
+is the ARM; the lines hanging from it are CHAINS; the small vessel they carry is the LAMP, and the nub
+above it the FLAME.
+
+The wall plate and the arm are EBONY, near black, the arm's end capped in silver. The chains are fine
+dark silver links. The lamp is a small SILVER bowl, tarnished grey with a bright rim — the one place this
+rank's metal is the object itself — and the flame a small warm orange tongue.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold sconce --contents=chain --shear=0.5 --width=448 --height=224 --colour=#33302c --sun=0 --margin=1.4
+yarn import-tile art/masters/props/expert/sconce.webp --tier=expert --name=sconce --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+```
+
+### `expert/wallShrine` — an ebony wall shrine, one leaf ajar
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/wallshrine-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a small shrine cabinet set into a wall. The box is the CABINET; the two leaves on its front are
+DOORS, one shut and one standing ajar; the dark gap between them shows the INSIDE.
+
+The cabinet is EBONY, near black, its cavetto cornice edged with a thin silver band. The doors are ebony
+panels with silver nail heads along their edges. Through the gap the inside is deep lapis blue, with a
+small pale crescent moon just visible on the back wall.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold wallShrine --contents=ajar --shear=0.5 --width=448 --height=224 --colour=#2e2a26 --sun=0
+yarn import-tile art/masters/props/expert/wallShrine.webp --tier=expert --name=wallShrine --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+```
+
+### `expert/wallShrine-anubis` — an ebony wall shrine, Anubis inside
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/wallShrine-anubis-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a small shrine cabinet set into a wall. The box is the CABINET; the two leaves on its front are
+DOORS, one shut and one standing ajar; the gap between them shows the INSIDE.
+
+The cabinet is EBONY, near black, its cavetto cornice edged with a thin silver band. The doors are ebony
+panels with silver nail heads. Inside, against a back wall of warm ochre so he reads, sits ANUBIS as a
+black jackal, ears up, a silver collar at his neck.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold wallShrine --contents=ajar --shear=0.5 --width=448 --height=224 --colour=#2e2a26 --sun=0
+yarn import-tile art/masters/props/expert/wallShrine-anubis.webp --tier=expert --name=wallShrine-anubis --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+```
+
+### `expert/veil` — a sheer satin veil on a silver rail, dyed lapis
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/veil-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a curtain hung on a wall. The bar along the top is the RAIL, held by two BRACKETS; the cloth
+falling from it is the VEIL, gathered at one side; the band across its foot is a weighted HEM.
+
+The veil is fine SATIN dyed deep lapis blue, a smooth soft sheen in the folds and no pattern on the field.
+The hem is a narrow band of the same blue embroidered with small silver stars. The rail and brackets are
+ebony capped in silver.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold hanging --contents=rail --shear=0.5 --width=448 --height=224 --colour=#2b3366 --sun=0 \
+  --alpha-cloth=0.6
+yarn import-tile art/masters/props/expert/veil.webp --tier=expert --name=veil --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+```
+
+### `expert/stela` — a black granite stela, sunk relief filled with lapis
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:** `~/tile-previews/expert-plain.png` — the material reference. A flat item has no scaffold.
+
+```
+A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Landscape, exactly two units wide by one tall. Do not re-compose it into a square. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
+
+The object: a round-topped STELA, one flat slab of dark stone, filling the frame from edge to edge.
+
+Polished BLACK GRANITE, crisp and clean. In the lunette at the top a CRESCENT MOON over a winged disc. Below
+it the priest stands before Thoth's IBIS, cut in sunk relief, every cut filled with LAPIS BLUE, with a thin
+silver line round the slab's edge. Columns of small hieroglyphs run down beneath, also lapis-filled. The
+slab stays dark: the colour is in the cuts.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+**Import:** `yarn import-tile art/masters/props/expert/stela.webp --tier=expert --name=stela --slot=wall --filter=smooth --headroom=0.18`
+
+### `expert/tallyBoard` — an ebony offering list, signs inlaid
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:** `~/tile-previews/expert-plain.png` — the material reference. A flat item has no scaffold.
+
+```
+A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Landscape, exactly two units wide by one tall. Do not re-compose it into a square. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
+
+The object: a temple OFFERING LIST, a flat board of EBONY, near black, in a narrow silver frame.
+
+Inlaid across it, a row of small HIEROGLYPHS — a loaf, a jar, a bird, a lotus — in pale bone, and under
+each a column of TALLY STROKES in lapis blue, counting. No modern writing, no letters, no numbers. A silver
+hanging ring at the top.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+**Import:** `yarn import-tile art/masters/props/expert/tallyBoard.webp --tier=expert --name=tallyBoard --slot=wall --filter=smooth --headroom=0.18`
+
+### `expert/hanging` — a sheer lapis satin curtain between ebony posts
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/hanging-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a free-standing curtain. The two uprights are POSTS; the bar between them is the RAIL; the
+cloth hanging from it is the CURTAIN, gathered; the band across its foot is a weighted HEM.
+
+The curtain is fine SATIN dyed deep lapis blue, a smooth soft sheen in the folds and no pattern on the
+field. The hem is a narrow band of the same blue embroidered with small silver stars. The posts and rail
+are EBONY, near black, with silver caps.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold hanging --contents=veil --spin=42 --colour=#2b3366 --alpha-cloth=0.6 --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/hanging.webp --tier=expert --name=hanging --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/offeringTable` — a black granite altar with a libation spout
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/offeringTable-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: an ALTAR. The block is the altar itself; the moulding round its top is a CORNICE; the shallow
+groove cut in its top is a libation CHANNEL, and the short nose at its front edge is the SPOUT it runs out
+of; the low shapes on top are OFFERINGS.
+
+The altar is BLACK GRANITE, dressed and crisp, a column of lapis-filled hieroglyphs down its front. A thin
+silver line edges the cornice. The channel is wet and dark. The offerings are a round loaf, a small silver
+dish and a lotus bud in blue and green.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold market --contents=altar --spin=-11 --colour=#2f3236 --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/offeringTable.webp --tier=expert --name=offeringTable --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/jarRack` — four canopic jars of blue faience in an ebony rack
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/jarRack-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a rack of CANOPIC JARS. The frame is the RACK; the four vessels standing in it are the JARS,
+and each one's lid is a STOPPER carved as a head — a human head, a baboon, a jackal and a falcon, told
+apart by the four stopper profiles in the reference.
+
+The jars are deep BLUE FAIENCE, glazed matte, each with a column of small black hieroglyphs. The stoppers
+are the same blue with the faces picked out in black. The rack is EBONY, near black, with silver bands
+round the jars' necks.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold jarrack --contents=canopic --spin=16 --colour=#2c3f5e --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/jarRack.webp --tier=expert --name=jarRack --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/mat` — a woven palm-fibre mat, indigo and black
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+Its scaffold is one plain quad, and a quad on magenta is a rectangle a generator straightens and grows to fill the frame. If the return comes back square or filling the frame, paint it square and project it onto the scaffold by hand, as the last one was.
+
+**Attach:**
+
+1. `~/tile-previews/mat-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a MAT lying flat on the floor.
+
+Woven PALM FIBRE dyed deep indigo, the weave a coarse even checker of indigo and black in crisp rows, about
+eight bands across and no finer. A plain black border runs round its edge, edged with a single thin silver
+thread.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold mat --spin=12 --shadow=0.5 --colour=#3b3a4a --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/mat.webp --tier=expert --name=mat --slot=prop \
+  --filter=smooth --key=none --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/lamp` — an ebony lamp stand, a silver lamp on top
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/lamp-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a LAMP STAND. The tall shaft is the STAND, on a spread FOOT; the dish at its top is the LAMP;
+the nub on the dish is the FLAME.
+
+The stand is EBONY, near black, fluted, with two thin SILVER collars round the shaft. The lamp is a wide
+SILVER dish, tarnished grey with a bright rim — the one place this rank's metal is the object itself —
+and the flame a small warm orange tongue.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold lamp --contents=stand --spin=11 --colour=#2e2a26 --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/lamp.webp --tier=expert --name=lamp --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/basin` — a sacred pool, black granite coping, still water
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**TAKES `--context`.** A hole cannot be a product shot. The handed-over render alone is made with `--context=1.04x0.74`, which lays the rank's floor round the pool with the hole cut in it; the mask below is rendered without it. **No `--seat`:** the coping is bedded flush with the paving, so nothing stands above the floor to cast.
+
+**Attach:**
+
+1. `~/tile-previews/basin-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A single object painted in flat matte gouache, seen from above and slightly in front, in the same raked view as the reference. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself. No perspective and no vanishing point: verticals stay vertical, horizontals stay horizontal.
+
+The scene: a POOL cut down into a stone floor. The whole frame is that floor, and the pool is a hole in
+it. You are painting a floor with a pool in it, not an object standing on a surface.
+
+The pale field filling the frame is the PAVING. The dark rectangle sunk into it is the pool. The low
+border running all the way round it is a COPING, bedded flush with the paving on all four sides, and the
+length of it nearest you passes IN FRONT of the pool. The four ledges at the left, the lowest of them below
+the surface, are STEPS walking down into it.
+
+The water is STILL, deep and dark blue-black, clear and calm, with nothing floating on it and nothing
+reflected in it. The coping is BLACK GRANITE in one unbroken course, a thin silver line inlaid along its
+inner edge. The paving is the pale alabaster of the reference, its joints kept where the reference draws
+them. Nothing here is a tank, a tub, a trough or a basin, and NOTHING STANDS ABOVE THE PAVING — not even the
+coping, which is bedded level with it.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold basin --contents=pool --colour=#34383e --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/basin.webp --tier=expert --name=basin --slot=prop \
+  --filter=smooth --mask="$OBJ"
+```
+
+### `expert/brazier` — a blackened bronze censer hung from its stand
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/brazier-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a CENSER on its stand. The upright is the STAND; the bar reaching out from it is the ARM; the
+lines hanging from the arm are CHAINS; the bowl they carry is the CENSER, and the glow in it is the EMBER.
+
+The stand and arm are BLACKENED BRONZE, near black with a faint green-black patina. The chains are fine
+dark silver links. The censer is the same dark bronze with a silver rim, a lid pierced with small holes,
+and inside it a small warm orange ember. One thin pale thread of incense smoke rises from it.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold brazier --contents=censer --spin=22 --colour=#2d302e --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/brazier.webp --tier=expert --name=brazier --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/pillar` — a papyrus-bundle column of dark granite
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/pillar-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a PAPYRUS-BUNDLE COLUMN. The shaft is a bundle of RIBS, each a separate stem with a scalloped
+edge; the closed bud at the top is the CAPITAL; the block under it is the BASE.
+
+The shaft is dark blue-grey GRANITE, dressed and crisp, each rib its own rib. Three thin SILVER bands bind
+the bundle below the capital. The capital is painted: the bud in lapis blue and leaf green, its sepals
+outlined in black. The base is plain black granite.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold palm --contents=papyrus --spin=6 --colour=#4a5160 --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/pillar.webp --tier=expert --name=pillar --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/shrine` — a shut naos, cedar doors corded and sealed
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/shrine-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a NAOS, a god's shrine with its doors shut. The box is the SHRINE, on a low PLINTH, under a
+CAVETTO cornice; the two leaves filling its front are the DOORS, with a dark seam between them; the line
+across them is a CORD, and the lump where it crosses the seam is a clay SEAL.
+
+The shrine is EBONY, near black, the cornice edged with a silver band and its top face a step lighter.
+The doors are dark red CEDAR, smooth, with silver nail heads down their edges. The cord is undyed linen and
+the seal red-brown clay.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shrine --contents=sealed --spin=-19 --colour=#2e2a26 --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/shrine.webp --tier=expert --name=shrine --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/shrine-anubis` — an open naos, Anubis standing inside
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/shrine-anubis-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: an open NAOS, a god's shrine. The box is the SHRINE, on a low PLINTH; the opening is its
+INSIDE; the figure standing in it is ANUBIS.
+
+The shrine is EBONY, near black, the coping edged with a silver band. The inside is deep lapis blue with
+small silver stars on its back wall. Anubis stands upright, jackal-headed, BLACK, ears up, in a white kilt
+with a silver collar, a was-sceptre in his hand.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shrine --contents=standing --spin=-19 --colour=#2e2a26 --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/shrine-anubis.webp --tier=expert --name=shrine-anubis --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/shrine-thoth` — an open naos, Thoth standing inside
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/shrine-thoth-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: an open NAOS, a god's shrine. The box is the SHRINE, on a low PLINTH; the opening is its
+INSIDE; the figure standing in it is THOTH.
+
+The shrine is EBONY, near black, the coping edged with a silver band. The inside is deep lapis blue with a
+small silver crescent moon on its back wall. Thoth stands upright with the head of an IBIS: a white head
+and a long black curved bill, a lapis wig, a white kilt and a silver collar.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shrine --contents=standing --spin=-19 --colour=#2e2a26 --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/shrine-thoth.webp --tier=expert --name=shrine-thoth --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/statue` — a couchant lion of dark granite
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/statue-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a recumbent LION, a temple guardian, cut from one block of dark grey-green granite. The marked
+upper part is the FIGURE, lying along its plinth with its head raised at the left; the block under it is
+the PLINTH.
+
+IT IS A CARVED OBJECT AND NOT AN ANIMAL. Block-carved: flat planes, hard arrises, the figure never leaves
+its block, nothing undercut. No fur, no muscle, no expression — a mane is a flat ruff of carved planes.
+
+The figure and the plinth are the same dark granite, unpainted. A thin silver band runs round the plinth's
+top edge, and a line of lapis-filled hieroglyphs along its front.
+
+THE REFERENCE IS A ROUGHED-OUT BLOCK, deliberately left fat. CHANGE, freely, and ONLY this: the contour
+of the figure, and only by CUTTING. CARVE INWARD ONLY — nothing may end up further left, right, higher or
+lower than the rough shape reaches.
+
+EVERYTHING ELSE IS FIXED:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them. It is not a photograph and not an isometric view.
+3. IT LIES along its plinth, head raised at the LEFT end, tail at the right.
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows. Do not swing it round, do not flatten it.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is. The figure is the marked upper part; the base is the lower part. Do not shrink the figure onto a taller base.
+
+You are re-carving a shape, not re-staging a photograph.
+
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF. Nothing is added below the plinth — no ground, no shadow, no floor.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=couchant --spin=-8 --colour=#3e4744 --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/statue.webp --tier=expert --name=statue --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/statue-anubis` — Anubis couchant in black stone, silver collar
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/statue-anubis-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: ANUBIS as a couchant jackal, cut from one block of black stone. The marked upper part is the
+FIGURE, lying along its plinth with its head carried up at the left; the block under it is the PLINTH.
+
+IT IS A CARVED OBJECT AND NOT AN ANIMAL. Block-carved: flat planes, hard arrises, the figure never leaves
+its block, nothing undercut. No fur, no muscle — two tall ears and a long muzzle are what he is.
+
+The jackal is BLACK, matte, with a silver collar and a lapis band at his ears. The plinth is a dark
+granite chest, its front cut with a row of lapis-filled hieroglyphs and edged with a thin silver line.
+
+THE REFERENCE IS A ROUGHED-OUT BLOCK, deliberately left fat. CHANGE, freely, and ONLY this: the contour
+of the figure, and only by CUTTING. CARVE INWARD ONLY — nothing may end up further left, right, higher or
+lower than the rough shape reaches.
+
+EVERYTHING ELSE IS FIXED:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them. It is not a photograph and not an isometric view.
+3. IT LIES along its plinth, head raised at the LEFT end, tail at the right.
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows. Do not swing it round, do not flatten it.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is. The figure is the marked upper part; the base is the lower part. Do not shrink the figure onto a taller base.
+
+You are re-carving a shape, not re-staging a photograph.
+
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF. Nothing is added below the plinth — no ground, no shadow, no floor.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=couchant --spin=-22 --colour=#2a2c30 --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/statue-anubis.webp --tier=expert --name=statue-anubis --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/sarcophagus` — an ebony anthropoid coffin, silver bands
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/sarcophagus-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: an upright ANTHROPOID COFFIN, a wrapped figure carved in wood. The upper marked part is the
+COFFIN; the block under it is its BASE.
+
+It is a COFFIN AND NOT A BOX: carve the outline of a wrapped body — a rounded head, shoulders, a body
+tapering to the feet — out of the rough block. No anatomy beyond that outline.
+
+The coffin is EBONY, near black, its face a calm flat mask, a striped lapis-and-black wig, a broad collar of
+lapis and silver bands, and one column of silver-inlaid hieroglyphs down the front. The base is dark
+granite.
+
+THE REFERENCE IS A ROUGHED-OUT BLOCK, deliberately left fat. CHANGE, freely, and ONLY this: the contour
+of the figure, and only by CUTTING. CARVE INWARD ONLY — nothing may end up further left, right, higher or
+lower than the rough shape reaches.
+
+EVERYTHING ELSE IS FIXED:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them. It is not a photograph and not an isometric view.
+3. IT STANDS upright, facing the viewer.
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows. Do not swing it round, do not flatten it.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is. The figure is the marked upper part; the base is the lower part. Do not shrink the figure onto a taller base.
+
+You are re-carving a shape, not re-staging a photograph.
+
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF. Nothing is added below the plinth — no ground, no shadow, no floor.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=mummiform --spin=-6 --colour=#3a3f46 --colour-figure=#2e2a26 --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/sarcophagus.webp --tier=expert --name=sarcophagus --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/shelf` — an ebony scroll rack, rolls in dyed leather cases
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/shelf-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a scroll rack. The open frame is the CARCASS; the rolls lying along its shelves are PAPYRUS
+ROLLS, each showing its cut end toward you.
+
+The carcass is EBONY, near black, its uprights capped in silver. Each roll is sheathed in a LEATHER CASE
+dyed deep red or indigo, tied with a dark cord, and only the round cut end of the papyrus shows pale. Keep
+the rolls lying along the shelves; they must not stand on end.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shelf --contents=papyrus --spin=-14 --colour=#3a2f2a --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/shelf.webp --tier=expert --name=shelf --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/chestProp` — a dark cedar relic box, corded and sealed
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/chestProp-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a RELIC BOX. The box is the CHEST; its top is the LID; the line round it is a CORD, and the
+lump where it is knotted is a clay SEAL.
+
+The chest is dark red CEDAR, oiled and smooth, its grain running along each board, with silver corner
+caps and silver nail heads. The lid carries a small inlaid lapis crescent moon. The cord is undyed linen
+and the seal red-brown clay, unbroken.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold sealedChest --spin=-24 --colour=#4a2e24 --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/chestProp.webp --tier=expert --name=chestProp --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/pit` — a robbed-out shaft, rope over the lip
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/pit-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a SHAFT cut down into the floor. The dark opening is the SHAFT; the frame round its mouth is
+the LIP; the beam across it is a timber BAULK; the line hanging over the lip is a ROPE, and the heap
+beside it is SPOIL.
+
+The lip is dark blue-grey granite, crisp at its edges. The shaft is near black, going down. The baulk is
+dark weathered cedar. The rope is pale hemp and crosses the lip clearly. The spoil is broken dark granite
+and grit.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold pit --colour=#3a3f46 --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/pit.webp --tier=expert --name=pit --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/rubblePile` — a fallen door plug of dark granite blocks
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/rubblePile-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a heap of fallen BLOCKS, a collapsed door plug.
+
+Dressed blocks of dark blue-grey GRANITE, broken, their faces still flat and their broken edges rough,
+one or two still showing a lapis-filled hieroglyph. Grit and white natron crust in small patches between
+them. The arrangement of the pieces does not matter — paint the material.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold rubblePile --colour=#3a3f46 --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/rubblePile.webp --tier=expert --name=rubblePile --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/rubbleSpill` — a spill of broken wall stone and lapis flakes
+
+**Re-roll:** painted for a darker floor. Repainted dark against the pale alabaster floor, in its own material's colours; silver only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/rubbleSpill-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a SPILL of broken stone lying flat on the floor.
+
+Fragments of the temple's blue-grey wall stone, a step darker than the wall, with flakes of lapis-filled
+relief among them and fine dark grit between the pieces. The arrangement of the pieces does not matter —
+paint the material.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Priest's temple: ebony, black granite, dark cedar, lapis and blue faience, dyed satin, each in its OWN colours and every body DARK, so it reads at a glance on a pale alabaster floor. Silver is an accent only — a rim, a band, nail heads, a thin inlaid line — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold rubblePile --contents=spill --colour=#4a5563 --floor=#bdc7cf
+yarn import-tile art/masters/props/expert/rubbleSpill.webp --tier=expert --name=rubbleSpill --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
 ## Priest — fifteen
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
