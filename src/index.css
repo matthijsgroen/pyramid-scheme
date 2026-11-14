@@ -162,6 +162,9 @@ body {
   --color-ember-600: #b87f14;
   --color-ember-700: #855a0c;
 
+  /* A ward's light: the violet a ward gate is drawn in on the map (nodeShapes' tombGateStroke), lifted. */
+  --color-ward-light: #a090f0;
+
   /* The same colours by the job they do in the camp UI. */
   --color-camp-paper: var(--color-parchment-100);
   --color-camp-card: var(--color-parchment-50);
@@ -613,6 +616,32 @@ body {
     }
     75% {
       transform: translateX(-4px);
+    }
+  }
+
+  /* The light behind a chest as it opens: it grows from the chest, then breathes. The pulse waits out the
+     grow; until then the grow's last frame holds. Reduced motion is `motion-reduce:animate-none` at the point
+     of use, which leaves the light standing at full size. */
+  --animate-chest-glow: chest-glow-grow 500ms ease-out both, chest-glow-pulse 2s ease-in-out 500ms infinite;
+  @keyframes chest-glow-grow {
+    0% {
+      transform: scale(0.2);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  @keyframes chest-glow-pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.06);
+      opacity: 0.8;
     }
   }
   /* ── The map's own motion ──────────────────────────────────────────────────────────────────────
