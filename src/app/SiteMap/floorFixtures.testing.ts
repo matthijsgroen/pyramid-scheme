@@ -298,3 +298,39 @@ export const prefabPorchFloor = (): FloorGrid =>
     PREFAB_PORCH,
     PORCH
   )
+
+/** A stall laid by hand at `STALL_NODE`, its node on its stop: rect rows 1-3, cols 2-6, door places west 2,1 and east
+ * 2,7 in line with the stop, pillars at 1,5 1,6 3,5 3,6 so the cell east of the stop is the only way to the east door,
+ * while the stop reaches the west door round the cell west of it. The entrance is at 2,0, a room at 2,8. */
+export const STALL_NODE = [2, 4] as const
+export const stallFloor = (node: Partial<RoomCell> = {}): FloorGrid => {
+  const grid = floorFrom(["", "", "E...G...R", "", ""], {
+    G: dirs => ({ type: "room", roomType: "encounter", dirs: new Set(dirs), state: "fogged", ...node }),
+  })
+  const doors: [number, number][] = [
+    [2, 1],
+    [2, 7],
+  ]
+  const ring: string[] = []
+  for (let r = 0; r <= 4; r++)
+    for (let c = 1; c <= 7; c++)
+      if ((r === 0 || r === 4 || c === 1 || c === 7) && !doors.some(([dr, dc]) => dr === r && dc === c))
+        ring.push(`${r},${c}`)
+  const pillars = ["1,5", "1,6", "3,5", "3,6"]
+  const prefabRoom: PrefabRoom = {
+    name: "stall",
+    layout: 0,
+    mirrored: false,
+    rect: { top: 1, left: 2, rows: 3, cols: 5 },
+    stop: STALL_NODE,
+    objects: pillars.map(at => {
+      const [top, left] = at.split(",").map(Number)
+      return { kind: "pillar" as const, layer: "floor" as const, top, left, rows: 1, cols: 1 }
+    }),
+    blocked: [...ring, ...pillars],
+    doors,
+  }
+  const cells = grid.cells.map(row => [...row])
+  cells[STALL_NODE[0]][STALL_NODE[1]] = { ...(cells[2][4] as RoomCell), prefabRoom }
+  return { ...grid, cells }
+}

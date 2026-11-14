@@ -78,7 +78,7 @@ export const standingOffset = (grid: FloorGrid, claims: RoomClaims, r: number, c
 /** Where somebody the room is FOR stands (roomOccupants): in a bare cell of the room beside its node, so the
  * explorer walking up to the marker meets them rather than standing in them — or, in a room with no floor to
  * spare, in the corner a node's furniture takes, away from every way out. In a prefab room fit for somebody, north of
- * its stop; in one that is not, beside the stop: east of it, else west, on the room's free floor. */
+ * its stop; in one that is not, on the free cell beside the stop that no way through the room needs. */
 export const occupantOffset = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): StandingOffset => {
   const actor = drawnAt(grid, [r, c])?.actor
   if (actor) return offsetTo(r, c, actor)

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { roomDoors } from "@/game/roomShape"
+import { prefabRoomAt, roomDoors } from "@/game/roomShape"
 import { registerFamily } from "@/app/families/familyRegistry"
 import type { FloorGrid, GridCell } from "@/game/siteTypes"
 import { CELL, COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
@@ -10,9 +10,21 @@ import {
   edgePrefabFloor,
   fitForkFloor,
   floorFrom,
+  STALL_NODE,
   prefabForkFloor,
+  stallFloor,
 } from "./floorFixtures.testing"
-import { markerCell, roomPath, roomStop, stepsBetween, walkPoints, walkSteps } from "./roomWalk"
+import {
+  drawnAt,
+  drawnOwner,
+  freeCells,
+  markerCell,
+  roomPath,
+  roomStop,
+  stepsBetween,
+  walkPoints,
+  walkSteps,
+} from "./roomWalk"
 import type { RoomEnd, WalkPoint } from "./roomWalk"
 
 type Cell = readonly [number, number]
@@ -317,6 +329,17 @@ describe("a walk through a room fit for somebody", () => {
         const walk = roomPath(grid, PREFAB_FORK, from, to)
         walk.slice(1).forEach((p, i) => expect(cuts(walk[i], p, [actor])).toBe(false))
       }
+  })
+})
+
+describe("somebody in a room with no place of their own", () => {
+  it("stands on the free cell beside the stop, not on the room's only way to a door, and is tapped there", () => {
+    const grid = stallFloor({ family: ACTOR_FAMILY })
+    const west: Cell = [STALL_NODE[0], STALL_NODE[1] - 1]
+    expect(drawnAt(grid, STALL_NODE)?.actor).toEqual(west)
+    expect(drawnOwner(grid, ...west)).toEqual(STALL_NODE)
+    const room = prefabRoomAt(grid, ...STALL_NODE)!
+    expect(freeCells(grid, STALL_NODE, room).has(`${west[0]},${west[1]}`)).toBe(false)
   })
 })
 

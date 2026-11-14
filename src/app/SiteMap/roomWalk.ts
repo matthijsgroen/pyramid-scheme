@@ -37,6 +37,26 @@ const armCells = (grid: FloorGrid, [r, c]: Cell): Set<string> => {
 /** The room's floor the walk may cross: its rect but what is blocked, its node and arms always, and the cell somebody
  * stands on (`drawnAt`) only where nothing else joins the stop to a door. */
 export const freeCells = (grid: FloorGrid, node: Cell, room: PrefabRoom): Set<string> => {
+  const free = floorCells(grid, node, room)
+  // Somebody standing in the room is walked round as well, unless the room has no other way from its stop to a door.
+  const actor = drawnAt(grid, node)?.actor
+  if (actor && keepsJoined(grid, node, room, free, actor)) free.delete(keyOf(actor))
+  return free
+}
+
+/** Whether the room's stop still reaches every door with `cell` taken out of `free`. */
+const keepsJoined = (grid: FloorGrid, node: Cell, room: PrefabRoom, free: ReadonlySet<string>, cell: Cell): boolean => {
+  const without = new Set(free)
+  without.delete(keyOf(cell))
+  return joins(
+    without,
+    room.stop,
+    roomDoors(grid, ...node).map(door => door.inside)
+  )
+}
+
+/** The room's floor nobody stands on: its rect but what is blocked or stands in its middle, its node and arms always. */
+const floorCells = (grid: FloorGrid, node: Cell, room: PrefabRoom): Set<string> => {
   const blocked = new Set(room.blocked)
   const free = armCells(grid, node)
   const { top, left, rows, cols } = room.rect
@@ -49,19 +69,6 @@ export const freeCells = (grid: FloorGrid, node: Cell, room: PrefabRoom): Set<st
       for (let r = object.top; r < object.top + object.rows; r++)
         for (let c = object.left; c < object.left + object.cols; c++) free.delete(`${r},${c}`)
   if (room.nodeArt) free.delete(keyOf(room.nodeArt))
-  // Somebody standing in the room is walked round as well, unless the room has no other way from its stop to a door.
-  const actor = drawnAt(grid, node)?.actor
-  if (actor) {
-    free.delete(keyOf(actor))
-    if (
-      !joins(
-        free,
-        room.stop,
-        roomDoors(grid, ...node).map(door => door.inside)
-      )
-    )
-      free.add(keyOf(actor))
-  }
   return free
 }
 
@@ -306,22 +313,37 @@ export const markerCell = (grid: FloorGrid, r: number, c: number): Cell => {
 
 /** The cells a designed room draws what is used in it on: its node art (a lever, a chest) on its place for it, else at
  * the stop; its marker at the stop; somebody its family has in it north of the stop in a room fit for them, else beside
- * the stop, east of it, else west, on the room's free floor. */
+ * the stop on the first free cell beside it (east, west, north, south, then the corners from the north) the stop
+ * reaches every door without. */
 export type DrawnCells = { art: Cell; marker: Cell; actor?: Cell }
+
+const BESIDE: readonly Cell[] = [
+  [0, 1],
+  [0, -1],
+  [-1, 0],
+  [1, 0],
+  [-1, 1],
+  [-1, -1],
+  [1, 1],
+  [1, -1],
+]
+
+const actorBeside = (grid: FloorGrid, node: Cell, room: PrefabRoom): Cell | undefined => {
+  const beside = BESIDE.map(([dr, dc]): Cell => [room.stop[0] + dr, room.stop[1] + dc])
+  const floor = floorCells(grid, node, room)
+  const free = beside.find(at => floor.has(keyOf(at)) && keepsJoined(grid, node, room, floor, at))
+  if (free) return free
+  const blocked = new Set(room.blocked)
+  return beside.slice(0, 2).find(([r, c]) => inRect(room.rect, r, c) && !blocked.has(`${r},${c}`))
+}
 
 export const drawnAt = (grid: FloorGrid, node: Cell): DrawnCells | undefined => {
   const room = prefabRoomAt(grid, node[0], node[1])
   if (!room) return undefined
   const cell = grid.cells[node[0]]?.[node[1]]
   const family = cell?.type === "room" ? cell.family : undefined
-  const blocked = new Set(room.blocked)
   const actor =
-    family && getFamilyPlugin(family)?.meta.actor
-      ? (room.actor ??
-        [1, -1]
-          .map(dc => [room.stop[0], room.stop[1] + dc] as const)
-          .find(([r, c]) => inRect(room.rect, r, c) && !blocked.has(`${r},${c}`)))
-      : undefined
+    family && getFamilyPlugin(family)?.meta.actor ? (room.actor ?? actorBeside(grid, node, room)) : undefined
   return { art: room.nodeArt ?? room.stop, marker: room.stop, ...(actor ? { actor } : {}) }
 }
 
