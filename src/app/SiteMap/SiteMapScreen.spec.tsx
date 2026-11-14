@@ -2,7 +2,10 @@
 import { render, act, fireEvent, cleanup } from "@testing-library/react"
 import { describe, expect, it, vi, beforeAll, beforeEach, afterEach } from "vitest"
 import type { FloorConfig, FloorGrid, GridCell, KeyColor, RoomCell, TombKeyReward } from "@/game/siteTypes"
-import { cellCenter } from "./mapScale"
+import { CELL, cellCenter } from "./mapScale"
+import { PREFAB_FORK, fitForkFloor, prefabForkFloor } from "./floorFixtures.testing"
+import { roomStop } from "./roomWalk"
+import { offerContextFrom } from "./clickTargets"
 import { clearGameData } from "@/support/useGameStorage"
 import { registerFamily, resolveEncounter } from "@/app/families/familyRegistry"
 import { registerHeldKeysProvider } from "@/app/SiteMap/keyProviders"
@@ -288,6 +291,80 @@ describe(SiteMapScreen, () => {
     // Taking the way out hands over to the exit transition, which completes the site when it finishes.
     expect(container.querySelector("[data-map-prompt]")).toBeNull()
     expect(container.querySelector(".animate-entrance-zoom")).not.toBeNull()
+  })
+
+  describe("standing in a designed room, a tap on what it draws", () => {
+    // Both stay open, so a tap on either, done with, offers it again beside him.
+    const [CHEST, FIGURE] = ["spec-chest", "spec-figure"]
+    for (const id of [CHEST, FIGURE])
+      registerFamily({
+        meta: {
+          id,
+          ownerMod: "test",
+          tags: [],
+          icon: "",
+          color: "",
+          rewardPriority: 0,
+          reEnterable: true,
+          ...(id === FIGURE ? { actor: true as const } : {}),
+        },
+        generate: () => null,
+        Component: () => null,
+      })
+    /** The made-up hall with its stop moved onto the east arm, beside the node, where a way out points over the node. */
+    const stopBesideNode = (base: FloorGrid): FloorGrid => {
+      const cells = base.cells.map(row => [...row])
+      const node = cells[PREFAB_FORK[0]][PREFAB_FORK[1]] as RoomCell
+      cells[PREFAB_FORK[0]][PREFAB_FORK[1]] = { ...node, prefabRoom: { ...node.prefabRoom!, stop: [4, 7] } }
+      return { ...base, cells }
+    }
+    /** Every box the map takes a tap on over `at`, each tapped on a fresh map: true when all of them open the room. */
+    const everyTapOnOpens = async (at: readonly [number, number]) => {
+      const boxesOn = (container: HTMLElement) =>
+        [...container.querySelectorAll<HTMLElement>("[data-marker-cell]")].filter(
+          box =>
+            box.style.cursor === "pointer" &&
+            parseFloat(box.style.left) + CELL / 2 === cellCenter(...at).cx &&
+            parseFloat(box.style.top) + CELL / 2 === cellCenter(...at).cy
+        )
+      const { container, unmount } = await renderScreen()
+      const count = boxesOn(container).length
+      unmount()
+      const opened: boolean[] = []
+      for (let i = 0; i < count; i++) {
+        const screen = await renderScreen()
+        fireEvent.click(boxesOn(screen.container)[i])
+        await act(async () => {
+          vi.advanceTimersByTime(1000)
+        })
+        opened.push(!!screen.container.querySelector("[data-map-prompt]") || !!screen.queryByRole("dialog"))
+        screen.unmount()
+      }
+      return { count, opened }
+    }
+
+    it("on the chest drawn on the stop opens it, though a way out points over the node's own cell", async () => {
+      grid = stopBesideNode(
+        completeCell(revealAll(prefabForkFloor({ roomType: "encounter", family: CHEST })), ...PREFAB_FORK)
+      )
+      explorerPos = PREFAB_FORK
+
+      expect(offerContextFrom(grid, PREFAB_FORK, {}).choices.has("4,6")).toBe(true)
+      const { count, opened } = await everyTapOnOpens([4, 7])
+      expect(count).toBeGreaterThan(0)
+      expect(opened).toEqual(Array(count).fill(true))
+    })
+
+    it("on somebody standing north of the stop speaks to them", async () => {
+      grid = completeCell(revealAll(fitForkFloor({ roomType: "encounter", family: FIGURE })), ...PREFAB_FORK)
+      explorerPos = PREFAB_FORK
+      const stop = roomStop(grid, ...PREFAB_FORK)!
+      const figure = [stop[0] - 1, stop[1]] as const
+
+      const { count, opened } = await everyTapOnOpens(figure)
+      expect(count).toBeGreaterThan(0)
+      expect(opened).toEqual(Array(count).fill(true))
+    })
   })
 
   describe("by keyboard", () => {

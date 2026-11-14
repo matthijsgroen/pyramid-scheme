@@ -53,7 +53,8 @@ import { useAssembledFloor } from "./useAssembledFloor"
 import { useMechanismStates } from "./useMechanismStates"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { buildRoomClaims } from "./roomClaims"
-import { nodeArtOwner, offerContextFrom, offeredTargets, roomEntryAt } from "./clickTargets"
+import { offerContextFrom, offeredTargets, roomEntryAt } from "./clickTargets"
+import { drawnOwner } from "./roomWalk"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
 import { isCorridorCorner } from "./corridorRuns"
@@ -183,8 +184,8 @@ const markerViolations = (
   const dropEnds = dropEndsOf(grid)
   grid.cells.forEach((row, r) =>
     row.forEach((cell, c) => {
-      // A designed room's node art (a lever on its mechanism place) is the room's own drawing, not a marker's.
-      if (nodeArtOwner(grid, r, c)) {
+      // What a designed room draws and uses (`drawnOwner`: a lever, a chest, a figure, its marker) is drawn by the room.
+      if (drawnOwner(grid, r, c)) {
         const { cx, cy } = cellCenter(r, c)
         exempt.add(`${cx - CELL / 2}px,${cy - CELL / 2}px`)
       }

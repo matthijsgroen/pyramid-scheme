@@ -33,6 +33,7 @@ import {
   prefabForkFloor,
 } from "./floorFixtures.testing"
 import { roomChoices } from "./roomChoices"
+import { roomStop } from "./roomWalk"
 import { ringDistance } from "./arrowRing"
 
 // jsdom has no scrollTo; the map scrolls itself to the explorer on mount.
@@ -300,12 +301,15 @@ describe("a room laid over a fork", () => {
   for (let r = rect.top; r < rect.top + rect.rows; r++)
     for (let c = rect.left; c < rect.left + rect.cols; c++) if (roomPlaceOf(grid, r, c) === "inner") inner.push([r, c])
 
-  it("a room's floor offers no stop, its doors and node do", () => {
+  it("a room's floor offers no stop, its doors and node do, and the stop its node is drawn on offers the node", () => {
     const claims = buildRoomClaims(grid)
     for (const freeWalk of [false, true]) {
       const ctx = offerContextFrom(grid, grid.entrancePos, { freeWalk })
       expect(inner.length).toBeGreaterThan(0)
-      for (const [r, c] of inner) expect(clickTargetAt(grid, claims, r, c, ctx), `${r},${c}`).toBeNull()
+      for (const [r, c] of inner)
+        expect(clickTargetAt(grid, claims, r, c, ctx), `${r},${c}`).toEqual(
+          `${r},${c}` === `${roomStop(grid, ...PREFAB_FORK)}` ? PREFAB_FORK : null
+        )
     }
     const ctx = offerContextFrom(grid, grid.entrancePos, { freeWalk: false })
     const doors = roomDoors(grid, ...PREFAB_FORK)
@@ -342,9 +346,10 @@ describe("a room laid over a fork", () => {
       for (const { arrowAt, dir, to } of choices) {
         expect(clickTargetAt(grid, claims, ...arrowAt, ctx), `${arrowAt}`).toEqual(to.at)
         expect(markerAt(grid, claims, ...arrowAt, ctx), `${arrowAt}`).toEqual({ kind: "arrow", dir })
-        expect(roomChoiceAt(ctx, PREFAB_FORK, ...arrowAt)).toEqual({ arrowAt, dir, to })
-        if (to.at[0] !== PREFAB_FORK[0] || to.at[1] !== PREFAB_FORK[1])
-          expect(roomChoiceAt(ctx, PREFAB_FORK, ...to.at)).toEqual({ arrowAt, dir, to })
+        expect(roomChoiceAt(grid, ctx, PREFAB_FORK, ...arrowAt)).toEqual({ arrowAt, dir, to })
+        // The stop is where the node is drawn, so a tap there is the room's own.
+        if (to.kind !== "stop" && (to.at[0] !== PREFAB_FORK[0] || to.at[1] !== PREFAB_FORK[1]))
+          expect(roomChoiceAt(grid, ctx, PREFAB_FORK, ...to.at)).toEqual({ arrowAt, dir, to })
       }
       // The steps round his cell are no arrows of their own: the room's floor is open every way.
       const arrows = inner.filter(([r, c]) => markerAt(grid, claims, r, c, ctx)?.kind === "arrow")
@@ -445,7 +450,7 @@ describe("a designed room's node art", () => {
     }
   })
 
-  it("is a tap on the map that hands on the node, with nothing drawn over the art", () => {
+  it("is a tap on the map handed on as its own cell, which offers the node, with nothing drawn over the art", () => {
     const onCellClick = vi.fn()
     const { container, unmount } = render(
       <SiteMapView grid={grid} explorerPos={PREFAB_FORK} onCellClick={onCellClick} />
@@ -455,7 +460,7 @@ describe("a designed room's node art", () => {
       expect(art).not.toBeNull()
       expect(art!.querySelector("svg")).toBeNull()
       fireEvent.click(art!)
-      expect(onCellClick).toHaveBeenCalledWith(...PREFAB_FORK)
+      expect(onCellClick).toHaveBeenCalledWith(...NODE_ART)
     } finally {
       unmount()
     }
