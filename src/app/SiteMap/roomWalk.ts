@@ -1,7 +1,7 @@
 import { STEP, inRect, prefabRoomAt, prefabRoomCells, roomDoors, type RoomDoor } from "@/game/roomShape"
 import type { FloorGrid, PrefabRoom } from "@/game/siteTypes"
 import { getFamilyPlugin } from "@/app/families/familyRegistry"
-import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
+import { CELL, COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import type { StandingOffset } from "./standingSpot"
 
 export type WalkPoint = { x: number; y: number; inRoom?: true }
@@ -186,12 +186,27 @@ export const roomPath = (grid: FloorGrid, node: Cell, from: RoomEnd, to: RoomEnd
   const a = endCell(from)
   const b = endCell(to)
   const inRoom = (cell: Cell): WalkPoint => ({ ...centreOf(cell), inRoom: true })
-  if (a[0] === b[0] && a[1] === b[1]) return [inRoom(a)]
+  // At the stop he stands where `stopPoint` says: a walk to it ends there, one from it starts there.
+  const front = room.nodeArt && { ...stopPoint(room), inRoom: true as const }
+  const atStop = (points: WalkPoint[]): WalkPoint[] =>
+    front ? [...(from === "stop" ? [front] : []), ...points, ...(to === "stop" ? [front] : [])] : points
+  if (a[0] === b[0] && a[1] === b[1])
+    return from === "stop" && to === "stop" ? [front || inRoom(a)] : atStop([inRoom(a)])
   const walk = shortestWalk(freeCells(grid, node, room), a, b)
-  if (walk) return walk.map(inRoom)
+  if (walk) return atStop(walk.map(inRoom))
   if (import.meta.env?.DEV)
     throw new Error(`[roomWalk] ${room.name} at ${keyOf(node)}: no way from ${keyOf(a)} to ${keyOf(b)}`)
-  return [inRoom(a), inRoom(b)]
+  return atStop([inRoom(a), inRoom(b)])
+}
+
+/** How far below the centre of a lever's or torch's cell he stands to work it: on its bottom edge, in front of its foot. */
+const IN_FRONT_OF_ART = CELL / 2
+
+/** Where he stands at a designed room's stop: in front of the foot of its node art (a lever, a torch) where it has
+ * some, so he is drawn working it, else on the stop. */
+export const stopPoint = (room: PrefabRoom): WalkPoint => {
+  const { x, y } = centreOf(room.nodeArt ?? room.stop)
+  return { x, y: room.nodeArt ? y + IN_FRONT_OF_ART : y }
 }
 
 /** The door whose straight arm from the node holds this cell. */

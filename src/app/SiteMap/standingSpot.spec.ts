@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest"
-import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
-import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
+import type { CellState, Direction, FloorGrid, GridCell, RoomCell } from "@/game/siteTypes"
+import { CELL, COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import { PREFAB_CHEST, PREFAB_FORK, fitForkFloor, prefabChestFloor, prefabForkFloor } from "./floorFixtures.testing"
-import { freeCells, roomStop } from "./roomWalk"
-import { prefabRoomAt } from "@/game/roomShape"
+import { freeCells, roomPath, roomStop } from "./roomWalk"
+import { prefabRoomAt, roomDoors } from "@/game/roomShape"
 import { buildRoomClaims } from "./roomClaims"
 import { nodeArtStep, occupantOffset, prefabArtOffset, standingOffset } from "./standingSpot"
 import { nodeArtOffset } from "./nodeArt"
@@ -140,6 +140,23 @@ describe("where the explorer stands in a prefab room", () => {
     expect(occupantOffset(plain, buildRoomClaims(plain), 1, 1)).toEqual(
       nodeArtStep(plain, buildRoomClaims(plain), 1, 1)
     )
+  })
+
+  it("in a room whose lever has a place of its own, stands him in front of the lever's foot, where a walk to the stop ends", () => {
+    const LEVER = [5, 6] as const
+    const node = grid.cells[PREFAB_FORK[0]][PREFAB_FORK[1]] as RoomCell
+    const cells = grid.cells.map(row => [...row])
+    cells[PREFAB_FORK[0]][PREFAB_FORK[1]] = { ...node, prefabRoom: { ...node.prefabRoom!, nodeArt: LEVER } }
+    const leverHall: FloorGrid = { ...grid, cells }
+    const { dx, dy } = offsetAt(leverHall, ...PREFAB_FORK)
+    const at = { x: cellCenter(...PREFAB_FORK).cx + dx, y: cellCenter(...PREFAB_FORK).cy + dy }
+
+    expect(at.x).toBe(cellCenter(...LEVER).cx)
+    expect(at.y).toBeGreaterThan(cellCenter(...LEVER).cy)
+    expect(at.y).toBeLessThanOrEqual(cellCenter(...LEVER).cy + CELL / 2)
+    const [west] = roomDoors(leverHall, ...PREFAB_FORK).filter(({ side }) => side === "w")
+    expect(roomPath(leverHall, PREFAB_FORK, { doorAt: west.at }, "stop").at(-1)).toEqual({ ...at, inRoom: true })
+    expect(roomPath(leverHall, PREFAB_FORK, "stop", { doorAt: west.at })[0]).toEqual({ ...at, inRoom: true })
   })
 
   it("the chest art stands at the stop, stepped aside as on a corridor node where there is floor to step to", () => {

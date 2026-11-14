@@ -6,7 +6,7 @@ import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import { shapeKindFor } from "./nodeKinds"
 import { nodeArtOffset } from "./nodeArt"
 import { opensToward, type RoomClaims } from "./roomClaims"
-import { drawnAt, roomStop } from "./roomWalk"
+import { drawnAt, stopPoint } from "./roomWalk"
 
 export type StandingOffset = { readonly dx: number; readonly dy: number }
 
@@ -17,12 +17,12 @@ const offsetTo = (r: number, c: number, [tr, tc]: readonly [number, number]): St
   dy: cellCenter(tr, tc).cy - cellCenter(r, c).cy,
 })
 
-/** The stop of the prefab room whose rect holds this cell, the node's own included. */
-const prefabStop = (grid: FloorGrid, r: number, c: number) => {
+/** The prefab room whose rect holds this cell, the node's own included. */
+const prefabRoomOf = (grid: FloorGrid, r: number, c: number) => {
   const node = prefabRoomCells(grid).get(`${r},${c}`)
   if (!node) return undefined
   const [nr, nc] = node.split(",").map(Number)
-  return roomStop(grid, nr, nc)
+  return prefabRoomAt(grid, nr, nc)
 }
 
 /** Where a prefab room's chest, portal or mechanism is drawn, relative to its node's centre: a mechanism on the
@@ -63,10 +63,13 @@ const ASIDE: ReadonlyArray<Direction> = ["e", "w", "s", "n"]
 /** Where the explorer is drawn standing in a room, relative to its node's centre. A stair's art IS its
  * node, so on the centre he stands in its shaft; he stands in the cell next to it instead — a bare cell of
  * the room's own floor, one with no prop in it. Drawing only: the explorer is still AT the node.
- * In a prefab room, on its node or on a cell it absorbed, he stands at the room's stop. */
+ * In a prefab room, on its node or on a cell it absorbed, he stands at the room's stop (`stopPoint`). */
 export const standingOffset = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): StandingOffset => {
-  const stop = prefabStop(grid, r, c)
-  if (stop) return offsetTo(r, c, stop)
+  const room = prefabRoomOf(grid, r, c)
+  if (room) {
+    const { x, y } = stopPoint(room)
+    return { dx: x - cellCenter(r, c).cx, dy: y - cellCenter(r, c).cy }
+  }
   const cell = cellAt(grid, r, c)
   if (cell.type !== "room" || shapeKindFor(grid, r, c, cell) !== "stairhead") return AT_CENTRE
   return besideNode(grid, claims, r, c) ?? AT_CENTRE
