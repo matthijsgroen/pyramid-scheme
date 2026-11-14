@@ -134,7 +134,14 @@ export const PyramidDisplay: FC<{
               ) : (
                 <span
                   key={block.id}
-                  className={clsx(interactive && !completed && selectedBlockIndex === blockIndex && "board-cursor")}
+                  // An outline inside the block: the numbers around it are what the player sums, so nothing may
+                  // lift over them. The iOS number pad sends keys, so this also shows while typing on a phone.
+                  className={clsx(
+                    interactive &&
+                      !completed &&
+                      selectedBlockIndex === blockIndex &&
+                      "[:root:is([data-input=keys],[data-input=pad])_&>div]:outline-3 [:root:is([data-input=keys],[data-input=pad])_&>div]:-outline-offset-3 [:root:is([data-input=keys],[data-input=pad])_&>div]:outline-ember-700"
+                  )}
                 >
                   {blockEl}
                 </span>
