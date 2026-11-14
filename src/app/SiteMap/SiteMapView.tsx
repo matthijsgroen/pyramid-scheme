@@ -2427,6 +2427,7 @@ export const SiteMapView = ({
                   const offer = clickTargetAt(grid, claims, r, c, offerContext)
                   const marker = cell.type === "corridor" ? markerAt(grid, claims, r, c, offerContext, offer) : null
                   const spot = markerSpot(marker, { cx, cy })
+                  const tap = tapCellAt(grid, offerContext, r, c, offer)
                   return (
                     <MarkerCell
                       at={[r, c]}
@@ -2435,7 +2436,7 @@ export const SiteMapView = ({
                       cx={spot.cx}
                       cy={spot.cy}
                       ring={spot.ring}
-                      onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
+                      onClick={tap && onCellClick ? () => onCellClick(tap[0], tap[1]) : undefined}
                     >
                       {drawCorridorMarker(marker)}
                     </MarkerCell>
@@ -2449,7 +2450,7 @@ export const SiteMapView = ({
                   const offer = clickTargetAt(grid, claims, r, c, offerContext)
                   const marker = markerAt(grid, claims, r, c, offerContext, offer)
                   const spot = markerSpot(marker, { cx, cy })
-                  const tap = tapCellAt(offerContext, r, c, offer)
+                  const tap = tapCellAt(grid, offerContext, r, c, offer)
                   return (
                     <MarkerCell
                       at={[r, c]}
@@ -2518,7 +2519,7 @@ export const SiteMapView = ({
                 // The arrow a room's own cell wears beside the player (`markerAt`), drawn on its ring beside the node.
                 const arrow = markerAt(grid, claims, r, c, offerContext, offer)
                 const arrowSpot = arrow?.kind === "arrow" ? markerSpot(arrow, cellCenter(r, c)) : undefined
-                const tap = tapCellAt(offerContext, r, c, offer)
+                const tap = tapCellAt(grid, offerContext, r, c, offer)
 
                 return (
                   <Fragment key={`${r},${c}`}>
@@ -2536,12 +2537,13 @@ export const SiteMapView = ({
                         <RunTargetArrow dir={arrow.dir} />
                       </MarkerCell>
                     )}
+                    {/* The node is tapped on the cell it is drawn on (`drawnOwner`), whatever choice its own cell holds. */}
                     <MarkerCell
                       at={[r, c]}
                       walls={walls}
                       cx={centre.cx}
                       cy={centre.cy}
-                      onClick={!choice && offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
+                      onClick={offer && onCellClick ? () => onCellClick(...(moved ?? ([r, c] as const))) : undefined}
                     >
                       {/* A FLIGHT SAYS STAIRS BETTER THAN A MARKER DOES, so where one is drawn the marker
                         goes out entirely rather than merely easing back the way a chest's does. The

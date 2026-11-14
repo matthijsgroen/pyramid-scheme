@@ -29,7 +29,9 @@ export const TreasureComponent: FamilyPlugin["Component"] = ({ ctx, onSolved }) 
   }
 
   const art = ctx.reward ? getRewardHandler(ctx.reward.type)?.art?.(ctx.reward) : undefined
-  const tile = art?.kind === "chest" ? art.tile : CHEST_TILE
+  // A chest of its own (a ward key's) opens in the ward's light, any other in torchlight.
+  const ownChest = art?.kind === "chest"
+  const tile = ownChest ? art.tile : CHEST_TILE
   // A tileset that is no rank (the cave) has no chest of its own, as on the map: the rank's is drawn.
   const rank = ctx.difficulty ?? "starter"
   const url = chestTileUrl(ctx.tileset ?? rank, rank, tile, opened)
@@ -47,7 +49,17 @@ export const TreasureComponent: FamilyPlugin["Component"] = ({ ctx, onSolved }) 
           opened ? "cursor-default" : "cursor-pointer motion-safe:hover:scale-105"
         )}
       >
-        {opened && <div className="absolute inset-x-4 bottom-0 h-1/3 rounded-full bg-amber-300/30 blur-xl" />}
+        {opened && (
+          <div
+            data-testid="chest-glow"
+            className={clsx(
+              "absolute -inset-16 animate-chest-glow rounded-full motion-reduce:animate-none",
+              ownChest
+                ? "bg-[radial-gradient(circle,var(--color-ward-light)_0%,transparent_65%)]"
+                : "bg-[radial-gradient(circle,var(--color-ember-300)_0%,transparent_65%)]"
+            )}
+          />
+        )}
         <img
           src={url}
           alt=""
