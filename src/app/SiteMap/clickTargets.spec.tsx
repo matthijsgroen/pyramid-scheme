@@ -420,6 +420,48 @@ describe("a room laid over a fork", () => {
   })
 })
 
+describe("a designed room's node art", () => {
+  // A made-up lever on the hall's south arm, an inner cell of the room.
+  const NODE_ART = [5, 6] as const
+  const grid = (() => {
+    const base = completeCell(revealAll(prefabForkFloor({}, true)), ...PREFAB_FORK)
+    const cells = base.cells.map(row => [...row])
+    const node = cells[PREFAB_FORK[0]][PREFAB_FORK[1]]
+    if (node.type === "empty" || !node.prefabRoom) throw new Error("no room")
+    cells[PREFAB_FORK[0]][PREFAB_FORK[1]] = { ...node, prefabRoom: { ...node.prefabRoom, nodeArt: NODE_ART } }
+    return { ...base, cells }
+  })()
+  const claims = buildRoomClaims(grid)
+
+  it("offers its room's node, from outside the room and from inside it", () => {
+    expect(roomPlaceOf(grid, ...NODE_ART)).toBe("inner")
+    for (const at of [grid.entrancePos, PREFAB_FORK]) {
+      const ctx = offerContextFrom(grid, at, {})
+      expect(clickTargetAt(grid, claims, ...NODE_ART, ctx), `from ${at}`).toEqual(
+        clickTargetAt(grid, claims, ...PREFAB_FORK, ctx)
+      )
+      expect(clickTargetAt(grid, claims, ...NODE_ART, ctx), `from ${at}`).not.toBeNull()
+      expect(markerAt(grid, claims, ...NODE_ART, ctx)).toEqual({ kind: "node" })
+    }
+  })
+
+  it("is a tap on the map that hands on the node, with nothing drawn over the art", () => {
+    const onCellClick = vi.fn()
+    const { container, unmount } = render(
+      <SiteMapView grid={grid} explorerPos={PREFAB_FORK} onCellClick={onCellClick} />
+    )
+    try {
+      const art = container.querySelector<HTMLElement>(`[data-marker-at="${NODE_ART[0]},${NODE_ART[1]}"]`)
+      expect(art).not.toBeNull()
+      expect(art!.querySelector("svg")).toBeNull()
+      fireEvent.click(art!)
+      expect(onCellClick).toHaveBeenCalledWith(...PREFAB_FORK)
+    } finally {
+      unmount()
+    }
+  })
+})
+
 describe("entering a designed room", () => {
   const grid = revealAll(crossingFloor())
 

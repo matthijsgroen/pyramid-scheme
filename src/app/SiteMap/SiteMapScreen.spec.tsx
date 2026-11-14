@@ -331,6 +331,44 @@ describe(SiteMapScreen, () => {
       expect(container.querySelector("[data-map-prompt]")).toBeNull()
       expect(getByRole("dialog")).toBeTruthy()
     })
+
+    it("offers a lever he stands at again with Enter once its prompt is taken", async () => {
+      const LEVER = "spec-lever"
+      registerFamily({
+        meta: {
+          id: LEVER,
+          ownerMod: "test",
+          tags: ["handle"],
+          icon: "",
+          color: "",
+          rewardPriority: 0,
+          reEnterable: true,
+          stateIsTheMechanism: true,
+          actsOnArrival: true,
+        },
+        generate: () => null,
+        Component: () => null,
+      })
+      const lever: GridCell = {
+        type: "room",
+        roomType: "encounter",
+        family: LEVER,
+        dirs: new Set(["w"]),
+        state: "completed",
+        mechanism: { states: ["left", "right"], initial: "left", returnsToInitial: true, positions: [] },
+      }
+      grid = gridOf([entrance, lever])
+      explorerPos = [0, 1]
+      const { container } = await renderScreen()
+
+      expect(container.querySelector("[data-map-prompt]")).toBeNull()
+      await key("Enter")
+      expect(container.querySelector("[data-map-prompt]")).not.toBeNull()
+      await key("Enter")
+      expect(container.querySelector("[data-map-prompt]")).toBeNull()
+      await key("Enter")
+      expect(container.querySelector("[data-map-prompt]")).not.toBeNull()
+    })
   })
 
   describe("what the prompt beside the explorer says", () => {
