@@ -57,9 +57,6 @@ const drawnThings = (grid: FloorGrid, claims: RoomClaims, floorIndex: number) =>
       const { cx, cy } = cellCenter(r, c)
       const { dx, dy } = occupantOffset(grid, claims, r, c)
       const drawn = cellOfPoint(cx + dx, cy + dy)
-      // Somebody standing in a room's only way is walked over (`freeCells`): that cell is a way first, its arrow's.
-      const room = prefabRoomAt(grid, r, c)
-      if (room && freeCells(grid, [r, c], room).has(key(drawn))) return
       things.push({ what: "figure", node: [r, c], drawn })
     })
   )
