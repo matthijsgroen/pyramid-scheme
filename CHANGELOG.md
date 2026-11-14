@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed pulling a lever in a room by tapping it, and pulling it again with Enter.
+- Standing in a doorway, the arrow up through its arch shows again.
 - Fixed tapping a chest, puzzle or figure in a room you stand in.
 - In a room with a lever or torch, the explorer stands in front of it, not below it.
 - Sudoku: the cursor steps away when the board is solved, and [ ] skip numbers already used up.

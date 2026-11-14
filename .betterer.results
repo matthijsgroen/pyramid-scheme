@@ -29,7 +29,7 @@ exports[`a seeded shuffle draws once per element, never inside a comparator`] = 
 
 exports[`every clicked element is reachable by keys`] = {
   value: `{
-    "src/app/SiteMap/SiteMapView.tsx:2131924537": [
+    "src/app/SiteMap/SiteMapView.tsx:3575245204": [
       [1578, 4, 509, "A clicked element the keys cannot reach: make it a <button>, give it role and tabIndex, or mark a backdrop aria-hidden.", "1522147696"]
     ],
     "src/mods/mosaic/app/StainedGlassMosaic.tsx:3293791392": [

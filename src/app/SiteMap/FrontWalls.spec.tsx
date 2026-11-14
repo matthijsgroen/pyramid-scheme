@@ -101,6 +101,11 @@ const chestLayers = (container: HTMLElement) =>
 
 const markerAt = (container: HTMLElement, at: string) =>
   container.querySelector<HTMLElement>(`[data-marker-at="${at}"]`)!
+/** The marker on the cell's own spot, not the arrow beside the explorer that also names it. */
+const nodeMarkerAt = (container: HTMLElement, at: string) =>
+  Array.from(container.querySelectorAll<HTMLElement>(`[data-marker-at="${at}"]`)).find(
+    marker => marker.style.borderRadius !== "50%"
+  )!
 
 describe("something standing behind a wall", () => {
   it("is cut where the wall stands in front of it, so the wall shows there", () => {
@@ -138,7 +143,7 @@ describe("a marker behind a wall", () => {
 
   it("shows whole over the wall while that wall is faded", () => {
     const { container } = render(<SiteMapView grid={chestBehindAWall()} explorerPos={[0, 2]} revealAllCells />)
-    const { underWall } = layersOf(markerAt(container, "0,1").querySelector("[data-behind-wall]"))
+    const { underWall } = layersOf(nodeMarkerAt(container, "0,1").querySelector("[data-behind-wall]"))
 
     expect(Number(underWall.style.opacity)).toBe(1)
   })
@@ -224,6 +229,15 @@ describe("an arch in a wall standing in front of floor", () => {
     const { container } = render(<SiteMapView grid={archBehindAWall()} explorerPos={[0, 2]} revealAllCells />)
 
     expect(drawnWalls(container).filter(wall => wall.hasAttribute("data-faded"))).toHaveLength(1)
+  })
+
+  it("leaves the arrow through it whole for the explorer standing in the doorway", () => {
+    const { container } = render(<SiteMapView grid={archBehindAWall()} explorerPos={[1, 2]} revealAllCells />)
+    const north = markerAt(container, "0,2")
+
+    expect(north.style.borderRadius).toBe("50%")
+    expect(north.querySelector("polygon")).not.toBeNull()
+    expect(north.querySelector("[data-behind-wall]")).toBeNull()
   })
 
   it("leaves its wall solid while the explorer stands in the doorway", () => {

@@ -1636,8 +1636,10 @@ const MarkerDrawing = ({
       {children}
     </svg>
   )
+  // An arrow of the ring stands with the explorer, never behind a wall: the one north of him in a doorway lands in the
+  // wall over its arch.
   const drawn: Rect = [cx - CELL / 2, cy - CELL / 2, CELL, CELL]
-  const behind = walls ? wallsBehind(walls.runs, drawn, cy) : []
+  const behind = walls && !ring ? wallsBehind(walls.runs, drawn, cy) : []
   if (!walls || behind.length === 0) return svg
   const [ox, oy] = [cx - box / 2, cy - box / 2]
   // Laid out in map space, where the walls are: the wrapper puts the map's origin back under the marker's box.
