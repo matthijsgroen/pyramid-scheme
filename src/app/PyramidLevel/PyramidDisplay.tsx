@@ -135,7 +135,7 @@ export const PyramidDisplay: FC<{
                 <span
                   key={block.id}
                   // An outline inside the block: the numbers around it are what the player sums, so nothing may
-                  // lift over them. The iOS number pad sends keys, so this also shows while typing on a phone.
+                  // lift over them.
                   className={clsx(
                     interactive &&
                       !completed &&

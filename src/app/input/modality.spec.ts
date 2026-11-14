@@ -27,6 +27,48 @@ describe("the input last used", () => {
     button.remove()
   })
 
+  describe("typing into a field", () => {
+    const field = () => {
+      const input = document.body.appendChild(document.createElement("input"))
+      input.type = "number"
+      return input
+    }
+    const press = (target: EventTarget, key: string) =>
+      target.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }))
+    afterEach(() => document.body.replaceChildren())
+
+    it("stays touch when a digit is typed into a tapped number field", () => {
+      const input = field()
+      input.dispatchEvent(new Event("pointerdown", { bubbles: true }))
+      press(input, "4")
+      expect(mode()).toBe("touch")
+    })
+
+    it("stays touch for arrows inside the field, which the field keeps", () => {
+      window.dispatchEvent(new Event("pointerdown"))
+      press(field(), "ArrowLeft")
+      expect(mode()).toBe("touch")
+    })
+
+    it.each(["Tab", "Escape", "Enter"])("is keys after %s, which leaves the field", key => {
+      window.dispatchEvent(new Event("pointerdown"))
+      press(field(), key)
+      expect(mode()).toBe("keys")
+    })
+
+    it("is keys after an arrow on the document", () => {
+      window.dispatchEvent(new Event("pointerdown"))
+      press(document.body, "ArrowLeft")
+      expect(mode()).toBe("keys")
+    })
+
+    it("stays keys when a keyboard player types a digit", () => {
+      press(document.body, "ArrowDown")
+      press(field(), "4")
+      expect(mode()).toBe("keys")
+    })
+  })
+
   it("is pad when the pad says so", () => {
     setModality("pad")
     expect(mode()).toBe("pad")

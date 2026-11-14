@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - The pyramid block you are filling in no longer pops out.
+- Typing a number on a phone no longer switches to the keyboard look.
 - Fixed pulling a lever in a room by tapping it, and pulling it again with Enter.
 - Standing in a doorway, the arrow up through its arch shows again.
 - Fixed the arrow toward a puzzle hiding behind it.
