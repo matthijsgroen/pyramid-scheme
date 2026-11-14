@@ -2143,11 +2143,17 @@ export const SiteMapView = ({
     [grid, offerKey, isTraveling, freeWalk]
   )
   const arrows = useMemo(() => ringArrows(grid, claims, offerContext), [grid, claims, offerContext])
+  // Confirm takes the prompt; with none, standing on a mechanism, it is the tap on his own cell that offers it again.
+  const standingOn = settledExplorerPos && !isTraveling ? cellAt(grid, ...settledExplorerPos) : undefined
+  const workHere =
+    settledExplorerPos && standingOn?.type === "room" && standingOn.mechanism
+      ? () => onCellClick?.(settledExplorerPos[0], settledExplorerPos[1])
+      : undefined
   useMapKeys({
     active: keysActive && !!onCellClick,
     arrows,
     onMove: (row, col) => onCellClick?.(row, col),
-    onConfirm: prompt?.onTake,
+    onConfirm: prompt?.onTake ?? workHere,
     onBack,
   })
 

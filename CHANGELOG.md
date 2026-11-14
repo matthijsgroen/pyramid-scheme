@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed pulling a lever in a room by tapping it, and pulling it again with Enter.
 - Sudoku: the cursor steps away when the board is solved, and [ ] skip numbers already used up.
 - Canisters: a picked-up vessel shows it is held, and Enter or Escape puts it down.
 - Beside a drop on the map, the arrows show only the ways you can walk, and a corner right beside you gets an arrow.
