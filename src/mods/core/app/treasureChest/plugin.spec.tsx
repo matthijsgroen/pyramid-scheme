@@ -79,3 +79,25 @@ describe("the chest's painting", () => {
     expect(onSolved).toHaveBeenCalledTimes(1)
   })
 })
+
+describe("the light behind an opening chest", () => {
+  const glowClass = () => screen.getByTestId("chest-glow").className
+  const open = () => fireEvent.click(screen.getByRole("button", { name: "chest.tapToOpen" }))
+
+  it("is not there while the chest is shut", () => {
+    renderChest({ type: "mosaicPiece" })
+    expect(screen.queryByTestId("chest-glow")).toBeNull()
+  })
+
+  it("is torchlight behind a plain chest", () => {
+    renderChest({ type: "mosaicPiece" })
+    open()
+    expect(glowClass()).toContain("--color-ember-300")
+  })
+
+  it("is the ward's light behind a chest of its own", () => {
+    renderChest({ type: "madeUpRelic" })
+    open()
+    expect(glowClass()).toContain("--color-ward-light")
+  })
+})
