@@ -9,6 +9,7 @@ import { SiteMapView } from "./SiteMapView"
 import { buildRoomClaims, floorTier } from "./roomClaims"
 import { beamShafts, litPlaceCells } from "./lighting"
 import { moodFor } from "./moodSettings"
+import { PUZZLE_ABOVE, puzzleAboveFloor } from "./floorFixtures.testing"
 
 // A map SCROLLS: its root is an overflow-auto box that sizes to the floor inside it, so it only scrolls
 // when something bounds it. Centred layout sizes the wrapper to the content instead, and a real generated
@@ -35,6 +36,11 @@ const getLinearGrid = (): FloorGrid => {
 }
 
 const linearGrid = getLinearGrid()
+
+// The ring's north arrow reaches half a cell into the puzzle node right above the explorer, and is drawn over it.
+export const RingArrowOverPuzzle: Story = {
+  args: { grid: puzzleAboveFloor(), explorerPos: PUZZLE_ABOVE.stand, onCellClick: () => {} },
+}
 
 export const AllFogged: Story = {
   args: {

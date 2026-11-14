@@ -24,6 +24,7 @@ import {
   DROP_AT,
   EDGE_NODE,
   PREFAB_FORK,
+  PUZZLE_ABOVE,
   crossingFloor,
   doorStopForkFloor,
   dropGrid,
@@ -31,6 +32,7 @@ import {
   forkFloor,
   obstacleIndexes,
   prefabForkFloor,
+  puzzleAboveFloor,
 } from "./floorFixtures.testing"
 import { roomChoices } from "./roomChoices"
 import { roomStop } from "./roomWalk"
@@ -838,5 +840,57 @@ describe("a designed room whose node stands just inside a door", () => {
     expect(south).toBeDefined()
     fireEvent.click(south!)
     expect(onCellClick).toHaveBeenCalledWith(...EDGE_NODE.L)
+  })
+})
+
+describe("the ring arrow toward a node right beside the player", () => {
+  const box = (el: HTMLElement) => {
+    const [left, top] = [parseFloat(el.style.left), parseFloat(el.style.top)]
+    return { left, top, right: left + parseFloat(el.style.width), bottom: top + parseFloat(el.style.height) }
+  }
+  const centreOf = (el: HTMLElement) => {
+    const b = box(el)
+    return [(b.left + b.right) / 2, (b.top + b.bottom) / 2] as const
+  }
+  // Boxes stacked by DOM order (the map uses no z-index): the last tappable one under the point takes the tap.
+  const tappedAt = (container: HTMLElement, [x, y]: readonly [number, number]) =>
+    Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]"))
+      .filter(el => el.style.pointerEvents === "auto")
+      .filter(el => {
+        const b = box(el)
+        return x >= b.left && x <= b.right && y >= b.top && y <= b.bottom
+      })
+      .at(-1)
+
+  const view = () => {
+    const onCellClick = vi.fn()
+    const { container } = render(
+      <SiteMapView grid={puzzleAboveFloor()} explorerPos={PUZZLE_ABOVE.stand} onCellClick={onCellClick} />
+    )
+    const at = `${PUZZLE_ABOVE.node[0]},${PUZZLE_ABOVE.node[1]}`
+    // A ring arrow's tap is a disc; a node's is its cell.
+    const onNode = Array.from(container.querySelectorAll<HTMLElement>(`[data-marker-cell][data-marker-at="${at}"]`))
+    const arrow = onNode.find(el => el.style.borderRadius === "50%")!
+    const node = onNode.find(el => el.style.borderRadius !== "50%")!
+    return { container, arrow, node, onCellClick }
+  }
+
+  it("reaches over the node's box", () => {
+    const { arrow, node } = view()
+    const [, y] = centreOf(arrow)
+    expect(y).toBeLessThan(box(node).bottom)
+  })
+
+  it("is drawn after the node, so it is on top of it", () => {
+    const { arrow, node } = view()
+    expect(node.compareDocumentPosition(arrow) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it("takes the tap at its own point, and the node keeps the rest of its box", () => {
+    const { container, arrow, node, onCellClick } = view()
+    expect(tappedAt(container, centreOf(arrow))).toBe(arrow)
+    expect(tappedAt(container, [centreOf(node)[0], box(node).top + 4])).toBe(node)
+    fireEvent.click(arrow)
+    expect(onCellClick).toHaveBeenCalledWith(...PUZZLE_ABOVE.node)
   })
 })
