@@ -68,6 +68,17 @@ describe("the chest's painting", () => {
     expect(chestSrc()).toBe(chestTileUrl("master", "master", "wardChest", false))
   })
 
+  it("stays open on screen until the light behind it has grown", () => {
+    vi.useFakeTimers()
+    const onSolved = vi.fn()
+    renderChest(undefined, onSolved)
+    fireEvent.click(screen.getByRole("button", { name: "chest.tapToOpen" }))
+    act(() => vi.advanceTimersByTime(500))
+    expect(onSolved).not.toHaveBeenCalled()
+    act(() => vi.runAllTimers())
+    expect(onSolved).toHaveBeenCalledTimes(1)
+  })
+
   it("opens once, however often it is tapped", () => {
     vi.useFakeTimers()
     const onSolved = vi.fn()

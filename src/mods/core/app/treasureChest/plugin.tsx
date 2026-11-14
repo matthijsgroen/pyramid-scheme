@@ -24,8 +24,8 @@ export const TreasureComponent: FamilyPlugin["Component"] = ({ ctx, onSolved }) 
   const handleOpen = () => {
     if (opened) return
     setOpened(true)
-    // Let the open chest be seen before the node closes and RewardFlow takes over.
-    setTimeout(onSolved, 600)
+    // The light behind the chest grows in 500ms; a moment of its glow is seen before RewardFlow takes over.
+    setTimeout(onSolved, 1100)
   }
 
   const art = ctx.reward ? getRewardHandler(ctx.reward.type)?.art?.(ctx.reward) : undefined
