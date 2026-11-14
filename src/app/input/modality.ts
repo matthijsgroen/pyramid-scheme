@@ -1,4 +1,5 @@
 import type { PadBrand } from "@/ui/atoms/glyphs"
+import { isEditable } from "./keyboardSource"
 import { padBrandOf } from "./padBrand"
 
 export type Modality = "touch" | "keys" | "pad"
@@ -13,13 +14,20 @@ export const setPadBrand = (brand: PadBrand, root: HTMLElement = document.docume
   if (root.dataset.pad !== brand) root.dataset.pad = brand
 }
 
+const LEAVES_FIELD = new Set(["Tab", "Escape", "Enter"])
+
 /**
  * A pointer makes it touch, a key makes it keys. The pad sets its own when it polls a press; a pad connecting
  * marks its brand.
+ *
+ * Typing into a field leaves it as it was: a phone's number pad sends keys too. Only a key that leaves the field
+ * makes it keys.
  */
 export const listenForModality = (target: Window = window) => {
   const pointer = () => setModality("touch")
-  const key = () => setModality("keys")
+  const key = (event: KeyboardEvent) => {
+    if (!isEditable(event.target) || LEAVES_FIELD.has(event.key)) setModality("keys")
+  }
   const connected = (event: Event) => {
     const id = (event as GamepadEvent).gamepad?.id
     if (id !== undefined) setPadBrand(padBrandOf(id))

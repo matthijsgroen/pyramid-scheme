@@ -3,7 +3,7 @@ import { keyAction, keyFallback } from "./keyMap"
 
 // A field being typed into keeps every key, Escape and the arrows included. A checkbox types nothing.
 const EDITABLE = 'input:not([type="checkbox"]), textarea, select, [contenteditable=""], [contenteditable="true"]'
-const isEditable = (target: EventTarget | null) => target instanceof Element && !!target.closest(EDITABLE)
+export const isEditable = (target: EventTarget | null) => target instanceof Element && !!target.closest(EDITABLE)
 
 // Enter and Space on a focused button (Space on a checkbox) already press it; a second press from here would be a double tap.
 const pressesItself = (target: EventTarget | null) =>
