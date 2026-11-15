@@ -3070,14 +3070,13 @@ describe("SiteMapView — a prefab room", () => {
     expect(explorer(container).compareDocumentPosition(mat) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy()
   })
 
-  it("the chest art stands at the stop, as on a corridor node", () => {
+  it("the chest art stands beside the stop, its floor line above the explorer's there", () => {
     const vault = revealAll(prefabChestFloor())
     const chest = nodeSpritesFor(vault, buildRoomClaims(vault), "expert").find(
       sprite => sprite.key === `chest:${PREFAB_CHEST[0]},${PREFAB_CHEST[1]}`
     )!
     const step = nodeArtOffset(undefined)
     expect(chest.x).toBeCloseTo(cellCenter(2, 4).cx + step.dx - CELL / 2)
-    // The stop is on the room's south row, so it is not stepped south into the wall.
-    expect(chest.y).toBeCloseTo(cellCenter(2, 4).cy + CELL / 2 - PROP_H)
+    expect(chest.y + PROP_H).toBeLessThan(cellCenter(2, 4).cy + CELL / 2)
   })
 })
