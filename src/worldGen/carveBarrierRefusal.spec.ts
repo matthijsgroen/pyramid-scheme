@@ -4,6 +4,7 @@ import { assembleFloor } from "@/game/siteAssembler"
 import type { Direction, FloorGrid, RoomCell } from "@/game/siteTypes"
 import { anyOuterDoorFloor } from "@/game/testSupport/barrierOrderFixtures"
 import { refusal } from "./carveSeedSearch"
+import type { Rung } from "@/game/carve/state"
 
 const KEY = (id: string) => `obstacle:test#0#0:${id}`
 const SEEDS = Array.from({ length: 40 }, (_, n) => n + 1)
@@ -47,7 +48,8 @@ const withHolder = (grid: FloorGrid, at: { r: number; c: number }, returnsToInit
   ),
 })
 
-const accepted = (grid: FloorGrid) => refusal({ success: true, grid, attempt: 0 }, anyOuterDoorFloor())
+const accepted = (grid: FloorGrid) =>
+  refusal({ success: true, grid, attempt: 0, rung: {} as Rung }, anyOuterDoorFloor())
 
 describe("a floor the player can be shut in on between two barriers is refused before it is baked", () => {
   const carved = SEEDS.flatMap(seed => {
