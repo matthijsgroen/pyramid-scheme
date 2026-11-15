@@ -239,6 +239,21 @@
       "description": "Hiasan kepala raja dengan kobra pelindung, dipakai firaun sebagai perlindungan dewa."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Roti",
+      "description": "Roti yang tinggi, tanda untuk roti. Pemberian Ipi, yang menghitung gandum selama empat puluh tahun dan sekali memberikannya."
+    },
+    "o2": {
+      "name": "Linen"
+    },
+    "o3": {
+      "name": "Air"
+    },
+    "o4": {
+      "name": "Perahu"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Daun Alang-alang",

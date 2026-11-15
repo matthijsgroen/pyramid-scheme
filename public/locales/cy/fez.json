@@ -28,7 +28,7 @@
   "tombTutorial3": "Mae'r symiau bach yn dangos pryd mae arwydd yn iawn. Dyna sut rydyn ni'n ffeindio pa arwydd sy'n mynd ble.",
   "tombTutorial4": "Popeth wedi'i lenwi? Yna mae clo rhifau'n ymddangos. Y swm mawr yw'r cod — ac wedyn mae'r bedd yn agor!",
   "hieroglyphUnlock": "Mae gyda ni drysor arbennig — gallwn ni ysgrifennu ar un o'r blociau wedi'u selio gyda fe!",
-  "hieroglyphUnlock2": "Tapia garreg sy'n disgleirio, yna llusga'r trysor arni i'w hagor. Un bloc ym mhob pyramid.",
+  "hieroglyphUnlock2": "Dewisa garreg sy'n disgleirio, yna dos â'r trysor ati i'w hagor. Un bloc ym mhob pyramid.",
   "errorHighlightTutorial": "Mae tric handi gyda'r trysor 'na ffeindion ni — rho ateb anghywir i mewn a bydd un camgymeriad yn troi'n goch!",
   "errorHighlightTutorial2": "Dim ond un bloc sy'n goleuo ar y tro, felly mae'n dal yn her. Ond mae'n helpu i ffeindio'r broblem!",
   "earlyFeedbackTutorial": "Weli di'r blociau gwirio 'na? Maen nhw'n troi'n wyrdd neu'n goch wrth i ti eu llenwi — yn syth!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Edrych beth sydd wrth y stondin! Dw i'n gwneud cludiant nawr."
+      },
+      "2": {
+        "explorer": "Dim ond llun dw i'n ei weld."
+      },
+      "3": {
+        "fez": "Mae'r un go iawn yn bwyta mwy."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "Ail linell. Dŵr i'r rhai oedd yn sychedig."
+        "explorer": "Ail linell. _Dillad i'r rhai heb ddim._"
       },
       "2": {
-        "fez": "Bara, a nawr dŵr. Roedd rhywun yn awyddus iawn i bobl gofio pa mor hael oedd e."
+        "fez": "Bara, a nawr dillad. Roedd rhywun yn awyddus iawn i bobl gofio pa mor hael oedd e."
       },
       "3": {
         "explorer": "Mae e gyda pawb. Pob wal, pob bedd, yr un ddwy linell."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Dillad i'r rhai heb ddim. Trydedd linell."
+        "explorer": "_Dŵr i'r rhai oedd yn sychedig._ Trydedd linell."
       },
       "2": {
-        "fez": "Bara, dŵr, dillad. Rhestr o bethau wedi'u rhoi i ffwrdd yw hi."
+        "fez": "Bara, dillad, dŵr. Rhestr o bethau wedi'u rhoi i ffwrdd yw hi."
       },
       "3": {
         "explorer": "Ym medd dyn aeth â phopeth gyda fe."
@@ -1599,8 +1605,42 @@
       "explorer": "Fe wnaiff y tro."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Mae rhywbeth i'r rhai sy eisiau bwyd ar goll fan'na. Bara, faswn i'n dweud. A dw i'n nabod dyn fu'n cyfri pob sach o rawn am ddeugain mlynedd."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, mae angen bara arnon ni. Ar gyfer wal."
+        },
+        "2": {
+          "ipi": "Bara? Fy mara i? Wyt ti'n gwybod faint mae grawn yn ei gostio?"
+        },
+        "3": {
+          "fez": "Mae e ar gyfer llinell am roi pethau i ffwrdd."
+        },
+        "4": {
+          "ipi": "…Rhoi. I ffwrdd."
+        },
+        "5": {
+          "ipi": "O'r gorau. Un dorth. Ond mae'n mynd i lawr ar bapur: _Rhoddodd Ipi fara._"
+        },
+        "6": {
+          "fez": "Rhoddodd e rywbeth i ffwrdd! Welaist ti hynna?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Y dorth yna — ydy rhywun wedi'i bwyta hi eto? Achos os ddim, hoffwn i ei chael hi 'nôl."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Dal yma? I'r gogledd! Henut! Un deg un deben!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "Y wal. Y trydydd arwydd. Dydy e dal ddim yn fy enw i."
+          "henut": "Y wal. Yr ail arwydd. Dydy e dal ddim yn fy enw i."
         }
       },
       "wall2": {

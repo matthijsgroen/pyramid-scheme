@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Tvoj postup sa nedá načítať",
     "body": "Prehliadač ti teraz nechce dať uloženú hru. Tvoja hra nezmizla: načítaj stránku znova a skús to ešte raz.",
-    "banner": "Postup sa neukladá. Ťukni a načítaj znova.",
+    "banner": "Postup sa neukladá. Načítaj znova.",
     "reload": "Načítať znova",
     "continue": "Hrať ďalej bez ukladania",
     "reset": "Začať odznova (zmazať hru)",
@@ -29,7 +29,6 @@
     "evening": "Večer",
     "night": "Noc"
   },
-  "tomb": {},
   "ui": {
     "level": "Úroveň",
     "symbols": "znaky",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Prerušiť výpravu",
     "confirmInterruptExpedition": "Naozaj chceš prerušiť túto výpravu? Postup na výprave ostane, ale postup v tejto úrovni sa stratí!",
     "cancel": "Zrušiť",
+    "leaveSite": "Odísť z tohto miesta?",
+    "confirmLeaveSite": "Vyber Odísť a vyjdeš von, alebo Zostať a môžeš ďalej skúmať.",
+    "leave": "Odísť",
+    "stay": "Zostať",
     "settings": "Nastavenia",
     "language": "Jazyk",
     "close": "Zavrieť",
@@ -108,8 +111,12 @@
     "solvedWithHints_few": "Vyriešené s {{count}} radami",
     "solvedWithHints_many": "Vyriešené s {{count}} rady",
     "solvedWithHints_other": "Vyriešené s {{count}} radami",
-    "tapToContinue": "Ťukni a pokračuj",
-    "goal": "Cieľ"
+    "tapToContinue": "Pokračovať",
+    "goal": "Cieľ",
+    "controls": "Ovládanie",
+    "controlsUndo": "späť",
+    "controlsHint": "rada",
+    "controlsLeave": "späť na mapu"
   },
   "trap": {
     "warning": "⚠ Chodba s pascou",
@@ -128,6 +135,7 @@
     "turnAround": "Otočiť sa",
     "wardDescription": {
       "starter": "Pečať obchodníka zatvára túto chodbu – otvorí ju len jeho strážny kľúč.",
+      "junior": "Túto cestu zamyká erb šľachtičnej – zdvihne ju len jej strážny kľúč.",
       "expert": "Chrámová stráž veľkňaza chráni tieto dvere – otvoriť ich musí posvätný kľúč.",
       "master": "Kráľovská pečať faraóna zviera túto chodbu – zlomí ju len kľúč vládcu.",
       "wizard": "Túto bránu drží stráž bohov – prejde len jej božský kľúč."
@@ -136,7 +144,7 @@
     "lockedColor": "Ten kľúč na tomto poschodí ešte nemáš."
   },
   "chest": {
-    "tapToOpen": "Ťukni a otvor",
+    "tapToOpen": "Otvoriť",
     "money_one": "{{count}} minca",
     "money_few": "{{count}} mince",
     "money_many": "{{count}} mince",
@@ -145,6 +153,7 @@
     "mapPieceDescription": "Krehký útržok mapy k nejakému dávno zabudnutému miestu. Škoda, že ešte zďaleka nie je celá…",
     "mapPieceProgress": "Máš {{found}} z {{required}} kúskov mapy",
     "mapPieceComplete": "Mapa je celá – vedie do miesta {{name}}.",
+    "hieroglyph": "Hieroglyf",
     "hieroglyphFragment": "Kúsok hieroglyfu",
     "fragmentProgress": "Nájdených {{found}} z {{required}} kúskov",
     "tombKey": "Kľúč od hrobky",
@@ -161,8 +170,9 @@
   },
   "loot": {
     "youFound": "Nájdené",
+    "youReceived": "Dostávaš",
     "expeditionReward": "Odmena navyše za dokončenú výpravu",
-    "clickToContinue": "Ťukni kamkoľvek a pokračuj"
+    "clickToContinue": "Pokračovať"
   },
   "money": {
     "label": "Mince"
@@ -264,7 +274,7 @@
     "tabNew_other": "{{label}} · {{count}} nových",
     "empty": "Tvoja truhla je ešte prázdna",
     "newLabel": "NOVÉ",
-    "clickForDetails": "Ťukni na dlaždicu a uvidíš viac",
+    "clickForDetails": "Vyber dlaždicu a uvidíš viac",
     "categories": {
       "deities": "🏺 Bohovia",
       "professions": "⚱️ Povolania",
@@ -272,6 +282,7 @@
       "artifacts": "💎 Predmety",
       "treasures": "💰 Poklady",
       "junk": "🔷 Drobnosti",
+      "offerings": "🍞 Dary",
       "signs": "✍️ Znaky"
     },
     "treasureCategories": {
@@ -354,22 +365,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Ťukni na znak dole a potom na číslo. Keď na to číslo ťukneš znova, odstrániš ho.",
+      "tap": "Vyber znak dole a potom číslo. Keď to číslo vyberieš znova, odstrániš ho.",
       "same": "Znak váži na každej váhe rovnako.",
-      "cancel": "Keď z oboch misiek zoberieš to isté, váha ostane v rovnováhe. Ťukni na označený kúsok – čo ostane, sa uloží ako nový riadok.",
-      "swap": "Ťukni na znak, oproti ktorému nie je nič také isté, a potom na riadok, kde ten znak stojí sám. Vymeníš ho za to, koľko ten riadok váži."
+      "cancel": "Keď z oboch misiek zoberieš to isté, váha ostane v rovnováhe. Vyber označený kúsok – čo ostane, sa uloží ako nový riadok.",
+      "swap": "Vyber znak, oproti ktorému nie je nič také isté, a potom riadok, kde ten znak stojí sám. Vymeníš ho za to, koľko ten riadok váži."
     },
     "hint": {
       "mistake": "Jedna z tvojich váh preváži misku. Zober ju preč a pozri sa znova.",
       "alone": "V rozsvietenom riadku je {{glyph}} jediný kúsok, ktorý ešte nemá číslo. Vypočítaj, koľko váži.",
       "equalShares": "V rozsvietenom riadku je len {{glyph}} oproti číslu. Rozdeľ to číslo medzi ne rovnako.",
       "difference": "Dva rozsvietené riadky sú rovnaké, okrem {{glyph}}. Porovnaj ich.",
-      "cancelGlyph": "Na oboch miskách rozsvieteného riadku je {{glyph}}. Ťukni naň a zoberieš ho z oboch strán – riadok ostane v rovnováhe.",
-      "cancelStones": "Na oboch miskách rozsvieteného riadku sú obyčajné čísla. Ťukni na jedno a zoberieš rovnako veľa z oboch strán.",
-      "swap": "Jeden rozsvietený riadok hovorí, koľko váži jeden samotný {{glyph}}. Ťukni na {{glyph}} v druhom rozsvietenom riadku a potom na ten riadok."
+      "cancelGlyph": "Na oboch miskách rozsvieteného riadku je {{glyph}}. Vyber jeden a zoberieš ho z oboch strán – riadok ostane v rovnováhe.",
+      "cancelStones": "Na oboch miskách rozsvieteného riadku sú obyčajné čísla. Vyber jedno a zoberieš rovnako veľa z oboch strán.",
+      "swap": "Jeden rozsvietený riadok hovorí, koľko váži jeden samotný {{glyph}}. Vyber {{glyph}} v druhom rozsvietenom riadku a potom ten riadok."
     },
     "swap": {
-      "pick": "Ťukni na rozsvietený riadok a vymeň tento {{glyph}} za to, koľko podľa toho riadku váži.",
+      "pick": "Vyber rozsvietený riadok a vymeň tento {{glyph}} za to, koľko podľa toho riadku váži.",
       "none": "Nič tu nehovorí, koľko váži jeden samotný {{glyph}}, a nič oproti nemu sa nezhoduje."
     },
     "goal": {
@@ -379,11 +390,16 @@
     "name": {
       "default": "Váhy",
       "weighing": "Váženie srdca"
+    },
+    "controls": {
+      "move": "vybrať kúsok, riadok alebo tlačidlo",
+      "press": "stlačiť",
+      "weigh": "dať vybranému znaku túto váhu"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Ťukni raz a číslo prečiarkneš, druhý raz ho označíš, že ostáva, tretí raz ho vymažeš.",
+      "tap": "Keď číslo vyberieš raz, prečiarkneš ho, druhý raz ho označíš, že ostáva, tretí raz ho vymažeš.",
       "totals": "Malé číslo pod každým cieľom ukazuje, koľko je súčet toho riadku práve teraz."
     },
     "hint": {
@@ -448,12 +464,16 @@
       }
     },
     "goal": "Každý riadok a každý stĺpec dáva dokopy číslo, ktoré je pri ňom.",
-    "name": "Súčty"
+    "name": "Súčty",
+    "controls": {
+      "move": "vybrať číslo",
+      "mark": "prečiarknuť, nechať alebo vymazať"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Znak medzi dvoma políčkami ukazuje na menšie z dvoch čísel.",
-      "enter": "Ťukni na políčko a potom na číslo. To isté číslo ešte raz ho zase vymaže.",
+      "enter": "Vyber políčko a potom číslo. To isté číslo ešte raz ho zase vymaže.",
       "notes": "Prepni na ceruzku a zapíš si čísla, ktoré by ešte mohli byť v políčku. Tlačidlo Späť vráti tvoj posledný ťah."
     },
     "hint": {
@@ -504,14 +524,22 @@
       }
     },
     "goal": "V každom riadku a v každom stĺpci je každé číslo presne raz.",
-    "name": "Väčšie a menšie"
+    "name": "Väčšie a menšie",
+    "controls": {
+      "move": "vybrať políčko",
+      "type": "napísať číslo",
+      "choose": "vybrať číslo alebo gumu",
+      "place": "napísať ho",
+      "pencil": "ceruzka",
+      "erase": "vymazať"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Zrkadlo odrazí svetlo z ktorejkoľvek strany. Malé značky okolo neho ukazujú, ako inak môže ležať: väčšina otočí svetlo o štvrť kruhu a niektoré menej, takže ho pošlú šikmo.",
       "walls": "Kamenný blok svetlo pohltí. Aj okraj hracej plochy.",
-      "tap": "Ťukni na kúsok a zmeň ho: zrkadlo sa otočí, posuvný kúsok sa presunie na ďalšie miesto. Biely okraj znamená, že s ním môžeš hýbať; všetko ostatné patrí k hádanke.",
-      "nodes": "Niektoré kamene sú spojené s otvorom v podlahe a ťuknutím sa nepohnú. Pošli svetlo cez otvor a kameň sa odsunie."
+      "tap": "Vyber kúsok a zmeň ho: zrkadlo sa otočí, posuvný kúsok sa presunie na ďalšie miesto. Biely okraj znamená, že s ním môžeš hýbať; všetko ostatné patrí k hádanke.",
+      "nodes": "Niektoré kamene sú spojené s otvorom v podlahe a ty s nimi nepohneš. Pošli svetlo cez otvor a kameň sa odsunie."
     },
     "hint": {
       "entryRun": "Začni tam, kam svetlo už ide: beží rovno z kotúča, až kým nenarazí na prvý kúsok, ktorý môžeš zmeniť. Cez tie políčka svetlo ide, nech urobíš čokoľvek.",
@@ -544,7 +572,7 @@
       "triple": "Tri rovnaké za sebou nesmú byť nikdy, ani vodorovne, ani zvisle.",
       "copies": "Žiadne dva riadky nesmú byť rovnaké a žiadne dva stĺpce tiež nie.",
       "signs": "Znak medzi dvoma políčkami hovorí, aké sú: = rovnaké, × rôzne.",
-      "enter": "Ťukni na políčko a daj tam slnko, ťukni znova a bude tam mesiac, ešte raz a políčko bude prázdne."
+      "enter": "Vyber políčko a daj tam slnko, znova a bude tam mesiac, ešte raz a políčko bude prázdne."
     },
     "hint": {
       "mistake": "Jedna z týchto značiek nemôže byť správne.",
@@ -570,7 +598,11 @@
       }
     },
     "goal": "V každom políčku je slnko alebo mesiac a v každom rade je rovnako veľa jedného aj druhého.",
-    "name": "Slnko a mesiac"
+    "name": "Slnko a mesiac",
+    "controls": {
+      "move": "vybrať políčko",
+      "mark": "zmeniť značku"
+    }
   },
   "constellation": {
     "rules": {
@@ -578,25 +610,25 @@
         "straight": "Čiary svetla idú rovno, vodorovne alebo zvisle, od jednej hviezdy k ďalšej.",
         "pair": "Dve hviezdy môžu mať spolu najviac dve čiary.",
         "cross": "Čiary sa nikdy nekrižujú a nikdy nejdú cez hviezdu.",
-        "enter": "Potiahni z hviezdy k susednej a nakreslíš čiaru, znova a bude dvojitá, ešte raz a zmizne."
+        "enter": "Nakresli čiaru z hviezdy k susednej, znova a bude dvojitá, ešte raz a zmizne."
       },
       "causeway": {
         "straight": "Cesty na ťahanie kameňov idú rovno, vodorovne alebo zvisle, od jedného staveniska k ďalšiemu.",
         "pair": "Dve staveniská môžu mať spolu najviac dve cesty.",
         "cross": "Cesty sa nikdy nekrižujú a nikdy nejdú cez stavenisko.",
-        "enter": "Potiahni zo staveniska k susednému a postavíš cestu, znova a bude dvojitá, ešte raz a zbúraš ju."
+        "enter": "Postav cestu zo staveniska k susednému, znova a bude dvojitá, ešte raz a zbúraš ju."
       },
       "irrigation": {
         "straight": "Kanály idú rovno, vodorovne alebo zvisle, od jednej nádrže k ďalšej.",
         "pair": "Dve nádrže môžu mať spolu najviac dva kanály.",
         "cross": "Kanály sa nikdy nekrižujú a nikdy nejdú cez nádrž.",
-        "enter": "Potiahni z nádrže k susednej a vykopeš kanál, znova a rozšíriš ho, ešte raz a zasypeš ho."
+        "enter": "Vykop kanál z nádrže k susednej, znova a rozšíriš ho, ešte raz a zasypeš ho."
       },
       "ceiling": {
         "straight": "Šnúry idú rovno, vodorovne alebo zvisle, od jednej hviezdy k ďalšej.",
         "pair": "Dve hviezdy môžu mať spolu najviac dve šnúry.",
         "cross": "Šnúry sa nikdy nekrižujú a nikdy nejdú cez hviezdu.",
-        "enter": "Potiahni z hviezdy k susednej a natiahneš šnúru, znova a bude dvojitá, ešte raz a zložíš ju."
+        "enter": "Natiahni šnúru z hviezdy k susednej, znova a bude dvojitá, ešte raz a zložíš ju."
       }
     },
     "hint": {
@@ -700,37 +732,44 @@
       "causeway": "Cesty na stavbu",
       "irrigation": "Vodovod",
       "ceiling": "Maľovaný strop"
+    },
+    "controls": {
+      "pick": "vybrať hviezdu",
+      "grab": "chytiť ju",
+      "draw": "nakresliť čiaru tým smerom",
+      "release": "pustiť",
+      "alt": "podržať a ukázať: čiara, dvojitá, žiadna"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Dve hviezdy sa nesmú dotýkať – ani rohmi.",
-        "enter": "Ťukni na políčko a vylúčiš ho, znova a dáš tam hviezdu, ešte raz a vymažeš ho."
+        "enter": "Vyber políčko a vylúčiš ho, znova a dáš tam hviezdu, ešte raz a vymažeš ho."
       },
       "fields": {
         "touch": "Dve farmy sa nesmú dotýkať – ani rohmi. Tak blízko by mali spolu len jednu studňu.",
-        "enter": "Ťukni na parcelu a vylúčiš ju, znova a postavíš farmu, ešte raz a vymažeš ju."
+        "enter": "Vyber parcelu a vylúčiš ju, znova a postavíš farmu, ešte raz a vymažeš ju."
       },
       "lamps": {
         "touch": "Dve olejové lampy nesmú stáť vedľa seba – ani rohmi. Ich svetlo by sa prekrývalo a olej by sa míňal zbytočne.",
         "walls": "Sivé kamenné bloky sú súčasť podlahy: nič na nich nemôže stáť a nie sú to políčka.",
-        "enter": "Ťukni na dlaždicu a vylúčiš ju, znova a postavíš tam olejovú lampu, ešte raz a vymažeš ju."
+        "enter": "Vyber dlaždicu a vylúčiš ju, znova a postavíš tam olejovú lampu, ešte raz a vymažeš ju."
       },
       "market": {
         "touch": "Dva stánky nesmú stáť vedľa seba – ani rohmi. Súperi sa nikdy nepostavia hneď vedľa seba.",
         "walls": "Domy sú súčasť námestia: nikto si v nich nemôže postaviť stánok a nie sú to miesta.",
-        "enter": "Ťukni na miesto a vylúčiš ho, znova a postavíš tam stánok, ešte raz a vymažeš ho."
+        "enter": "Vyber miesto a vylúčiš ho, znova a postavíš tam stánok, ešte raz a vymažeš ho."
       },
       "lotus": {
         "touch": "Dva lotosy nesmú plávať vedľa seba – ani rohmi. Každý kvet potrebuje okolo seba voľnú vodu.",
         "walls": "Skaly trčia z jazierka: nič na nich nemôže plávať a nie sú to políčka.",
-        "enter": "Ťukni na kúsok vody a vylúčiš ho, znova a pustíš tam lotos, ešte raz a vymažeš ho."
+        "enter": "Vyber kúsok vody a vylúčiš ho, znova a pustíš tam lotos, ešte raz a vymažeš ho."
       },
       "cats": {
         "touch": "Dve mačky nesmú spať vedľa seba – ani rohmi. Každá mačka má svoj vlastný kúsok slnka.",
         "walls": "Stĺpy držia chrám: žiadna mačka na nich nemôže spať a nie sú to políčka.",
-        "enter": "Ťukni na dlaždicu a vylúčiš ju, znova a uložíš tam mačku, ešte raz a vymažeš ju."
+        "enter": "Vyber dlaždicu a vylúčiš ju, znova a uložíš tam mačku, ešte raz a vymažeš ju."
       }
     },
     "hint": {
@@ -1136,6 +1175,11 @@
       "market": "Trhové stánky",
       "lotus": "Lotosové jazierko",
       "cats": "Chrámové mačky"
+    },
+    "controls": {
+      "move": "vybrať políčko",
+      "mark": "zmeniť značku",
+      "sweep": "podržať a posunúť: vylúčiť celý rad"
     }
   },
   "pairPuzzle": {
@@ -1152,13 +1196,13 @@
         "pair": "Každý sarkofág má jednu múmiu, ktorá leží priamo nad ním, pod ním, vľavo alebo vpravo, a každá múmia leží pri svojom vlastnom sarkofágu.",
         "count": "Číslo pri riadku alebo stĺpci hovorí, koľko je v ňom múmií. Zozelenie, keď ich je presne toľko, a sčervenie, keď sa to už nedá splniť.",
         "touch": "Dve múmie nesmú byť vedľa seba – ani rohmi.",
-        "enter": "Ťukni na políčko a vylúčiš ho, znova a položíš tam múmiu, ešte raz a vymažeš ho. Potiahni cez viac políčok a vylúčiš ich všetky. Na sarkofágy sa ťukať nedá."
+        "enter": "Vyber políčko a vylúčiš ho, znova a položíš tam múmiu, ešte raz a vymažeš ho. Celý rad políčok vylúčiš jedným ťahom. Sarkofágy sa označiť nedajú."
       },
       "beetles": {
         "pair": "Každá guľôčka trusu má jedného chrobáka priamo nad ňou, pod ňou, vľavo alebo vpravo, a každý chrobák stojí pri svojej vlastnej guľôčke, ktorú kotúľa.",
         "count": "Číslo pri riadku alebo stĺpci hovorí, koľko je v ňom chrobákov. Zozelenie, keď ich je presne toľko, a sčervenie, keď sa to už nedá splniť.",
         "touch": "Dva chrobáky nesmú byť vedľa seba – ani rohmi.",
-        "enter": "Ťukni na políčko a vylúčiš ho, znova a dáš tam chrobáka, ešte raz a vymažeš ho. Potiahni cez viac políčok a vylúčiš ich všetky. Na guľôčky sa ťukať nedá."
+        "enter": "Vyber políčko a vylúčiš ho, znova a dáš tam chrobáka, ešte raz a vymažeš ho. Celý rad políčok vylúčiš jedným ťahom. Guľôčky sa označiť nedajú."
       }
     },
     "hint": {
@@ -1254,6 +1298,11 @@
           "place_other": "Daj chrobáka na každé vyšrafované políčko."
         }
       }
+    },
+    "controls": {
+      "move": "vybrať políčko",
+      "mark": "zmeniť značku",
+      "sweep": "podržať a posunúť: vylúčiť celý rad"
     }
   },
   "rushHour": {
@@ -1268,11 +1317,11 @@
     "rules": {
       "default": {
         "lanes": "Blok sa posúva len po svojej dráhe – nikdy nabok, nikdy mimo plochy.",
-        "shove": "Potiahni blok a posunieš ho. Zastaví sa tam, kde mu niečo stojí v ceste."
+        "shove": "Posuň blok po jeho dráhe. Zastaví sa tam, kde mu niečo stojí v ceste."
       },
       "market": {
         "lanes": "Sane sa posúvajú len po dráhe, na ktorej stoja – nikdy nabok, nikdy von z ulice.",
-        "shove": "Potiahni sane a posunieš ich. Zastavia sa tam, kde im niečo stojí v ceste."
+        "shove": "Posuň sane po ich dráhe. Zastavia sa tam, kde im niečo stojí v ceste."
       }
     },
     "hint": {
@@ -1300,29 +1349,35 @@
           "down": "Posuň ho dole ulicou, až po krúžok."
         }
       }
+    },
+    "controls": {
+      "pick": "vybrať blok",
+      "grab": "chytiť ho",
+      "slide": "posunúť",
+      "release": "pustiť"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "Čísla, ktoré už sú v plástve, patria k hádanke – ostávajú na mieste.",
-        "enter": "Ťukni na číslo a pokračuj odtiaľ, potom ťukni na prázdnu bunku, ktorá sa ho dotýka – alebo potiahni prstom rovno cez bunky, kadiaľ rad ide.",
-        "back": "Ťukni na svoje číslo a ťukni naň znova – zmizne aj so všetkým, čo na ňom visí. Rovnako to urobí, keď rad z čísla povedieš inou cestou. Tlačidlo Späť vráti tvoj posledný ťah."
+        "enter": "Veď čiaru z čísla cez prázdne bunky vedľa neho a pokračuj tak v rade.",
+        "back": "Vyber svoje číslo a vyber ho znova – zmizne aj so všetkým, čo na ňom visí. Rovnako to urobí, keď rad z čísla povedieš inou cestou. Tlačidlo Späť vráti tvoj posledný ťah."
       },
       "channel": {
         "given": "Polia, ktoré už majú číslo, patria k hádanke – ostávajú na mieste.",
-        "enter": "Ťukni na pole s číslom a pokračuj s vodou odtiaľ, potom ťukni na suché pole vedľa a kop ďalej – alebo potiahni prstom rovno po poliach, kadiaľ kanál ide.",
-        "back": "Ťukni na vykopané pole a ťukni naň znova – zasypeš ho aj s kanálom, ktorý od neho ostal odrezaný. Rovnako to urobí, keď z poľa budeš kopať inou cestou. Tlačidlo Späť vráti tvoj posledný ťah."
+        "enter": "Kop kanál z poľa s číslom cez suché polia vedľa neho a veď tak vodu ďalej.",
+        "back": "Vyber vykopané pole a vyber ho znova – zasypeš ho aj s kanálom, ktorý od neho ostal odrezaný. Rovnako to urobí, keď z poľa budeš kopať inou cestou. Tlačidlo Späť vráti tvoj posledný ťah."
       },
       "scribe": {
         "given": "Čísla napísané červeným atramentom patria k hádanke – ostávajú na mieste.",
-        "enter": "Ťukni na číslo a zober tam pero, potom ťukni na prázdne miesto vedľa a píš ďalej – alebo potiahni prstom rovno po riadku.",
-        "back": "Ťukni na svoje číslo a ťukni naň znova – zoškrabeš ho aj s riadkom, ktorý od neho ostal odrezaný. Rovnako to urobí, keď z čísla budeš písať inou cestou. Tlačidlo Späť vráti tvoj posledný ťah."
+        "enter": "Píš čiaru z čísla cez prázdne miesta vedľa neho a počítaj tak ďalej.",
+        "back": "Vyber svoje číslo a vyber ho znova – zoškrabeš ho aj s riadkom, ktorý od neho ostal odrezaný. Rovnako to urobí, keď z čísla budeš písať inou cestou. Tlačidlo Späť vráti tvoj posledný ťah."
       },
       "chambers": {
         "given": "Komnaty, ktoré už majú číslo, vytesali stavitelia – ostávajú na mieste.",
-        "enter": "Ťukni na komnatu s číslom a pokračuj v chodbe odtiaľ, potom ťukni na zapečatenú komnatu vedľa a prerazíš do nej – alebo potiahni prstom rovno po komnatách, kadiaľ chodba ide.",
-        "back": "Ťukni na otvorenú komnatu a ťukni na ňu znova – zapečatíš ju aj s chodbou, ktorá od nej ostala odrezaná. Rovnako to urobí, keď z komnaty prerazíš inou cestou. Tlačidlo Späť vráti tvoj posledný ťah."
+        "enter": "Prerážaj chodbu z komnaty s číslom cez zapečatené komnaty vedľa nej a veď ju tak ďalej.",
+        "back": "Vyber otvorenú komnatu a vyber ju znova – zapečatíš ju aj s chodbou, ktorá od nej ostala odrezaná. Rovnako to urobí, keď z komnaty prerazíš inou cestou. Tlačidlo Späť vráti tvoj posledný ťah."
       }
     },
     "goal": {
@@ -1386,6 +1441,13 @@
       "channel": "Kanál",
       "scribe": "Pisárov list",
       "chambers": "Zapečatené komnaty"
+    },
+    "controls": {
+      "move": "prejsť na bunku vedľa; hore a dole sa stáča doľava",
+      "right": "hore doprava alebo dole doprava",
+      "grab": "vziať rad, alebo zobrať svoje číslo",
+      "carry": "s radom v ruke: pokračovať; hore a dole vedie na stranu, kadiaľ sa dá pokračovať",
+      "drop": "položiť rad"
     }
   },
   "sudoku": {
@@ -1393,13 +1455,13 @@
       "default": {
         "chambers": "Hrubé čiary delia mriežku na šesť komôr, dve políčka široké a tri vysoké.",
         "given": "Čísla, ktoré už sú vytesané, patria k hádanke – ostávajú na mieste.",
-        "enter": "Ťukni na políčko a potom na číslo. To isté číslo ešte raz ho zase vymaže.",
+        "enter": "Vyber políčko a potom číslo. To isté číslo ešte raz ho zase vymaže.",
         "notes": "Prepni na ceruzku a zapíš si čísla, ktoré by ešte mohli byť v políčku. Tlačidlo Späť vráti tvoj posledný ťah."
       },
       "papyrus": {
         "chambers": "Hrubé čiary delia list na šesť polí, dve miesta široké a tri vysoké.",
         "given": "Znaky napísané červeným atramentom patria k hádanke – ostávajú na mieste.",
-        "enter": "Ťukni na miesto a potom na znak. Ten istý znak ešte raz ho zoškrabe.",
+        "enter": "Vyber miesto a potom znak. Ten istý znak ešte raz ho zoškrabe.",
         "notes": "Zober trstinové pero a zapíš si znaky, ktoré by ešte mohli byť na mieste. Tlačidlo Späť vráti tvoj posledný ťah."
       }
     },
@@ -1470,6 +1532,14 @@
     "name": {
       "default": "Šesť komôr",
       "papyrus": "Pisárov zápis"
+    },
+    "controls": {
+      "move": "vybrať políčko",
+      "type": "napísať číslo",
+      "choose": "vybrať číslo alebo gumu",
+      "place": "napísať ho",
+      "pencil": "ceruzka",
+      "erase": "vymazať"
     }
   },
   "crocodile": {
@@ -1483,6 +1553,10 @@
     "hint": {
       "biggest": "Tento krokodíl chce najväčšiu odpoveď. Tá je {{value}}.",
       "smallest": "Tento krokodíl chce najmenšiu odpoveď. Tá je {{value}}."
+    },
+    "controls": {
+      "move": "vybrať kameň",
+      "step": "stúpiť naň"
     }
   },
   "canisters": {
@@ -1525,35 +1599,35 @@
         "sums": "Každé množstvo, ktoré vieš urobiť, sú dve čísla na lavici sčítané alebo odčítané: veľkosť nádoby, koľko je v nej, alebo koľko sa do nej ešte zmestí.",
         "backwards": "Tak choď späť od množstva, ktoré treba – ktoré dve čísla ho dajú a ako dosiahneš, aby boli obe naraz?"
       },
-      "claim": "Keď máš správne množstvo, ťukni na „táto“. Keď povieš zlú nádobu, stojí ťa to jeden ťah.",
+      "claim": "Keď máš správne množstvo, vyber „táto“. Keď povieš zlú nádobu, stojí ťa to jeden ťah.",
       "legs": "Potom ďalšie množstvo, odmerané z toho, čo v nádobách ostalo.",
       "default": {
-        "moves": "Ťukni na nádobu a zdvihni ju, potom ťukni na inú a prelej do nej. Lievanie skončí, keď je prvá prázdna alebo druhá plná.",
+        "moves": "Zdvihni nádobu, potom vyber inú a prelej do nej. Lievanie skončí, keď je prvá prázdna alebo druhá plná.",
         "contents": "Toto je všetka voda – jedna nádoba je na začiatku plná a žiadnu nemôžeš vyliať ani doniesť novú.",
         "levels": "Na každej nádobe je napísané, koľko je v nej a koľko sa do nej zmestí, keď je plná."
       },
       "grain": {
-        "moves": "Ťukni na mieru a zdvihni ju, potom ťukni na inú a nasyp do nej obilie. Sypanie skončí, keď je prvá prázdna alebo druhá plná po okraj.",
+        "moves": "Zdvihni mieru, potom vyber inú a nasyp do nej obilie. Sypanie skončí, keď je prvá prázdna alebo druhá plná po okraj.",
         "contents": "Toto je všetko obilie – jedna miera je na začiatku plná a žiadne nemôžeš zmiesť ani doniesť zo sýpky.",
         "levels": "Na každej miere je napísané, koľko je v nej a koľko sa do nej zmestí po okraj."
       },
       "oil": {
-        "moves": "Ťukni na džbán a zdvihni ho, potom ťukni na iný a prelej doň. Lievanie skončí, keď je prvý prázdny alebo druhý plný.",
+        "moves": "Zdvihni džbán, potom vyber iný a prelej doň. Lievanie skončí, keď je prvý prázdny alebo druhý plný.",
         "contents": "Toto je všetok olej – jeden džbán je na začiatku plný a žiadny olej nemôžeš vyliať ani načerpať nový.",
         "levels": "Na každom džbáne je napísané, koľko je v ňom a koľko sa doň zmestí, keď je plný."
       },
       "wine": {
-        "moves": "Ťukni na amforu a zdvihni ju, potom ťukni na inú a prelej do nej. Prelievanie skončí, keď je prvá prázdna alebo druhá plná.",
+        "moves": "Zdvihni amforu, potom vyber inú a prelej do nej. Prelievanie skončí, keď je prvá prázdna alebo druhá plná.",
         "contents": "Toto je všetko víno – jedna amfora je na začiatku plná a žiadne víno nemôžeš rozliať ani doniesť z pivnice.",
         "levels": "Na každej amfore je napísané, koľko je v nej a koľko sa do nej zmestí, keď je plná."
       },
       "natron": {
-        "moves": "Ťukni na džbán a zdvihni ho, potom ťukni na iný a nasyp doň natrón. Sypanie skončí, keď je prvý prázdny alebo druhý plný po viečko.",
+        "moves": "Zdvihni džbán, potom vyber iný a nasyp doň natrón. Sypanie skončí, keď je prvý prázdny alebo druhý plný po viečko.",
         "contents": "Toto je všetok natrón – jeden džbán je na začiatku plný a žiadny natrón nemôžeš zmiesť ani doniesť nový.",
         "levels": "Na každom džbáne je napísané, koľko je v ňom a koľko sa doň zmestí po viečko."
       },
       "ink": {
-        "moves": "Ťukni na kalamár a zdvihni ho, potom ťukni na iný a prelej doň. Lievanie skončí, keď je prvý prázdny alebo druhý plný.",
+        "moves": "Zdvihni kalamár, potom vyber iný a prelej doň. Lievanie skončí, keď je prvý prázdny alebo druhý plný.",
         "contents": "Toto je všetok atrament – jeden kalamár je na začiatku plný a žiadny atrament nemôžeš vyliať ani namiešať nový.",
         "levels": "Na každom kalamári je napísané, koľko je v ňom a koľko sa doň zmestí, keď je plný."
       }
@@ -1580,7 +1654,12 @@
     "legs": "odmerané {{done}} z {{total}}",
     "wanted": "Odmeraj",
     "claim": "táto",
-    "claimAria": "Povedz, že {{capacity}} má to množstvo"
+    "claimAria": "Povedz, že {{capacity}} má to množstvo",
+    "controls": {
+      "move": "vybrať nádobu alebo „táto“ pod ňou",
+      "press": "zdvihnúť, preliať sem alebo povedať",
+      "putDown": "znova položiť nádobu, ktorú držíš"
+    }
   },
   "procession": {
     "name": {
@@ -1600,8 +1679,8 @@
     "rules": {
       "default": {
         "lengths": "Každý riadok je jedna udalosť a trvá tak dlho, aký široký je jej pásik. Kedy sa stane, to musíš zistiť ty.",
-        "marks": "Riadok pod dňom je červený, kým neplatí. Ťukni naň a zakrúžkujú sa riadky, o ktorých hovorí.",
-        "drag": "Ťahaj pásik po jeho vlastnom riadku. Nikdy neopustí deň."
+        "marks": "Riadok pod dňom je červený, kým neplatí. Vyber ho a zakrúžkujú sa riadky, o ktorých hovorí.",
+        "drag": "Posúvaj pásik po jeho vlastnom riadku. Nikdy neopustí deň."
       }
     },
     "hint": {
@@ -1610,7 +1689,7 @@
         "squeeze": "Zo dňa ostáva už len toľko a toto je všetko, čo sa zmestí.",
         "apart": "Naopak sa to do dňa nezmestí.",
         "split": "Skús to naopak a pokazí sa niečo iné.",
-        "move": "Potiahni zakrúžkovaný pásik na vyšrafované čiarky."
+        "move": "Posuň zakrúžkovaný pásik na vyšrafované čiarky."
       }
     },
     "events": {
@@ -1642,6 +1721,11 @@
       "hint": "Každá dlaždica, na ktorú stúpiš, uvoľní svoju prácu. Usporiadaj deň a potom prejdi dlaždice v tom poradí.",
       "read": "Deň je prečítaný. Prejdi jeho dlaždice v tomto poradí, od prvej.",
       "hintButton": "Rada"
+    },
+    "controls": {
+      "row": "vybrať riadok",
+      "slide": "posunúť jeho pásik",
+      "mark": "vybrať riadok pod dňom"
     }
   },
   "story": {
@@ -1664,6 +1748,13 @@
       "pick": "Daj na jeho miesto správny znak.",
       "cannot": "Znak, ktorý sem patrí, ešte nepoznáš. Zatiaľ."
     },
+    "formula": {
+      "wrong": "V tomto riadku jeden znak chýba. Nie je vytesaný zle – nikdy ho nikto nevytesal.",
+      "fixed": "Riadok je celý.",
+      "pick": "Daj darovaný znak na prázdne miesto.",
+      "cannot": "Znak pre toto miesto ti ešte nikto nedal. Zatiaľ.",
+      "gap": "Chýbajúci znak"
+    },
     "sphinx": {
       "wrong": "To isté písmo ako vonku, ale piesok sem nikdy nedosiahol. Dva znaky sú stále čisto vytesané a tam, kde bol tretí, je medzera.",
       "fixed": "To je celé.",
@@ -1680,7 +1771,7 @@
       "shrines": "Jeden kotúč svetla a nad každým východom z tejto križovatky svätyňa. Zrkadlá na podlahe dokážu doniesť svetlo ku ktorejkoľvek z nich.",
       "doors": "Východ, kam svetlo dôjde, je otvorený, ostatné sú zatvorené. Jedna cesta svetla, jedna cesta ďalej.",
       "returning": "Výberom nič nestratíš. Kedykoľvek sa môžeš vrátiť a poslať svetlo inam – tá cesta sa otvorí a táto zatvorí.",
-      "tap": "Ťukni na zrkadlo a otočíš ho. Ďalšie ťuknutie ho vráti späť."
+      "tap": "Vyber zrkadlo a otočíš ho. Keď ho vyberieš znova, vrátiš ho späť."
     },
     "doorOpen": "{{way}} východ: otvorený",
     "doorShut": "{{way}} východ: zatvorený",
@@ -1689,6 +1780,10 @@
       "e": "Východný",
       "s": "Južný",
       "w": "Západný"
+    },
+    "controls": {
+      "move": "vybrať zrkadlo",
+      "turn": "otočiť ho"
     }
   },
   "handle": {
@@ -1944,5 +2039,37 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Kreslenie prepíše text: všetky komentáre sa presunú navrch"
+  },
+  "saveCard": {
+    "title": "Cestovná karta",
+    "explain": "Vezmi si výpravu na iné zariadenie: tu vytvor kartu a tam ju do 15 minút načítaj.",
+    "make": "Vytvoriť cestovnú kartu",
+    "share": "Zdieľať kartu",
+    "download": "Stiahnuť kartu",
+    "read": "Načítať cestovnú kartu",
+    "busy": "Moment…",
+    "makeFailed": "Kartu sa nepodarilo vytvoriť.",
+    "shareFailed": "Zdieľanie nefungovalo, stiahni si kartu.",
+    "confirm_one": "Nahradiť výpravu na tomto zariadení tou z karty ({{count}} cesta)?",
+    "confirm_few": "Nahradiť výpravu na tomto zariadení tou z karty ({{count}} cesty)?",
+    "confirm_many": "Nahradiť výpravu na tomto zariadení tou z karty ({{count}} cesty)?",
+    "confirm_other": "Nahradiť výpravu na tomto zariadení tou z karty ({{count}} ciest)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Cestovná karta · vezmi si výpravu so sebou",
+    "validUntil": "platí do {{time}}",
+    "codes_one": "{{count}} kód",
+    "codes_few": "{{count}} kódy",
+    "codes_many": "{{count}} kódu",
+    "codes_other": "{{count}} kódov",
+    "refused": {
+      "notACard": "Toto nie je cestovná karta.",
+      "tampered": "Táto karta bola zmenená a už sa nedá prečítať.",
+      "expired": "Táto karta už neplatí, vytvor novú.",
+      "future": "Táto karta je z budúcnosti: skontroluj hodiny na oboch zariadeniach.",
+      "otherEpoch": "Táto karta je z inej verzie hry.",
+      "newerGame": "Táto karta je z novšej verzie: najprv hru aktualizuj."
+    },
+    "writeFailed": "Uloženú hru sa nepodarilo zapísať, toto zariadenie si nechalo svoju.",
+    "writeLost": "Uloženú hru sa nepodarilo nahradiť a uložená hra na tomto zariadení možno nie je celá."
   }
 }

@@ -21,19 +21,24 @@
     "mapHint": "A cetlin egy piaci út és egy pinceajtó látszik. Egy kereskedő rejtekhelye, semmi több."
   },
   "junior_1": {
-    "name": "A szent íbiszek vonulása"
+    "name": "A szent íbiszek vonulása",
+    "description": "Nádas mocsarak a Nílus mentén, és a bennük gázoló íbiszek. Szent madarak – és nem azért, amire gondolnál."
   },
   "junior_2": {
-    "name": "A kézművesek völgye"
+    "name": "A kézművesek völgye",
+    "description": "Dejr el-Medina, a sírépítők faluja. A műhelyeik még állnak, és a munkájuk egy része is."
   },
   "junior_3": {
-    "name": "Thot temploma"
+    "name": "Thot temploma",
+    "description": "Thot temploma. A nevét mindenki ismeri; kérdezz meg három embert, minek volt az istene, és három választ kapsz."
   },
   "junior_4": {
-    "name": "Az alexandriai világítótorony"
+    "name": "Az alexandriai világítótorony",
+    "description": "Az alexandriai Pharosz, a világ hét csodájának egyike. Ami megmaradt belőle, a kikötőben fekszik, a víz alatt."
   },
   "junior_treasure_tomb": {
     "name": "A nemes asszony rejtett kamrája",
+    "description": "Egy nemes asszony kamrája, padlótól a mennyezetig kifestve, és benne minden ott van még, ahová ő tette.",
     "mapHint": "Finom tinta, a sarokban egy címeres pecsét. Valaki előkelő azt akarta, hogy ezt a szobát elfelejtsék."
   },
   "expert_1": {

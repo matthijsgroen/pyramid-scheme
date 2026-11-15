@@ -239,8 +239,8 @@
   "haul": {
     "new": "Nuevo en tu campamento",
     "parts_one": "{{name}} · {{count}} pieza",
-    "parts_other": "{{name}} · {{count}} piezas",
-    "parts_many": "{{name}} · {{count}} piezas"
+    "parts_many": "{{name}} · {{count}} piezas",
+    "parts_other": "{{name}} · {{count}} piezas"
   },
   "arrivals": {
     "donkey": "Tu burro ya está en el campamento",

@@ -28,7 +28,7 @@
   "tombTutorial3": "Małe działania pokazują, kiedy znak pasuje. Tak odkryjemy, który znak gdzie idzie.",
   "tombTutorial4": "Wszystko wypełnione? Wtedy pojawi się zamek na cyfry. Duże działanie to szyfr, a potem grobowiec się otworzy!",
   "hieroglyphUnlock": "Mamy niezwykły przedmiot! Dzięki niemu możemy pisać na jednym z tych zamkniętych bloków!",
-  "hieroglyphUnlock2": "Stuknij świecący kamień i przeciągnij na niego przedmiot, żeby go otworzyć. Jeden blok na piramidę.",
+  "hieroglyphUnlock2": "Wybierz świecący kamień i przynieś do niego przedmiot, żeby go otworzyć. Jeden blok na piramidę.",
   "errorHighlightTutorial": "Ten skarb, który mamy, zna fajną sztuczkę: wpisz złą odpowiedź, a jeden błąd zaświeci się na czerwono!",
   "errorHighlightTutorial2": "Świeci tylko jeden blok naraz, więc dalej trzeba pogłówkować. Ale łatwiej znaleźć, gdzie szukać!",
   "earlyFeedbackTutorial": "Widzisz te bloki kontrolne? Robią się zielone albo czerwone, kiedy je wypełniasz. Od razu wiesz, co jest grane!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Patrz, co mam na kramie! Teraz zajmuję się też transportem."
+      },
+      "2": {
+        "explorer": "Widzę tylko rysunek."
+      },
+      "3": {
+        "fez": "Oryginał więcej je."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "Druga linijka. „Woda dla spragnionych.”"
+        "explorer": "Druga linijka. _Ubranie dla nagich._"
       },
       "2": {
-        "fez": "Chleb, a teraz woda. Ktoś bardzo chciał, żeby go pamiętano jako hojnego."
+        "fez": "Chleb, a teraz ubranie. Ktoś bardzo chciał, żeby go pamiętano jako hojnego."
       },
       "3": {
         "explorer": "Każdy to ma. Każda ściana, każdy grobowiec, te same dwie linijki."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "„Ubranie dla nagich.” Trzecia linijka."
+        "explorer": "_Woda dla spragnionych._ Trzecia linijka."
       },
       "2": {
-        "fez": "Chleb, woda, ubranie. To lista rzeczy, które ktoś rozdał."
+        "fez": "Chleb, ubranie, woda. To lista rzeczy, które ktoś rozdał."
       },
       "3": {
         "explorer": "W grobowcu człowieka, który zabrał ze sobą wszystko."
@@ -1599,8 +1605,42 @@
       "explorer": "Może być."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Tu brakuje czegoś dla głodnych. Chleba, powiedziałbym. A znam kogoś, kto przez czterdzieści lat liczył każdy worek zboża."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, potrzebujemy chleba. Do ściany."
+        },
+        "2": {
+          "ipi": "Chleba? Mojego? Wiecie, ile kosztuje zboże?"
+        },
+        "3": {
+          "fez": "To do linijki o rozdawaniu."
+        },
+        "4": {
+          "ipi": "…Roz. Dawaniu."
+        },
+        "5": {
+          "ipi": "No dobra. Jeden bochenek. Ale to się zapisze: _Ipi dał chleb._"
+        },
+        "6": {
+          "fez": "On coś oddał! Widzisz to?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Ten bochenek — zjadł go już ktoś? Bo jak nie, to chcę go z powrotem."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Dalej tutaj? Na północ! Henut! Jedenaście debenów!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "Ściana. Trzeci znak. To dalej nie jest moje imię."
+          "henut": "Ściana. Drugi znak. To dalej nie jest moje imię."
         }
       },
       "wall2": {

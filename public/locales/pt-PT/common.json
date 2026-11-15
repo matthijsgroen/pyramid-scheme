@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Não foi possível carregar o teu progresso",
     "body": "O navegador não está a deixar abrir o teu jogo guardado. Mas o jogo não se perdeu: recarrega a página para tentares outra vez.",
-    "banner": "O progresso não está a ser guardado. Toca para recarregar.",
+    "banner": "O progresso não está a ser guardado. Recarrega.",
     "reload": "Recarregar",
     "continue": "Continuar a jogar sem guardar",
     "reset": "Começar de novo (apagar o jogo guardado)",
@@ -29,7 +29,6 @@
     "evening": "Fim de tarde",
     "night": "Noite"
   },
-  "tomb": {},
   "ui": {
     "level": "Nível",
     "symbols": "símbolos",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Parar a expedição",
     "confirmInterruptExpedition": "Tens a certeza de que queres parar esta expedição? O progresso da expedição fica guardado, mas perdes o progresso deste nível!",
     "cancel": "Cancelar",
+    "leaveSite": "Sair deste sítio?",
+    "confirmLeaveSite": "Carrega em Sair para voltares lá para fora, ou em Ficar para continuares a explorar.",
+    "leave": "Sair",
+    "stay": "Ficar",
     "settings": "Definições",
     "language": "Língua",
     "close": "Fechar",
@@ -107,8 +110,12 @@
     "solvedWithHints_one": "Resolvido com {{count}} pista",
     "solvedWithHints_many": "Resolvido com {{count}} pistas",
     "solvedWithHints_other": "Resolvido com {{count}} pistas",
-    "tapToContinue": "Toca para continuar",
-    "goal": "Objetivo"
+    "tapToContinue": "Continuar",
+    "goal": "Objetivo",
+    "controls": "Controlos",
+    "controlsUndo": "desfazer",
+    "controlsHint": "pista",
+    "controlsLeave": "voltar ao mapa"
   },
   "trap": {
     "warning": "⚠ Corredor com armadilha",
@@ -127,6 +134,7 @@
     "turnAround": "Dar meia-volta",
     "wardDescription": {
       "starter": "O selo de um mercador fecha esta passagem. Só a chave dele a abre.",
+      "junior": "O brasão de uma nobre fecha esta passagem. Só a chave dela a abre.",
       "expert": "Um selo do templo do sumo sacerdote guarda esta porta. Só a chave sagrada a abre.",
       "master": "O selo real de um faraó fecha esta passagem. Só a chave do rei a abre.",
       "wizard": "Um selo dos deuses fecha este portão. Só a chave divina deixa passar."
@@ -135,7 +143,7 @@
     "lockedColor": "Ainda não encontraste essa chave neste andar."
   },
   "chest": {
-    "tapToOpen": "Toca para abrir",
+    "tapToOpen": "Abrir",
     "money_one": "{{count}} moeda",
     "money_many": "{{count}} moedas",
     "money_other": "{{count}} moedas",
@@ -143,6 +151,7 @@
     "mapPieceDescription": "Um pedaço frágil de um mapa para um lugar esquecido há muito tempo. Pena estar tão incompleto...",
     "mapPieceProgress": "{{found}} de {{required}} pedaços do mapa encontrados",
     "mapPieceComplete": "O mapa está inteiro: leva até {{name}}.",
+    "hieroglyph": "Hieróglifo",
     "hieroglyphFragment": "Pedaço de hieróglifo",
     "fragmentProgress": "{{found}} de {{required}} pedaços encontrados",
     "tombKey": "Chave do túmulo",
@@ -159,8 +168,9 @@
   },
   "loot": {
     "youFound": "Encontraste",
+    "youReceived": "Recebeste",
     "expeditionReward": "Prémio extra por terminares a expedição",
-    "clickToContinue": "Toca em qualquer sítio para continuar"
+    "clickToContinue": "Continuar"
   },
   "money": {
     "label": "Moedas"
@@ -258,7 +268,7 @@
     "tabNew_other": "{{label}} · {{count}} novos",
     "empty": "O teu baú ainda está vazio",
     "newLabel": "NOVO",
-    "clickForDetails": "Toca num quadrado para ver mais",
+    "clickForDetails": "Escolhe um quadrado para ver mais",
     "categories": {
       "deities": "🏺 Deuses",
       "professions": "⚱️ Profissões",
@@ -266,6 +276,7 @@
       "artifacts": "💎 Artefactos",
       "treasures": "💰 Tesouros",
       "junk": "🔷 Bugigangas",
+      "offerings": "🍞 Oferendas",
       "signs": "✍️ Sinais"
     },
     "treasureCategories": {
@@ -347,22 +358,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Toca num símbolo lá em baixo e depois num número. Toca outra vez nesse número para o tirar.",
+      "tap": "Escolhe um símbolo lá em baixo e depois um número. Escolhe outra vez esse número para o tirar.",
       "same": "Um símbolo pesa o mesmo em todas as balanças.",
-      "cancel": "Se tirares a mesma coisa dos dois pratos, a balança continua equilibrada. Toca numa peça marcada para fazer isso: o que sobra fica guardado numa linha nova.",
-      "swap": "Toca num símbolo que não tenha nenhum igual do outro lado, e depois numa linha onde esse símbolo esteja sozinho, para o trocares pelo que essa linha vale."
+      "cancel": "Se tirares a mesma coisa dos dois pratos, a balança continua equilibrada. Escolhe uma peça marcada para fazer isso: o que sobra fica guardado numa linha nova.",
+      "swap": "Escolhe um símbolo que não tenha nenhum igual do outro lado, e depois uma linha onde esse símbolo esteja sozinho, para o trocares pelo que essa linha vale."
     },
     "hint": {
       "mistake": "Um dos pesos que deste faz uma balança inclinar. Tira-o e volta a olhar.",
       "alone": "Na linha iluminada, {{glyph}} é a única peça que ainda não tem número. Descobre quanto pesa.",
       "equalShares": "A linha iluminada só tem {{glyph}} contra um número. Divide esse número por eles.",
       "difference": "As duas linhas iluminadas são iguais, tirando {{glyph}}. Compara-as.",
-      "cancelGlyph": "Os dois pratos da linha iluminada têm {{glyph}}. Toca num para o tirares dos dois lados: a linha continua equilibrada.",
-      "cancelStones": "Os dois pratos da linha iluminada têm números simples. Toca num para tirares a mesma quantidade dos dois lados.",
-      "swap": "Uma das linhas iluminadas diz quanto vale um {{glyph}} sozinho. Toca no {{glyph}} da outra linha iluminada e depois toca nessa linha."
+      "cancelGlyph": "Os dois pratos da linha iluminada têm {{glyph}}. Escolhe um para o tirares dos dois lados: a linha continua equilibrada.",
+      "cancelStones": "Os dois pratos da linha iluminada têm números simples. Escolhe um para tirares a mesma quantidade dos dois lados.",
+      "swap": "Uma das linhas iluminadas diz quanto vale um {{glyph}} sozinho. Escolhe o {{glyph}} da outra linha iluminada e depois escolhe essa linha."
     },
     "swap": {
-      "pick": "Toca numa linha iluminada para trocares este {{glyph}} pelo que essa linha diz que ele vale.",
+      "pick": "Escolhe uma linha iluminada para trocares este {{glyph}} pelo que essa linha diz que ele vale.",
       "none": "Aqui nada diz quanto vale um {{glyph}} sozinho, e não há nada igual do outro lado."
     },
     "goal": {
@@ -372,11 +383,16 @@
     "name": {
       "default": "A balança",
       "weighing": "A pesagem do coração"
+    },
+    "controls": {
+      "move": "escolher uma peça, uma linha ou um botão",
+      "press": "carregar",
+      "weigh": "dar esse peso ao símbolo escolhido"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Toca uma vez para riscar um número, outra vez para o marcar como um que fica, e outra vez para limpar.",
+      "tap": "Escolhe um número uma vez para o riscar, outra vez para o marcar como um que fica, e outra vez para limpar.",
       "totals": "O número pequeno debaixo de cada objetivo é quanto essa linha soma agora."
     },
     "hint": {
@@ -439,12 +455,16 @@
       }
     },
     "goal": "Cada linha e cada coluna somam o número que está ao lado.",
-    "name": "A conta certa"
+    "name": "A conta certa",
+    "controls": {
+      "move": "escolher um número",
+      "mark": "riscar, manter ou limpar"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Um sinal entre dois quadrados aponta para o número mais pequeno dos dois.",
-      "enter": "Toca num quadrado e depois num número. O mesmo número outra vez tira-o.",
+      "enter": "Escolhe um quadrado e depois um número. O mesmo número outra vez tira-o.",
       "notes": "Muda para o lápis para apontares os números que um quadrado ainda pode ter. Desfazer volta atrás na tua última jogada."
     },
     "hint": {
@@ -495,14 +515,22 @@
       }
     },
     "goal": "Cada linha e cada coluna têm cada número exatamente uma vez.",
-    "name": "Maior e menor"
+    "name": "Maior e menor",
+    "controls": {
+      "move": "escolher um quadrado",
+      "type": "escrever um número",
+      "choose": "escolher um número ou a borracha",
+      "place": "escrevê-lo",
+      "pencil": "lápis",
+      "erase": "apagar"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Um espelho desvia a luz com qualquer um dos dois lados. As marquinhas à volta mostram as outras posições que pode ter: a maioria vira a luz um quarto de volta, e algumas viram menos e mandam-na na diagonal.",
       "walls": "Um bloco de pedra engole a luz. A borda do tabuleiro também.",
-      "tap": "Toca numa peça para a mudar: um espelho roda, uma peça que desliza passa para o sítio seguinte. Uma borda branca quer dizer que és tu que a mexes; tudo o resto faz parte do enigma.",
-      "nodes": "Algumas pedras estão ligadas a um encaixe no chão, e nenhum toque as mexe. Manda a luz por cima do encaixe e a pedra desliza para o lado."
+      "tap": "Escolhe uma peça para a mudar: um espelho roda, uma peça que desliza passa para o sítio seguinte. Uma borda branca quer dizer que és tu que a mexes; tudo o resto faz parte do enigma.",
+      "nodes": "Algumas pedras estão ligadas a um encaixe no chão e não as consegues mexer. Manda a luz por cima do encaixe e a pedra desliza para o lado."
     },
     "hint": {
       "entryRun": "Começa por onde a luz já vai: sai a direito do disco até chegar à primeira peça que podes mudar. Esses quadrados têm sempre luz, faças o que fizeres.",
@@ -535,7 +563,7 @@
       "triple": "Três iguais seguidos nunca pode ser, nem na horizontal nem na vertical.",
       "copies": "Não pode haver duas linhas iguais, nem duas colunas iguais.",
       "signs": "Um sinal entre dois quadrados diz como são: = quer dizer iguais, × quer dizer diferentes.",
-      "enter": "Toca num quadrado para pores um sol, outra vez para uma lua, e mais uma vez para o esvaziares."
+      "enter": "Escolhe um quadrado para pores um sol, outra vez para uma lua, e mais uma vez para o esvaziares."
     },
     "hint": {
       "mistake": "Uma destas marcas não pode estar certa.",
@@ -560,7 +588,11 @@
       }
     },
     "goal": "Cada quadrado tem um sol ou uma lua, e cada linha tem tantos de um como do outro.",
-    "name": "Sol e lua"
+    "name": "Sol e lua",
+    "controls": {
+      "move": "escolher um quadrado",
+      "mark": "mudar a marca"
+    }
   },
   "constellation": {
     "rules": {
@@ -568,25 +600,25 @@
         "straight": "As linhas de luz vão a direito, na horizontal ou na vertical, de uma estrela até à seguinte.",
         "pair": "Duas estrelas podem ter no máximo duas linhas entre elas.",
         "cross": "As linhas nunca se cruzam e nunca passam por cima de uma estrela.",
-        "enter": "Arrasta de uma estrela para a vizinha para desenhares uma linha, outra vez para uma dupla, e mais uma vez para a apagares."
+        "enter": "Desenha uma linha de uma estrela para a vizinha, outra vez para uma dupla, e mais uma vez para a apagares."
       },
       "causeway": {
         "straight": "As estradas vão a direito, na horizontal ou na vertical, de uma obra até à seguinte.",
         "pair": "Duas obras podem ter no máximo duas estradas entre elas.",
         "cross": "As estradas nunca se cruzam e nunca passam por cima de uma obra.",
-        "enter": "Arrasta de uma obra para a vizinha para fazeres uma estrada, outra vez para a duplicares, e mais uma vez para a desfazeres."
+        "enter": "Faz uma estrada de uma obra para a vizinha, outra vez para a duplicares, e mais uma vez para a desfazeres."
       },
       "irrigation": {
         "straight": "Os canais vão a direito, na horizontal ou na vertical, de um tanque até ao seguinte.",
         "pair": "Dois tanques podem ter no máximo dois canais entre eles.",
         "cross": "Os canais nunca se cruzam e nunca passam por um tanque.",
-        "enter": "Arrasta de um tanque para o vizinho para cavares um canal, outra vez para o alargares, e mais uma vez para o tapares."
+        "enter": "Cava um canal de um tanque para o vizinho, outra vez para o alargares, e mais uma vez para o tapares."
       },
       "ceiling": {
         "straight": "Os cordões vão a direito, na horizontal ou na vertical, de uma estrela até à seguinte.",
         "pair": "Duas estrelas podem ter no máximo dois cordões entre elas.",
         "cross": "Os cordões nunca se cruzam e nunca passam por cima de uma estrela.",
-        "enter": "Arrasta de uma estrela para a vizinha para pores um cordão, outra vez para o duplicares, e mais uma vez para o tirares."
+        "enter": "Estica um cordão de uma estrela para a vizinha, outra vez para o duplicares, e mais uma vez para o tirares."
       }
     },
     "hint": {
@@ -682,37 +714,44 @@
       "causeway": "A estrada das pedras",
       "irrigation": "A rega",
       "ceiling": "O teto pintado"
+    },
+    "controls": {
+      "pick": "escolher uma estrela",
+      "grab": "pegar nela",
+      "draw": "desenhar uma linha para esse lado",
+      "release": "largar",
+      "alt": "manter e apontar: uma linha, uma dupla, nenhuma"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Duas estrelas nunca se podem tocar, nem pelos cantos.",
-        "enter": "Toca num quadrado para o pores de parte, outra vez para pores lá uma estrela, e mais uma vez para o limpares."
+        "enter": "Escolhe um quadrado para o pores de parte, outra vez para pores lá uma estrela, e mais uma vez para o limpares."
       },
       "fields": {
         "touch": "Duas quintas nunca se podem tocar, nem pelos cantos. Tão perto, tinham de dividir o mesmo poço.",
-        "enter": "Toca num terreno para o pores de parte, outra vez para construíres lá uma quinta, e mais uma vez para o limpares."
+        "enter": "Escolhe um terreno para o pores de parte, outra vez para construíres lá uma quinta, e mais uma vez para o limpares."
       },
       "lamps": {
         "touch": "Duas candeias nunca podem ficar lado a lado, nem pelos cantos. A luz de uma ia por cima da da outra, e o azeite era desperdiçado.",
         "walls": "Os blocos de pedra cinzenta fazem parte do chão: não se pode pôr nada em cima deles, e não contam como quadrados.",
-        "enter": "Toca numa laje para a pores de parte, outra vez para pores lá uma candeia, e mais uma vez para a limpares."
+        "enter": "Escolhe uma laje para a pores de parte, outra vez para pores lá uma candeia, e mais uma vez para a limpares."
       },
       "market": {
         "touch": "Duas bancas nunca podem ficar lado a lado, nem pelos cantos. Os rivais nunca se põem juntinhos.",
         "walls": "As casas fazem parte da praça: ninguém pode montar uma banca lá dentro, e não contam como lugares.",
-        "enter": "Toca num lugar para o pores de parte, outra vez para montares lá uma banca, e mais uma vez para o limpares."
+        "enter": "Escolhe um lugar para o pores de parte, outra vez para montares lá uma banca, e mais uma vez para o limpares."
       },
       "lotus": {
         "touch": "Duas flores de lótus nunca podem flutuar lado a lado, nem pelos cantos. Cada flor precisa de água livre à volta.",
         "walls": "As rochas saem do lago: nada pode flutuar em cima delas, e não contam como quadrados.",
-        "enter": "Toca num bocado de água para o pores de parte, outra vez para pores lá um lótus a flutuar, e mais uma vez para o limpares."
+        "enter": "Escolhe um bocado de água para o pores de parte, outra vez para pores lá um lótus a flutuar, e mais uma vez para o limpares."
       },
       "cats": {
         "touch": "Dois gatos nunca podem dormir lado a lado, nem pelos cantos. Cada gato tem o seu bocadinho de sol.",
         "walls": "Os pilares seguram o templo: nenhum gato pode dormir em cima deles, e não contam como quadrados.",
-        "enter": "Toca numa laje para a pores de parte, outra vez para deitares lá um gato, e mais uma vez para a limpares."
+        "enter": "Escolhe uma laje para a pores de parte, outra vez para deitares lá um gato, e mais uma vez para a limpares."
       }
     },
     "hint": {
@@ -1040,6 +1079,11 @@
       "market": "Bancas do mercado",
       "lotus": "O lago dos lótus",
       "cats": "Os gatos do templo"
+    },
+    "controls": {
+      "move": "escolher um quadrado",
+      "mark": "mudar a marca",
+      "sweep": "manter e mover: pôr uma fila de parte"
     }
   },
   "pairPuzzle": {
@@ -1056,13 +1100,13 @@
         "pair": "Cada sarcófago tem uma múmia a descansar mesmo em cima, em baixo, à esquerda ou à direita, e cada múmia descansa ao lado do seu próprio sarcófago.",
         "count": "O número ao lado de uma linha ou coluna diz quantas múmias tem. Fica verde quando a linha tem exatamente esse número, e vermelho quando já não dá.",
         "touch": "Duas múmias nunca podem ficar lado a lado, nem pelos cantos.",
-        "enter": "Toca num quadrado para o pores de parte, outra vez para deitares lá uma múmia, e mais uma vez para o limpares. Arrasta por cima de vários quadrados para os pores de parte de uma vez. Não se pode tocar nos sarcófagos."
+        "enter": "Escolhe um quadrado para o pores de parte, outra vez para deitares lá uma múmia, e mais uma vez para o limpares. Põe de parte uma fila de quadrados de uma só vez. Os sarcófagos não podem ser marcados."
       },
       "beetles": {
         "pair": "Cada bola de esterco tem um escaravelho mesmo em cima, em baixo, à esquerda ou à direita, e cada escaravelho fica ao lado da sua própria bola para empurrar.",
         "count": "O número ao lado de uma linha ou coluna diz quantos escaravelhos tem. Fica verde quando a linha tem exatamente esse número, e vermelho quando já não dá.",
         "touch": "Dois escaravelhos nunca podem ficar lado a lado, nem pelos cantos.",
-        "enter": "Toca num quadrado para o pores de parte, outra vez para pores lá um escaravelho, e mais uma vez para o limpares. Arrasta por cima de vários quadrados para os pores de parte de uma vez. Não se pode tocar nas bolas de esterco."
+        "enter": "Escolhe um quadrado para o pores de parte, outra vez para pores lá um escaravelho, e mais uma vez para o limpares. Põe de parte uma fila de quadrados de uma só vez. As bolas de esterco não podem ser marcadas."
       }
     },
     "hint": {
@@ -1142,6 +1186,11 @@
           "place_other": "Põe um escaravelho em cada quadrado às riscas."
         }
       }
+    },
+    "controls": {
+      "move": "escolher um quadrado",
+      "mark": "mudar a marca",
+      "sweep": "manter e mover: pôr uma fila de parte"
     }
   },
   "rushHour": {
@@ -1156,11 +1205,11 @@
     "rules": {
       "default": {
         "lanes": "Um bloco só desliza pela sua própria faixa: nunca de lado, nunca para fora do tabuleiro.",
-        "shove": "Arrasta um bloco para o empurrar. Para quando há alguma coisa no caminho."
+        "shove": "Empurra um bloco ao longo da sua faixa. Para quando há alguma coisa no caminho."
       },
       "market": {
         "lanes": "Um trenó só desliza pela faixa onde está: nunca de lado, nunca para fora da rua.",
-        "shove": "Arrasta um trenó para o empurrar. Para quando há alguma coisa no caminho."
+        "shove": "Empurra um trenó ao longo da sua faixa. Para quando há alguma coisa no caminho."
       }
     },
     "hint": {
@@ -1188,29 +1237,35 @@
           "down": "Empurra rua abaixo, até ao círculo."
         }
       }
+    },
+    "controls": {
+      "pick": "escolher um bloco",
+      "grab": "pegar nele",
+      "slide": "deslizar",
+      "release": "largar"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "Os números que já estão no favo fazem parte do enigma: ficam onde estão.",
-        "enter": "Toca num número para continuares a fila a partir dele, e depois toca numa casa vazia encostada para a levares mais longe. Ou arrasta a direito pelas casas por onde ela passa.",
-        "back": "Toca num número que puseste e toca outra vez para o tirares, junto com tudo o que ficou pendurado nele. Levar a fila por outro lado a partir de um número faz o mesmo. Desfazer volta atrás na tua última jogada."
+        "enter": "Desenha uma linha a partir de um número pelas casas vazias ao lado para levares a fila mais longe.",
+        "back": "Escolhe um número que puseste e escolhe-o outra vez para o tirares, junto com tudo o que ficou pendurado nele. Levar a fila por outro lado a partir de um número faz o mesmo. Desfazer volta atrás na tua última jogada."
       },
       "channel": {
         "given": "Os campos que já têm número fazem parte do enigma: ficam onde estão.",
-        "enter": "Toca num campo com número para pegares na água ali, e depois toca num campo seco ao lado para continuares a cavar. Ou arrasta a direito pelos campos por onde o canal passa.",
-        "back": "Toca num campo que cavaste e toca outra vez para o tapares, junto com qualquer canal que fique separado dele. Cavar por outro lado a partir de um campo faz o mesmo. Desfazer volta atrás na tua última jogada."
+        "enter": "Cava um canal a partir de um campo com número pelos campos secos ao lado para levares a água mais longe.",
+        "back": "Escolhe um campo que cavaste e escolhe-o outra vez para o tapares, junto com qualquer canal que fique separado dele. Cavar por outro lado a partir de um campo faz o mesmo. Desfazer volta atrás na tua última jogada."
       },
       "scribe": {
         "given": "Os números escritos a vermelho são do próprio enigma: ficam onde estão.",
-        "enter": "Toca num número para pegares no pincel ali, e depois toca num espaço vazio ao lado para continuares a escrever. Ou arrasta a direito ao longo da linha.",
-        "back": "Toca num número que escreveste e toca outra vez para o raspares, junto com qualquer linha que fique separada dele. Escrever por outro lado a partir de um número faz o mesmo. Desfazer volta atrás na tua última jogada."
+        "enter": "Escreve uma linha a partir de um número pelos espaços vazios ao lado para continuares a contagem.",
+        "back": "Escolhe um número que escreveste e escolhe-o outra vez para o raspares, junto com qualquer linha que fique separada dele. Escrever por outro lado a partir de um número faz o mesmo. Desfazer volta atrás na tua última jogada."
       },
       "chambers": {
         "given": "As salas que já têm número foram escavadas pelos construtores: ficam onde estão.",
-        "enter": "Toca numa sala com número para continuares o túnel a partir dela, e depois toca numa sala fechada ao lado para a abrires. Ou arrasta a direito pelas salas por onde o túnel passa.",
-        "back": "Toca numa sala que abriste e toca outra vez para a voltares a fechar, junto com qualquer túnel que fique separado dela. Abrir por outro lado a partir de uma sala faz o mesmo. Desfazer volta atrás na tua última jogada."
+        "enter": "Abre um túnel a partir de uma sala com número pelas salas fechadas ao lado para o levares mais longe.",
+        "back": "Escolhe uma sala que abriste e escolhe-a outra vez para a voltares a fechar, junto com qualquer túnel que fique separado dela. Abrir por outro lado a partir de uma sala faz o mesmo. Desfazer volta atrás na tua última jogada."
       }
     },
     "goal": {
@@ -1274,6 +1329,13 @@
       "channel": "O canal",
       "scribe": "A folha do escriba",
       "chambers": "Salas seladas"
+    },
+    "controls": {
+      "move": "ir para uma casa ao lado; cima e baixo puxam para a esquerda",
+      "right": "cima-direita ou baixo-direita",
+      "grab": "pegar na fila, ou tirar o teu número",
+      "carry": "com a fila na mão: levá-la mais longe; cima e baixo vão para o lado onde ela pode continuar",
+      "drop": "pousar a fila"
     }
   },
   "sudoku": {
@@ -1281,13 +1343,13 @@
       "default": {
         "chambers": "As linhas grossas dividem a grelha em seis salas, com dois quadrados de largura e três de altura.",
         "given": "Os números que já estão gravados fazem parte do enigma: ficam onde estão.",
-        "enter": "Toca num quadrado e depois num número. O mesmo número outra vez tira-o.",
+        "enter": "Escolhe um quadrado e depois um número. O mesmo número outra vez tira-o.",
         "notes": "Muda para o lápis para apontares os números que um quadrado ainda pode ter. Desfazer volta atrás na tua última jogada."
       },
       "papyrus": {
         "chambers": "As linhas grossas dividem a folha em seis quadros, com dois espaços de largura e três de altura.",
         "given": "Os sinais escritos a vermelho são do próprio enigma: ficam onde estão.",
-        "enter": "Toca num espaço e depois num sinal. O mesmo sinal outra vez raspa-o.",
+        "enter": "Escolhe um espaço e depois um sinal. O mesmo sinal outra vez raspa-o.",
         "notes": "Pega no pincel de junco para apontares os sinais que um espaço ainda pode ter. Desfazer volta atrás na tua última jogada."
       }
     },
@@ -1356,6 +1418,14 @@
     "name": {
       "default": "Seis salas",
       "papyrus": "O registo do escriba"
+    },
+    "controls": {
+      "move": "escolher um quadrado",
+      "type": "escrever um número",
+      "choose": "escolher um número ou a borracha",
+      "place": "escrevê-lo",
+      "pencil": "lápis",
+      "erase": "apagar"
     }
   },
   "crocodile": {
@@ -1369,6 +1439,10 @@
     "hint": {
       "biggest": "Este crocodilo quer a resposta maior. É {{value}}.",
       "smallest": "Este crocodilo quer a resposta mais pequena. É {{value}}."
+    },
+    "controls": {
+      "move": "escolher uma pedra",
+      "step": "pisá-la"
     }
   },
   "canisters": {
@@ -1405,35 +1479,35 @@
         "sums": "Cada quantidade que consegues fazer são dois números da bancada somados ou subtraídos: o tamanho de uma vasilha, o que está lá dentro, ou o espaço que ainda tem.",
         "backwards": "Por isso, faz o caminho ao contrário a partir da quantidade pedida: que dois números a fazem, e como consegues ter esses dois ao mesmo tempo?"
       },
-      "claim": "Quando tiveres a quantidade, toca em “esta”. Se escolheres a vasilha errada, perdes uma jogada.",
+      "claim": "Quando tiveres a quantidade, escolhe “esta”. Se escolheres a vasilha errada, perdes uma jogada.",
       "legs": "Depois vem a quantidade seguinte, medida a partir do que ficou nas vasilhas.",
       "default": {
-        "moves": "Toca numa vasilha para pegares nela, e depois toca noutra para despejares lá para dentro. Paras de despejar quando a primeira fica vazia ou a segunda fica cheia.",
+        "moves": "Pega numa vasilha e depois escolhe outra para despejares lá para dentro. Paras de despejar quando a primeira fica vazia ou a segunda fica cheia.",
         "contents": "Esta é toda a água que há: uma vasilha começa cheia, e não se pode deitar fora nem ir buscar mais.",
         "levels": "Cada vasilha diz quanto tem lá dentro, e quanto leva quando está cheia."
       },
       "grain": {
-        "moves": "Toca numa medida para lhe pegares, e depois toca noutra para despejares o cereal lá para dentro. Paras quando a primeira fica vazia ou a segunda fica cheia até à borda.",
+        "moves": "Levanta uma medida e depois escolhe outra para despejares o cereal lá para dentro. Paras quando a primeira fica vazia ou a segunda fica cheia até à borda.",
         "contents": "Este é todo o cereal que há: uma medida começa cheia, e não se pode varrer nem ir buscar mais ao celeiro.",
         "levels": "Cada medida diz quanto tem lá dentro, e quanto leva quando está cheia até à borda."
       },
       "oil": {
-        "moves": "Toca num jarro para lhe pegares, e depois toca noutro para despejares lá para dentro. Paras de despejar quando o primeiro fica vazio ou o segundo fica cheio.",
+        "moves": "Levanta um jarro e depois escolhe outro para despejares lá para dentro. Paras de despejar quando o primeiro fica vazio ou o segundo fica cheio.",
         "contents": "Este é todo o azeite que há: um jarro começa cheio, e não se pode deitar fora nem ir buscar mais.",
         "levels": "Cada jarro diz quanto tem lá dentro, e quanto leva quando está cheio."
       },
       "wine": {
-        "moves": "Toca numa ânfora para lhe pegares, e depois toca noutra para despejares lá para dentro. Paras de despejar quando a primeira fica vazia ou a segunda fica cheia.",
+        "moves": "Levanta uma ânfora e depois escolhe outra para despejares lá para dentro. Paras de despejar quando a primeira fica vazia ou a segunda fica cheia.",
         "contents": "Este é todo o vinho que há: uma ânfora começa cheia, e não se pode entornar nem ir buscar mais à adega.",
         "levels": "Cada ânfora diz quanto tem lá dentro, e quanto leva quando está cheia."
       },
       "natron": {
-        "moves": "Toca num vaso para lhe pegares, e depois toca noutro para despejares o natrão lá para dentro. Paras quando o primeiro fica vazio ou o segundo fica cheio até à tampa.",
+        "moves": "Levanta um vaso e depois escolhe outro para despejares o natrão lá para dentro. Paras quando o primeiro fica vazio ou o segundo fica cheio até à tampa.",
         "contents": "Este é todo o natrão que há: um vaso começa cheio, e não se pode varrer nem ir buscar mais.",
         "levels": "Cada vaso diz quanto tem lá dentro, e quanto leva quando está cheio até à tampa."
       },
       "ink": {
-        "moves": "Toca num tinteiro para lhe pegares, e depois toca noutro para despejares lá para dentro. Paras de despejar quando o primeiro fica vazio ou o segundo fica cheio.",
+        "moves": "Levanta um tinteiro e depois escolhe outro para despejares lá para dentro. Paras de despejar quando o primeiro fica vazio ou o segundo fica cheio.",
         "contents": "Esta é toda a tinta que há: um tinteiro começa cheio, e não se pode deitar fora nem fazer tinta nova.",
         "levels": "Cada tinteiro diz quanto tem lá dentro, e quanto leva quando está cheio."
       }
@@ -1459,7 +1533,12 @@
     "legs": "medido {{done}} de {{total}}",
     "wanted": "Mede",
     "claim": "esta",
-    "claimAria": "Dizer que a de {{capacity}} tem a quantidade"
+    "claimAria": "Dizer que a de {{capacity}} tem a quantidade",
+    "controls": {
+      "move": "escolher uma vasilha ou o “esta” por baixo dela",
+      "press": "pegar, despejar aqui ou dizer que é esta",
+      "putDown": "pousar outra vez a vasilha que tens na mão"
+    }
   },
   "procession": {
     "name": {
@@ -1479,8 +1558,8 @@
     "rules": {
       "default": {
         "lengths": "Cada linha é uma coisa que acontece, e demora o tempo que a barra tem de largura. Quando acontece, és tu que descobres.",
-        "marks": "Uma frase debaixo do dia fica vermelha enquanto não bater certo. Toca numa para marcares as linhas de que ela fala.",
-        "drag": "Arrasta uma barra ao longo da sua linha. Nunca sai do dia."
+        "marks": "Uma frase debaixo do dia fica vermelha enquanto não bater certo. Escolhe uma para marcares as linhas de que ela fala.",
+        "drag": "Desliza uma barra ao longo da sua linha. Nunca sai do dia."
       }
     },
     "hint": {
@@ -1489,7 +1568,7 @@
         "squeeze": "Já não sobra muito dia, e isto é tudo o que cabe.",
         "apart": "Ao contrário, não cabe no dia.",
         "split": "Experimenta ao contrário e outra coisa deixa de bater certo.",
-        "move": "Arrasta a barra marcada para cima dos tracinhos às riscas."
+        "move": "Desliza a barra marcada para cima dos tracinhos às riscas."
       }
     },
     "events": {
@@ -1547,6 +1626,11 @@
       "hint": "Cada placa que pisas solta a sua tarefa. Põe o dia em ordem e depois pisa as placas por essa ordem.",
       "read": "O dia está lido. Pisa as placas por esta ordem, a começar pela primeira.",
       "hintButton": "Pista"
+    },
+    "controls": {
+      "row": "escolher uma linha",
+      "slide": "deslizar a barra dela",
+      "mark": "escolher uma frase debaixo do dia"
     }
   },
   "story": {
@@ -1569,6 +1653,13 @@
       "pick": "Põe o sinal certo no lugar dele.",
       "cannot": "Ainda não conheces o sinal que pertence aqui. Ainda não."
     },
+    "formula": {
+      "wrong": "Falta um sinal nesta linha. Não foi mal gravado: nunca chegou a ser gravado.",
+      "fixed": "A linha está completa.",
+      "pick": "Põe no espaço vazio o sinal que te deram.",
+      "cannot": "Ainda ninguém te deu o sinal para este lugar. Ainda não.",
+      "gap": "O sinal que falta"
+    },
     "sphinx": {
       "wrong": "A mesma escrita que lá fora, mas aqui a areia nunca chegou. Dois sinais ainda bem gravados, e um espaço onde estava o terceiro.",
       "fixed": "Agora está completo.",
@@ -1585,7 +1676,7 @@
       "shrines": "Há um disco de luz, e um santuário por cima de cada saída deste cruzamento. Os espelhos no chão podem levar a luz até qualquer um deles.",
       "doors": "A saída onde a luz chega fica aberta, e as outras ficam fechadas. Um caminho de luz, uma saída.",
       "returning": "Não perdes nada por escolher. Volta cá sempre que quiseres e manda a luz por outro lado: essa saída abre, e esta fecha.",
-      "tap": "Toca num espelho para o rodar. Tocar outra vez põe-no como estava."
+      "tap": "Escolhe um espelho para o rodar. Escolhe-o outra vez para o pores como estava."
     },
     "doorOpen": "Saída {{way}}: aberta",
     "doorShut": "Saída {{way}}: fechada",
@@ -1594,6 +1685,10 @@
       "e": "este",
       "s": "sul",
       "w": "oeste"
+    },
+    "controls": {
+      "move": "escolher um espelho",
+      "turn": "rodá-lo"
     }
   },
   "handle": {
@@ -1846,5 +1941,35 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Desenhar reescreve o texto: todos os comentários vão para o topo"
+  },
+  "saveCard": {
+    "title": "Cartão de viagem",
+    "explain": "Leva a tua expedição para outro aparelho: faz aqui um cartão e lê-o lá dentro de 15 minutos.",
+    "make": "Fazer cartão de viagem",
+    "share": "Partilhar cartão",
+    "download": "Descarregar cartão",
+    "read": "Ler cartão de viagem",
+    "busy": "Um momento…",
+    "makeFailed": "Não foi possível fazer o cartão.",
+    "shareFailed": "Não deu para partilhar; descarrega antes o cartão.",
+    "confirm_one": "Substituir a expedição deste aparelho pela do cartão ({{count}} viagem)?",
+    "confirm_many": "Substituir a expedição deste aparelho pela do cartão ({{count}} viagens)?",
+    "confirm_other": "Substituir a expedição deste aparelho pela do cartão ({{count}} viagens)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Cartão de viagem · leva a tua expedição contigo",
+    "validUntil": "válido até às {{time}}",
+    "codes_one": "{{count}} código",
+    "codes_many": "{{count}} códigos",
+    "codes_other": "{{count}} códigos",
+    "refused": {
+      "notACard": "Isto não é um cartão de viagem.",
+      "tampered": "Este cartão foi alterado e já não pode ser lido.",
+      "expired": "Este cartão já expirou; faz um novo.",
+      "future": "Este cartão vem do futuro: confirma o relógio nos dois aparelhos.",
+      "otherEpoch": "Este cartão é de outra versão do jogo.",
+      "newerGame": "Este cartão vem de uma versão mais recente: atualiza primeiro o jogo."
+    },
+    "writeFailed": "Não foi possível gravar o jogo guardado; este aparelho ficou com o seu.",
+    "writeLost": "Não foi possível substituir o jogo guardado, e o jogo deste aparelho pode estar incompleto."
   }
 }

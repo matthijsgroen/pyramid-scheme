@@ -21,19 +21,24 @@
     "mapHint": "Gabaliņā ieskicēts tirgus ceļš un pagraba durvis — tirgotāja slēptuve, nekas vairāk."
   },
   "junior_1": {
-    "name": "Svēto ibisu ceļš"
+    "name": "Svēto ibisu ceļš",
+    "description": "Niedru purvi gar Nīlu un ibiss, kas pa tiem brien. Svēti putni — un ne tā iemesla dēļ, ko tu domā."
   },
   "junior_2": {
-    "name": "Amatnieku ieleja"
+    "name": "Amatnieku ieleja",
+    "description": "Deir el-Medina, kapu cēlāju ciems. Viņu darbnīcas joprojām stāv, un arī daļa darba."
   },
   "junior_3": {
-    "name": "Tota templis"
+    "name": "Tota templis",
+    "description": "Tota templis. Visi zina viņa vārdu; pajautā trim cilvēkiem, kā dievs viņš bija, un saņemsi trīs atbildes."
   },
   "junior_4": {
-    "name": "Aleksandrijas bāka"
+    "name": "Aleksandrijas bāka",
+    "description": "Aleksandrijas bāka, viens no septiņiem pasaules brīnumiem. Tas, kas no tās palicis, guļ ostā zem ūdens."
   },
   "junior_treasure_tomb": {
     "name": "Dižciltīgās slēptā velve",
+    "description": "Dižciltīgas kundzes velve, apgleznota no grīdas līdz griestiem, un viss joprojām ir tur, kur viņa to nolika.",
     "mapHint": "Smalka tinte, zīmogs ar ģerboni stūrī — kāds no augstas kārtas gribēja, lai šo istabu aizmirst."
   },
   "expert_1": {

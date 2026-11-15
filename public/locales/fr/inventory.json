@@ -239,6 +239,21 @@
       "description": "La coiffe royale avec un cobra protecteur. Les pharaons la portaient pour que les dieux les protègent."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Pain",
+      "description": "Le grand pain, le signe du pain. Donné par Ipi, qui a compté le grain pendant quarante ans et l’a donné une seule fois."
+    },
+    "o2": {
+      "name": "Lin"
+    },
+    "o3": {
+      "name": "Eau"
+    },
+    "o4": {
+      "name": "Bateau"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Feuille de roseau",

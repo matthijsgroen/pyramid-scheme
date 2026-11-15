@@ -21,19 +21,24 @@
     "mapHint": "Stumpen viser en markedsvej og en kælderdør — en købmands gemmested, ikke noget finere."
   },
   "junior_1": {
-    "name": "De hellige ibisser"
+    "name": "De hellige ibisser",
+    "description": "Sivsumpe langs Nilen og ibisserne, der vader igennem dem. Hellige fugle — og ikke af den grund, du tror."
   },
   "junior_2": {
-    "name": "Håndværkernes dal"
+    "name": "Håndværkernes dal",
+    "description": "Deir el-Medina, gravbyggernes landsby. Deres værksteder står der endnu, og det gør noget af arbejdet også."
   },
   "junior_3": {
-    "name": "Thoths tempel"
+    "name": "Thoths tempel",
+    "description": "Thoths tempel. Alle kender hans navn; spørg tre mennesker, hvad han var gud for, og du får tre svar."
   },
   "junior_4": {
-    "name": "Fyrtårnet i Alexandria"
+    "name": "Fyrtårnet i Alexandria",
+    "description": "Pharos i Alexandria, et af de syv underværker. Det, der er tilbage af det, ligger i havnen under vandet."
   },
   "junior_treasure_tomb": {
     "name": "Adelsdamens skjulte hvælving",
+    "description": "En adelsdames hvælving, malet fra gulv til loft, og alt derinde ligger stadig, hvor hun lagde det.",
     "mapHint": "Fint blæk og et våbenskjold i hjørnet — en fin person ville have, at dette rum blev glemt."
   },
   "expert_1": {

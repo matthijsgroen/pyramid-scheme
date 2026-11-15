@@ -28,7 +28,7 @@
   "tombTutorial3": "Die kleinen Aufgaben zeigen dir, wann ein Zeichen richtig ist. So finden wir raus, welches Zeichen wohin gehört.",
   "tombTutorial4": "Alles ausgefüllt? Dann erscheint ein Zahlenschloss. Die große Aufgabe ist der Code – und dann geht das Grab auf!",
   "hieroglyphUnlock": "Wir haben ein besonderes Artefakt – damit können wir auf einen der versiegelten Blöcke schreiben!",
-  "hieroglyphUnlock2": "Tipp auf einen leuchtenden Stein und zieh das Artefakt darauf, um ihn zu öffnen. Ein Block pro Pyramide.",
+  "hieroglyphUnlock2": "Wähl einen leuchtenden Stein und bring das Artefakt dorthin, um ihn zu öffnen. Ein Block pro Pyramide.",
   "errorHighlightTutorial": "Der Schatz, den wir gefunden haben, kann einen tollen Trick – schreib eine falsche Antwort hin, und ein Fehler leuchtet rot!",
   "errorHighlightTutorial2": "Es leuchtet immer nur ein Block, also bleibt es knifflig. Aber es hilft beim Eingrenzen!",
   "earlyFeedbackTutorial": "Siehst du die Kontrollblöcke? Die werden grün oder rot, während du sie ausfüllst – sofort!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Schau mal, was an meinem Stand steht! Ich mach jetzt auch Transporte."
+      },
+      "2": {
+        "explorer": "Ich seh nur eine Zeichnung."
+      },
+      "3": {
+        "fez": "Das Original frisst mehr."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "Zweite Zeile. Den Durstigen Wasser."
+        "explorer": "Zweite Zeile. _Den Nackten Kleider._"
       },
       "2": {
-        "fez": "Brot, und jetzt Wasser. Da wollte aber jemand unbedingt als großzügig gelten."
+        "fez": "Brot, und jetzt Kleider. Da wollte aber jemand unbedingt als großzügig gelten."
       },
       "3": {
         "explorer": "Das haben alle. Jede Wand, jedes Grab, dieselben zwei Zeilen."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Den Nackten Kleider. Dritte Zeile."
+        "explorer": "_Den Durstigen Wasser._ Dritte Zeile."
       },
       "2": {
-        "fez": "Brot, Wasser, Kleider. Das ist eine Liste von Sachen, die man verschenkt hat."
+        "fez": "Brot, Kleider, Wasser. Das ist eine Liste von Sachen, die man verschenkt hat."
       },
       "3": {
         "explorer": "Im Grab von einem, der alles mitgenommen hat."
@@ -1599,8 +1605,42 @@
       "explorer": "Geht so."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Da fehlt was für die Hungrigen. Brot, würde ich sagen. Und ich kenne einen, der vierzig Jahre lang jeden Kornsack gezählt hat."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, wir brauchen Brot. Für eine Wand."
+        },
+        "2": {
+          "ipi": "Brot? Von mir? Weißt du, was Korn kostet?"
+        },
+        "3": {
+          "fez": "Es ist für eine Zeile übers Verschenken."
+        },
+        "4": {
+          "ipi": "…Ver. Schenken."
+        },
+        "5": {
+          "ipi": "Na gut. Ein Laib. Aber das wird aufgeschrieben: _Ipi gab Brot._"
+        },
+        "6": {
+          "fez": "Er hat was verschenkt! Hast du das gesehen?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Das Brot – hat das schon jemand gegessen? Wenn nicht, hätte ich es gern zurück."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Immer noch hier? Nach Norden! Henut! Elf Deben!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "Die Wand. Das dritte Zeichen. Das ist immer noch nicht mein Name."
+          "henut": "Die Wand. Das zweite Zeichen. Das ist immer noch nicht mein Name."
         }
       },
       "wall2": {

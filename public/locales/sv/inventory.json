@@ -239,6 +239,21 @@
       "description": "Kunglig krona med en skyddande kobra. Faraonerna bar den som skydd från gudarna."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Bröd",
+      "description": "Det höga brödet, tecknet för bröd. Givet av Ipi, som räknade säd i fyrtio år och gav bort den en gång."
+    },
+    "o2": {
+      "name": "Linne"
+    },
+    "o3": {
+      "name": "Vatten"
+    },
+    "o4": {
+      "name": "Båt"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Vassblad",

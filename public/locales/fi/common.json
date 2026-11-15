@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Edistymistäsi ei voi ladata",
     "body": "Selain ei juuri nyt anna tallennettua peliäsi. Tallennus ei ole kadonnut: lataa sivu uudelleen ja yritä taas.",
-    "banner": "Edistymistä ei tallenneta. Napauta ladataksesi uudelleen.",
+    "banner": "Edistymistä ei tallenneta. Lataa uudelleen.",
     "reload": "Lataa uudelleen",
     "continue": "Pelaa ilman tallennusta",
     "reset": "Aloita alusta (poista tallennus)",
@@ -29,7 +29,6 @@
     "evening": "Ilta",
     "night": "Yö"
   },
-  "tomb": {},
   "ui": {
     "level": "Taso",
     "symbols": "merkkiä",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Keskeytä retki",
     "confirmInterruptExpedition": "Haluatko varmasti keskeyttää retken? Retken edistyminen säilyy, mutta tason edistyminen katoaa!",
     "cancel": "Peruuta",
+    "leaveSite": "Lähdetkö tästä paikasta?",
+    "confirmLeaveSite": "Valitse Lähde, niin kävelet takaisin ulos, tai Jää, niin jatkat tutkimista.",
+    "leave": "Lähde",
+    "stay": "Jää",
     "settings": "Asetukset",
     "language": "Kieli",
     "close": "Sulje",
@@ -106,8 +109,12 @@
     "solvedUnaided": "Ratkaistu ilman yhtään vihjettä",
     "solvedWithHints_one": "Ratkaistu {{count}} vihjeellä",
     "solvedWithHints_other": "Ratkaistu {{count}} vihjeellä",
-    "tapToContinue": "Napauta jatkaaksesi",
-    "goal": "Tavoite"
+    "tapToContinue": "Jatka",
+    "goal": "Tavoite",
+    "controls": "Ohjaus",
+    "controlsUndo": "kumoa",
+    "controlsHint": "vihje",
+    "controlsLeave": "takaisin karttaan"
   },
   "trap": {
     "warning": "⚠ Ansoitettu käytävä",
@@ -126,6 +133,7 @@
     "turnAround": "Käänny takaisin",
     "wardDescription": {
       "starter": "Kauppiaan sinetti sulkee tämän käytävän. Vain hänen suoja-avaimensa avaa sen.",
+      "junior": "Ylhäisen naisen vaakuna sulkee tämän tien. Vain hänen suoja-avaimensa avaa sen.",
       "expert": "Ylipapin temppelisuoja vartioi tätä ovea. Vain sen pyhä avain avaa sen.",
       "master": "Faaraon kuninkaallinen sinetti sitoo tämän käytävän. Vain hallitsijan avain murtaa sen.",
       "wizard": "Jumalten suoja pitää tätä porttia. Vain sen jumalallinen avain pääsee läpi."
@@ -134,13 +142,14 @@
     "lockedColor": "Et ole vielä löytänyt sitä avainta tästä kerroksesta."
   },
   "chest": {
-    "tapToOpen": "Napauta avataksesi",
+    "tapToOpen": "Avaa",
     "money_one": "{{count}} kolikko",
     "money_other": "{{count}} kolikkoa",
     "mapPiece": "Karttapala",
     "mapPieceDescription": "Hauras palanen karttaa johonkin kauan sitten unohdettuun paikkaan. Harmi, ettei se ole läheskään kokonainen…",
     "mapPieceProgress": "{{found}}/{{required}} karttapalaa kerätty",
     "mapPieceComplete": "Kartta on kokonainen: se johtaa paikkaan {{name}}.",
+    "hieroglyph": "Hieroglyfi",
     "hieroglyphFragment": "Hieroglyfin pala",
     "fragmentProgress": "{{found}}/{{required}} palaa löydetty",
     "tombKey": "Haudan avain",
@@ -157,8 +166,9 @@
   },
   "loot": {
     "youFound": "Löysit",
+    "youReceived": "Sait",
     "expeditionReward": "Lisäpalkinto retken suorittamisesta",
-    "clickToContinue": "Napauta mihin tahansa jatkaaksesi"
+    "clickToContinue": "Jatka"
   },
   "money": {
     "label": "Kolikot"
@@ -252,7 +262,7 @@
     "tabNew_other": "{{label}} · {{count}} uutta",
     "empty": "Arkkusi on vielä tyhjä",
     "newLabel": "UUSI",
-    "clickForDetails": "Napauta ruutua nähdäksesi lisää",
+    "clickForDetails": "Valitse ruutu nähdäksesi lisää",
     "categories": {
       "deities": "🏺 Jumalat",
       "professions": "⚱️ Ammatit",
@@ -260,6 +270,7 @@
       "artifacts": "💎 Esineet",
       "treasures": "💰 Aarteet",
       "junk": "🔷 Pikkuesineet",
+      "offerings": "🍞 Uhrilahjat",
       "signs": "✍️ Merkit"
     },
     "treasureCategories": {
@@ -340,22 +351,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Napauta alhaalta merkkiä ja sitten numeroa. Napauta samaa numeroa uudelleen, niin se lähtee pois.",
+      "tap": "Valitse alhaalta merkki ja sitten numero. Valitse sama numero uudelleen, niin se lähtee pois.",
       "same": "Merkki painaa saman verran joka vaa'assa.",
-      "cancel": "Kun otat saman asian pois kummastakin kupista, vaaka pysyy tasapainossa. Napauta merkittyä palaa tehdäksesi sen. Se mitä jää, säilyy uutena rivinä.",
-      "swap": "Napauta merkkiä, jonka vastapuolella ei ole samanlaista, ja sitten riviä, jossa se merkki on yksin. Niin vaihdat sen siihen, minkä arvoinen se rivi on."
+      "cancel": "Kun otat saman asian pois kummastakin kupista, vaaka pysyy tasapainossa. Valitse merkitty pala tehdäksesi sen. Se mitä jää, säilyy uutena rivinä.",
+      "swap": "Valitse merkki, jonka vastapuolella ei ole samanlaista, ja sitten rivi, jossa se merkki on yksin. Niin vaihdat sen siihen, minkä arvoinen se rivi on."
     },
     "hint": {
       "mistake": "Yksi antamistasi painoista kallistaa vaakaa. Ota se pois ja katso uudelleen.",
       "alone": "Valaistulla rivillä {{glyph}} on ainoa pala, jolla ei ole numeroa. Laske, paljonko se painaa.",
       "equalShares": "Valaistulla rivillä on pelkkiä merkkejä {{glyph}} numeroa vastaan. Jaa se numero tasan niiden kesken.",
       "difference": "Kaksi valaistua riviä ovat samat paitsi merkin {{glyph}} osalta. Vertaa niitä.",
-      "cancelGlyph": "Valaistun rivin kummassakin kupissa on {{glyph}}. Napauta yhtä ottaaksesi sen pois molemmilta puolilta. Rivi pysyy tasapainossa.",
-      "cancelStones": "Valaistun rivin kummassakin kupissa on pelkkiä numeroita. Napauta yhtä ottaaksesi saman määrän pois molemmilta puolilta.",
-      "swap": "Yksi valaistu rivi kertoo, minkä arvoinen yksi {{glyph}} on yksinään. Napauta merkkiä {{glyph}} toisella valaistulla rivillä ja napauta sitten sitä riviä."
+      "cancelGlyph": "Valaistun rivin kummassakin kupissa on {{glyph}}. Valitse yksi ottaaksesi sen pois molemmilta puolilta. Rivi pysyy tasapainossa.",
+      "cancelStones": "Valaistun rivin kummassakin kupissa on pelkkiä numeroita. Valitse yksi ottaaksesi saman määrän pois molemmilta puolilta.",
+      "swap": "Yksi valaistu rivi kertoo, minkä arvoinen yksi {{glyph}} on yksinään. Valitse merkki {{glyph}} toisella valaistulla rivillä ja valitse sitten se rivi."
     },
     "swap": {
-      "pick": "Napauta valaistua riviä vaihtaaksesi tämän merkin {{glyph}} siihen arvoon, jonka rivi sille antaa.",
+      "pick": "Valitse valaistu rivi vaihtaaksesi tämän merkin {{glyph}} siihen arvoon, jonka rivi sille antaa.",
       "none": "Mikään täällä ei kerro, minkä arvoinen yksi {{glyph}} on yksinään, eikä mikään vastapuolella ole samanlainen."
     },
     "goal": {
@@ -365,11 +376,16 @@
     "name": {
       "default": "Vaaka",
       "weighing": "Sydämen punnitus"
+    },
+    "controls": {
+      "move": "valitse pala, rivi tai painike",
+      "press": "paina sitä",
+      "weigh": "anna valitulle merkille tämä paino"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Napauta kerran yliviivataksesi numeron, toisen kerran merkitäksesi sen pidettäväksi ja kolmannen kerran tyhjentääksesi sen.",
+      "tap": "Valitse numero kerran yliviivataksesi sen, toisen kerran merkitäksesi sen pidettäväksi ja kolmannen kerran tyhjentääksesi sen.",
       "totals": "Jokaisen tavoitteen alla oleva pieni numero kertoo, paljonko rivin numerot ovat yhteensä juuri nyt."
     },
     "hint": {
@@ -430,12 +446,16 @@
       }
     },
     "goal": "Jokaisen rivin ja sarakkeen numerot ovat yhteensä viereisen numeron verran.",
-    "name": "Laskulauta"
+    "name": "Laskulauta",
+    "controls": {
+      "move": "valitse numero",
+      "mark": "viivaa yli, pidä tai tyhjennä"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Kahden ruudun välissä oleva merkki osoittaa kohti pienempää numeroa.",
-      "enter": "Napauta ruutua ja sitten numeroa. Sama numero uudelleen ottaa sen pois.",
+      "enter": "Valitse ruutu ja sitten numero. Sama numero uudelleen ottaa sen pois.",
       "notes": "Vaihda lyijykynään, niin voit merkitä, mitkä numerot ruutuun vielä sopisivat. Kumoa ottaa viimeisen siirtosi takaisin."
     },
     "hint": {
@@ -486,14 +506,22 @@
       }
     },
     "goal": "Jokaisella rivillä ja jokaisessa sarakkeessa on jokainen numero tasan kerran.",
-    "name": "Isompi ja pienempi"
+    "name": "Isompi ja pienempi",
+    "controls": {
+      "move": "valitse ruutu",
+      "type": "kirjoita numero",
+      "choose": "valitse numero tai pyyhekumi",
+      "place": "kirjoita se",
+      "pencil": "lyijykynä",
+      "erase": "pyyhi"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Peili kääntää valon kummalta tahansa puoleltaan. Sen ympärillä olevat pienet merkit näyttävät, mihin muihin asentoihin sen voi kääntää. Useimmat kääntävät valoa neljänneksen, ja jotkut vähemmän, jolloin valo lähtee vinoon.",
       "walls": "Kivilohkare nielee valon. Niin tekee myös laudan reuna.",
-      "tap": "Napauta palaa muuttaaksesi sitä: peili kääntyy, liukuva pala siirtyy seuraavaan kohtaansa. Valkoinen reuna tarkoittaa, että saat siirtää sitä. Kaikki muu kuuluu pulmaan.",
-      "nodes": "Osa kivistä on kytketty lattiassa olevaan koloon, eikä napautus liikuta niitä. Ohjaa valo kolon yli, niin kivi liukuu sivuun."
+      "tap": "Valitse pala muuttaaksesi sitä: peili kääntyy, liukuva pala siirtyy seuraavaan kohtaansa. Valkoinen reuna tarkoittaa, että saat siirtää sitä. Kaikki muu kuuluu pulmaan.",
+      "nodes": "Osa kivistä on kytketty lattiassa olevaan koloon, eikä niitä voi itse liikuttaa. Ohjaa valo kolon yli, niin kivi liukuu sivuun."
     },
     "hint": {
       "entryRun": "Aloita sieltä, minne valo jo menee: se kulkee kiekosta suoraan, kunnes osuu ensimmäiseen palaan, jota voit muuttaa. Niissä ruuduissa valo kulkee, teit mitä tahansa.",
@@ -526,7 +554,7 @@
       "triple": "Kolme samaa peräkkäin ei ole koskaan sallittua, ei vaakaan eikä pystyyn.",
       "copies": "Kaksi riviä ei saa olla samanlaisia, eikä kaksi saraketta myöskään.",
       "signs": "Kahden ruudun välissä oleva merkki kertoo, miten ne suhtautuvat toisiinsa: = tarkoittaa samaa, × eri.",
-      "enter": "Napauta ruutua laittaaksesi siihen auringon, uudelleen kuun, ja vielä kerran tyhjentääksesi sen."
+      "enter": "Valitse ruutu laittaaksesi siihen auringon, uudelleen kuun, ja vielä kerran tyhjentääksesi sen."
     },
     "hint": {
       "mistake": "Yksi näistä merkinnöistä ei voi olla oikein.",
@@ -550,7 +578,11 @@
       }
     },
     "goal": "Jokaisessa ruudussa on aurinko tai kuu, ja jokaisella linjalla on yhtä monta kumpaakin.",
-    "name": "Aurinko ja kuu"
+    "name": "Aurinko ja kuu",
+    "controls": {
+      "move": "valitse ruutu",
+      "mark": "vaihda merkintää"
+    }
   },
   "constellation": {
     "rules": {
@@ -558,25 +590,25 @@
         "straight": "Valoviivat kulkevat suoraan vaakaan tai pystyyn tähdestä seuraavaan.",
         "pair": "Kahden tähden välillä voi olla enintään kaksi viivaa.",
         "cross": "Viivat eivät koskaan risteä eivätkä kulje tähden läpi.",
-        "enter": "Vedä tähdestä naapuria kohti piirtääksesi viivan, uudelleen tuplaviivan, ja vielä kerran poistaaksesi sen."
+        "enter": "Piirrä viiva tähdestä naapuria kohti, uudelleen saat tuplaviivan, ja vielä kerran viiva poistuu."
       },
       "causeway": {
         "straight": "Kuljetustiet kulkevat suoraan vaakaan tai pystyyn paikasta seuraavaan.",
         "pair": "Kahden paikan välillä voi olla enintään kaksi tietä.",
         "cross": "Tiet eivät koskaan risteä eivätkä kulje paikan läpi.",
-        "enter": "Vedä paikasta naapuria kohti rakentaaksesi tien, uudelleen tuplataksesi sen, ja vielä kerran purkaaksesi sen."
+        "enter": "Rakenna tie paikasta naapuria kohti, uudelleen tuplataksesi sen, ja vielä kerran purkaaksesi sen."
       },
       "irrigation": {
         "straight": "Kanavat kulkevat suoraan vaakaan tai pystyyn altaasta seuraavaan.",
         "pair": "Kahden altaan välillä voi olla enintään kaksi kanavaa.",
         "cross": "Kanavat eivät koskaan risteä eivätkä kulje altaan läpi.",
-        "enter": "Vedä altaasta naapuria kohti kaivaaksesi kanavan, uudelleen leventääksesi sen, ja vielä kerran täyttääksesi sen."
+        "enter": "Kaiva kanava altaasta naapuria kohti, uudelleen leventääksesi sen, ja vielä kerran täyttääksesi sen."
       },
       "ceiling": {
         "straight": "Nauhat kulkevat suoraan vaakaan tai pystyyn tähdestä seuraavaan.",
         "pair": "Kahden tähden välillä voi olla enintään kaksi nauhaa.",
         "cross": "Nauhat eivät koskaan risteä eivätkä kulje tähden läpi.",
-        "enter": "Vedä tähdestä naapuria kohti pannaksesi nauhan, uudelleen tuplataksesi sen, ja vielä kerran ottaaksesi sen pois."
+        "enter": "Pingota nauha tähdestä naapuria kohti, uudelleen tuplataksesi sen, ja vielä kerran ottaaksesi sen pois."
       }
     },
     "hint": {
@@ -664,37 +696,44 @@
       "causeway": "Pengertie",
       "irrigation": "Vesistö",
       "ceiling": "Maalattu katto"
+    },
+    "controls": {
+      "pick": "valitse tähti",
+      "grab": "tartu siihen",
+      "draw": "piirrä viiva siihen suuntaan",
+      "release": "päästä irti",
+      "alt": "pidä pohjassa ja osoita: viiva, tupla, ei mitään"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Kaksi tähteä ei saa koskea toisiaan, eivät edes kulmista.",
-        "enter": "Napauta ruutua sulkeaksesi sen pois, uudelleen laittaaksesi siihen tähden, ja vielä kerran tyhjentääksesi sen."
+        "enter": "Valitse ruutu sulkeaksesi sen pois, uudelleen laittaaksesi siihen tähden, ja vielä kerran tyhjentääksesi sen."
       },
       "fields": {
         "touch": "Kaksi maataloa ei saa koskea toisiaan, eivät edes kulmista. Niin lähellä niillä olisi yhteinen kaivo.",
-        "enter": "Napauta palstaa sulkeaksesi sen pois, uudelleen rakentaaksesi siihen maatalon, ja vielä kerran tyhjentääksesi sen."
+        "enter": "Valitse palsta sulkeaksesi sen pois, uudelleen rakentaaksesi siihen maatalon, ja vielä kerran tyhjentääksesi sen."
       },
       "lamps": {
         "touch": "Kaksi öljylamppua ei saa olla vierekkäin, eivät edes kulmittain. Niiden valot menisivät päällekkäin, ja öljy menisi hukkaan.",
         "walls": "Harmaat kivilohkareet kuuluvat lattiaan: niiden päälle ei voi panna mitään, eivätkä ne ole ruutuja.",
-        "enter": "Napauta laattaa sulkeaksesi sen pois, uudelleen pannaksesi siihen öljylampun, ja vielä kerran tyhjentääksesi sen."
+        "enter": "Valitse laatta sulkeaksesi sen pois, uudelleen pannaksesi siihen öljylampun, ja vielä kerran tyhjentääksesi sen."
       },
       "market": {
         "touch": "Kaksi kojua ei saa olla vierekkäin, eivät edes kulmittain. Kilpailijat eivät koskaan asetu vierekkäin.",
         "walls": "Talot kuuluvat toriin: niihin ei voi pystyttää kojua, eivätkä ne ole paikkoja.",
-        "enter": "Napauta paikkaa sulkeaksesi sen pois, uudelleen pystyttääksesi siihen kojun, ja vielä kerran tyhjentääksesi sen."
+        "enter": "Valitse paikka sulkeaksesi sen pois, uudelleen pystyttääksesi siihen kojun, ja vielä kerran tyhjentääksesi sen."
       },
       "lotus": {
         "touch": "Kaksi lootusta ei saa kellua vierekkäin, eivät edes kulmittain. Jokainen kukka tarvitsee ympärilleen avointa vettä.",
         "walls": "Kivet työntyvät esiin lammesta: niiden päällä ei voi kellua mitään, eivätkä ne ole ruutuja.",
-        "enter": "Napauta vesiläikkää sulkeaksesi sen pois, uudelleen pannaksesi siihen lootuksen kellumaan, ja vielä kerran tyhjentääksesi sen."
+        "enter": "Valitse vesiläikkä sulkeaksesi sen pois, uudelleen pannaksesi siihen lootuksen kellumaan, ja vielä kerran tyhjentääksesi sen."
       },
       "cats": {
         "touch": "Kaksi kissaa ei saa nukkua vierekkäin, eivät edes kulmittain. Jokaisella kissalla on oma aurinkoläikkänsä.",
         "walls": "Pylväät kannattelevat temppeliä: kissa ei voi nukkua niiden päällä, eivätkä ne ole ruutuja.",
-        "enter": "Napauta laattaa sulkeaksesi sen pois, uudelleen pannaksesi siihen kissan, ja vielä kerran tyhjentääksesi sen."
+        "enter": "Valitse laatta sulkeaksesi sen pois, uudelleen pannaksesi siihen kissan, ja vielä kerran tyhjentääksesi sen."
       }
     },
     "hint": {
@@ -800,20 +839,20 @@
         "mistake": "Tämä merkintä ei voi olla oikein.",
         "touch": "Tässä on {{token}}, eikä kaksi öljylamppua saa olla vierekkäin, eivät edes kulmittain.",
         "groupFull.row_one": "Tällä rivillä on jo öljylamppu.",
-        "groupFull.col_one": "Tässä sarakkeessa on jo öljylamppu.",
         "groupFull.row_other": "Tällä rivillä on jo kaikki {{count}} öljylamppua.",
+        "groupFull.col_one": "Tässä sarakkeessa on jo öljylamppu.",
         "groupFull.col_other": "Tässä sarakkeessa on jo kaikki {{count}} öljylamppua.",
         "groupTight.row_one": "Tällä rivillä on jäljellä enää yksi laatta.",
         "groupTight.row_other": "Tällä rivillä on jäljellä enää {{count}} laattaa.",
         "groupTight.col_one": "Tässä sarakkeessa on jäljellä enää yksi laatta.",
         "groupTight.col_other": "Tässä sarakkeessa on jäljellä enää {{count}} laattaa.",
         "onlyWay.row_one": "Kivilohkareiden välissä tällä rivillä on enää yksi ruutu öljylampulle.",
-        "onlyWay.col_one": "Kivilohkareiden välissä tässä sarakkeessa on enää yksi ruutu öljylampulle.",
         "onlyWay.row_other": "{{count}} öljylamppua voi sovittaa tälle riville vain yhdellä tavalla.",
+        "onlyWay.col_one": "Kivilohkareiden välissä tässä sarakkeessa on enää yksi ruutu öljylampulle.",
         "onlyWay.col_other": "{{count}} öljylamppua voi sovittaa tähän sarakkeeseen vain yhdellä tavalla.",
         "everyWay.row_one": "Meni tämän rivin öljylamppu mihin tahansa, se on aina tässä.",
-        "everyWay.col_one": "Meni tämän sarakkeen öljylamppu mihin tahansa, se on aina tässä.",
         "everyWay.row_other": "Menivät tämän rivin {{count}} öljylamppua mihin tahansa, yksi on aina tässä.",
+        "everyWay.col_one": "Meni tämän sarakkeen öljylamppu mihin tahansa, se on aina tässä.",
         "everyWay.col_other": "Menivät tämän sarakkeen {{count}} öljylamppua mihin tahansa, yksi on aina tässä.",
         "lineBlock.rowsToCols": "Merkityt rivit pitävät öljylamppunsa noiden sarakkeiden ruuduissa, joten niillä sarakkeilla ei ole yhtään ylimääräistä.",
         "lineBlock.colsToRows": "Merkityt sarakkeet pitävät öljylamppunsa noiden rivien ruuduissa, joten niillä riveillä ei ole yhtään ylimääräistä.",
@@ -830,20 +869,20 @@
         "mistake": "Tämä merkintä ei voi olla oikein.",
         "touch": "Tässä on {{token}}, eikä kaksi kojua saa olla vierekkäin, eivät edes kulmittain.",
         "groupFull.row_one": "Tällä rivillä on jo koju.",
-        "groupFull.col_one": "Tässä sarakkeessa on jo koju.",
         "groupFull.row_other": "Tällä rivillä on jo kaikki {{count}} kojua.",
+        "groupFull.col_one": "Tässä sarakkeessa on jo koju.",
         "groupFull.col_other": "Tässä sarakkeessa on jo kaikki {{count}} kojua.",
         "groupTight.row_one": "Tällä rivillä on jäljellä enää yksi paikka.",
         "groupTight.row_other": "Tällä rivillä on jäljellä enää {{count}} paikkaa.",
         "groupTight.col_one": "Tässä sarakkeessa on jäljellä enää yksi paikka.",
         "groupTight.col_other": "Tässä sarakkeessa on jäljellä enää {{count}} paikkaa.",
         "onlyWay.row_one": "Talojen välissä tällä rivillä on enää yksi ruutu kojulle.",
-        "onlyWay.col_one": "Talojen välissä tässä sarakkeessa on enää yksi ruutu kojulle.",
         "onlyWay.row_other": "{{count}} kojua voi sovittaa tälle riville vain yhdellä tavalla.",
+        "onlyWay.col_one": "Talojen välissä tässä sarakkeessa on enää yksi ruutu kojulle.",
         "onlyWay.col_other": "{{count}} kojua voi sovittaa tähän sarakkeeseen vain yhdellä tavalla.",
         "everyWay.row_one": "Meni tämän rivin koju mihin tahansa, se on aina tässä.",
-        "everyWay.col_one": "Meni tämän sarakkeen koju mihin tahansa, se on aina tässä.",
         "everyWay.row_other": "Menivät tämän rivin {{count}} kojua mihin tahansa, yksi on aina tässä.",
+        "everyWay.col_one": "Meni tämän sarakkeen koju mihin tahansa, se on aina tässä.",
         "everyWay.col_other": "Menivät tämän sarakkeen {{count}} kojua mihin tahansa, yksi on aina tässä.",
         "lineBlock.rowsToCols": "Merkityt rivit pitävät kojunsa noiden sarakkeiden ruuduissa, joten niillä sarakkeilla ei ole yhtään ylimääräistä.",
         "lineBlock.colsToRows": "Merkityt sarakkeet pitävät kojunsa noiden rivien ruuduissa, joten niillä riveillä ei ole yhtään ylimääräistä.",
@@ -860,20 +899,20 @@
         "mistake": "Tämä merkintä ei voi olla oikein.",
         "touch": "Tässä on {{token}}, eikä kaksi lootusta saa kellua vierekkäin, eivät edes kulmittain.",
         "groupFull.row_one": "Tällä rivillä on jo lootus.",
-        "groupFull.col_one": "Tässä sarakkeessa on jo lootus.",
         "groupFull.row_other": "Tällä rivillä on jo kaikki {{count}} lootusta.",
+        "groupFull.col_one": "Tässä sarakkeessa on jo lootus.",
         "groupFull.col_other": "Tässä sarakkeessa on jo kaikki {{count}} lootusta.",
         "groupTight.row_one": "Tällä rivillä on jäljellä enää yksi vesiläikkä.",
         "groupTight.row_other": "Tällä rivillä on jäljellä enää {{count}} vesiläikkää.",
         "groupTight.col_one": "Tässä sarakkeessa on jäljellä enää yksi vesiläikkä.",
         "groupTight.col_other": "Tässä sarakkeessa on jäljellä enää {{count}} vesiläikkää.",
         "onlyWay.row_one": "Kivien välissä tällä rivillä on enää yksi ruutu lootukselle.",
-        "onlyWay.col_one": "Kivien välissä tässä sarakkeessa on enää yksi ruutu lootukselle.",
         "onlyWay.row_other": "{{count}} lootusta voi sovittaa tälle riville vain yhdellä tavalla.",
+        "onlyWay.col_one": "Kivien välissä tässä sarakkeessa on enää yksi ruutu lootukselle.",
         "onlyWay.col_other": "{{count}} lootusta voi sovittaa tähän sarakkeeseen vain yhdellä tavalla.",
         "everyWay.row_one": "Meni tämän rivin lootus mihin tahansa, se on aina tässä.",
-        "everyWay.col_one": "Meni tämän sarakkeen lootus mihin tahansa, se on aina tässä.",
         "everyWay.row_other": "Menivät tämän rivin {{count}} lootusta mihin tahansa, yksi on aina tässä.",
+        "everyWay.col_one": "Meni tämän sarakkeen lootus mihin tahansa, se on aina tässä.",
         "everyWay.col_other": "Menivät tämän sarakkeen {{count}} lootusta mihin tahansa, yksi on aina tässä.",
         "lineBlock.rowsToCols": "Merkityt rivit pitävät lootuksensa noiden sarakkeiden ruuduissa, joten niillä sarakkeilla ei ole yhtään ylimääräistä.",
         "lineBlock.colsToRows": "Merkityt sarakkeet pitävät lootuksensa noiden rivien ruuduissa, joten niillä riveillä ei ole yhtään ylimääräistä.",
@@ -890,20 +929,20 @@
         "mistake": "Tämä merkintä ei voi olla oikein.",
         "touch": "Tässä on {{token}}, eikä kaksi kissaa saa nukkua vierekkäin, eivät edes kulmittain.",
         "groupFull.row_one": "Tällä rivillä on jo kissa.",
-        "groupFull.col_one": "Tässä sarakkeessa on jo kissa.",
         "groupFull.row_other": "Tällä rivillä on jo kaikki {{count}} kissaa.",
+        "groupFull.col_one": "Tässä sarakkeessa on jo kissa.",
         "groupFull.col_other": "Tässä sarakkeessa on jo kaikki {{count}} kissaa.",
         "groupTight.row_one": "Tällä rivillä on jäljellä enää yksi laatta.",
         "groupTight.row_other": "Tällä rivillä on jäljellä enää {{count}} laattaa.",
         "groupTight.col_one": "Tässä sarakkeessa on jäljellä enää yksi laatta.",
         "groupTight.col_other": "Tässä sarakkeessa on jäljellä enää {{count}} laattaa.",
         "onlyWay.row_one": "Pylväiden välissä tällä rivillä on enää yksi ruutu kissalle.",
-        "onlyWay.col_one": "Pylväiden välissä tässä sarakkeessa on enää yksi ruutu kissalle.",
         "onlyWay.row_other": "{{count}} kissaa voi sovittaa tälle riville vain yhdellä tavalla.",
+        "onlyWay.col_one": "Pylväiden välissä tässä sarakkeessa on enää yksi ruutu kissalle.",
         "onlyWay.col_other": "{{count}} kissaa voi sovittaa tähän sarakkeeseen vain yhdellä tavalla.",
         "everyWay.row_one": "Meni tämän rivin kissa mihin tahansa, se on aina tässä.",
-        "everyWay.col_one": "Meni tämän sarakkeen kissa mihin tahansa, se on aina tässä.",
         "everyWay.row_other": "Menivät tämän rivin {{count}} kissaa mihin tahansa, yksi on aina tässä.",
+        "everyWay.col_one": "Meni tämän sarakkeen kissa mihin tahansa, se on aina tässä.",
         "everyWay.col_other": "Menivät tämän sarakkeen {{count}} kissaa mihin tahansa, yksi on aina tässä.",
         "lineBlock.rowsToCols": "Merkityt rivit pitävät kissansa noiden sarakkeiden ruuduissa, joten niillä sarakkeilla ei ole yhtään ylimääräistä.",
         "lineBlock.colsToRows": "Merkityt sarakkeet pitävät kissansa noiden rivien ruuduissa, joten niillä riveillä ei ole yhtään ylimääräistä.",
@@ -944,6 +983,11 @@
       "market": "Torikojut",
       "lotus": "Lootuslampi",
       "cats": "Temppelikissat"
+    },
+    "controls": {
+      "move": "valitse ruutu",
+      "mark": "vaihda merkintää",
+      "sweep": "pidä pohjassa ja liiku: sulje pois rivi"
     }
   },
   "pairPuzzle": {
@@ -960,13 +1004,13 @@
         "pair": "Jokaisen sarkofagin vieressä, suoraan ylhäällä, alhaalla, vasemmalla tai oikealla, lepää yksi muumio, ja jokaisella muumiolla on oma sarkofaginsa vieressään.",
         "count": "Rivin tai sarakkeen vieressä oleva numero kertoo, montako muumiota siinä on. Se muuttuu vihreäksi, kun muumioita on juuri sen verran, ja punaiseksi, kun se ei enää voi täyttyä.",
         "touch": "Kaksi muumiota ei saa olla vierekkäin, eivät edes kulmittain.",
-        "enter": "Napauta ruutua sulkeaksesi sen pois, uudelleen pannaksesi siihen muumion, ja vielä kerran tyhjentääksesi sen. Vedä ruutujen yli sulkeaksesi monta kerralla. Sarkofageja ei voi napauttaa."
+        "enter": "Valitse ruutu sulkeaksesi sen pois, uudelleen pannaksesi siihen muumion, ja vielä kerran tyhjentääksesi sen. Sulje pois monta ruutua peräkkäin yhdellä vedolla. Sarkofageja ei voi merkitä."
       },
       "beetles": {
         "pair": "Jokaisen lantapallon vieressä, suoraan ylhäällä, alhaalla, vasemmalla tai oikealla, on yksi sittiäinen, ja jokaisella sittiäisellä on oma pallonsa vieressään kieritettäväksi.",
         "count": "Rivin tai sarakkeen vieressä oleva numero kertoo, montako sittiäistä siinä on. Se muuttuu vihreäksi, kun sittiäisiä on juuri sen verran, ja punaiseksi, kun se ei enää voi täyttyä.",
         "touch": "Kaksi sittiäistä ei saa olla vierekkäin, eivät edes kulmittain.",
-        "enter": "Napauta ruutua sulkeaksesi sen pois, uudelleen pannaksesi siihen sittiäisen, ja vielä kerran tyhjentääksesi sen. Vedä ruutujen yli sulkeaksesi monta kerralla. Lantapalloja ei voi napauttaa."
+        "enter": "Valitse ruutu sulkeaksesi sen pois, uudelleen pannaksesi siihen sittiäisen, ja vielä kerran tyhjentääksesi sen. Sulje pois monta ruutua peräkkäin yhdellä vedolla. Lantapalloja ei voi merkitä."
       }
     },
     "hint": {
@@ -1030,6 +1074,11 @@
           "place_other": "Pane sittiäinen jokaiseen viivoitettuun ruutuun."
         }
       }
+    },
+    "controls": {
+      "move": "valitse ruutu",
+      "mark": "vaihda merkintää",
+      "sweep": "pidä pohjassa ja liiku: sulje pois rivi"
     }
   },
   "rushHour": {
@@ -1044,11 +1093,11 @@
     "rules": {
       "default": {
         "lanes": "Palikka liukuu vain omaa kaistaansa pitkin, ei koskaan sivuttain eikä laudan ulkopuolelle.",
-        "shove": "Vedä palikkaa työntääksesi sitä. Se pysähtyy, kun jokin on tiellä."
+        "shove": "Työnnä palikkaa sen omaa uraa pitkin. Se pysähtyy, kun jokin on tiellä."
       },
       "market": {
         "lanes": "Reki liukuu vain sitä kaistaa pitkin, jolla se on, ei koskaan sivuttain eikä kadulta pois.",
-        "shove": "Vedä rekeä työntääksesi sitä. Se pysähtyy, kun jokin on tiellä."
+        "shove": "Työnnä rekeä sen omaa uraa pitkin. Se pysähtyy, kun jokin on tiellä."
       }
     },
     "hint": {
@@ -1076,29 +1125,35 @@
           "down": "Työnnä sitä katua alas renkaaseen asti."
         }
       }
+    },
+    "controls": {
+      "pick": "valitse palikka",
+      "grab": "tartu siihen",
+      "slide": "liu'uta",
+      "release": "päästä irti"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "Kennossa jo olevat numerot kuuluvat pulmaan. Ne pysyvät paikallaan.",
-        "enter": "Napauta numeroa jatkaaksesi jonoa siitä, ja napauta sitten viereistä tyhjää kennoa viedäksesi sitä eteenpäin. Tai vedä suoraan niiden kennojen läpi, joita jono kulkee.",
-        "back": "Napauta itse panemaasi numeroa ja napauta sitä uudelleen ottaaksesi sen pois, samoin kaiken, mikä jäi roikkumaan siitä. Jos viet jonoa numerosta eri suuntaan, käy samoin. Kumoa ottaa viimeisen siirtosi takaisin."
+        "enter": "Piirrä viiva numerosta viereisten tyhjien kennojen läpi viedäksesi jonoa eteenpäin.",
+        "back": "Valitse itse panemasi numero ja valitse se uudelleen ottaaksesi sen pois, samoin kaiken, mikä jäi roikkumaan siitä. Jos viet jonoa numerosta eri suuntaan, käy samoin. Kumoa ottaa viimeisen siirtosi takaisin."
       },
       "channel": {
         "given": "Valmiiksi numeroidut pellot kuuluvat pulmaan. Ne pysyvät paikallaan.",
-        "enter": "Napauta numeroitua peltoa jatkaaksesi vettä siitä, ja napauta sitten sen vieressä olevaa kuivaa peltoa kaivaaksesi eteenpäin. Tai vedä suoraan niitä peltoja pitkin, joita kanava kulkee.",
-        "back": "Napauta itse kaivamaasi peltoa ja napauta sitä uudelleen täyttääksesi sen, samoin kaiken kanavan, joka jäi siitä erilleen. Jos kaivat pellosta eri suuntaan, käy samoin. Kumoa ottaa viimeisen siirtosi takaisin."
+        "enter": "Kaiva kanava numeroidusta pellosta viereisten kuivien peltojen läpi viedäksesi vettä eteenpäin.",
+        "back": "Valitse itse kaivamasi pelto ja valitse se uudelleen täyttääksesi sen, samoin kaiken kanavan, joka jäi siitä erilleen. Jos kaivat pellosta eri suuntaan, käy samoin. Kumoa ottaa viimeisen siirtosi takaisin."
       },
       "scribe": {
         "given": "Punaisella musteella kirjoitetut numerot kuuluvat pulmaan. Ne pysyvät paikallaan.",
-        "enter": "Napauta numeroa ottaaksesi ruokokynän siitä, ja napauta sitten sen vieressä olevaa tyhjää kohtaa kirjoittaaksesi eteenpäin. Tai vedä suoraan riviä pitkin.",
-        "back": "Napauta itse kirjoittamaasi numeroa ja napauta sitä uudelleen raaputtaaksesi sen pois, samoin kaiken rivin, joka jäi siitä erilleen. Jos kirjoitat numerosta eri suuntaan, käy samoin. Kumoa ottaa viimeisen siirtosi takaisin."
+        "enter": "Kirjoita rivi numerosta viereisten tyhjien kohtien läpi viedäksesi laskua eteenpäin.",
+        "back": "Valitse itse kirjoittamasi numero ja valitse se uudelleen raaputtaaksesi sen pois, samoin kaiken rivin, joka jäi siitä erilleen. Jos kirjoitat numerosta eri suuntaan, käy samoin. Kumoa ottaa viimeisen siirtosi takaisin."
       },
       "chambers": {
         "given": "Valmiiksi numeroidut kammiot ovat rakentajien hakkaamia. Ne pysyvät paikallaan.",
-        "enter": "Napauta numeroitua kammiota jatkaaksesi käytävää siitä, ja napauta sitten sen vieressä olevaa suljettua kammiota murtautuaksesi läpi. Tai vedä suoraan niitä kammioita pitkin, joita käytävä kulkee.",
-        "back": "Napauta itse avaamaasi kammiota ja napauta sitä uudelleen sulkeaksesi sen, samoin kaiken käytävän, joka jäi siitä erilleen. Jos murtaudut kammiosta eri suuntaan, käy samoin. Kumoa ottaa viimeisen siirtosi takaisin."
+        "enter": "Murra käytävä numeroidusta kammiosta viereisten suljettujen kammioiden läpi viedäksesi sitä eteenpäin.",
+        "back": "Valitse itse avaamasi kammio ja valitse se uudelleen sulkeaksesi sen, samoin kaiken käytävän, joka jäi siitä erilleen. Jos murtaudut kammiosta eri suuntaan, käy samoin. Kumoa ottaa viimeisen siirtosi takaisin."
       }
     },
     "goal": {
@@ -1162,6 +1217,13 @@
       "channel": "Kanava",
       "scribe": "Kirjurin paperi",
       "chambers": "Suljetut kammiot"
+    },
+    "controls": {
+      "move": "siirry viereiseen kennoon; ylös ja alas menevät vinosti vasemmalle",
+      "right": "vinosti oikealle ylös tai alas",
+      "grab": "nosta jono, tai ota numerosi pois",
+      "carry": "jono nostettuna: vie sitä eteenpäin; ylös ja alas valitsevat puolen, jolle jono voi jatkua",
+      "drop": "laske jono alas"
     }
   },
   "sudoku": {
@@ -1169,13 +1231,13 @@
       "default": {
         "chambers": "Paksut viivat jakavat ruudukon kuuteen kammioon, jotka ovat kaksi ruutua leveitä ja kolme korkeita.",
         "given": "Valmiiksi kaiverretut numerot kuuluvat pulmaan. Ne pysyvät paikallaan.",
-        "enter": "Napauta ruutua ja sitten numeroa. Sama numero uudelleen ottaa sen pois.",
+        "enter": "Valitse ruutu ja sitten numero. Sama numero uudelleen ottaa sen pois.",
         "notes": "Vaihda lyijykynään, niin voit merkitä, mitkä numerot ruutuun vielä sopisivat. Kumoa ottaa viimeisen siirtosi takaisin."
       },
       "papyrus": {
         "chambers": "Paksut viivat jakavat paperin kuuteen lohkoon, jotka ovat kaksi kohtaa leveitä ja kolme korkeita.",
         "given": "Punaisella musteella kirjoitetut merkit kuuluvat pulmaan. Ne pysyvät paikallaan.",
-        "enter": "Napauta kohtaa ja sitten merkkiä. Sama merkki uudelleen raaputtaa sen pois.",
+        "enter": "Valitse kohta ja sitten merkki. Sama merkki uudelleen raaputtaa sen pois.",
         "notes": "Ota ruokokynä, niin voit merkitä kevyesti, mitkä merkit kohtaan vielä sopisivat. Kumoa ottaa viimeisen siirtosi takaisin."
       }
     },
@@ -1242,6 +1304,14 @@
     "name": {
       "default": "Kuusi kammiota",
       "papyrus": "Kirjurin luettelo"
+    },
+    "controls": {
+      "move": "valitse ruutu",
+      "type": "kirjoita numero",
+      "choose": "valitse numero tai pyyhekumi",
+      "place": "kirjoita se",
+      "pencil": "lyijykynä",
+      "erase": "pyyhi"
     }
   },
   "crocodile": {
@@ -1255,6 +1325,10 @@
     "hint": {
       "biggest": "Tämä krokotiili haluaa isoimman vastauksen. Se on {{value}}.",
       "smallest": "Tämä krokotiili haluaa pienimmän vastauksen. Se on {{value}}."
+    },
+    "controls": {
+      "move": "valitse kivi",
+      "step": "astu sen päälle"
     }
   },
   "canisters": {
@@ -1285,35 +1359,35 @@
         "sums": "Jokainen määrä, jonka voit saada, on kaksi pöydän numeroa yhteen laskettuna tai toisistaan vähennettynä: astian koko, mitä siinä on, tai paljonko siihen vielä mahtuu.",
         "backwards": "Mieti siis taaksepäin pyydetystä määrästä: mitkä kaksi numeroa tekevät sen, ja miten saat ne molemmat näkyviin yhtä aikaa?"
       },
-      "claim": "Kun määrä on valmis, napauta ”tämä”. Väärän astian valitseminen maksaa yhden siirron.",
+      "claim": "Kun määrä on valmis, valitse ”tämä”. Väärän astian valitseminen maksaa yhden siirron.",
       "legs": "Sitten seuraava määrä, mitattuna siitä, mitä astioihin jäi.",
       "default": {
-        "moves": "Napauta astiaa nostaaksesi sen ja napauta sitten toista kaataaksesi siihen. Kaataminen loppuu, kun ensimmäinen tyhjenee tai toinen on täynnä.",
+        "moves": "Nosta astia ja valitse sitten toinen kaataaksesi siihen. Kaataminen loppuu, kun ensimmäinen tyhjenee tai toinen on täynnä.",
         "contents": "Tässä on kaikki vesi, mitä on. Yksi astia on aluksi täynnä, eikä vettä voi heittää pois tai hakea lisää.",
         "levels": "Jokaisessa astiassa lukee, paljonko siinä on ja paljonko siihen mahtuu täytenä."
       },
       "grain": {
-        "moves": "Napauta mittaa nostaaksesi sen ja napauta sitten toista kaataaksesi viljan siihen. Kaataminen loppuu, kun ensimmäinen on tyhjä tai toinen on täynnä reunaan asti.",
+        "moves": "Nosta mitta ja valitse sitten toinen kaataaksesi viljan siihen. Kaataminen loppuu, kun ensimmäinen on tyhjä tai toinen on täynnä reunaan asti.",
         "contents": "Tässä on kaikki vilja, mitä on. Yksi mitta on aluksi täynnä, eikä viljaa voi lakaista pois tai hakea lisää aitasta.",
         "levels": "Jokaisessa mitassa lukee, paljonko siinä on ja paljonko siihen mahtuu reunaan asti."
       },
       "oil": {
-        "moves": "Napauta ruukkua nostaaksesi sen ja napauta sitten toista kaataaksesi siihen. Kaataminen loppuu, kun ensimmäinen tyhjenee tai toinen on täynnä.",
+        "moves": "Nosta ruukku ja valitse sitten toinen kaataaksesi siihen. Kaataminen loppuu, kun ensimmäinen tyhjenee tai toinen on täynnä.",
         "contents": "Tässä on kaikki öljy, mitä on. Yksi ruukku on aluksi täynnä, eikä öljyä voi kaataa pois tai hakea lisää.",
         "levels": "Jokaisessa ruukussa lukee, paljonko siinä on ja paljonko siihen mahtuu täytenä."
       },
       "wine": {
-        "moves": "Napauta amforaa nostaaksesi sen ja napauta sitten toista kaataaksesi siihen. Kaataminen loppuu, kun ensimmäinen tyhjenee tai toinen on täynnä.",
+        "moves": "Nosta amfora ja valitse sitten toinen kaataaksesi siihen. Kaataminen loppuu, kun ensimmäinen tyhjenee tai toinen on täynnä.",
         "contents": "Tässä on kaikki viini, mitä on. Yksi amfora on aluksi täynnä, eikä viiniä voi läikyttää tai hakea lisää kellarista.",
         "levels": "Jokaisessa amforassa lukee, paljonko siinä on ja paljonko siihen mahtuu täytenä."
       },
       "natron": {
-        "moves": "Napauta ruukkua nostaaksesi sen ja napauta sitten toista kaataaksesi natronin siihen. Kaataminen loppuu, kun ensimmäinen on tyhjä tai toinen on täynnä kanteen asti.",
+        "moves": "Nosta ruukku ja valitse sitten toinen kaataaksesi natronin siihen. Kaataminen loppuu, kun ensimmäinen on tyhjä tai toinen on täynnä kanteen asti.",
         "contents": "Tässä on kaikki natron, mitä on. Yksi ruukku on aluksi täynnä, eikä natronia voi lakaista pois tai hakea lisää.",
         "levels": "Jokaisessa ruukussa lukee, paljonko siinä on ja paljonko siihen mahtuu kanteen asti."
       },
       "ink": {
-        "moves": "Napauta purkkia nostaaksesi sen ja napauta sitten toista kaataaksesi siihen. Kaataminen loppuu, kun ensimmäinen tyhjenee tai toinen on täynnä.",
+        "moves": "Nosta purkki ja valitse sitten toinen kaataaksesi siihen. Kaataminen loppuu, kun ensimmäinen tyhjenee tai toinen on täynnä.",
         "contents": "Tässä on kaikki muste, mitä on. Yksi purkki on aluksi täynnä, eikä mustetta voi kaataa pois tai tehdä lisää.",
         "levels": "Jokaisessa purkissa lukee, paljonko siinä on ja paljonko siihen mahtuu täytenä."
       }
@@ -1338,7 +1412,12 @@
     "legs": "mitattu {{done}}/{{total}}",
     "wanted": "Mittaa",
     "claim": "tämä",
-    "claimAria": "Ilmoita, että astiassa {{capacity}} on oikea määrä"
+    "claimAria": "Ilmoita, että astiassa {{capacity}} on oikea määrä",
+    "controls": {
+      "move": "valitse astia tai sen alla oleva ”tämä”",
+      "press": "nosta, kaada tähän tai ilmoita",
+      "putDown": "laske kädessä oleva astia takaisin alas"
+    }
   },
   "procession": {
     "name": {
@@ -1358,8 +1437,8 @@
     "rules": {
       "default": {
         "lengths": "Jokainen rivi on yksi tapahtuma, ja se kestää niin kauan kuin sen palkki on leveä. Milloin se tapahtuu, sen sinä selvität.",
-        "marks": "Päivän alla oleva rivi muuttuu punaiseksi, kun se ei pidä. Napauta sitä, niin näet, mistä riveistä se kertoo.",
-        "drag": "Vedä palkkia omaa riviään pitkin. Se ei koskaan lähde päivän ulkopuolelle."
+        "marks": "Päivän alla oleva rivi muuttuu punaiseksi, kun se ei pidä. Valitse se, niin näet, mistä riveistä se kertoo.",
+        "drag": "Liu'uta palkkia omaa riviään pitkin. Se ei koskaan lähde päivän ulkopuolelle."
       }
     },
     "hint": {
@@ -1368,7 +1447,7 @@
         "squeeze": "Päivää on jäljellä vain tämän verran, ja tämä on kaikki, mikä mahtuu.",
         "apart": "Toisin päin se ei mahdu päivään.",
         "split": "Kokeile toisin päin, niin jokin muu menee rikki.",
-        "move": "Vedä ympyröity palkki viivoitettujen merkkien kohdalle."
+        "move": "Liu'uta ympyröity palkki viivoitettujen merkkien kohdalle."
       }
     },
     "events": {
@@ -1396,6 +1475,11 @@
       "hint": "Jokainen laatta, jolle astut, vapauttaa oman tapahtumansa. Järjestä päivä ja kävele sitten laattojen yli siinä järjestyksessä.",
       "read": "Päivä on luettu. Kävele sen laattojen yli tässä järjestyksessä, ensimmäisestä alkaen.",
       "hintButton": "Vihje"
+    },
+    "controls": {
+      "row": "valitse rivi",
+      "slide": "liu'uta sen palkkia",
+      "mark": "valitse päivän alla oleva rivi"
     }
   },
   "story": {
@@ -1418,6 +1502,13 @@
       "pick": "Pane oikea merkki paikalleen.",
       "cannot": "Et tunne merkkiä, joka tähän kuuluu. Et vielä."
     },
+    "formula": {
+      "wrong": "Tältä riviltä puuttuu yksi merkki. Ei hakattu väärin — ei hakattu ollenkaan.",
+      "fixed": "Rivi on ehjä.",
+      "pick": "Laita saamasi merkki tyhjään kohtaan.",
+      "cannot": "Kukaan ei ole antanut sinulle tämän kohdan merkkiä. Ei vielä.",
+      "gap": "Puuttuva merkki"
+    },
     "sphinx": {
       "wrong": "Samaa kirjoitusta kuin ulkona, mutta hiekka ei koskaan päässyt tänne. Kaksi merkkiä on yhä selvästi hakattuna, ja kolmannen kohdalla on tyhjä kolo.",
       "fixed": "Siinä se on kokonaan.",
@@ -1434,7 +1525,7 @@
       "shrines": "Yksi valokiekko, ja jokaisen tämän risteyksen uloskäynnin yllä pyhäkkö. Lattian peilit voivat viedä valon mihin tahansa niistä.",
       "doors": "Uloskäynti, johon valo osuu, on auki, ja muut ovat kiinni. Yksi reitti, yksi tie eteenpäin.",
       "returning": "Valitseminen ei vie mitään. Voit tulla takaisin milloin vain ja ohjata valon toiseen suuntaan. Silloin se tie aukeaa ja tämä sulkeutuu.",
-      "tap": "Napauta peiliä kääntääksesi sitä. Napauta uudelleen, niin se palaa takaisin."
+      "tap": "Valitse peili kääntääksesi sitä. Valitse se uudelleen, niin se palaa takaisin."
     },
     "doorOpen": "{{way}} uloskäynti: auki",
     "doorShut": "{{way}} uloskäynti: kiinni",
@@ -1443,6 +1534,10 @@
       "e": "Itäinen",
       "s": "Eteläinen",
       "w": "Läntinen"
+    },
+    "controls": {
+      "move": "valitse peili",
+      "turn": "käännä sitä"
     }
   },
   "handle": {
@@ -1692,5 +1787,33 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Piirtäminen kirjoittaa tekstin uudelleen: jokainen kommentti siirtyy ylös"
+  },
+  "saveCard": {
+    "title": "Matkakortti",
+    "explain": "Vie retkesi toiselle laitteelle: tee kortti tässä ja lue se siellä 15 minuutin sisällä.",
+    "make": "Tee matkakortti",
+    "share": "Jaa kortti",
+    "download": "Lataa kortti",
+    "read": "Lue matkakortti",
+    "busy": "Hetki…",
+    "makeFailed": "Korttia ei voitu tehdä.",
+    "shareFailed": "Jakaminen ei onnistunut; lataa kortti sen sijaan.",
+    "confirm_one": "Korvataanko tämän laitteen retki kortilla olevalla ({{count}} matka)?",
+    "confirm_other": "Korvataanko tämän laitteen retki kortilla olevalla ({{count}} matkaa)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Matkakortti · ota retkesi mukaan",
+    "validUntil": "voimassa {{time}} asti",
+    "codes_one": "{{count}} koodi",
+    "codes_other": "{{count}} koodia",
+    "refused": {
+      "notACard": "Tämä ei ole matkakortti.",
+      "tampered": "Tätä korttia on muutettu, eikä sitä voi enää lukea.",
+      "expired": "Tämä kortti on vanhentunut; tee uusi.",
+      "future": "Tämä kortti tulee tulevaisuudesta: tarkista kummankin laitteen kello.",
+      "otherEpoch": "Tämä kortti on pelin toisesta versiosta.",
+      "newerGame": "Tämä kortti on uudemmasta versiosta: päivitä peli ensin."
+    },
+    "writeFailed": "Tallennusta ei voitu kirjoittaa; tämä laite piti omansa.",
+    "writeLost": "Tallennusta ei voitu korvata, ja tämän laitteen tallennus voi olla puutteellinen."
   }
 }

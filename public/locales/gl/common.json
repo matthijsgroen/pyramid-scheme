@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Non se pode cargar o teu progreso",
     "body": "O navegador non quere darnos agora a túa partida gardada. A partida non se perdeu: recarga a páxina para tentalo outra vez.",
-    "banner": "O progreso non se está gardando. Toca para recargar.",
+    "banner": "O progreso non se está gardando. Recarga a páxina.",
     "reload": "Recargar",
     "continue": "Seguir xogando sen gardar",
     "reset": "Empezar de novo (borrar a partida)",
@@ -29,7 +29,6 @@
     "evening": "Serán",
     "night": "Noite"
   },
-  "tomb": {},
   "ui": {
     "level": "Nivel",
     "symbols": "símbolos",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Deixar a expedición",
     "confirmInterruptExpedition": "Seguro que queres deixar esta expedición? O progreso da expedición gárdase, pero perderás o progreso deste nivel!",
     "cancel": "Cancelar",
+    "leaveSite": "Saír deste lugar?",
+    "confirmLeaveSite": "Escolle Saír para volver fóra, ou Quedar para seguir explorando.",
+    "leave": "Saír",
+    "stay": "Quedar",
     "settings": "Axustes",
     "language": "Idioma",
     "close": "Pechar",
@@ -106,8 +109,12 @@
     "solvedUnaided": "Resolto sen ningunha pista",
     "solvedWithHints_one": "Resolto con {{count}} pista",
     "solvedWithHints_other": "Resolto con {{count}} pistas",
-    "tapToContinue": "Toca para seguir",
-    "goal": "Obxectivo"
+    "tapToContinue": "Seguir",
+    "goal": "Obxectivo",
+    "controls": "Controis",
+    "controlsUndo": "desfacer",
+    "controlsHint": "pista",
+    "controlsLeave": "volver ao mapa"
   },
   "trap": {
     "warning": "⚠ Corredor con trampa",
@@ -126,6 +133,7 @@
     "turnAround": "Dar a volta",
     "wardDescription": {
       "starter": "O selo dun mercador pecha este paso. Só a súa chave o abre.",
+      "junior": "O escudo dunha nobre pecha este camiño. Só a súa chave o abre.",
       "expert": "Un selo do templo dun sumo sacerdote garda esta porta. Só a súa chave sagrada a abre.",
       "master": "O selo real dun faraón pecha este paso. Só a chave do rei o rompe.",
       "wizard": "Un selo dos deuses pecha esta porta. Só a súa chave divina deixa pasar."
@@ -134,13 +142,14 @@
     "lockedColor": "Aínda non atopaches esa chave neste piso."
   },
   "chest": {
-    "tapToOpen": "Toca para abrir",
+    "tapToOpen": "Abrir",
     "money_one": "{{count}} moeda",
     "money_other": "{{count}} moedas",
     "mapPiece": "Anaco de mapa",
     "mapPieceDescription": "Un anaco fráxil dun mapa a algún lugar esquecido hai moito tempo. Que pena que estea tan incompleto...",
     "mapPieceProgress": "Tes {{found}} de {{required}} anacos de mapa",
     "mapPieceComplete": "O mapa está enteiro: leva a {{name}}.",
+    "hieroglyph": "Xeroglífico",
     "hieroglyphFragment": "Anaco de xeroglífico",
     "fragmentProgress": "Atopaches {{found}} de {{required}} anacos",
     "tombKey": "Chave da tumba",
@@ -157,8 +166,9 @@
   },
   "loot": {
     "youFound": "Atopaches",
+    "youReceived": "Recibiches",
     "expeditionReward": "Recompensa extra por completar a expedición",
-    "clickToContinue": "Toca onde queiras para seguir"
+    "clickToContinue": "Seguir"
   },
   "money": {
     "label": "Moedas"
@@ -252,7 +262,7 @@
     "tabNew_other": "{{label}} · {{count}} novos",
     "empty": "O teu baúl aínda está baleiro",
     "newLabel": "NOVO",
-    "clickForDetails": "Toca unha peza para ver máis",
+    "clickForDetails": "Escolle unha peza para ver máis",
     "categories": {
       "deities": "🏺 Deuses",
       "professions": "⚱️ Oficios",
@@ -260,6 +270,7 @@
       "artifacts": "💎 Obxectos",
       "treasures": "💰 Tesouros",
       "junk": "🔷 Bagatelas",
+      "offerings": "🍞 Ofrendas",
       "signs": "✍️ Signos"
     },
     "treasureCategories": {
@@ -340,22 +351,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Toca un símbolo de abaixo e despois un número. Toca outra vez ese número para quitalo.",
+      "tap": "Escolle un símbolo de abaixo e despois un número. Escolle outra vez ese número para quitalo.",
       "same": "Un símbolo pesa o mesmo en todas as balanzas.",
-      "cancel": "Se quitas o mesmo dos dous pratos, a balanza segue equilibrada. Toca unha peza marcada para facelo: o que queda gárdase como unha fila nova.",
-      "swap": "Toca un símbolo que non teña outro igual enfronte, e despois unha fila onde ese símbolo está só, para cambialo polo que vale esa fila."
+      "cancel": "Se quitas o mesmo dos dous pratos, a balanza segue equilibrada. Escolle unha peza marcada para facelo: o que queda gárdase como unha fila nova.",
+      "swap": "Escolle un símbolo que non teña outro igual enfronte, e despois unha fila onde ese símbolo está só, para cambialo polo que vale esa fila."
     },
     "hint": {
       "mistake": "Un dos pesos que puxeches fai que unha balanza se incline. Quítao e mira outra vez.",
       "alone": "Na fila iluminada, {{glyph}} é a única peza que queda sen número. Calcula canto pesa.",
       "equalShares": "Na fila iluminada só hai {{glyph}} fronte a un número. Reparte ese número entre eles.",
       "difference": "As dúas filas iluminadas son iguais menos en {{glyph}}. Compáraas.",
-      "cancelGlyph": "Os dous pratos da fila iluminada teñen {{glyph}}. Toca un para quitalo dos dous lados: a fila segue equilibrada.",
-      "cancelStones": "Os dous pratos da fila iluminada teñen números soltos. Toca un para quitar o mesmo dos dous lados.",
-      "swap": "Unha fila iluminada di canto vale un só {{glyph}}. Toca o {{glyph}} da outra fila iluminada, e despois toca esa fila."
+      "cancelGlyph": "Os dous pratos da fila iluminada teñen {{glyph}}. Escolle un para quitalo dos dous lados: a fila segue equilibrada.",
+      "cancelStones": "Os dous pratos da fila iluminada teñen números soltos. Escolle un para quitar o mesmo dos dous lados.",
+      "swap": "Unha fila iluminada di canto vale un só {{glyph}}. Escolle o {{glyph}} da outra fila iluminada, e despois escolle esa fila."
     },
     "swap": {
-      "pick": "Toca unha fila iluminada para cambiar este {{glyph}} polo que esa fila di que vale.",
+      "pick": "Escolle unha fila iluminada para cambiar este {{glyph}} polo que esa fila di que vale.",
       "none": "Aquí nada di canto vale un só {{glyph}}, e nada enfronte del é igual."
     },
     "goal": {
@@ -365,11 +376,16 @@
     "name": {
       "default": "Balanza",
       "weighing": "O peso do corazón"
+    },
+    "controls": {
+      "move": "escoller unha peza, unha fila ou un botón",
+      "press": "premelo",
+      "weigh": "darlle ese peso ao símbolo escollido"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Toca unha vez para riscar un número, outra vez para marcalo como un que se queda, e outra máis para borralo.",
+      "tap": "Escolle un número unha vez para riscalo, outra vez para marcalo como un que se queda, e outra máis para borralo.",
       "totals": "O número pequeno debaixo de cada obxectivo é o que suma esa liña agora mesmo."
     },
     "hint": {
@@ -430,12 +446,16 @@
       }
     },
     "goal": "Cada fila e cada columna suma o número que ten ao lado.",
-    "name": "A conta"
+    "name": "A conta",
+    "controls": {
+      "move": "escoller un número",
+      "mark": "riscar, deixar ou borrar"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Un signo entre dous cadros apunta ao número máis pequeno dos dous.",
-      "enter": "Toca un cadro e despois un número. Se tocas outra vez o mesmo número, quítalo.",
+      "enter": "Escolle un cadro e despois un número. Se escolles outra vez o mesmo número, quítalo.",
       "notes": "Cambia ao lapis para apuntar os números que aínda poderían ir nun cadro. Desfacer quita o teu último movemento."
     },
     "hint": {
@@ -486,14 +506,22 @@
       }
     },
     "goal": "En cada fila e en cada columna sae cada número unha soa vez.",
-    "name": "Maior e menor"
+    "name": "Maior e menor",
+    "controls": {
+      "move": "escoller un cadro",
+      "type": "escribir un número",
+      "choose": "escoller un número ou a goma",
+      "place": "escribilo",
+      "pencil": "lapis",
+      "erase": "borrar"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Un espello desvía a luz por calquera das súas dúas caras. As marquiñas de arredor amosan as outras formas en que pode estar: a maioría xiran a luz un cuarto de volta, e algunhas menos, e mándana en diagonal.",
       "walls": "Un bloque de pedra trágase a luz. O bordo do taboleiro tamén.",
-      "tap": "Toca unha peza para cambiala: un espello xira, unha peza que esvara vai ao seu seguinte sitio. Un bordo branco quere dicir que a podes mover ti; o resto é parte do crebacabezas.",
-      "nodes": "Algunhas pedras están conectadas a un enchufe no chan, e non se moven por moito que toques. Fai pasar a luz polo enchufe e a pedra apártase."
+      "tap": "Escolle unha peza para cambiala: un espello xira, unha peza que esvara vai ao seu seguinte sitio. Un bordo branco quere dicir que a podes mover ti; o resto é parte do crebacabezas.",
+      "nodes": "Algunhas pedras están conectadas a un enchufe no chan, e ti non as podes mover. Fai pasar a luz polo enchufe e a pedra apártase."
     },
     "hint": {
       "entryRun": "Empeza por onde xa vai a luz: sae recta do disco ata que atopa a primeira peza que podes cambiar. Eses cadros levan a luz fagas o que fagas.",
@@ -526,7 +554,7 @@
       "triple": "Tres iguais seguidos nunca se permite, nin en horizontal nin en vertical.",
       "copies": "Non pode haber dúas filas iguais, nin dúas columnas iguais.",
       "signs": "Un signo entre dous cadros di como son: = se son iguais, × se son distintos.",
-      "enter": "Toca un cadro para pór un sol, toca outra vez para unha lúa, e unha vez máis para baleiralo."
+      "enter": "Escolle un cadro para pór un sol, outra vez para unha lúa, e unha vez máis para baleiralo."
     },
     "hint": {
       "mistake": "Unha destas marcas non pode estar ben.",
@@ -550,7 +578,11 @@
       }
     },
     "goal": "Cada cadro ten un sol ou unha lúa, e cada liña ten tantos dun coma do outro.",
-    "name": "Sol e lúa"
+    "name": "Sol e lúa",
+    "controls": {
+      "move": "escoller un cadro",
+      "mark": "cambiar a marca"
+    }
   },
   "constellation": {
     "rules": {
@@ -558,25 +590,25 @@
         "straight": "As liñas de luz van rectas, en horizontal ou en vertical, dunha estrela á seguinte.",
         "pair": "Dúas estrelas poden compartir dúas liñas como moito.",
         "cross": "As liñas nunca se cruzan, e nunca pasan por riba dunha estrela.",
-        "enter": "Arrastra desde unha estrela cara á súa veciña para debuxar unha liña, outra vez para facela dobre, e unha vez máis para borrala."
+        "enter": "Traza unha liña desde unha estrela cara á súa veciña, outra vez para facela dobre, e unha vez máis para borrala."
       },
       "causeway": {
         "straight": "Os camiños de carga van rectos, en horizontal ou en vertical, dunha obra á seguinte.",
         "pair": "Dúas obras poden compartir dous camiños como moito.",
         "cross": "Os camiños nunca se cruzan, e nunca pasan por riba dunha obra.",
-        "enter": "Arrastra desde unha obra cara á súa veciña para facer un camiño, outra vez para facelo dobre, e unha vez máis para desfacelo."
+        "enter": "Fai un camiño desde unha obra cara á súa veciña, outra vez para facelo dobre, e unha vez máis para desfacelo."
       },
       "irrigation": {
         "straight": "As canles van rectas, en horizontal ou en vertical, dun estanque ao seguinte.",
         "pair": "Dous estanques poden compartir dúas canles como moito.",
         "cross": "As canles nunca se cruzan, e nunca pasan por riba dun estanque.",
-        "enter": "Arrastra desde un estanque cara ao seu veciño para cavar unha canle, outra vez para facela máis ancha, e unha vez máis para enchela de terra."
+        "enter": "Cava unha canle desde un estanque cara ao seu veciño, outra vez para facela máis ancha, e unha vez máis para enchela de terra."
       },
       "ceiling": {
         "straight": "Os cordóns van rectos, en horizontal ou en vertical, dunha estrela á seguinte.",
         "pair": "Dúas estrelas poden compartir dous cordóns como moito.",
         "cross": "Os cordóns nunca se cruzan, e nunca pasan por riba dunha estrela.",
-        "enter": "Arrastra desde unha estrela cara á súa veciña para pór un cordón, outra vez para facelo dobre, e unha vez máis para quitalo."
+        "enter": "Estira un cordón desde unha estrela cara á súa veciña, outra vez para facelo dobre, e unha vez máis para quitalo."
       }
     },
     "hint": {
@@ -664,37 +696,44 @@
       "causeway": "Camiño de carga",
       "irrigation": "Sistema de rega",
       "ceiling": "Teito pintado"
+    },
+    "controls": {
+      "pick": "escoller unha estrela",
+      "grab": "collela",
+      "draw": "trazar unha liña cara a ese lado",
+      "release": "soltar",
+      "alt": "manter e apuntar: unha liña, unha dobre, ningunha"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Dúas estrelas non se poden tocar, nin sequera polas esquinas.",
-        "enter": "Toca un cadro para descartalo, outra vez para pór unha estrela, e unha vez máis para borralo."
+        "enter": "Escolle un cadro para descartalo, outra vez para pór unha estrela, e unha vez máis para borralo."
       },
       "fields": {
         "touch": "Dúas granxas non se poden tocar, nin sequera polas esquinas. Tan preto, terían que compartir un pozo.",
-        "enter": "Toca unha parcela para descartala, outra vez para construír unha granxa, e unha vez máis para borrala."
+        "enter": "Escolle unha parcela para descartala, outra vez para construír unha granxa, e unha vez máis para borrala."
       },
       "lamps": {
         "touch": "Dous candís non poden estar xuntos, nin sequera polas esquinas. A súa luz mesturaríase e o aceite gastaríase para nada.",
         "walls": "Os bloques de pedra grises son parte do chan: neles non se pode pór nada, e non contan como cadro.",
-        "enter": "Toca unha lousa para descartala, outra vez para pór un candil, e unha vez máis para borrala."
+        "enter": "Escolle unha lousa para descartala, outra vez para pór un candil, e unha vez máis para borrala."
       },
       "market": {
         "touch": "Dous postos non poden estar xuntos, nin sequera polas esquinas. Os rivais nunca se poñen un ao lado do outro.",
         "walls": "As casas son parte da praza: ninguén pode pór un posto nelas, e non contan como sitio.",
-        "enter": "Toca un sitio para descartalo, outra vez para pór un posto, e unha vez máis para borralo."
+        "enter": "Escolle un sitio para descartalo, outra vez para pór un posto, e unha vez máis para borralo."
       },
       "lotus": {
         "touch": "Dous lotos non poden flotar xuntos, nin sequera polas esquinas. Cada flor necesita auga libre arredor.",
         "walls": "As rochas saen fóra da lagoa: nelas non pode flotar nada, e non contan como cadro.",
-        "enter": "Toca un anaco de auga para descartalo, outra vez para pór un loto, e unha vez máis para borralo."
+        "enter": "Escolle un anaco de auga para descartalo, outra vez para pór un loto, e unha vez máis para borralo."
       },
       "cats": {
         "touch": "Dous gatos non poden durmir xuntos, nin sequera polas esquinas. Cada gato ten o seu anaquiño de sol.",
         "walls": "As columnas suxeitan o templo: ningún gato pode durmir nelas, e non contan como cadro.",
-        "enter": "Toca unha lousa para descartala, outra vez para deitar un gato, e unha vez máis para borrala."
+        "enter": "Escolle unha lousa para descartala, outra vez para deitar un gato, e unha vez máis para borrala."
       }
     },
     "hint": {
@@ -800,20 +839,20 @@
         "mistake": "Esta marca non pode estar ben.",
         "touch": "Aquí hai un {{token}}, e dous candís non poden estar xuntos, nin sequera polas esquinas.",
         "groupFull.row_one": "Esta fila xa ten o seu candil.",
-        "groupFull.col_one": "Esta columna xa ten o seu candil.",
         "groupFull.row_other": "Esta fila xa ten os seus {{count}} candís.",
+        "groupFull.col_one": "Esta columna xa ten o seu candil.",
         "groupFull.col_other": "Esta columna xa ten os seus {{count}} candís.",
         "groupTight.row_one": "A esta fila só lle queda unha lousa.",
         "groupTight.row_other": "A esta fila só lle quedan {{count}} lousas.",
         "groupTight.col_one": "A esta columna só lle queda unha lousa.",
         "groupTight.col_other": "A esta columna só lle quedan {{count}} lousas.",
         "onlyWay.row_one": "Entre os bloques de pedra, nesta fila só queda un cadro para un candil.",
-        "onlyWay.col_one": "Entre os bloques de pedra, nesta columna só queda un cadro para un candil.",
         "onlyWay.row_other": "Só hai unha forma de meter {{count}} candís nesta fila.",
+        "onlyWay.col_one": "Entre os bloques de pedra, nesta columna só queda un cadro para un candil.",
         "onlyWay.col_other": "Só hai unha forma de meter {{count}} candís nesta columna.",
         "everyWay.row_one": "Vaia onde vaia o candil desta fila, sempre está aquí.",
-        "everyWay.col_one": "Vaia onde vaia o candil desta columna, sempre está aquí.",
         "everyWay.row_other": "Vaian onde vaian os {{count}} candís desta fila, un sempre está aquí.",
+        "everyWay.col_one": "Vaia onde vaia o candil desta columna, sempre está aquí.",
         "everyWay.col_other": "Vaian onde vaian os {{count}} candís desta columna, un sempre está aquí.",
         "lineBlock.rowsToCols": "As filas marcadas teñen os seus candís nos cadros desas columnas, así que esas columnas non teñen ningún de sobra.",
         "lineBlock.colsToRows": "As columnas marcadas teñen os seus candís nos cadros desas filas, así que esas filas non teñen ningún de sobra.",
@@ -830,20 +869,20 @@
         "mistake": "Esta marca non pode estar ben.",
         "touch": "Aquí hai un {{token}}, e dous postos non poden estar xuntos, nin sequera polas esquinas.",
         "groupFull.row_one": "Esta fila xa ten o seu posto.",
-        "groupFull.col_one": "Esta columna xa ten o seu posto.",
         "groupFull.row_other": "Esta fila xa ten os seus {{count}} postos.",
+        "groupFull.col_one": "Esta columna xa ten o seu posto.",
         "groupFull.col_other": "Esta columna xa ten os seus {{count}} postos.",
         "groupTight.row_one": "A esta fila só lle queda un sitio.",
         "groupTight.row_other": "A esta fila só lle quedan {{count}} sitios.",
         "groupTight.col_one": "A esta columna só lle queda un sitio.",
         "groupTight.col_other": "A esta columna só lle quedan {{count}} sitios.",
         "onlyWay.row_one": "Entre as casas, nesta fila só queda un cadro para un posto.",
-        "onlyWay.col_one": "Entre as casas, nesta columna só queda un cadro para un posto.",
         "onlyWay.row_other": "Só hai unha forma de meter {{count}} postos nesta fila.",
+        "onlyWay.col_one": "Entre as casas, nesta columna só queda un cadro para un posto.",
         "onlyWay.col_other": "Só hai unha forma de meter {{count}} postos nesta columna.",
         "everyWay.row_one": "Vaia onde vaia o posto desta fila, sempre está aquí.",
-        "everyWay.col_one": "Vaia onde vaia o posto desta columna, sempre está aquí.",
         "everyWay.row_other": "Vaian onde vaian os {{count}} postos desta fila, un sempre está aquí.",
+        "everyWay.col_one": "Vaia onde vaia o posto desta columna, sempre está aquí.",
         "everyWay.col_other": "Vaian onde vaian os {{count}} postos desta columna, un sempre está aquí.",
         "lineBlock.rowsToCols": "As filas marcadas teñen os seus postos nos cadros desas columnas, así que esas columnas non teñen ningún de sobra.",
         "lineBlock.colsToRows": "As columnas marcadas teñen os seus postos nos cadros desas filas, así que esas filas non teñen ningún de sobra.",
@@ -860,20 +899,20 @@
         "mistake": "Esta marca non pode estar ben.",
         "touch": "Aquí hai un {{token}}, e dous lotos non poden flotar xuntos, nin sequera polas esquinas.",
         "groupFull.row_one": "Esta fila xa ten o seu loto.",
-        "groupFull.col_one": "Esta columna xa ten o seu loto.",
         "groupFull.row_other": "Esta fila xa ten os seus {{count}} lotos.",
+        "groupFull.col_one": "Esta columna xa ten o seu loto.",
         "groupFull.col_other": "Esta columna xa ten os seus {{count}} lotos.",
         "groupTight.row_one": "A esta fila só lle queda un anaco de auga.",
         "groupTight.row_other": "A esta fila só lle quedan {{count}} anacos de auga.",
         "groupTight.col_one": "A esta columna só lle queda un anaco de auga.",
         "groupTight.col_other": "A esta columna só lle quedan {{count}} anacos de auga.",
         "onlyWay.row_one": "Entre as rochas, nesta fila só queda un cadro para un loto.",
-        "onlyWay.col_one": "Entre as rochas, nesta columna só queda un cadro para un loto.",
         "onlyWay.row_other": "Só hai unha forma de meter {{count}} lotos nesta fila.",
+        "onlyWay.col_one": "Entre as rochas, nesta columna só queda un cadro para un loto.",
         "onlyWay.col_other": "Só hai unha forma de meter {{count}} lotos nesta columna.",
         "everyWay.row_one": "Vaia onde vaia o loto desta fila, sempre está aquí.",
-        "everyWay.col_one": "Vaia onde vaia o loto desta columna, sempre está aquí.",
         "everyWay.row_other": "Vaian onde vaian os {{count}} lotos desta fila, un sempre está aquí.",
+        "everyWay.col_one": "Vaia onde vaia o loto desta columna, sempre está aquí.",
         "everyWay.col_other": "Vaian onde vaian os {{count}} lotos desta columna, un sempre está aquí.",
         "lineBlock.rowsToCols": "As filas marcadas teñen os seus lotos nos cadros desas columnas, así que esas columnas non teñen ningún de sobra.",
         "lineBlock.colsToRows": "As columnas marcadas teñen os seus lotos nos cadros desas filas, así que esas filas non teñen ningún de sobra.",
@@ -890,20 +929,20 @@
         "mistake": "Esta marca non pode estar ben.",
         "touch": "Aquí hai un {{token}}, e dous gatos non poden durmir xuntos, nin sequera polas esquinas.",
         "groupFull.row_one": "Esta fila xa ten o seu gato.",
-        "groupFull.col_one": "Esta columna xa ten o seu gato.",
         "groupFull.row_other": "Esta fila xa ten os seus {{count}} gatos.",
+        "groupFull.col_one": "Esta columna xa ten o seu gato.",
         "groupFull.col_other": "Esta columna xa ten os seus {{count}} gatos.",
         "groupTight.row_one": "A esta fila só lle queda unha lousa.",
         "groupTight.row_other": "A esta fila só lle quedan {{count}} lousas.",
         "groupTight.col_one": "A esta columna só lle queda unha lousa.",
         "groupTight.col_other": "A esta columna só lle quedan {{count}} lousas.",
         "onlyWay.row_one": "Entre as columnas do templo, nesta fila só queda un cadro para un gato.",
-        "onlyWay.col_one": "Entre as columnas do templo, nesta columna só queda un cadro para un gato.",
         "onlyWay.row_other": "Só hai unha forma de meter {{count}} gatos nesta fila.",
+        "onlyWay.col_one": "Entre as columnas do templo, nesta columna só queda un cadro para un gato.",
         "onlyWay.col_other": "Só hai unha forma de meter {{count}} gatos nesta columna.",
         "everyWay.row_one": "Vaia onde vaia o gato desta fila, sempre está aquí.",
-        "everyWay.col_one": "Vaia onde vaia o gato desta columna, sempre está aquí.",
         "everyWay.row_other": "Vaian onde vaian os {{count}} gatos desta fila, un sempre está aquí.",
+        "everyWay.col_one": "Vaia onde vaia o gato desta columna, sempre está aquí.",
         "everyWay.col_other": "Vaian onde vaian os {{count}} gatos desta columna, un sempre está aquí.",
         "lineBlock.rowsToCols": "As filas marcadas teñen os seus gatos nos cadros desas columnas, así que esas columnas non teñen ningún de sobra.",
         "lineBlock.colsToRows": "As columnas marcadas teñen os seus gatos nos cadros desas filas, así que esas filas non teñen ningún de sobra.",
@@ -944,6 +983,11 @@
       "market": "Postos de mercado",
       "lotus": "Lagoa dos lotos",
       "cats": "Gatos do templo"
+    },
+    "controls": {
+      "move": "escoller un cadro",
+      "mark": "cambiar a marca",
+      "sweep": "manter e mover: descartar unha fila"
     }
   },
   "pairPuzzle": {
@@ -960,13 +1004,13 @@
         "pair": "Cada sarcófago ten unha momia descansando xusto enriba, debaixo, á esquerda ou á dereita, e cada momia descansa ao lado do seu propio sarcófago.",
         "count": "O número ao lado dunha fila ou columna di cantas momias ten. Ponse verde cando a liña ten xusto esas, e vermello cando xa non pode ser.",
         "touch": "Dúas momias non poden estar xuntas, nin sequera polas esquinas.",
-        "enter": "Toca un cadro para descartalo, outra vez para deitar unha momia, e unha vez máis para borralo. Arrastra por varios cadros para descartalos todos. Os sarcófagos non se poden tocar."
+        "enter": "Escolle un cadro para descartalo, outra vez para deitar unha momia, e unha vez máis para borralo. Podes descartar varios cadros seguidos dunha soa pasada. Os sarcófagos non se poden marcar."
       },
       "beetles": {
         "pair": "Cada bóla de esterco ten un escaravello xusto enriba, debaixo, á esquerda ou á dereita, e cada escaravello está ao lado da súa propia bóla para facela rodar.",
         "count": "O número ao lado dunha fila ou columna di cantos escaravellos ten. Ponse verde cando a liña ten xusto eses, e vermello cando xa non pode ser.",
         "touch": "Dous escaravellos non poden estar xuntos, nin sequera polas esquinas.",
-        "enter": "Toca un cadro para descartalo, outra vez para pór un escaravello, e unha vez máis para borralo. Arrastra por varios cadros para descartalos todos. As bólas de esterco non se poden tocar."
+        "enter": "Escolle un cadro para descartalo, outra vez para pór un escaravello, e unha vez máis para borralo. Podes descartar varios cadros seguidos dunha soa pasada. As bólas de esterco non se poden marcar."
       }
     },
     "hint": {
@@ -1030,6 +1074,11 @@
           "place_other": "Pon un escaravello en cada cadro raiado."
         }
       }
+    },
+    "controls": {
+      "move": "escoller un cadro",
+      "mark": "cambiar a marca",
+      "sweep": "manter e mover: descartar unha fila"
     }
   },
   "rushHour": {
@@ -1044,11 +1093,11 @@
     "rules": {
       "default": {
         "lanes": "Un bloque só esvara polo seu carril: nunca de lado, nunca fóra do taboleiro.",
-        "shove": "Arrastra un bloque para empuxalo. Para onde hai algo no medio."
+        "shove": "Empuxa un bloque polo seu carril. Para onde hai algo no medio."
       },
       "market": {
         "lanes": "Un trineo só esvara polo carril onde está: nunca de lado, nunca fóra da rúa.",
-        "shove": "Arrastra un trineo para empuxalo. Para onde hai algo no medio."
+        "shove": "Empuxa un trineo polo seu carril. Para onde hai algo no medio."
       }
     },
     "hint": {
@@ -1076,29 +1125,35 @@
           "down": "Empúxao rúa abaixo, ata o aro."
         }
       }
+    },
+    "controls": {
+      "pick": "escoller un bloque",
+      "grab": "collelo",
+      "slide": "esvaralo",
+      "release": "soltar"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "Os números que xa están no panal son parte do crebacabezas: non se moven.",
-        "enter": "Toca un número para seguir a cadea desde aí, e despois toca unha cela baleira que lle toque para continuala. Ou arrastra directamente polas celas por onde vai.",
-        "back": "Toca un número que puxeches e tócao outra vez para quitalo, xunto co que quede colgado del. Se levas a cadea por outro camiño desde un número, pasa o mesmo. Desfacer quita o teu último movemento."
+        "enter": "Traza unha liña desde un número polas celas baleiras do lado para continuar a cadea.",
+        "back": "Escolle un número que puxeches e escólleo outra vez para quitalo, xunto co que quede colgado del. Se levas a cadea por outro camiño desde un número, pasa o mesmo. Desfacer quita o teu último movemento."
       },
       "channel": {
         "given": "Os campos que xa teñen número son parte do crebacabezas: non se moven.",
-        "enter": "Toca un campo con número para levar a auga desde aí, e despois toca un campo seco ao lado para seguir cavando. Ou arrastra directamente polos campos por onde vai a canle.",
-        "back": "Toca un campo que cavaches e tócao outra vez para enchelo de terra, xunto con calquera canle que quede cortada del. Se cavas por outro camiño desde un campo, pasa o mesmo. Desfacer quita o teu último movemento."
+        "enter": "Cava unha canle desde un campo con número polos campos secos do lado para levar a auga máis lonxe.",
+        "back": "Escolle un campo que cavaches e escólleo outra vez para enchelo de terra, xunto con calquera canle que quede cortada del. Se cavas por outro camiño desde un campo, pasa o mesmo. Desfacer quita o teu último movemento."
       },
       "scribe": {
         "given": "As cifras escritas en vermello son do propio crebacabezas: non se moven.",
-        "enter": "Toca unha cifra para coller o cálamo desde aí, e despois toca un espazo baleiro ao lado para seguir escribindo. Ou arrastra directamente pola liña.",
-        "back": "Toca unha cifra que escribiches e tócaa outra vez para rascala, xunto con calquera liña que quede cortada dela. Se escribes por outro camiño desde unha cifra, pasa o mesmo. Desfacer quita o teu último movemento."
+        "enter": "Escribe unha liña desde unha cifra polos espazos baleiros do lado para seguir a conta.",
+        "back": "Escolle unha cifra que escribiches e escóllea outra vez para rascala, xunto con calquera liña que quede cortada dela. Se escribes por outro camiño desde unha cifra, pasa o mesmo. Desfacer quita o teu último movemento."
       },
       "chambers": {
         "given": "As cámaras que xa teñen número fixéronas os construtores: non se moven.",
-        "enter": "Toca unha cámara con número para seguir o paso desde aí, e despois toca unha cámara selada ao lado para abrir camiño. Ou arrastra directamente polas cámaras por onde vai o paso.",
-        "back": "Toca unha cámara que abriches e tócaa outra vez para selala, xunto con calquera paso que quede cortado dela. Se abres camiño por outro lado desde unha cámara, pasa o mesmo. Desfacer quita o teu último movemento."
+        "enter": "Abre un paso desde unha cámara con número polas cámaras seladas do lado para continualo.",
+        "back": "Escolle unha cámara que abriches e escóllea outra vez para selala, xunto con calquera paso que quede cortado dela. Se abres camiño por outro lado desde unha cámara, pasa o mesmo. Desfacer quita o teu último movemento."
       }
     },
     "goal": {
@@ -1162,6 +1217,13 @@
       "channel": "A canle",
       "scribe": "A folla do escriba",
       "chambers": "Cámaras seladas"
+    },
+    "controls": {
+      "move": "ir a unha cela do lado; arriba e abaixo inclínanse á esquerda",
+      "right": "arriba á dereita ou abaixo á dereita",
+      "grab": "coller a cadea, ou quitar o teu número",
+      "carry": "coa cadea collida: continuala; arriba e abaixo van cara ao lado onde pode seguir",
+      "drop": "soltar a cadea"
     }
   },
   "sudoku": {
@@ -1169,13 +1231,13 @@
       "default": {
         "chambers": "As liñas grosas dividen a grella en seis cámaras, de dous cadros de ancho e tres de alto.",
         "given": "Os números que xa están tallados son parte do crebacabezas: non se moven.",
-        "enter": "Toca un cadro e despois un número. Se tocas outra vez o mesmo número, quítalo.",
+        "enter": "Escolle un cadro e despois un número. Se escolles outra vez o mesmo número, quítalo.",
         "notes": "Cambia ao lapis para apuntar os números que aínda poderían ir nun cadro. Desfacer quita o teu último movemento."
       },
       "papyrus": {
         "chambers": "As liñas grosas dividen a folla en seis recadros, de dous espazos de ancho e tres de alto.",
         "given": "Os signos escritos en vermello son do propio crebacabezas: non se moven.",
-        "enter": "Toca un espazo e despois un signo. Se tocas outra vez o mesmo signo, rascalo.",
+        "enter": "Escolle un espazo e despois un signo. Se escolles outra vez o mesmo signo, rascalo.",
         "notes": "Colle o cálamo para apuntar os signos que aínda poderían ir nun espazo. Desfacer quita o teu último movemento."
       }
     },
@@ -1242,6 +1304,14 @@
     "name": {
       "default": "Seis cámaras",
       "papyrus": "O rexistro do escriba"
+    },
+    "controls": {
+      "move": "escoller un cadro",
+      "type": "escribir un número",
+      "choose": "escoller un número ou a goma",
+      "place": "escribilo",
+      "pencil": "lapis",
+      "erase": "borrar"
     }
   },
   "crocodile": {
@@ -1255,6 +1325,10 @@
     "hint": {
       "biggest": "Este crocodilo quere a resposta máis grande. É {{value}}.",
       "smallest": "Este crocodilo quere a resposta máis pequena. É {{value}}."
+    },
+    "controls": {
+      "move": "escoller unha pedra",
+      "step": "pisala"
     }
   },
   "canisters": {
@@ -1285,35 +1359,35 @@
         "sums": "Cada cantidade que podes facer son dous números da mesa sumados ou restados: o tamaño dun recipiente, o que ten dentro, ou o sitio que lle queda.",
         "backwards": "Así que pensa cara atrás desde a cantidade que se pide: que dous números a fan, e como consegues ter eses dous á vez?"
       },
-      "claim": "Cando teñas a cantidade, toca «este». Se dis o recipiente equivocado, custa un movemento.",
+      "claim": "Cando teñas a cantidade, escolle «este». Se dis o recipiente equivocado, custa un movemento.",
       "legs": "Despois a seguinte cantidade, medida co que quede nos recipientes.",
       "default": {
-        "moves": "Toca un recipiente para collelo, e despois toca outro para botar nel. Deixas de botar cando o primeiro queda baleiro ou o segundo está cheo.",
+        "moves": "Colle un recipiente, e despois escolle outro para botar nel. Deixas de botar cando o primeiro queda baleiro ou o segundo está cheo.",
         "contents": "Esta é toda a auga que hai: un recipiente empeza cheo, e non se pode tirar nin traer máis.",
         "levels": "Cada recipiente di canto ten dentro, e canto lle cabe cando está cheo."
       },
       "grain": {
-        "moves": "Toca unha medida para levantala, e despois toca outra para botarlle o gran. Deixas de botar cando a primeira queda baleira ou a segunda está rasa ata o bordo.",
+        "moves": "Levanta unha medida, e despois escolle outra para botarlle o gran. Deixas de botar cando a primeira queda baleira ou a segunda está rasa ata o bordo.",
         "contents": "Este é todo o gran que hai: unha medida empeza chea, e non se pode varrer nin traer máis do hórreo.",
         "levels": "Cada medida di canto ten dentro, e canto lle cabe rasa ata o bordo."
       },
       "oil": {
-        "moves": "Toca unha xerra para levantala, e despois toca outra para botar nela. Deixas de botar cando a primeira queda baleira ou a segunda está chea.",
+        "moves": "Levanta unha xerra, e despois escolle outra para botar nela. Deixas de botar cando a primeira queda baleira ou a segunda está chea.",
         "contents": "Este é todo o aceite que hai: unha xerra empeza chea, e non se pode tirar nin sacar máis.",
         "levels": "Cada xerra di canto ten dentro, e canto lle cabe cando está chea."
       },
       "wine": {
-        "moves": "Toca unha ánfora para levantala, e despois toca outra para pasar o viño. Deixas de botar cando a primeira queda baleira ou a segunda está chea.",
+        "moves": "Levanta unha ánfora, e despois escolle outra para pasar o viño. Deixas de botar cando a primeira queda baleira ou a segunda está chea.",
         "contents": "Este é todo o viño que hai: unha ánfora empeza chea, e non se pode derramar nin traer máis da adega.",
         "levels": "Cada ánfora di canto ten dentro, e canto lle cabe cando está chea."
       },
       "natron": {
-        "moves": "Toca un vaso para levantalo, e despois toca outro para botarlle o natrón. Deixas de botar cando o primeiro queda baleiro ou o segundo está cheo ata a tapa.",
+        "moves": "Levanta un vaso, e despois escolle outro para botarlle o natrón. Deixas de botar cando o primeiro queda baleiro ou o segundo está cheo ata a tapa.",
         "contents": "Este é todo o natrón que hai: un vaso empeza cheo, e non se pode varrer nin traer máis.",
         "levels": "Cada vaso di canto ten dentro, e canto lle cabe cheo ata a tapa."
       },
       "ink": {
-        "moves": "Toca un tinteiro para levantalo, e despois toca outro para botar nel. Deixas de botar cando o primeiro queda baleiro ou o segundo está cheo.",
+        "moves": "Levanta un tinteiro, e despois escolle outro para botar nel. Deixas de botar cando o primeiro queda baleiro ou o segundo está cheo.",
         "contents": "Esta é toda a tinta que hai: un tinteiro empeza cheo, e non se pode tirar nin moer máis.",
         "levels": "Cada tinteiro di canto ten dentro, e canto lle cabe cando está cheo."
       }
@@ -1338,7 +1412,12 @@
     "legs": "medidas {{done}} de {{total}}",
     "wanted": "Mide",
     "claim": "este",
-    "claimAria": "Dicir que o de {{capacity}} ten a cantidade"
+    "claimAria": "Dicir que o de {{capacity}} ten a cantidade",
+    "controls": {
+      "move": "escoller un recipiente ou o «este» de debaixo",
+      "press": "coller, botar aquí ou dicir que é este",
+      "putDown": "volver deixar o recipiente que levas"
+    }
   },
   "procession": {
     "name": {
@@ -1358,8 +1437,8 @@
     "rules": {
       "default": {
         "lengths": "Cada fila é unha cousa que pasa, e dura o que mide a súa barra. Cando pasa é o que tes que descubrir ti.",
-        "marks": "Unha liña de debaixo do día ponse vermella mentres non se cumpre. Tócaa para rodear as filas das que fala.",
-        "drag": "Arrastra unha barra pola súa fila. Nunca sae do día."
+        "marks": "Unha liña de debaixo do día ponse vermella mentres non se cumpre. Escóllea para rodear as filas das que fala.",
+        "drag": "Despraza unha barra pola súa fila. Nunca sae do día."
       }
     },
     "hint": {
@@ -1368,7 +1447,7 @@
         "squeeze": "Queda pouco día, e isto é todo o que cabe.",
         "apart": "Ao revés non cabe no día.",
         "split": "Próbao ao revés e outra cousa deixa de funcionar.",
-        "move": "Arrastra a barra rodeada ata as marcas raiadas."
+        "move": "Despraza a barra rodeada ata as marcas raiadas."
       }
     },
     "events": {
@@ -1431,6 +1510,11 @@
       "hint": "Cada lousa que pisas pon en marcha a súa tarefa. Ordena o día, e despois pisa as lousas nesa orde.",
       "read": "O día xa está lido. Pisa as súas lousas nesta orde, desde a primeira.",
       "hintButton": "Pista"
+    },
+    "controls": {
+      "row": "escoller unha fila",
+      "slide": "desprazar a súa barra",
+      "mark": "escoller unha liña de debaixo do día"
     }
   },
   "story": {
@@ -1453,6 +1537,13 @@
       "pick": "Pon o símbolo bo no seu sitio.",
       "cannot": "Non coñeces o símbolo que vai aquí. Aínda non."
     },
+    "formula": {
+      "wrong": "A esta liña fáltalle un símbolo. Non está mal tallado: nunca se tallou.",
+      "fixed": "A liña está completa.",
+      "pick": "Pon o símbolo que che deron no sitio baleiro.",
+      "cannot": "Ninguén che deu o símbolo para este sitio. Aínda non.",
+      "gap": "O símbolo que falta"
+    },
     "sphinx": {
       "wrong": "A mesma escritura ca fóra, pero aquí nunca chegou a area. Dous símbolos aínda ben tallados, e un oco onde estaba o terceiro.",
       "fixed": "Xa está enteiro.",
@@ -1469,7 +1560,7 @@
       "shrines": "Un disco de luz, e un santuario enriba de cada saída deste cruce. Os espellos do chan poden levar a luz a calquera deles.",
       "doors": "A saída á que chega a luz queda aberta, e as outras pechadas. Un camiño de luz, unha saída.",
       "returning": "Escoller non che fai perder nada. Volve entrar cando queiras e manda a luz por outro lado: esa saída ábrese, e esta péchase.",
-      "tap": "Toca un espello para xiralo. Se o tocas outra vez, volve como estaba."
+      "tap": "Escolle un espello para xiralo. Escólleo outra vez para deixalo como estaba."
     },
     "doorOpen": "Saída {{way}}: aberta",
     "doorShut": "Saída {{way}}: pechada",
@@ -1478,6 +1569,10 @@
       "e": "do leste",
       "s": "do sur",
       "w": "do oeste"
+    },
+    "controls": {
+      "move": "escoller un espello",
+      "turn": "xiralo"
     }
   },
   "handle": {
@@ -1727,5 +1822,33 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Debuxar reescribe o texto: todos os comentarios van ao principio"
+  },
+  "saveCard": {
+    "title": "Tarxeta de viaxe",
+    "explain": "Leva a túa expedición a outro dispositivo: fai unha tarxeta aquí e léea no outro en menos de 15 minutos.",
+    "make": "Facer tarxeta de viaxe",
+    "share": "Compartir tarxeta",
+    "download": "Descargar tarxeta",
+    "read": "Ler tarxeta de viaxe",
+    "busy": "Un momento…",
+    "makeFailed": "Non se puido facer a tarxeta.",
+    "shareFailed": "Non se puido compartir; descarga a tarxeta.",
+    "confirm_one": "Cambiar a expedición deste dispositivo pola da tarxeta ({{count}} viaxe)?",
+    "confirm_other": "Cambiar a expedición deste dispositivo pola da tarxeta ({{count}} viaxes)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Tarxeta de viaxe · leva a túa expedición contigo",
+    "validUntil": "válida ata {{time}}",
+    "codes_one": "{{count}} código",
+    "codes_other": "{{count}} códigos",
+    "refused": {
+      "notACard": "Isto non é unha tarxeta de viaxe.",
+      "tampered": "Esta tarxeta foi modificada e xa non se pode ler.",
+      "expired": "Esta tarxeta caducou; fai unha nova.",
+      "future": "Esta tarxeta vén do futuro: comproba a hora nos dous dispositivos.",
+      "otherEpoch": "Esta tarxeta é doutra versión do xogo.",
+      "newerGame": "Esta tarxeta vén dunha versión máis nova: primeiro actualiza o xogo."
+    },
+    "writeFailed": "Non se puido escribir a partida gardada; este dispositivo conservou a súa.",
+    "writeLost": "Non se puido substituír a partida gardada, e a deste dispositivo pode estar incompleta."
   }
 }

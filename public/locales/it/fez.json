@@ -28,7 +28,7 @@
   "tombTutorial3": "Le operazioni piccole ti fanno vedere quando un segno è giusto. Così scopriamo quale segno va dove.",
   "tombTutorial4": "Tutto pieno? Allora appare un lucchetto con i numeri. L'operazione grande è il codice, e poi la tomba si apre!",
   "hieroglyphUnlock": "Abbiamo un oggetto speciale: con questo possiamo scrivere su uno di quei blocchi sigillati!",
-  "hieroglyphUnlock2": "Tocca una pietra che brilla, poi trascinaci sopra l'oggetto per sbloccarla. Un blocco per piramide.",
+  "hieroglyphUnlock2": "Scegli una pietra che brilla, poi portaci l'oggetto per sbloccarla. Un blocco per piramide.",
   "errorHighlightTutorial": "Quel tesoro che abbiamo trovato ha un trucco utile: se scrivi una risposta sbagliata, un errore si illumina di rosso!",
   "errorHighlightTutorial2": "Si illumina solo un blocco alla volta, quindi resta una sfida. Però ti aiuta a capire dove cercare!",
   "earlyFeedbackTutorial": "Vedi quei blocchi di controllo? Diventano verdi o rossi mentre li riempi: ti dicono subito se va bene!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Guarda cosa c'è alla bancarella! Adesso vendo anche trasporti."
+      },
+      "2": {
+        "explorer": "Io vedo solo un disegno."
+      },
+      "3": {
+        "fez": "L'originale mangia di più."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "Seconda riga. L'acqua a chi aveva sete."
+        "explorer": "Seconda riga. _I vestiti a chi non ne aveva._"
       },
       "2": {
-        "fez": "Il pane, e adesso l'acqua. Qualcuno ci teneva tanto a essere ricordato come generoso."
+        "fez": "Il pane, e adesso i vestiti. Qualcuno ci teneva tanto a essere ricordato come generoso."
       },
       "3": {
         "explorer": "Ce l'hanno tutti. Ogni muro, ogni tomba, le stesse due righe."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "I vestiti a chi non ne aveva. Terza riga."
+        "explorer": "_L'acqua a chi aveva sete._ Terza riga."
       },
       "2": {
-        "fez": "Pane, acqua, vestiti. È un elenco di cose regalate."
+        "fez": "Pane, vestiti, acqua. È un elenco di cose regalate."
       },
       "3": {
         "explorer": "Nella tomba di un uomo che si è portato via tutto."
@@ -1599,8 +1605,42 @@
       "explorer": "Può andare."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Lì manca qualcosa per chi ha fame. Il pane, direi. E conosco un uomo che ha contato ogni sacco di grano per quarant'anni."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, ci serve del pane. Per un muro."
+        },
+        "2": {
+          "ipi": "Del pane? Il mio? Lo sai quanto costa il grano?"
+        },
+        "3": {
+          "fez": "È per una riga che parla di regalare le cose."
+        },
+        "4": {
+          "ipi": "…Regalare. Le cose."
+        },
+        "5": {
+          "ipi": "E va bene. Una pagnotta. Ma che resti scritto: _Ipi ha dato il pane._"
+        },
+        "6": {
+          "fez": "Ha regalato qualcosa! L'hai visto?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Quella pagnotta… qualcuno l'ha già mangiata? Perché se no, la rivorrei indietro."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Ancora qui? A nord! Henut! Undici deben!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "Il muro. Il terzo segno. Non è ancora il mio nome."
+          "henut": "Il muro. Il secondo segno. Non è ancora il mio nome."
         }
       },
       "wall2": {

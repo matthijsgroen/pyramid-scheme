@@ -28,7 +28,7 @@
   "tombTutorial3": "Taispeánann na suimeanna beaga duit nuair atá comhartha ceart. Sin mar a aimsímid cén comhartha a théann cén áit.",
   "tombTutorial4": "Iad go léir líonta? Ansin tagann glas uimhreacha. Is í an tsuim mhór an cód — agus ansin osclaíonn an tuama!",
   "hieroglyphUnlock": "Tá déantán speisialta againn — ligeann sé dúinn scríobh ar cheann de na bloic shéalaithe sin!",
-  "hieroglyphUnlock2": "Tapáil cloch atá ag lonrú, ansin tarraing an déantán uirthi lena oscailt. Bloc amháin i ngach pirimid.",
+  "hieroglyphUnlock2": "Roghnaigh cloch atá ag lonrú, ansin tabhair an déantán chuici lena oscailt. Bloc amháin i ngach pirimid.",
   "errorHighlightTutorial": "Tá cleas áisiúil ag an stór sin a d’aimsíomar — cuir freagra mícheart isteach agus lonróidh botún amháin dearg!",
   "errorHighlightTutorial2": "Ní lonraíonn ach bloc amháin ag an am, mar sin tá dúshlán ann fós. Ach cabhraíonn sé leat!",
   "earlyFeedbackTutorial": "An bhfeiceann tú na bloic seiceála sin? Éiríonn siad glas nó dearg fad a líonann tú iad — díreach ansin!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Féach cad atá ag an stainnín! Déanaim iompar anois."
+      },
+      "2": {
+        "explorer": "Ní fheicim ach líníocht."
+      },
+      "3": {
+        "fez": "Itheann an ceann fíor níos mó."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "An dara líne. Uisce don té a raibh tart air."
+        "explorer": "An dara líne. _Éadaí don té a bhí nocht._"
       },
       "2": {
-        "fez": "Arán, agus anois uisce. Bhí duine éigin an-tógtha le cuimhneamh air mar dhuine flaithiúil."
+        "fez": "Arán, agus anois éadaí. Bhí duine éigin an-tógtha le cuimhneamh air mar dhuine flaithiúil."
       },
       "3": {
         "explorer": "Tá sé ag gach duine. Gach balla, gach tuama, an dá líne chéanna."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Éadaí don té a bhí nocht. An tríú líne."
+        "explorer": "_Uisce don té a raibh tart air._ An tríú líne."
       },
       "2": {
-        "fez": "Arán, uisce, éadaí. Liosta de rudaí a tugadh uathu atá ann."
+        "fez": "Arán, éadaí, uisce. Liosta de rudaí a tugadh uathu atá ann."
       },
       "3": {
         "explorer": "I dtuama fir a thóg gach rud leis."
@@ -1599,8 +1605,42 @@
       "explorer": "Déanfaidh sé cúis."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Tá rud éigin don té a bhfuil ocras air ar iarraidh ansin. Arán, déarfainn. Agus tá aithne agam ar fhear a chomhair gach mála gráin ar feadh daichead bliain."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, tá arán uainn. Do bhalla."
+        },
+        "2": {
+          "ipi": "Arán? Mo chuidse? An bhfuil a fhios agat cad a chosnaíonn grán?"
+        },
+        "3": {
+          "fez": "Is le haghaidh líne faoi rudaí a thabhairt uait é."
+        },
+        "4": {
+          "ipi": "…A thabhairt. Uait."
+        },
+        "5": {
+          "ipi": "Ceart go leor. Builín amháin. Ach scríobhfar síos é: _Thug Ipi arán._"
+        },
+        "6": {
+          "fez": "Thug sé rud éigin uaidh! An bhfaca tú é sin?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "An builín sin — ar ith duine ar bith fós é? Mar mura n-ith, ba mhaith liom é a fháil ar ais."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Fós anseo? Ó thuaidh! Henut! Aon deben déag!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "An balla. An tríú comhartha. Ní hé m’ainm fós é."
+          "henut": "An balla. An dara comhartha. Ní hé m’ainm fós é."
         }
       },
       "wall2": {

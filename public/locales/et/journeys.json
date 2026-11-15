@@ -21,19 +21,24 @@
     "mapHint": "Kaardijupil on turutee ja keldriuks — kaupmehe peidukoht, ei midagi uhkemat."
   },
   "junior_1": {
-    "name": "Pühade iibiste rändetee"
+    "name": "Pühade iibiste rändetee",
+    "description": "Pilliroosood Niiluse ääres ja iibis, kes neis sumpab. Pühad linnud — ja mitte sel põhjusel, mida sa arvad."
   },
   "junior_2": {
-    "name": "Meistrite org"
+    "name": "Meistrite org",
+    "description": "Deir el-Medina, hauaehitajate küla. Nende töökojad on ikka veel püsti, ja osa tööst ka."
   },
   "junior_3": {
-    "name": "Thothi tempel"
+    "name": "Thothi tempel",
+    "description": "Thothi tempel. Kõik teavad tema nime; küsi kolmelt inimeselt, mille jumal ta oli, ja saad kolm vastust."
   },
   "junior_4": {
-    "name": "Aleksandria majakas"
+    "name": "Aleksandria majakas",
+    "description": "Aleksandria majakas, üks seitsmest maailmaimest. See, mis sellest alles on, lebab sadamas vee all."
   },
   "junior_treasure_tomb": {
     "name": "Aadliku salakamber",
+    "description": "Aadlinaise võlvkamber, maalitud põrandast laeni, ja kõik on ikka seal, kuhu ta selle pani.",
     "mapHint": "Peen tint ja nurgas vapiga pitser — keegi tähtis tahtis, et see tuba ununeks."
   },
   "expert_1": {

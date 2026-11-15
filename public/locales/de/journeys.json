@@ -21,19 +21,24 @@
     "mapHint": "Auf dem Fetzen sind eine Marktstraße und eine Kellertür gezeichnet – das Versteck eines Händlers, mehr nicht."
   },
   "junior_1": {
-    "name": "Der Zug der heiligen Ibisse"
+    "name": "Der Zug der heiligen Ibisse",
+    "description": "Schilfsümpfe am Nil, und der Ibis, der hindurchwatet. Heilige Vögel – und nicht aus dem Grund, den du denkst."
   },
   "junior_2": {
-    "name": "Tal der Handwerker"
+    "name": "Tal der Handwerker",
+    "description": "Deir el-Medina, das Dorf der Grabbauer. Ihre Werkstätten stehen noch, und ein Teil ihrer Arbeit auch."
   },
   "junior_3": {
-    "name": "Tempel des Thoth"
+    "name": "Tempel des Thoth",
+    "description": "Der Tempel des Thoth. Jeder kennt seinen Namen; frag drei Leute, wofür er der Gott war, und du bekommst drei Antworten."
   },
   "junior_4": {
-    "name": "Leuchtturm von Alexandria"
+    "name": "Leuchtturm von Alexandria",
+    "description": "Der Pharos von Alexandria, eines der sieben Weltwunder. Was von ihm übrig ist, liegt im Hafen unter Wasser."
   },
   "junior_treasure_tomb": {
     "name": "Verborgene Kammer der Edeldame",
+    "description": "Das Gewölbe einer Edeldame, vom Boden bis zur Decke bemalt, und alles darin liegt noch da, wo sie es hingelegt hat.",
     "mapHint": "Feine Tinte, ein Wappensiegel in der Ecke – jemand Vornehmes wollte, dass dieser Raum vergessen wird."
   },
   "expert_1": {

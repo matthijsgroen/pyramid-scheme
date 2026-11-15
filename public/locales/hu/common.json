@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Nem sikerült betölteni, hol tartasz",
     "body": "A böngésző most nem adja oda a mentett játékodat. A mentésed nem veszett el: töltsd újra az oldalt, és próbáld meg még egyszer.",
-    "banner": "A játék most nem ment. Koppints az újratöltéshez.",
+    "banner": "A játék most nem ment. Töltsd újra.",
     "reload": "Újratöltés",
     "continue": "Játék mentés nélkül",
     "reset": "Újrakezdés (mentés törlése)",
@@ -29,7 +29,6 @@
     "evening": "Este",
     "night": "Éjszaka"
   },
-  "tomb": {},
   "ui": {
     "level": "Szint",
     "symbols": "jel",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Expedíció megszakítása",
     "confirmInterruptExpedition": "Biztosan megszakítod ezt az expedíciót? Az expedíció állása megmarad, de a mostani pálya elveszik!",
     "cancel": "Mégse",
+    "leaveSite": "Elhagyod ezt a helyet?",
+    "confirmLeaveSite": "A Távozom gombbal visszasétálsz kifelé, a Maradok gombbal tovább felfedezel.",
+    "leave": "Távozom",
+    "stay": "Maradok",
     "settings": "Beállítások",
     "language": "Nyelv",
     "close": "Bezárás",
@@ -106,8 +109,12 @@
     "solvedUnaided": "Egyetlen tipp nélkül megoldva",
     "solvedWithHints_one": "{{count}} tippel megoldva",
     "solvedWithHints_other": "{{count}} tippel megoldva",
-    "tapToContinue": "Koppints a folytatáshoz",
-    "goal": "Cél"
+    "tapToContinue": "Tovább",
+    "goal": "Cél",
+    "controls": "Irányítás",
+    "controlsUndo": "visszavonás",
+    "controlsHint": "tipp",
+    "controlsLeave": "vissza a térképhez"
   },
   "trap": {
     "warning": "⚠ Csapdás folyosó",
@@ -126,6 +133,7 @@
     "turnAround": "Visszafordulok",
     "wardDescription": {
       "starter": "Egy kereskedő pecsétje zárja el ezt az utat – csak az ő őrkulcsa nyitja ki.",
+      "junior": "Egy nemes asszony címere zárja ezt az utat – csak az ő őrkulcsa nyitja ki.",
       "expert": "Egy főpap templomi védelme őrzi ezt az ajtót – csak a szent kulcs nyitja ki.",
       "master": "Egy fáraó királyi pecsétje zárja ezt az utat – csak az uralkodó kulcsa töri meg.",
       "wizard": "Az istenek védelme tartja ezt a kaput – csak az isteni kulcs nyitja ki."
@@ -134,13 +142,14 @@
     "lockedColor": "Ezt a kulcsot még nem találtad meg ezen a szinten."
   },
   "chest": {
-    "tapToOpen": "Koppints a kinyitáshoz",
+    "tapToOpen": "Kinyitás",
     "money_one": "{{count}} érme",
     "money_other": "{{count}} érme",
     "mapPiece": "Térképdarab",
     "mapPieceDescription": "Egy törékeny térképdarab egy rég elfeledett helyhez. Kár, hogy még nagyon nincs egészben…",
     "mapPieceProgress": "{{found}} / {{required}} térképdarab összegyűjtve",
     "mapPieceComplete": "A térkép egész – ide vezet: {{name}}.",
+    "hieroglyph": "Hieroglifa",
     "hieroglyphFragment": "Hieroglifadarab",
     "fragmentProgress": "{{found}} / {{required}} darab megtalálva",
     "tombKey": "Sírkulcs",
@@ -157,8 +166,9 @@
   },
   "loot": {
     "youFound": "Ezt találtad:",
+    "youReceived": "Ezt kaptad:",
     "expeditionReward": "Extra jutalom az expedíció teljesítéséért",
-    "clickToContinue": "Koppints bárhová a folytatáshoz"
+    "clickToContinue": "Tovább"
   },
   "money": {
     "label": "Érmék"
@@ -252,7 +262,7 @@
     "tabNew_other": "{{label}} · {{count}} új",
     "empty": "A ládád még üres",
     "newLabel": "ÚJ",
-    "clickForDetails": "Koppints egy lapra a részletekért",
+    "clickForDetails": "Válassz egy lapot a részletekért",
     "categories": {
       "deities": "🏺 Istenek",
       "professions": "⚱️ Mesterségek",
@@ -260,6 +270,7 @@
       "artifacts": "💎 Tárgyak",
       "treasures": "💰 Kincsek",
       "junk": "🔷 Csecsebecsék",
+      "offerings": "🍞 Adományok",
       "signs": "✍️ Jelek"
     },
     "treasureCategories": {
@@ -340,22 +351,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Koppints egy lenti jelre, aztán egy számra. Koppints újra arra a számra, hogy levedd.",
+      "tap": "Válassz egy lenti jelet, aztán egy számot. Válaszd újra azt a számot, hogy levedd.",
       "same": "Egy jel minden mérlegen ugyanannyit nyom.",
-      "cancel": "Ha mindkét serpenyőből ugyanazt veszed le, a mérleg egyensúlyban marad. Koppints egy jelölt darabra – ami marad, új sorként megmarad.",
-      "swap": "Koppints egy jelre, aminek nincs párja a másik oldalon, aztán egy sorra, ahol ez a jel egyedül áll, hogy kicseréld arra, amennyit az a sor ér."
+      "cancel": "Ha mindkét serpenyőből ugyanazt veszed le, a mérleg egyensúlyban marad. Válassz egy jelölt darabot – ami marad, új sorként megmarad.",
+      "swap": "Válassz egy jelet, aminek nincs párja a másik oldalon, aztán egy sort, ahol ez a jel egyedül áll, hogy kicseréld arra, amennyit az a sor ér."
     },
     "hint": {
       "mistake": "Az egyik súly, amit megadtál, megbillent egy mérleget. Vedd le, és nézd meg újra.",
       "alone": "A világító sorban {{glyph}} az egyetlen darab, amin még nincs szám. Számold ki, mennyit nyom.",
       "equalShares": "A világító sorban csak {{glyph}} áll egy számmal szemben. Oszd el azt a számot köztük.",
       "difference": "A két világító sor ugyanaz, csak {{glyph}} más. Hasonlítsd össze őket.",
-      "cancelGlyph": "A világító sor mindkét serpenyőjében van {{glyph}}. Koppints az egyikre, hogy mindkét oldalról levedd – a sor egyensúlyban marad.",
-      "cancelStones": "A világító sor mindkét serpenyőjében sima számok vannak. Koppints az egyikre, hogy mindkét oldalról ugyanannyit vegyél le.",
-      "swap": "Az egyik világító sor megmondja, mennyit ér egyetlen {{glyph}} egyedül. Koppints a {{glyph}} jelre a másik világító sorban, aztán arra a sorra."
+      "cancelGlyph": "A világító sor mindkét serpenyőjében van {{glyph}}. Válaszd az egyiket, hogy mindkét oldalról levedd – a sor egyensúlyban marad.",
+      "cancelStones": "A világító sor mindkét serpenyőjében sima számok vannak. Válassz egyet, hogy mindkét oldalról ugyanannyit vegyél le.",
+      "swap": "Az egyik világító sor megmondja, mennyit ér egyetlen {{glyph}} egyedül. Válaszd a {{glyph}} jelet a másik világító sorban, aztán azt a sort."
     },
     "swap": {
-      "pick": "Koppints egy világító sorra, hogy ezt a {{glyph}} jelet kicseréld arra, amennyit az a sor szerint ér.",
+      "pick": "Válassz egy világító sort, hogy ezt a {{glyph}} jelet kicseréld arra, amennyit az a sor szerint ér.",
       "none": "Itt semmi sem mondja meg, mennyit ér egyetlen {{glyph}} egyedül, és a másik oldalon sincs hozzá illő."
     },
     "goal": {
@@ -365,11 +376,16 @@
     "name": {
       "default": "Mérleg",
       "weighing": "A szív megmérése"
+    },
+    "controls": {
+      "move": "darab, sor vagy gomb kiválasztása",
+      "press": "megnyomás",
+      "weigh": "a kiválasztott jel ezt a súlyt kapja"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Koppints egyszer, hogy kihúzz egy számot, még egyszer, hogy megtartottnak jelöld, és még egyszer, hogy töröld.",
+      "tap": "Válassz ki egy számot egyszer, hogy kihúzd, még egyszer, hogy megtartottnak jelöld, és még egyszer, hogy töröld.",
       "totals": "Az egyes célszámok alatti kis szám mutatja, mennyi most annak a sornak az összege."
     },
     "hint": {
@@ -430,12 +446,16 @@
       }
     },
     "goal": "Minden sor és minden oszlop összege annyi, mint a mellette álló szám.",
-    "name": "A számvetés"
+    "name": "A számvetés",
+    "controls": {
+      "move": "szám kiválasztása",
+      "mark": "kihúzás, megtartás vagy törlés"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "A két mező közötti jel a kisebbik szám felé mutat.",
-      "enter": "Koppints egy mezőre, aztán egy számra. Ha ugyanarra a számra újra koppintasz, kiveszed.",
+      "enter": "Válassz egy mezőt, aztán egy számot. Ha ugyanazt a számot újra választod, kiveszed.",
       "notes": "Válts ceruzára, hogy felírd, milyen számok lehetnek még egy mezőben. A Vissza gomb visszavonja az utolsó lépésedet."
     },
     "hint": {
@@ -486,14 +506,22 @@
       }
     },
     "goal": "Minden sorban és minden oszlopban minden szám pontosan egyszer szerepel.",
-    "name": "Kisebb és nagyobb"
+    "name": "Kisebb és nagyobb",
+    "controls": {
+      "move": "mező kiválasztása",
+      "type": "szám beírása",
+      "choose": "szám vagy radír kiválasztása",
+      "place": "beírás",
+      "pencil": "ceruza",
+      "erase": "törlés"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "A tükör mindkét oldaláról visszaveri a fényt. A körülötte lévő kis jelek mutatják, hogyan állhat még: a legtöbb negyed fordulattal fordítja el a fényt, néhány kevesebbel, és ferdén küldi tovább.",
       "walls": "A kőtömb elnyeli a fényt. A tábla széle is.",
-      "tap": "Koppints egy darabra, hogy megváltoztasd: a tükör elfordul, a csúszó darab a következő helyére megy. A fehér szél azt jelenti, hogy te mozgathatod; minden más a rejtvény része.",
-      "nodes": "Néhány kő egy padlóaljzathoz van kötve, és koppintással nem mozdul. Vezesd át a fényt az aljzaton, és a kő félrecsúszik."
+      "tap": "Válassz egy darabot, hogy megváltoztasd: a tükör elfordul, a csúszó darab a következő helyére megy. A fehér szél azt jelenti, hogy te mozgathatod; minden más a rejtvény része.",
+      "nodes": "Néhány kő egy padlóaljzathoz van kötve, és te nem tudod elmozdítani. Vezesd át a fényt az aljzaton, és a kő félrecsúszik."
     },
     "hint": {
       "entryRun": "Kezdd ott, ahová a fény már most is megy: egyenesen fut a korongtól az első darabig, amit megváltoztathatsz. Azokon a mezőkön a fény mindenképp átmegy.",
@@ -526,7 +554,7 @@
       "triple": "Ugyanabból három egymás mellett soha nem lehet, se vízszintesen, se függőlegesen.",
       "copies": "Nem lehet két egyforma sor, és két egyforma oszlop sem.",
       "signs": "A két mező közötti jel megmutatja, hogyan viszonyulnak: = azt jelenti, hogy ugyanaz, × azt, hogy különböző.",
-      "enter": "Koppints egy mezőre, hogy napot tegyél bele, újra a holdért, és még egyszer, hogy kiürítsd."
+      "enter": "Válassz egy mezőt, hogy napot tegyél bele, újra a holdért, és még egyszer, hogy kiürítsd."
     },
     "hint": {
       "mistake": "Az egyik jel itt nem lehet jó.",
@@ -550,7 +578,11 @@
       }
     },
     "goal": "Minden mezőben nap vagy hold van, és minden sorban ugyanannyi van mindkettőből.",
-    "name": "Nap és Hold"
+    "name": "Nap és Hold",
+    "controls": {
+      "move": "mező kiválasztása",
+      "mark": "a jel váltása"
+    }
   },
   "constellation": {
     "rules": {
@@ -558,25 +590,25 @@
         "straight": "A fényvonalak egyenesen futnak vízszintesen vagy függőlegesen, egyik csillagtól a következőig.",
         "pair": "Két csillag között legfeljebb két vonal lehet.",
         "cross": "A vonalak soha nem keresztezik egymást, és soha nem mennek át csillagon.",
-        "enter": "Húzz egy csillagtól a szomszédja felé, hogy vonalat rajzolj, még egyszer a dupláért, és még egyszer, hogy töröld."
+        "enter": "Rajzolj vonalat egy csillagtól a szomszédja felé, még egyszer a dupláért, és még egyszer, hogy töröld."
       },
       "causeway": {
         "straight": "A szállítóutak egyenesen futnak vízszintesen vagy függőlegesen, egyik helytől a következőig.",
         "pair": "Két hely között legfeljebb két út lehet.",
         "cross": "Az utak soha nem keresztezik egymást, és soha nem mennek át egy helyen.",
-        "enter": "Húzz egy helytől a szomszédja felé, hogy utat építs, még egyszer, hogy duplázd, és még egyszer, hogy felszedd."
+        "enter": "Építs utat egy helytől a szomszédja felé, még egyszer, hogy duplázd, és még egyszer, hogy felszedd."
       },
       "irrigation": {
         "straight": "A csatornák egyenesen futnak vízszintesen vagy függőlegesen, egyik medencétől a következőig.",
         "pair": "Két medence között legfeljebb két csatorna lehet.",
         "cross": "A csatornák soha nem keresztezik egymást, és soha nem mennek át egy medencén.",
-        "enter": "Húzz egy medencétől a szomszédja felé, hogy csatornát áss, még egyszer, hogy kiszélesítsd, és még egyszer, hogy betemesd."
+        "enter": "Áss csatornát egy medencétől a szomszédja felé, még egyszer, hogy kiszélesítsd, és még egyszer, hogy betemesd."
       },
       "ceiling": {
         "straight": "A zsinórok egyenesen futnak vízszintesen vagy függőlegesen, egyik csillagtól a következőig.",
         "pair": "Két csillag között legfeljebb két zsinór lehet.",
         "cross": "A zsinórok soha nem keresztezik egymást, és soha nem mennek át csillagon.",
-        "enter": "Húzz egy csillagtól a szomszédja felé, hogy zsinórt feszíts ki, még egyszer, hogy duplázd, és még egyszer, hogy levedd."
+        "enter": "Feszíts ki zsinórt egy csillagtól a szomszédja felé, még egyszer, hogy duplázd, és még egyszer, hogy levedd."
       }
     },
     "hint": {
@@ -664,37 +696,44 @@
       "causeway": "Töltésút",
       "irrigation": "Vízrendszer",
       "ceiling": "Festett mennyezet"
+    },
+    "controls": {
+      "pick": "csillag kiválasztása",
+      "grab": "megfogás",
+      "draw": "vonal húzása arra",
+      "release": "elengedés",
+      "alt": "nyomva tartva mutass: vonal, dupla, semmi"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Két csillag nem érhet egymáshoz – a sarkok is számítanak.",
-        "enter": "Koppints egy mezőre, hogy kizárd, újra, hogy csillagot tegyél bele, és még egyszer, hogy töröld."
+        "enter": "Válassz egy mezőt, hogy kizárd, újra, hogy csillagot tegyél bele, és még egyszer, hogy töröld."
       },
       "fields": {
         "touch": "Két tanya nem érhet egymáshoz – a sarkok is számítanak. Ilyen közel egy kúton kellene osztozniuk.",
-        "enter": "Koppints egy telekre, hogy kizárd, újra, hogy tanyát építs rá, és még egyszer, hogy töröld."
+        "enter": "Válassz egy telket, hogy kizárd, újra, hogy tanyát építs rá, és még egyszer, hogy töröld."
       },
       "lamps": {
         "touch": "Két olajlámpás nem állhat egymás mellett – a sarkok is számítanak. A fényük összeérne, és kárba veszne az olaj.",
         "walls": "A szürke kőtömbök a padló részei: semmi sem állhat rajtuk, és nem számítanak mezőnek.",
-        "enter": "Koppints egy kőlapra, hogy kizárd, újra, hogy olajlámpást tegyél rá, és még egyszer, hogy töröld."
+        "enter": "Válassz egy kőlapot, hogy kizárd, újra, hogy olajlámpást tegyél rá, és még egyszer, hogy töröld."
       },
       "market": {
         "touch": "Két stand nem állhat egymás mellett – a sarkok is számítanak. A versenytársak sosem pakolnak ki egymás mellé.",
         "walls": "A házak a tér részei: senki sem állíthat bennük standot, és nem számítanak helynek.",
-        "enter": "Koppints egy helyre, hogy kizárd, újra, hogy standot állíts oda, és még egyszer, hogy töröld."
+        "enter": "Válassz egy helyet, hogy kizárd, újra, hogy standot állíts oda, és még egyszer, hogy töröld."
       },
       "lotus": {
         "touch": "Két lótusz nem úszhat egymás mellett – a sarkok is számítanak. Minden virágnak szabad víz kell maga körül.",
         "walls": "A sziklák kiállnak a tóból: semmi sem úszhat rajtuk, és nem számítanak mezőnek.",
-        "enter": "Koppints egy vízfoltra, hogy kizárd, újra, hogy lótuszt tegyél rá, és még egyszer, hogy töröld."
+        "enter": "Válassz egy vízfoltot, hogy kizárd, újra, hogy lótuszt tegyél rá, és még egyszer, hogy töröld."
       },
       "cats": {
         "touch": "Két macska nem alhat egymás mellett – a sarkok is számítanak. Minden macskának megvan a saját napos foltja.",
         "walls": "Az oszlopok tartják a templomot: egy macska sem alhat rajtuk, és nem számítanak mezőnek.",
-        "enter": "Koppints egy kőlapra, hogy kizárd, újra, hogy egy macskát fektess oda, és még egyszer, hogy töröld."
+        "enter": "Válassz egy kőlapot, hogy kizárd, újra, hogy egy macskát fektess oda, és még egyszer, hogy töröld."
       }
     },
     "hint": {
@@ -800,20 +839,20 @@
         "mistake": "Ez a jel nem lehet jó.",
         "touch": "Itt egy {{token}} áll, és két olajlámpás nem állhat egymás mellett – a sarkok is számítanak.",
         "groupFull.row_one": "Ebben a sorban már megvan az olajlámpás.",
-        "groupFull.col_one": "Ebben az oszlopban már megvan az olajlámpás.",
         "groupFull.row_other": "Ebben a sorban már megvan a(z) {{count}} olajlámpás.",
+        "groupFull.col_one": "Ebben az oszlopban már megvan az olajlámpás.",
         "groupFull.col_other": "Ebben az oszlopban már megvan a(z) {{count}} olajlámpás.",
         "groupTight.row_one": "Ebben a sorban már csak egy kőlap maradt.",
         "groupTight.row_other": "Ebben a sorban már csak {{count}} kőlap maradt.",
         "groupTight.col_one": "Ebben az oszlopban már csak egy kőlap maradt.",
         "groupTight.col_other": "Ebben az oszlopban már csak {{count}} kőlap maradt.",
         "onlyWay.row_one": "A kőtömbök között ebben a sorban már csak egy mező maradt olajlámpásnak.",
-        "onlyWay.col_one": "A kőtömbök között ebben az oszlopban már csak egy mező maradt olajlámpásnak.",
         "onlyWay.row_other": "Csak egyféleképpen fér el {{count}} olajlámpás ebben a sorban.",
+        "onlyWay.col_one": "A kőtömbök között ebben az oszlopban már csak egy mező maradt olajlámpásnak.",
         "onlyWay.col_other": "Csak egyféleképpen fér el {{count}} olajlámpás ebben az oszlopban.",
         "everyWay.row_one": "Akárhová kerül ennek a sornak az olajlámpása, mindig itt van.",
-        "everyWay.col_one": "Akárhová kerül ennek az oszlopnak az olajlámpása, mindig itt van.",
         "everyWay.row_other": "Akárhová kerül ennek a sornak a(z) {{count}} olajlámpása, egy mindig itt van.",
+        "everyWay.col_one": "Akárhová kerül ennek az oszlopnak az olajlámpása, mindig itt van.",
         "everyWay.col_other": "Akárhová kerül ennek az oszlopnak a(z) {{count}} olajlámpása, egy mindig itt van.",
         "lineBlock.rowsToCols": "A jelölt sorok olajlámpásai azoknak az oszlopoknak a mezőiben vannak, így azokban az oszlopokban nem jut több.",
         "lineBlock.colsToRows": "A jelölt oszlopok olajlámpásai azoknak a soroknak a mezőiben vannak, így azokban a sorokban nem jut több.",
@@ -830,20 +869,20 @@
         "mistake": "Ez a jel nem lehet jó.",
         "touch": "Itt egy {{token}} áll, és két stand nem állhat egymás mellett – a sarkok is számítanak.",
         "groupFull.row_one": "Ebben a sorban már megvan a stand.",
-        "groupFull.col_one": "Ebben az oszlopban már megvan a stand.",
         "groupFull.row_other": "Ebben a sorban már megvan a(z) {{count}} stand.",
+        "groupFull.col_one": "Ebben az oszlopban már megvan a stand.",
         "groupFull.col_other": "Ebben az oszlopban már megvan a(z) {{count}} stand.",
         "groupTight.row_one": "Ebben a sorban már csak egy hely maradt.",
         "groupTight.row_other": "Ebben a sorban már csak {{count}} hely maradt.",
         "groupTight.col_one": "Ebben az oszlopban már csak egy hely maradt.",
         "groupTight.col_other": "Ebben az oszlopban már csak {{count}} hely maradt.",
         "onlyWay.row_one": "A házak között ebben a sorban már csak egy mező maradt standnak.",
-        "onlyWay.col_one": "A házak között ebben az oszlopban már csak egy mező maradt standnak.",
         "onlyWay.row_other": "Csak egyféleképpen fér el {{count}} stand ebben a sorban.",
+        "onlyWay.col_one": "A házak között ebben az oszlopban már csak egy mező maradt standnak.",
         "onlyWay.col_other": "Csak egyféleképpen fér el {{count}} stand ebben az oszlopban.",
         "everyWay.row_one": "Akárhová kerül ennek a sornak a standja, mindig itt van.",
-        "everyWay.col_one": "Akárhová kerül ennek az oszlopnak a standja, mindig itt van.",
         "everyWay.row_other": "Akárhová kerül ennek a sornak a(z) {{count}} standja, egy mindig itt van.",
+        "everyWay.col_one": "Akárhová kerül ennek az oszlopnak a standja, mindig itt van.",
         "everyWay.col_other": "Akárhová kerül ennek az oszlopnak a(z) {{count}} standja, egy mindig itt van.",
         "lineBlock.rowsToCols": "A jelölt sorok standjai azoknak az oszlopoknak a mezőiben vannak, így azokban az oszlopokban nem jut több.",
         "lineBlock.colsToRows": "A jelölt oszlopok standjai azoknak a soroknak a mezőiben vannak, így azokban a sorokban nem jut több.",
@@ -860,20 +899,20 @@
         "mistake": "Ez a jel nem lehet jó.",
         "touch": "Itt egy {{token}} úszik, és két lótusz nem úszhat egymás mellett – a sarkok is számítanak.",
         "groupFull.row_one": "Ebben a sorban már megvan a lótusz.",
-        "groupFull.col_one": "Ebben az oszlopban már megvan a lótusz.",
         "groupFull.row_other": "Ebben a sorban már megvan a(z) {{count}} lótusz.",
+        "groupFull.col_one": "Ebben az oszlopban már megvan a lótusz.",
         "groupFull.col_other": "Ebben az oszlopban már megvan a(z) {{count}} lótusz.",
         "groupTight.row_one": "Ebben a sorban már csak egy vízfolt maradt.",
         "groupTight.row_other": "Ebben a sorban már csak {{count}} vízfolt maradt.",
         "groupTight.col_one": "Ebben az oszlopban már csak egy vízfolt maradt.",
         "groupTight.col_other": "Ebben az oszlopban már csak {{count}} vízfolt maradt.",
         "onlyWay.row_one": "A sziklák között ebben a sorban már csak egy mező maradt lótusznak.",
-        "onlyWay.col_one": "A sziklák között ebben az oszlopban már csak egy mező maradt lótusznak.",
         "onlyWay.row_other": "Csak egyféleképpen fér el {{count}} lótusz ebben a sorban.",
+        "onlyWay.col_one": "A sziklák között ebben az oszlopban már csak egy mező maradt lótusznak.",
         "onlyWay.col_other": "Csak egyféleképpen fér el {{count}} lótusz ebben az oszlopban.",
         "everyWay.row_one": "Akárhová kerül ennek a sornak a lótusza, mindig itt van.",
-        "everyWay.col_one": "Akárhová kerül ennek az oszlopnak a lótusza, mindig itt van.",
         "everyWay.row_other": "Akárhová kerül ennek a sornak a(z) {{count}} lótusza, egy mindig itt van.",
+        "everyWay.col_one": "Akárhová kerül ennek az oszlopnak a lótusza, mindig itt van.",
         "everyWay.col_other": "Akárhová kerül ennek az oszlopnak a(z) {{count}} lótusza, egy mindig itt van.",
         "lineBlock.rowsToCols": "A jelölt sorok lótuszai azoknak az oszlopoknak a mezőiben vannak, így azokban az oszlopokban nem jut több.",
         "lineBlock.colsToRows": "A jelölt oszlopok lótuszai azoknak a soroknak a mezőiben vannak, így azokban a sorokban nem jut több.",
@@ -890,20 +929,20 @@
         "mistake": "Ez a jel nem lehet jó.",
         "touch": "Itt egy {{token}} alszik, és két macska nem alhat egymás mellett – a sarkok is számítanak.",
         "groupFull.row_one": "Ebben a sorban már megvan a macska.",
-        "groupFull.col_one": "Ebben az oszlopban már megvan a macska.",
         "groupFull.row_other": "Ebben a sorban már megvan a(z) {{count}} macska.",
+        "groupFull.col_one": "Ebben az oszlopban már megvan a macska.",
         "groupFull.col_other": "Ebben az oszlopban már megvan a(z) {{count}} macska.",
         "groupTight.row_one": "Ebben a sorban már csak egy kőlap maradt.",
         "groupTight.row_other": "Ebben a sorban már csak {{count}} kőlap maradt.",
         "groupTight.col_one": "Ebben az oszlopban már csak egy kőlap maradt.",
         "groupTight.col_other": "Ebben az oszlopban már csak {{count}} kőlap maradt.",
         "onlyWay.row_one": "Az oszlopok között ebben a sorban már csak egy mező maradt macskának.",
-        "onlyWay.col_one": "Az oszlopok között ebben az oszlopban már csak egy mező maradt macskának.",
         "onlyWay.row_other": "Csak egyféleképpen fér el {{count}} macska ebben a sorban.",
+        "onlyWay.col_one": "Az oszlopok között ebben az oszlopban már csak egy mező maradt macskának.",
         "onlyWay.col_other": "Csak egyféleképpen fér el {{count}} macska ebben az oszlopban.",
         "everyWay.row_one": "Akárhová kerül ennek a sornak a macskája, mindig itt van.",
-        "everyWay.col_one": "Akárhová kerül ennek az oszlopnak a macskája, mindig itt van.",
         "everyWay.row_other": "Akárhová kerül ennek a sornak a(z) {{count}} macskája, egy mindig itt van.",
+        "everyWay.col_one": "Akárhová kerül ennek az oszlopnak a macskája, mindig itt van.",
         "everyWay.col_other": "Akárhová kerül ennek az oszlopnak a(z) {{count}} macskája, egy mindig itt van.",
         "lineBlock.rowsToCols": "A jelölt sorok macskái azoknak az oszlopoknak a mezőiben vannak, így azokban az oszlopokban nem jut több.",
         "lineBlock.colsToRows": "A jelölt oszlopok macskái azoknak a soroknak a mezőiben vannak, így azokban a sorokban nem jut több.",
@@ -944,6 +983,11 @@
       "market": "Piaci standok",
       "lotus": "Lótuszos tó",
       "cats": "Templomi macskák"
+    },
+    "controls": {
+      "move": "mező kiválasztása",
+      "mark": "a jel váltása",
+      "sweep": "nyomva tartva mozgasd: egy egész sor kizárása"
     }
   },
   "pairPuzzle": {
@@ -960,13 +1004,13 @@
         "pair": "Minden szarkofág fölött, alatt, balra vagy jobbra közvetlenül egy múmia pihen, és minden múmia a saját szarkofágja mellett pihen.",
         "count": "A sor vagy oszlop melletti szám mutatja, hány múmia van benne. Zöld lesz, ha pontosan annyi van, és piros, ha már nem jöhet ki.",
         "touch": "Két múmia nem lehet egymás mellett – a sarkok is számítanak.",
-        "enter": "Koppints egy mezőre, hogy kizárd, újra, hogy múmiát fektess oda, és még egyszer, hogy töröld. Húzd végig az ujjad több mezőn, hogy egyszerre kizárd őket. A szarkofágokra nem lehet koppintani."
+        "enter": "Válassz egy mezőt, hogy kizárd, újra, hogy múmiát fektess oda, és még egyszer, hogy töröld. Egy egész mezősort egy mozdulattal is kizárhatsz. A szarkofágokat nem lehet megjelölni."
       },
       "beetles": {
         "pair": "Minden galacsin fölött, alatt, balra vagy jobbra közvetlenül egy bogár áll, és minden bogár a saját galacsinja mellett áll, hogy gurítsa.",
         "count": "A sor vagy oszlop melletti szám mutatja, hány bogár van benne. Zöld lesz, ha pontosan annyi van, és piros, ha már nem jöhet ki.",
         "touch": "Két bogár nem lehet egymás mellett – a sarkok is számítanak.",
-        "enter": "Koppints egy mezőre, hogy kizárd, újra, hogy bogarat tegyél oda, és még egyszer, hogy töröld. Húzd végig az ujjad több mezőn, hogy egyszerre kizárd őket. A galacsinokra nem lehet koppintani."
+        "enter": "Válassz egy mezőt, hogy kizárd, újra, hogy bogarat tegyél oda, és még egyszer, hogy töröld. Egy egész mezősort egy mozdulattal is kizárhatsz. A galacsinokat nem lehet megjelölni."
       }
     },
     "hint": {
@@ -1030,6 +1074,11 @@
           "place_other": "Tegyél egy-egy bogarat minden csíkozott mezőre."
         }
       }
+    },
+    "controls": {
+      "move": "mező kiválasztása",
+      "mark": "a jel váltása",
+      "sweep": "nyomva tartva mozgasd: egy egész sor kizárása"
     }
   },
   "rushHour": {
@@ -1044,11 +1093,11 @@
     "rules": {
       "default": {
         "lanes": "Egy kő csak a saját sávjában csúszik – soha nem oldalra, és soha nem le a tábláról.",
-        "shove": "Húzz egy követ, hogy eltold. Ott áll meg, ahol valami útban van."
+        "shove": "Tolj el egy követ a saját sávjában. Ott áll meg, ahol valami útban van."
       },
       "market": {
         "lanes": "Egy szán csak abban a sávban csúszik, ahol áll – soha nem oldalra, és soha nem ki az utcából.",
-        "shove": "Húzz egy szánt, hogy eltold. Ott áll meg, ahol valami útban van."
+        "shove": "Tolj el egy szánt a saját sávjában. Ott áll meg, ahol valami útban van."
       }
     },
     "hint": {
@@ -1076,29 +1125,35 @@
           "down": "Told le az utcán, egészen a karikáig."
         }
       }
+    },
+    "controls": {
+      "pick": "kő kiválasztása",
+      "grab": "megfogás",
+      "slide": "tolás",
+      "release": "elengedés"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "A lépben már ott lévő számok a rejtvény részei – maradnak a helyükön.",
-        "enter": "Koppints egy számra, hogy onnan folytasd a sort, aztán koppints egy szomszédos üres cellára, hogy továbbvidd – vagy húzd végig az ujjad a cellákon, amerre megy.",
-        "back": "Koppints egy általad lerakott számra, majd még egyszer, hogy levedd, mindazzal együtt, ami rajta lógott. Ha egy számtól más irányba viszed tovább a sort, az is ugyanezt teszi. A Vissza gomb visszavonja az utolsó lépésedet."
+        "enter": "Húzz vonalat egy számtól a mellette lévő üres cellákon át, hogy továbbvidd a sort.",
+        "back": "Válassz egy általad lerakott számot, majd válaszd még egyszer, hogy levedd, mindazzal együtt, ami rajta lógott. Ha egy számtól más irányba viszed tovább a sort, az is ugyanezt teszi. A Vissza gomb visszavonja az utolsó lépésedet."
       },
       "channel": {
         "given": "A már megszámozott mezők a rejtvény részei – maradnak a helyükön.",
-        "enter": "Koppints egy számozott mezőre, hogy onnan vezesd tovább a vizet, aztán koppints egy mellette lévő száraz mezőre, hogy tovább áss – vagy húzd végig az ujjad a mezőkön, amerre a csatorna fut.",
-        "back": "Koppints egy általad kiásott mezőre, majd még egyszer, hogy betemesd, minden olyan csatornával együtt, ami így elszakad tőle. Ha egy mezőtől más irányba ásol tovább, az is ugyanezt teszi. A Vissza gomb visszavonja az utolsó lépésedet."
+        "enter": "Áss csatornát egy számozott mezőtől a mellette lévő száraz mezőkön át, hogy továbbvezesd a vizet.",
+        "back": "Válassz egy általad kiásott mezőt, majd válaszd még egyszer, hogy betemesd, minden olyan csatornával együtt, ami így elszakad tőle. Ha egy mezőtől más irányba ásol tovább, az is ugyanezt teszi. A Vissza gomb visszavonja az utolsó lépésedet."
       },
       "scribe": {
         "given": "A pirossal írt számok a rejtvény sajátjai – maradnak a helyükön.",
-        "enter": "Koppints egy számra, hogy ott vedd fel a nádtollat, aztán koppints egy mellette lévő üres helyre, hogy tovább írj – vagy húzd végig az ujjad a vonalon.",
-        "back": "Koppints egy általad írt számra, majd még egyszer, hogy lekaparj, minden olyan vonallal együtt, ami így elszakad tőle. Ha egy számtól más irányba írsz tovább, az is ugyanezt teszi. A Vissza gomb visszavonja az utolsó lépésedet."
+        "enter": "Írj vonalat egy számtól a mellette lévő üres helyeken át, hogy tovább számolj.",
+        "back": "Válassz egy általad írt számot, majd válaszd még egyszer, hogy lekapard, minden olyan vonallal együtt, ami így elszakad tőle. Ha egy számtól más irányba írsz tovább, az is ugyanezt teszi. A Vissza gomb visszavonja az utolsó lépésedet."
       },
       "chambers": {
         "given": "A már megszámozott kamrákat az építők vájták – maradnak a helyükön.",
-        "enter": "Koppints egy számozott kamrára, hogy onnan folytasd a járatot, aztán koppints egy mellette lévő lezárt kamrára, hogy áttörj – vagy húzd végig az ujjad a kamrákon, amerre a járat fut.",
-        "back": "Koppints egy általad kinyitott kamrára, majd még egyszer, hogy újra lezárd, minden olyan járattal együtt, ami így elszakad tőle. Ha egy kamrától más irányba törsz át, az is ugyanezt teszi. A Vissza gomb visszavonja az utolsó lépésedet."
+        "enter": "Törj járatot egy számozott kamrától a mellette lévő lezárt kamrákon át, hogy továbbvidd.",
+        "back": "Válassz egy általad kinyitott kamrát, majd válaszd még egyszer, hogy újra lezárd, minden olyan járattal együtt, ami így elszakad tőle. Ha egy kamrától más irányba törsz át, az is ugyanezt teszi. A Vissza gomb visszavonja az utolsó lépésedet."
       }
     },
     "goal": {
@@ -1162,6 +1217,13 @@
       "channel": "A csatorna",
       "scribe": "Az írnok lapja",
       "chambers": "Lezárt kamrák"
+    },
+    "controls": {
+      "move": "lépés a szomszédos cellára; fel és le balra dől",
+      "right": "fel-jobbra vagy le-jobbra",
+      "grab": "a sor felvétele, vagy a saját számod levétele",
+      "carry": "felvett sorral: továbbvitel; fel és le arra az oldalra visz, amerre tovább lehet menni",
+      "drop": "a sor letétele"
     }
   },
   "sudoku": {
@@ -1169,13 +1231,13 @@
       "default": {
         "chambers": "A vastag vonalak hat kamrára osztják a rácsot, mindegyik két mező széles és három magas.",
         "given": "A már bevésett számok a rejtvény részei – maradnak a helyükön.",
-        "enter": "Koppints egy mezőre, aztán egy számra. Ha ugyanarra a számra újra koppintasz, kiveszed.",
+        "enter": "Válassz egy mezőt, aztán egy számot. Ha ugyanazt a számot újra választod, kiveszed.",
         "notes": "Válts ceruzára, hogy felírd, milyen számok lehetnek még egy mezőben. A Vissza gomb visszavonja az utolsó lépésedet."
       },
       "papyrus": {
         "chambers": "A vastag vonalak hat táblára osztják a lapot, mindegyik két hely széles és három magas.",
         "given": "A pirossal írt jelek a rejtvény sajátjai – maradnak a helyükön.",
-        "enter": "Koppints egy helyre, aztán egy jelre. Ha ugyanarra a jelre újra koppintasz, lekaparod.",
+        "enter": "Válassz egy helyet, aztán egy jelet. Ha ugyanazt a jelet újra választod, lekaparod.",
         "notes": "Vedd fel a nádtollat, hogy halványan felírd, milyen jelek lehetnek még egy helyen. A Vissza gomb visszavonja az utolsó lépésedet."
       }
     },
@@ -1242,6 +1304,14 @@
     "name": {
       "default": "Hat kamra",
       "papyrus": "Az írnok jegyzéke"
+    },
+    "controls": {
+      "move": "mező kiválasztása",
+      "type": "szám beírása",
+      "choose": "szám vagy radír kiválasztása",
+      "place": "beírás",
+      "pencil": "ceruza",
+      "erase": "törlés"
     }
   },
   "crocodile": {
@@ -1255,6 +1325,10 @@
     "hint": {
       "biggest": "Ez a krokodil a legnagyobb választ akarja. Az a(z) {{value}}.",
       "smallest": "Ez a krokodil a legkisebb választ akarja. Az a(z) {{value}}."
+    },
+    "controls": {
+      "move": "kő kiválasztása",
+      "step": "rálépés"
     }
   },
   "canisters": {
@@ -1285,35 +1359,35 @@
         "sums": "Minden mennyiség, amit ki tudsz mérni, két szám összege vagy különbsége a padon: egy edény mérete, ami benne van, vagy amennyi hely még maradt benne.",
         "backwards": "Ezért számolj visszafelé a kért mennyiségtől – melyik két szám adja ki, és hogyan éred el, hogy egyszerre mindkettő ott legyen?"
       },
-      "claim": "Ha megvan a mennyiség, koppints arra, hogy „ez az”. Ha rossz edényt mondasz, egy lépésbe kerül.",
+      "claim": "Ha megvan a mennyiség, válaszd azt, hogy „ez az”. Ha rossz edényt mondasz, egy lépésbe kerül.",
       "legs": "Aztán jön a következő mennyiség, abból mérve, ami az edényekben maradt.",
       "default": {
-        "moves": "Koppints egy kannára, hogy felemeld, aztán egy másikra, hogy beletölts. A töltés megáll, ha az első kiürül, vagy a második megtelik.",
+        "moves": "Emelj fel egy kannát, aztán válassz egy másikat, hogy beletölts. A töltés megáll, ha az első kiürül, vagy a második megtelik.",
         "contents": "Ennyi víz van összesen – az egyik kanna tele van az elején, és egyiket sem lehet kiönteni vagy újratölteni.",
         "levels": "Minden kannán látszik, mennyi van benne, és mennyi fér bele, ha tele van."
       },
       "grain": {
-        "moves": "Koppints egy mércére, hogy felemeld, aztán egy másikra, hogy beleszórd a gabonát. A szórás megáll, ha az első kiürül, vagy a második színültig megtelik.",
+        "moves": "Emelj fel egy mércét, aztán válassz egy másikat, hogy beleszórd a gabonát. A szórás megáll, ha az első kiürül, vagy a második színültig megtelik.",
         "contents": "Ennyi gabona van összesen – az egyik mérce tele van az elején, és semmit sem lehet kisöpörni vagy a magtárból hozni.",
         "levels": "Minden mércén látszik, mennyi van benne, és mennyi fér bele színültig."
       },
       "oil": {
-        "moves": "Koppints egy korsóra, hogy felemeld, aztán egy másikra, hogy beletölts. A töltés megáll, ha az első kiürül, vagy a második megtelik.",
+        "moves": "Emelj fel egy korsót, aztán válassz egy másikat, hogy beletölts. A töltés megáll, ha az első kiürül, vagy a második megtelik.",
         "contents": "Ennyi olaj van összesen – az egyik korsó tele van az elején, és semmit sem lehet kiönteni vagy újat meríteni.",
         "levels": "Minden korsón látszik, mennyi van benne, és mennyi fér bele, ha tele van."
       },
       "wine": {
-        "moves": "Koppints egy amforára, hogy felemeld, aztán egy másikra, hogy átöntsd. Az átöntés megáll, ha az első kiürül, vagy a második megtelik.",
+        "moves": "Emelj fel egy amforát, aztán válassz egy másikat, hogy átöntsd. Az átöntés megáll, ha az első kiürül, vagy a második megtelik.",
         "contents": "Ennyi bor van összesen – az egyik amfora tele van az elején, és semmit sem lehet kiönteni vagy a pincéből hozni.",
         "levels": "Minden amforán látszik, mennyi van benne, és mennyi fér bele, ha tele van."
       },
       "natron": {
-        "moves": "Koppints egy korsóra, hogy felemeld, aztán egy másikra, hogy beleszórd a nátront. A szórás megáll, ha az első kiürül, vagy a második a fedeléig megtelik.",
+        "moves": "Emelj fel egy korsót, aztán válassz egy másikat, hogy beleszórd a nátront. A szórás megáll, ha az első kiürül, vagy a második a fedeléig megtelik.",
         "contents": "Ennyi nátron van összesen – az egyik korsó tele van az elején, és semmit sem lehet kisöpörni vagy újat hozni.",
         "levels": "Minden korsón látszik, mennyi van benne, és mennyi fér bele a fedeléig."
       },
       "ink": {
-        "moves": "Koppints egy tégelyre, hogy felemeld, aztán egy másikra, hogy beletölts. A töltés megáll, ha az első kiürül, vagy a második megtelik.",
+        "moves": "Emelj fel egy tégelyt, aztán válassz egy másikat, hogy beletölts. A töltés megáll, ha az első kiürül, vagy a második megtelik.",
         "contents": "Ennyi tinta van összesen – az egyik tégely tele van az elején, és semmit sem lehet kiönteni vagy újat keverni.",
         "levels": "Minden tégelyen látszik, mennyi van benne, és mennyi fér bele, ha tele van."
       }
@@ -1338,7 +1412,12 @@
     "legs": "{{done}} / {{total}} kimérve",
     "wanted": "Mérd ki",
     "claim": "ez az",
-    "claimAria": "A(z) {{capacity}} edényben van a mennyiség"
+    "claimAria": "A(z) {{capacity}} edényben van a mennyiség",
+    "controls": {
+      "move": "edény vagy az alatta lévő „ez az” kiválasztása",
+      "press": "felemelés, töltés ide vagy bejelentés",
+      "putDown": "a kézben lévő edény visszatétele"
+    }
   },
   "procession": {
     "name": {
@@ -1358,8 +1437,8 @@
     "rules": {
       "default": {
         "lengths": "Minden sor egy esemény, és olyan sokáig tart, amilyen széles a csíkja. Hogy mikor történik, azt neked kell kitalálnod.",
-        "marks": "A nap alatti vonal piros, amíg nem teljesül. Koppints rá, hogy bekarikázza azokat a sorokat, amikről szól.",
-        "drag": "Húzd a csíkot a saját sorában. Soha nem csúszik ki a napból."
+        "marks": "A nap alatti vonal piros, amíg nem teljesül. Válaszd ki, hogy bekarikázza azokat a sorokat, amikről szól.",
+        "drag": "Csúsztasd a csíkot a saját sorában. Soha nem csúszik ki a napból."
       }
     },
     "hint": {
@@ -1368,50 +1447,22 @@
         "squeeze": "Már csak ennyi nap maradt, és pont ennyi fér el benne.",
         "apart": "Fordítva nem fér bele a napba.",
         "split": "Próbáld fordítva, és valami más romlik el.",
-        "move": "Húzd a bekarikázott csíkot a csíkozott beosztásokra."
+        "move": "Csúsztasd a bekarikázott csíkot a csíkozott beosztásokra."
       }
     },
     "events": {
-      "default": {
-        "0": "a tűzrakás",
-        "1": "a vízhordás",
-        "2": "a sütés",
-        "3": "a csónakázás",
-        "4": "az ökörhajtás",
-        "5": "az éjjeli őrség"
-      },
-      "funerary": {
-        "0": "a vakolás",
-        "1": "a rácsrajzolás",
-        "2": "a faragás",
-        "3": "a festés",
-        "4": "az aranyozás",
-        "5": "az ajtó beillesztése"
-      },
-      "cosmos": {
-        "0": "a nap átkelése",
-        "1": "a csillag felkelése",
-        "2": "a hold őrsége",
-        "3": "a tiszta égbolt",
-        "4": "a hajnal",
-        "5": "az év fordulója"
-      },
-      "water": {
-        "0": "az áradás",
-        "1": "a csatornaásás",
-        "2": "a medence feltöltése",
-        "3": "a földek öntözése",
-        "4": "a révészet",
-        "5": "az aratás"
-      },
-      "trade": {
-        "0": "az áru válogatása",
-        "1": "a kenyérárulás",
-        "2": "a sörárulás",
-        "3": "a révészet",
-        "4": "a cipekedés",
-        "5": "az elszámolás"
-      }
+      "default": ["a tűzrakás", "a vízhordás", "a sütés", "a csónakázás", "az ökörhajtás", "az éjjeli őrség"],
+      "funerary": ["a vakolás", "a rácsrajzolás", "a faragás", "a festés", "az aranyozás", "az ajtó beillesztése"],
+      "cosmos": [
+        "a nap átkelése",
+        "a csillag felkelése",
+        "a hold őrsége",
+        "a tiszta égbolt",
+        "a hajnal",
+        "az év fordulója"
+      ],
+      "water": ["az áradás", "a csatornaásás", "a medence feltöltése", "a földek öntözése", "a révészet", "az aratás"],
+      "trade": ["az áru válogatása", "a kenyérárulás", "a sörárulás", "a révészet", "a cipekedés", "az elszámolás"]
     },
     "marks": {
       "default": {
@@ -1431,6 +1482,11 @@
       "hint": "Minden lap, amire rálépsz, elindítja a hozzá tartozó eseményt. Rendezd el a napot, aztán lépkedj végig a lapokon ebben a sorrendben.",
       "read": "A nap ki van olvasva. Lépkedj végig a lapjain ebben a sorrendben, az elsőtől kezdve.",
       "hintButton": "Tipp"
+    },
+    "controls": {
+      "row": "sor kiválasztása",
+      "slide": "a csík csúsztatása",
+      "mark": "egy nap alatti vonal kiválasztása"
     }
   },
   "story": {
@@ -1453,6 +1509,13 @@
       "pick": "Tedd a helyére a jó jelet.",
       "cannot": "Még nem ismered a jelet, ami ide kell. Egyelőre."
     },
+    "formula": {
+      "wrong": "Ebből a sorból hiányzik egy jel. Nem rosszul vésték ki – sosem vésték ki.",
+      "fixed": "A sor teljes.",
+      "pick": "Tedd az üres helyre a jelet, amit kaptál.",
+      "cannot": "Erre a helyre még senki nem adott neked jelet. Egyelőre.",
+      "gap": "A hiányzó jel"
+    },
     "sphinx": {
       "wrong": "Ugyanaz az írás, mint odakint, de ide sosem ért el a homok. Két jel még tisztán látszik, és ott egy üres hely, ahol a harmadik volt.",
       "fixed": "Most már teljes.",
@@ -1469,7 +1532,7 @@
       "shrines": "Egy fénykorong, és minden kijárat fölött egy szentély ebben az elágazásban. A padlón lévő tükrök bármelyikhez elvihetik a fényt.",
       "doors": "Az a kijárat nyitva áll, amelyikhez a fény elér, a többi zárva van. Egy útvonal, egy továbbjutás.",
       "returning": "A választással semmit sem veszítesz. Bármikor visszajöhetsz, és máshová küldheted a fényt – akkor az az út nyílik ki, ez pedig bezárul.",
-      "tap": "Koppints egy tükörre, hogy elfordítsd. Ha újra koppintasz, visszaáll."
+      "tap": "Válassz egy tükröt, hogy elfordítsd. Válaszd újra, hogy visszaálljon."
     },
     "doorOpen": "{{way}} kijárat: nyitva",
     "doorShut": "{{way}} kijárat: zárva",
@@ -1478,6 +1541,10 @@
       "e": "Keleti",
       "s": "Déli",
       "w": "Nyugati"
+    },
+    "controls": {
+      "move": "tükör kiválasztása",
+      "turn": "elforgatás"
     }
   },
   "handle": {
@@ -1727,5 +1794,33 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "A rajzolás átírja a szöveget: minden megjegyzés a tetejére kerül"
+  },
+  "saveCard": {
+    "title": "Útikártya",
+    "explain": "Vidd át az expedíciódat egy másik eszközre: itt készíts kártyát, ott pedig olvasd be 15 percen belül.",
+    "make": "Útikártya készítése",
+    "share": "Kártya megosztása",
+    "download": "Kártya letöltése",
+    "read": "Útikártya beolvasása",
+    "busy": "Egy pillanat…",
+    "makeFailed": "Nem sikerült elkészíteni a kártyát.",
+    "shareFailed": "A megosztás nem sikerült; töltsd le inkább a kártyát.",
+    "confirm_one": "Lecseréled az ezen az eszközön lévő expedíciót a kártyán lévőre ({{count}} utazás)?",
+    "confirm_other": "Lecseréled az ezen az eszközön lévő expedíciót a kártyán lévőre ({{count}} utazás)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Útikártya · vidd magaddal az expedíciódat",
+    "validUntil": "érvényes eddig: {{time}}",
+    "codes_one": "{{count}} kód",
+    "codes_other": "{{count}} kód",
+    "refused": {
+      "notACard": "Ez nem útikártya.",
+      "tampered": "Ezt a kártyát megváltoztatták, és már nem olvasható.",
+      "expired": "Ez a kártya lejárt; készíts újat.",
+      "future": "Ez a kártya a jövőből jött: nézd meg az órát mindkét eszközön.",
+      "otherEpoch": "Ez a kártya a játék egy másik verziójából való.",
+      "newerGame": "Ez a kártya egy újabb verzióból való: előbb frissítsd a játékot."
+    },
+    "writeFailed": "Nem sikerült beírni a mentést; ez az eszköz megtartotta a sajátját.",
+    "writeLost": "Nem sikerült lecserélni a mentést, és az eszközön lévő mentés hiányos lehet."
   }
 }

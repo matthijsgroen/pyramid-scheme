@@ -239,6 +239,21 @@
       "description": "Királyi fejdísz egy védő kobrával. A fáraók viselték isteni védelemként."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Kenyér",
+      "description": "A magas cipó, a kenyér jele. Ipi adta, aki negyven évig számolta a gabonát, és egyszer odaadta."
+    },
+    "o2": {
+      "name": "Len"
+    },
+    "o3": {
+      "name": "Víz"
+    },
+    "o4": {
+      "name": "Bárka"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Nádlevél",

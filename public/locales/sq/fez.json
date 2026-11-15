@@ -28,7 +28,7 @@
   "tombTutorial3": "Llogaritë e vogla të tregojnë kur një shenjë është e saktë. Kështu gjejmë cila shenjë shkon ku.",
   "tombTutorial4": "I mbushe të gjitha? Atëherë del një bravë me numra. Llogaria e madhe është kodi, dhe pastaj varri hapet!",
   "hieroglyphUnlock": "Kemi një send të veçantë. Me të mund të shkruajmë mbi një nga ata blloqe të vulosur!",
-  "hieroglyphUnlock2": "Prek një gur që ndriçon, pastaj tërhiqe sendin mbi të që ta hapësh. Një bllok për çdo piramidë.",
+  "hieroglyphUnlock2": "Zgjidh një gur që ndriçon, pastaj çoje sendin tek ai që ta hapësh. Një bllok për çdo piramidë.",
   "errorHighlightTutorial": "Ai thesar që gjetëm ka një marifet të dobishëm. Po të shkruash një përgjigje të gabuar, një gabim do të ndriçojë i kuq!",
   "errorHighlightTutorial2": "Ndriçon vetëm një bllok në një kohë, ndaj prapë është sfidë. Por të ndihmon ta ngushtosh kërkimin!",
   "earlyFeedbackTutorial": "I sheh ata blloqe kontrolli? Bëhen të gjelbër ose të kuq ndërsa i mbush. Ta thonë menjëherë!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Shiko çfarë ka te tezga! Tani bëj edhe transport."
+      },
+      "2": {
+        "explorer": "Unë shoh vetëm një vizatim."
+      },
+      "3": {
+        "fez": "Origjinali ha më shumë."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "Rreshti i dytë. Ujë të eturve."
+        "explorer": "Rreshti i dytë. _Rroba të zhveshurve._"
       },
       "2": {
-        "fez": "Bukë, dhe tani ujë. Dikush donte shumë që ta kujtonin si bujar."
+        "fez": "Bukë, dhe tani rroba. Dikush donte shumë që ta kujtonin si bujar."
       },
       "3": {
         "explorer": "E kanë të gjithë. Çdo mur, çdo varr, të njëjtët dy rreshta."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Rroba të zhveshurve. Rreshti i tretë."
+        "explorer": "_Ujë të eturve._ Rreshti i tretë."
       },
       "2": {
-        "fez": "Bukë, ujë, rroba. Është një listë gjërash që u dhanë."
+        "fez": "Bukë, rroba, ujë. Është një listë gjërash që u dhanë."
       },
       "3": {
         "explorer": "Në varrin e një njeriu që mori gjithçka me vete."
@@ -1599,8 +1605,42 @@
       "explorer": "Shkon."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Aty mungon diçka për të uriturit. Bukë, do të thosha. Dhe njoh një njeri që numëroi çdo thes gruri për dyzet vjet."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, na duhet bukë. Për një mur."
+        },
+        "2": {
+          "ipi": "Bukë? Timen? E di sa kushton gruri?"
+        },
+        "3": {
+          "fez": "Është për një rresht për dhënien e gjërave."
+        },
+        "4": {
+          "ipi": "…Dhënien. Falas."
+        },
+        "5": {
+          "ipi": "Mirë. Një bukë. Por do të shkruhet: _Ipi dha bukë._"
+        },
+        "6": {
+          "fez": "Dha diçka! E pe këtë?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Ajo bukë — e ka ngrënë njeri ende? Se po jo, do ta doja mbrapsht."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Ende këtu? Në veri! Henut! Njëmbëdhjetë deben!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "Muri. Shenja e tretë. Ende nuk është emri im."
+          "henut": "Muri. Shenja e dytë. Ende nuk është emri im."
         }
       },
       "wall2": {

@@ -28,7 +28,7 @@
   "tombTutorial3": "Mazie rēķini parāda, kad zīme ir pareiza. Tā mēs atrodam, kura zīme kur pieder.",
   "tombTutorial4": "Viss aizpildīts? Tad parādās ciparu slēdzene. Lielais rēķins ir kods — un tad kaps atveras!",
   "hieroglyphUnlock": "Mums ir īpaša senlieta — ar to var rakstīt uz viena no aizzīmogotajiem bluķiem!",
-  "hieroglyphUnlock2": "Pieskaries mirdzošam akmenim un tad uzvelc senlietu uz tā, lai to atvērtu. Viens bluķis katrā piramīdā.",
+  "hieroglyphUnlock2": "Izvēlies mirdzošu akmeni un tad aiznes senlietu pie tā, lai to atvērtu. Viens bluķis katrā piramīdā.",
   "errorHighlightTutorial": "Tam dārgumam, ko atradām, ir noderīgs triks — ieraksti nepareizu atbildi, un viena kļūda iedegsies sarkana!",
   "errorHighlightTutorial2": "Vienlaikus deg tikai viens bluķis, tāpēc tas vēl joprojām ir izaicinājums. Bet tas palīdz sašaurināt meklēšanu!",
   "earlyFeedbackTutorial": "Redzi tos kontrolbluķus? Tie kļūst zaļi vai sarkani, kamēr tu tos aizpildi — uzreiz redzams!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Paskat, kas ir bodītē! Es tagad nodarbojos ar pārvadājumiem."
+      },
+      "2": {
+        "explorer": "Es redzu tikai zīmējumu."
+      },
+      "3": {
+        "fez": "Oriģināls ēd vairāk."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "Otrā rinda. Ūdeni izslāpušajiem."
+        "explorer": "Otrā rinda. _Drēbes kailajiem._"
       },
       "2": {
-        "fez": "Maize, un tagad ūdens. Kādam ļoti gribējās, lai viņu atceras kā dāsnu."
+        "fez": "Maize, un tagad drēbes. Kādam ļoti gribējās, lai viņu atceras kā dāsnu."
       },
       "3": {
         "explorer": "Tas ir visiem. Katrā sienā, katrā kapā tās pašas divas rindas."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Drēbes kailajiem. Trešā rinda."
+        "explorer": "_Ūdeni izslāpušajiem._ Trešā rinda."
       },
       "2": {
-        "fez": "Maize, ūdens, drēbes. Tas ir saraksts ar lietām, kas atdotas citiem."
+        "fez": "Maize, drēbes, ūdens. Tas ir saraksts ar lietām, kas atdotas citiem."
       },
       "3": {
         "explorer": "Kapā vīram, kurš visu paņēma sev līdzi."
@@ -1599,8 +1605,42 @@
       "explorer": "Iztiks."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Tur trūkst kaut kā izsalkušajiem. Maizes, es teiktu. Un es pazīstu vīru, kurš četrdesmit gadus skaitīja katru graudu maisu."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, mums vajag maizi. Sienai."
+        },
+        "2": {
+          "ipi": "Maizi? Manu? Vai tu zini, cik maksā graudi?"
+        },
+        "3": {
+          "fez": "Tā ir vienai rindai par to, kā lietas atdod prom."
+        },
+        "4": {
+          "ipi": "…Atdod. Prom."
+        },
+        "5": {
+          "ipi": "Labi. Viens kukulis. Bet to pierakstīs: _Ipi deva maizi._"
+        },
+        "6": {
+          "fez": "Viņš kaut ko atdeva! Tu redzēji?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Tas kukulis — vai kāds to jau ir apēdis? Jo ja nē, es gribētu to atpakaļ."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Vēl te? Uz ziemeļiem! Henut! Vienpadsmit debenu!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "Siena. Trešā zīme. Tas joprojām nav mans vārds."
+          "henut": "Siena. Otrā zīme. Tas joprojām nav mans vārds."
         }
       },
       "wall2": {

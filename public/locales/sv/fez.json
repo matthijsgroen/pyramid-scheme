@@ -3,15 +3,12 @@
   "welcome": "Egypten! Jag är här på riktigt.",
   "welcome2": "Och den här kartan… den betalade jag alldeles för mycket för. Den får minsann stämma.",
   "welcome3": "Kom igen. Vi kollar var det där krysset är.",
-
   "pyramidIntro": "Det står siffror på de här stenarna. Och några fattas…",
   "pyramidIntro2": "Vänta. Varje sten är de två under den, ihoplagda! Ja – här också!",
-
   "pyramidBlockedBlocks": "Hallå, vad är det här? De där blocken är förseglade. De visar inte sin siffra!",
   "pyramidBlockedBlocks2": "Det gör inget. Titta på blocken runt omkring – med dem kan du räkna ut det.",
   "pyramidBlockedBlocks3": "Men du kan inte skriva in den. Den siffran får du hålla i huvudet.",
   "pyramidBlockedBlocks4": "Kom igen, du har kommit så här långt. Du fixar det här!",
-
   "levelCompleted": "Ha! Den öppnas! Kom, in med oss.",
   "exitPillar": {
     "1": { "fez": "Ha! Dagsljus! Ser du ljusstrålen? Där går vi ut. Kliv in i den, så är vi klara här." },
@@ -22,24 +19,18 @@
   },
   "expeditionCompleted": "Grattis, du klarade expeditionen!",
   "expeditionCompleted2": "En ny expedition finns nu.",
-
   "tombTutorial": "Åh, skrift! Kan vi läsa den? Med hieroglyferna vi har hittat… kanske!",
   "tombTutorial2": "Titta, räknetal med tecken i! Ser du de tomma platserna? Där ska hieroglyferna in. Dina, där nere.",
   "tombTutorial3": "De små talen visar när ett tecken är rätt. Så listar vi ut vilket tecken som ska vara var.",
   "tombTutorial4": "Är allt ifyllt? Då dyker ett sifferlås upp. Det stora talet är koden – och sen öppnas graven!",
-
   "hieroglyphUnlock": "Vi har ett speciellt föremål – med det kan vi skriva på ett av de förseglade blocken!",
-  "hieroglyphUnlock2": "Tryck på en sten som glittrar och dra föremålet dit för att låsa upp den. Ett block per pyramid.",
-
+  "hieroglyphUnlock2": "Välj en sten som glittrar och ta föremålet dit för att låsa upp den. Ett block per pyramid.",
   "errorHighlightTutorial": "Skatten vi hittade har ett smart knep – skriver du fel svar så lyser ett fel upp i rött!",
   "errorHighlightTutorial2": "Bara ett block lyser åt gången, så det är fortfarande klurigt. Men det hjälper dig att hitta felet!",
-
   "earlyFeedbackTutorial": "Ser du kontrollblocken? De blir gröna eller röda medan du fyller i – direkt!",
   "earlyFeedbackTutorial2": "Använd dem som hjälp när du löser. Blir ett rött, så är något i närheten fel.",
-
   "notEnoughHieroglyphs": "Du kan alltid avbryta den här expeditionen genom att gå tillbaka till resekartan.",
   "notEnoughHieroglyphs2": "Vi kan pausa expeditionen och leta på andra ställen efter hieroglyferna vi fortfarande behöver.",
-
   "tombLoot": "Wow, vår första skatt! Bra jobbat!",
   "mapPiece": "Titta! DET är en riktig karta. Jättegammal! Värd mer än båda våra kartor tillsammans!",
   "mapPiece2": "Fast det är bara en bit, alltså. Varje expedition här omkring gömmer en, och tillsammans visar de vägen till en grav.",
@@ -47,39 +38,30 @@
   "mapComplete2": "Där, där alla linjer möts. Där ligger en grav.",
   "mapComplete3": "Den finns bland våra resor nu. Ska vi gå och titta?",
   "mapPiece3": "Håll räkningen i listan med expeditioner. Det gör i alla fall jag!",
-
   "mosaicIntro": "Åh, färgat glas! Titta hur det glittrar – SÅNT slänger man inte!",
   "mosaicIntro2": "Det är en bit av en bild. Ett helt fönster av glas, och varje bit vi hittar tar tillbaka lite av det.",
   "mosaicIntro3": "Har inte du ett läger någonstans? Ta med dem, så pusslar vi ihop dem där. Jag vill se vad det blir!",
   "mosaicReminder": "Psst! Glasbitarna skramlar fortfarande i väskan. Ska vi sätta in dem i fönstret i lägret?",
-
   "mosaicStarter": "En katt i dörröppningen, och en orm som har bråttom därifrån. Det var värt en skål mjölk.",
   "mosaicStarter2": "Egypterna älskade katter just därför – de dödade ormarna och råttorna som tog sig in i säden.",
   "mosaicStarter3": "De älskade dem så mycket att de gjorde en till gudinna. Bastet. Hon skyddar huset, dörren och alla som sover där bakom.",
-
   "mosaicJunior": "Titta på hans hand – någon visar honom hur man håller pennan.",
   "mosaicJunior2": "Han med fågelhuvudet är Thoth. Skriva, räkna, hålla koll på allt – det är hans grej.",
   "mosaicJunior3": "Ibisen vi följde uppför floden? Det är hans fågel. Varenda siffra vi har fyllt i på en vägg hör till honom också.",
-
   "mosaicExpert": "Det där ljuset är ingen tur. De byggde hela salen så att det skulle landa precis där, på rätt morgon.",
   "mosaicExpert2": "Solen är Amon-Ra – den gömda, och ljuset som alla kan se. Båda på en gång.",
   "mosaicExpert3": "Den som kan mäta himlen så noga kan mäta vad som helst. Vi har löst deras räknetal hela vägen hit.",
-
   "mosaicMaster": "Grön hud, och säd som växer rakt ut ur honom. Det är med flit.",
   "mosaicMaster2": "Osiris. Han blev dödad och ihopsatt igen, och nu är han det som kommer tillbaka varje år när floden svämmar över åkrarna.",
   "mosaicMaster3": "Här nere är det hela idén: död betyder inte slut. Mysig tanke i en grav, va?",
-
   "mosaicWizard": "Ett hjärta på ena sidan. En fjäder på den andra. Och de väger lika.",
   "mosaicWizard2": "Fjädern är Maat – sanning, balans, hur saker ska vara. Är hjärtat tyngre än fjädern, så kommer man inte in genom dörren.",
   "mosaicWizard3": "Schakalen som håller vågen stilla är Anubis. Det är han som följer dig hit.",
-
   "mosaicFinale": "Ta ett steg bakåt. Titta på allt vi har burit upp ur de där pyramiderna.",
   "mosaicFinale2": "Varje bit är en del av honom – han som håller vågen stilla. Han har tittat på hela vägen.",
   "mosaicFinale3": "Det där är hans berättelse om oss. Och jag tycker att det väger jämnt.",
-
   "shopFirstVisit": "Ah, här är vi. Mitt stånd – jag sa ju att jag var med för affärernas skull.",
   "shopFirstVisit2": "Allt på den här disken har jag burit ut från något ställe. Den där kommer från två gravar tillbaka.",
-
   "shopArrival": "Ah, mitt stånd! Vänta, så lägger jag fram allt jag har plockat upp på vägen.",
   "shopArrival2": "Sällsynta fynd kostar mest, men jag betalar dig för alla småsaker du bär på.",
   "arrival": {
@@ -99,9 +81,7 @@
       "5": { "fez": "Tre tusen år. Varorna är borta, men kvittona ligger kvar. Typiskt!" }
     },
     "starter_3": {
-      "1": {
-        "fez": "Titta på de där dörrarna! Hit kom man för att be om skydd. Och sen förblev en sån dörr stängd."
-      },
+      "1": { "fez": "Titta på de där dörrarna! Hit kom man för att be om skydd. Och sen förblev en sån dörr stängd." },
       "2": { "explorer": "Stängd för vem?" },
       "3": { "fez": "För alla som inte frågade snällt. För oss, mest." },
       "4": { "fez": "Allt som är förseglat här har någon förseglat på allvar. På riktigt allvar." },
@@ -118,7 +98,6 @@
       "4": { "explorer": "Den där Sfinxen… jag vill titta på den en gång till." },
       "5": { "fez": "Inte än. Snart." }
     },
-
     "junior_1": {
       "1": { "fez": "De kom tillbaka varje år med översvämningen, nästan på dagen." },
       "2": { "fez": "Så folk började räkna dagarna emellan. Det är därifrån kalendern kommer – från fåglar." },
@@ -144,7 +123,6 @@
       "3": { "explorer": "Hur hittar man något här ute utan en sån?" },
       "4": { "fez": "Man frågar någon som har varit där. Det är hela mitt jobb." }
     },
-
     "expert_1": {
       "1": { "fez": "Ett sextiotal gravar inhuggna i en enda dal, och varenda en öppnades innan vi kom hit." },
       "2": { "explorer": "Av vem?" },
@@ -171,7 +149,6 @@
       "3": { "explorer": "Funkade det?" },
       "4": { "fez": "Den står kvar, och det gör inte han. Beror på vad man menar." }
     },
-
     "master_1": {
       "1": { "fez": "Två miljoner block. Någon har räknat." },
       "2": { "explorer": "Har någon räknat?" },
@@ -201,7 +178,6 @@
       "2": { "explorer": "Henut skulle bli rasande." },
       "3": { "fez": "Henut skulle anteckna." }
     },
-
     "wizard_1": {
       "1": { "fez": "Solen går under jorden på natten och kommer upp på andra sidan. Det är hela tron." },
       "2": { "fez": "Tolv timmar i mörkret, med massor i vägen, och någon måste bära den hela vägen igenom." },
@@ -242,7 +218,6 @@
       "3": { "fez": "För alla som tittar. Det var hela poängen – den var aldrig till för mannen där inne." }
     }
   },
-
   "tomb": {
     "starter": {
       "1": { "ipi": "Hallå! Bort med tassarna! Det där är min kruka!" },
@@ -363,7 +338,6 @@
       "3": { "fez": "Det har varit en bild hela tiden." }
     }
   },
-
   "cave": {
     "starter_treasure_tomb": {
       "1": { "fez": "En grotta! Kartan visade en källardörr, och det här är en hel kulle!" },
@@ -413,7 +387,6 @@
       "3": { "fez": "Ingen aning. Det är det värsta." }
     }
   },
-
   "pillar": {
     "starter_treasure_tomb": {
       "1": { "fez": "Alla de där spakarna och dörrarna, för en enda källare!" },
@@ -455,7 +428,6 @@
       "3": { "fez": "Och då hade jag nästan rätt." }
     }
   },
-
   "cavern": {
     "starter_treasure_tomb": {
       "1": { "fez": "Titta där! En pyramid, under jorden! Åt en köpman!" },
@@ -502,7 +474,6 @@
       "3": { "fez": "På kartan, ja. Konstigt. Jag trodde att det skulle kännas bättre." }
     }
   },
-
   "camp": {
     "firstHome": {
       "1": { "fez": "Är det här ditt läger? En eld och en kista?" },
@@ -560,10 +531,11 @@
       "3": { "fez": "Tja. Jag pekade mest." }
     }
   },
-
   "animal": {
     "forSale": {
-      "1": { "fez": "Titta vad som står vid ståndet! Jag sysslar med transporter nu." }
+      "1": { "fez": "Titta vad som står vid ståndet! Jag sysslar med transporter nu." },
+      "2": { "explorer": "Jag ser bara en teckning." },
+      "3": { "fez": "Originalet äter mer." }
     },
     "boughtDonkey": {
       "1": { "fez": "Såld! En åsna. Envis, men han bär vad som helst." },
@@ -574,10 +546,7 @@
       "1": { "fez": "Vi går inte så långt med alla de här grejerna. Det behövs en åsna." },
       "2": { "fez": "Och gissa vem som har en? Jag. Vid mitt stånd i Henuts valv." }
     },
-    "throughDonkey": {
-      "1": { "explorer": "Han vill gärna." },
-      "2": { "fez": "I dag. Fråga honom igen i morgon." }
-    },
+    "throughDonkey": { "1": { "explorer": "Han vill gärna." }, "2": { "fez": "I dag. Fråga honom igen i morgon." } },
     "arrivesDonkey": {
       "1": { "fez": "Där är han! Kom hit före oss." },
       "2": { "explorer": "Han hittade elden också." },
@@ -692,7 +661,6 @@
       "3": { "fez": "Nej. Det behöver det inte." }
     }
   },
-
   "bond": {
     "starter": {
       "1": { "fez": "Det gick fort." },
@@ -734,7 +702,6 @@
       "3": { "fez": "Alla de åren har folk gått rakt förbi. Alla de åren!" }
     }
   },
-
   "reading": {
     "junior": {
       "1": { "explorer": "Det står en rad här som jag kan läsa nu." },
@@ -743,15 +710,15 @@
       "4": { "explorer": "Det står i den förra också. Jag visste inte att det var ord." }
     },
     "expert": {
-      "1": { "explorer": "Andra raden. Vatten åt den törstige." },
-      "2": { "fez": "Bröd, och nu vatten. Någon ville verkligen bli ihågkommen som snäll och givmild." },
+      "1": { "explorer": "Andra raden. _Kläder åt den nakne._" },
+      "2": { "fez": "Bröd, och nu kläder. Någon ville verkligen bli ihågkommen som snäll och givmild." },
       "3": { "explorer": "Alla har det. Varje vägg, varje grav, samma två rader." },
       "4": { "fez": "Då var antingen alla givmilda, eller så är det bara det man ska säga." },
       "5": { "explorer": "Eller så är det det de mättes efter." }
     },
     "master": {
-      "1": { "explorer": "Kläder åt den nakne. Tredje raden." },
-      "2": { "fez": "Bröd, vatten, kläder. Det är en lista över saker man har gett bort." },
+      "1": { "explorer": "_Vatten åt den törstige._ Tredje raden." },
+      "2": { "fez": "Bröd, kläder, vatten. Det är en lista över saker man har gett bort." },
       "3": { "explorer": "I graven efter en man som tog med sig allt." },
       "4": { "fez": "…Ja. Det hade jag märkt." }
     },
@@ -771,7 +738,6 @@
       "13": { "fez": "Nåja. Det förklarar fezen." }
     }
   },
-
   "altar": {
     "refused": {
       "1": { "priest": "Nej." },
@@ -782,7 +748,6 @@
       "4": { "priest": "Jag har väntat i tre tusen år. Jag tänker inte låta mig luras under den sista veckan." }
     }
   },
-
   "meeting": {
     "starter_1": {
       "1": { "voice": "Hallå! Inte DÄR! Se dig för var du går!" },
@@ -803,14 +768,27 @@
       "16": { "fez": "Fyra ögon ser mer än två. Kom igen, pyramiden väntar!" }
     }
   },
-
-  "end": {
-    "1": { "fez": "Var det häftigt?" },
-    "2": { "explorer": "Det duger." }
+  "end": { "1": { "fez": "Var det häftigt?" }, "2": { "explorer": "Det duger." } },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Där saknas något åt den hungrige. Bröd, skulle jag tro. Och jag känner en man som räknade varenda sädessäck i fyrtio år."
+        }
+      },
+      "gift": {
+        "1": { "explorer": "Ipi, vi behöver bröd. Till en vägg." },
+        "2": { "ipi": "Bröd? Mitt? Vet ni vad säd kostar?" },
+        "3": { "fez": "Det är till en rad om att ge bort saker." },
+        "4": { "ipi": "…Ge. Bort." },
+        "5": { "ipi": "Okej. Ett bröd. Men det skrivs upp: _Ipi gav bröd._" },
+        "6": { "fez": "Han gav bort något! Såg du det?" }
+      }
+    }
   },
-
   "revisit": {
     "starter": {
+      "gave1": { "1": { "ipi": "Det där brödet – har någon ätit upp det än? För annars vill jag ha tillbaka det." } },
       "north1": { "1": { "ipi": "Fortfarande här? Norrut! Henut! Elva deben!" } },
       "north2": { "1": { "ipi": "Elva deben lapis. Henut. Norrut. Vad väntar ni på?" } },
       "paid1": { "1": { "ipi": "Nå? Betalade hon? …Nej. Klart att hon inte gjorde." } },
@@ -819,7 +797,7 @@
       "later2": { "1": { "ipi": "Fyrtio år av böcker, och inte en enda går jämnt ut. Inte en enda!" } }
     },
     "junior": {
-      "wall1": { "1": { "henut": "Väggen. Tredje tecknet. Det är fortfarande inte mitt namn." } },
+      "wall1": { "1": { "henut": "Väggen. Andra tecknet. Det är fortfarande inte mitt namn." } },
       "wall2": {
         "1": { "henut": "Ni är fortfarande här, och den där gåsen sitter fortfarande på min vägg. Rätta till det." }
       },

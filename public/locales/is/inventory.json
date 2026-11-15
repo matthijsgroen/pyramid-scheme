@@ -239,6 +239,21 @@
       "description": "Konunglegt höfuðfat með verndandi kóbraslöngu, sem faraóar báru sér til verndar."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Brauð",
+      "description": "Háa brauðið, táknið fyrir brauð. Gefið af Ipi, sem taldi korn í fjörutíu ár og gaf það einu sinni frá sér."
+    },
+    "o2": {
+      "name": "Lín"
+    },
+    "o3": {
+      "name": "Vatn"
+    },
+    "o4": {
+      "name": "Bátur"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Reyrlauf",

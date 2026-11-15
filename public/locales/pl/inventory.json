@@ -239,6 +239,21 @@
       "description": "Królewskie nakrycie głowy z kobrą, która chroni faraona."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Chleb",
+      "description": "Wysoki bochenek, znak chleba. Dar od Ipiego, który przez czterdzieści lat liczył zboże i raz je oddał."
+    },
+    "o2": {
+      "name": "Len"
+    },
+    "o3": {
+      "name": "Woda"
+    },
+    "o4": {
+      "name": "Łódź"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Liść trzciny",

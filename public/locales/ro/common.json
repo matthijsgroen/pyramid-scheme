@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Progresul tău nu poate fi încărcat",
     "body": "Browserul nu vrea să-ți dea jocul salvat acum. Salvarea ta nu s-a pierdut: reîncarcă pagina ca să încerci din nou.",
-    "banner": "Progresul nu se salvează. Atinge ca să reîncarci.",
+    "banner": "Progresul nu se salvează. Reîncarcă.",
     "reload": "Reîncarcă",
     "continue": "Joacă mai departe fără să salvezi",
     "reset": "Ia-o de la capăt (șterge salvarea)",
@@ -29,7 +29,6 @@
     "evening": "Seară",
     "night": "Noapte"
   },
-  "tomb": {},
   "ui": {
     "level": "Nivel",
     "symbols": "semne",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Întrerupe expediția",
     "confirmInterruptExpedition": "Sigur vrei să întrerupi expediția? Progresul expediției rămâne, dar progresul nivelului se pierde!",
     "cancel": "Anulează",
+    "leaveSite": "Pleci de aici?",
+    "confirmLeaveSite": "Apasă Pleacă ca să ieși înapoi, sau Rămâi ca să explorezi mai departe.",
+    "leave": "Pleacă",
+    "stay": "Rămâi",
     "settings": "Setări",
     "language": "Limbă",
     "close": "Închide",
@@ -107,8 +110,12 @@
     "solvedWithHints_one": "Rezolvat cu {{count}} indiciu",
     "solvedWithHints_few": "Rezolvat cu {{count}} indicii",
     "solvedWithHints_other": "Rezolvat cu {{count}} de indicii",
-    "tapToContinue": "Atinge ca să continui",
-    "goal": "Scop"
+    "tapToContinue": "Continuă",
+    "goal": "Scop",
+    "controls": "Comenzi",
+    "controlsUndo": "anulează",
+    "controlsHint": "indiciu",
+    "controlsLeave": "înapoi la hartă"
   },
   "trap": {
     "warning": "⚠ Coridor cu capcană",
@@ -127,6 +134,7 @@
     "turnAround": "Întoarce-te",
     "wardDescription": {
       "starter": "Sigiliul unui negustor închide trecerea — doar cheia lui de pază o deschide.",
+      "junior": "Blazonul unei nobile închide trecerea — doar cheia ei de pază o deschide.",
       "expert": "Paza templului unui mare preot apără ușa asta — doar cheia lui sfântă o poate deschide.",
       "master": "Sigiliul regal al unui faraon leagă trecerea — doar cheia regelui îl rupe.",
       "wizard": "O pază a zeilor ține poarta asta — doar cheia divină trece de ea."
@@ -135,7 +143,7 @@
     "lockedColor": "Încă n-ai găsit cheia aia pe etajul ăsta."
   },
   "chest": {
-    "tapToOpen": "Atinge ca să deschizi",
+    "tapToOpen": "Deschide",
     "money_one": "{{count}} monedă",
     "money_few": "{{count}} monede",
     "money_other": "{{count}} de monede",
@@ -143,6 +151,7 @@
     "mapPieceDescription": "O bucățică fragilă dintr-o hartă spre un loc uitat de mult. Păcat că e departe de a fi întreagă...",
     "mapPieceProgress": "{{found}} din {{required}} bucăți de hartă adunate",
     "mapPieceComplete": "Harta e întreagă — duce la {{name}}.",
+    "hieroglyph": "Hieroglifă",
     "hieroglyphFragment": "Bucată de hieroglifă",
     "fragmentProgress": "{{found}} din {{required}} bucăți găsite",
     "tombKey": "Cheia mormântului",
@@ -159,8 +168,9 @@
   },
   "loot": {
     "youFound": "Ai găsit",
+    "youReceived": "Ai primit",
     "expeditionReward": "Recompensă în plus pentru că ai terminat expediția",
-    "clickToContinue": "Atinge oriunde ca să continui"
+    "clickToContinue": "Continuă"
   },
   "money": {
     "label": "Monede"
@@ -258,7 +268,7 @@
     "tabNew_other": "{{label}} · {{count}} noi",
     "empty": "Cufărul tău e încă gol",
     "newLabel": "NOU",
-    "clickForDetails": "Atinge o piesă ca să vezi mai multe",
+    "clickForDetails": "Alege o piesă ca să vezi mai multe",
     "categories": {
       "deities": "🏺 Zei",
       "professions": "⚱️ Meserii",
@@ -266,6 +276,7 @@
       "artifacts": "💎 Obiecte",
       "treasures": "💰 Comori",
       "junk": "🔷 Mărunțișuri",
+      "offerings": "🍞 Ofrande",
       "signs": "✍️ Semne"
     },
     "treasureCategories": {
@@ -347,22 +358,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Atinge un semn de jos, apoi un număr. Atinge iar numărul ca să-l scoți.",
+      "tap": "Alege un semn de jos, apoi un număr. Alege iar numărul ca să-l scoți.",
       "same": "Un semn cântărește la fel pe fiecare cântar.",
-      "cancel": "Dacă iei același lucru de pe ambele talere, cântarul rămâne în echilibru. Atinge o piesă însemnată ca s-o faci — ce rămâne se păstrează ca un rând nou.",
-      "swap": "Atinge un semn care nu are nimic la fel în față, apoi un rând unde semnul ăla stă singur, ca să-l schimbi pe cât valorează rândul ăla."
+      "cancel": "Dacă iei același lucru de pe ambele talere, cântarul rămâne în echilibru. Alege o piesă însemnată ca s-o faci — ce rămâne se păstrează ca un rând nou.",
+      "swap": "Alege un semn care nu are nimic la fel în față, apoi un rând unde semnul ăla stă singur, ca să-l schimbi pe cât valorează rândul ăla."
     },
     "hint": {
       "mistake": "Una dintre greutățile pe care le-ai dat face un cântar să se încline. Scoate-o și mai uită-te o dată.",
       "alone": "Pe rândul luminat, {{glyph}} e singura piesă rămasă fără număr. Află cât cântărește.",
       "equalShares": "Rândul luminat are doar {{glyph}} față în față cu un număr. Împarte numărul ăla între ele.",
       "difference": "Cele două rânduri luminate sunt la fel, în afară de {{glyph}}. Compară-le.",
-      "cancelGlyph": "Ambele talere ale rândului luminat au {{glyph}}. Atinge unul ca să-l iei de pe ambele părți — rândul rămâne în echilibru.",
-      "cancelStones": "Ambele talere ale rândului luminat au numere simple. Atinge unul ca să iei aceeași cantitate de pe ambele părți.",
-      "swap": "Un rând luminat spune cât valorează un singur {{glyph}}. Atinge {{glyph}} din celălalt rând luminat, apoi atinge rândul ăla."
+      "cancelGlyph": "Ambele talere ale rândului luminat au {{glyph}}. Alege unul ca să-l iei de pe ambele părți — rândul rămâne în echilibru.",
+      "cancelStones": "Ambele talere ale rândului luminat au numere simple. Alege unul ca să iei aceeași cantitate de pe ambele părți.",
+      "swap": "Un rând luminat spune cât valorează un singur {{glyph}}. Alege {{glyph}} din celălalt rând luminat, apoi alege rândul ăla."
     },
     "swap": {
-      "pick": "Atinge un rând luminat ca să schimbi acest {{glyph}} pe cât spune rândul că valorează.",
+      "pick": "Alege un rând luminat ca să schimbi acest {{glyph}} pe cât spune rândul că valorează.",
       "none": "Nimic de aici nu spune cât valorează un singur {{glyph}}, și nimic din față nu se potrivește."
     },
     "goal": {
@@ -372,11 +383,16 @@
     "name": {
       "default": "Cântarul",
       "weighing": "Cântărirea inimii"
+    },
+    "controls": {
+      "move": "alege o piesă, un rând sau un buton",
+      "press": "apasă-l",
+      "weigh": "dă-i semnului ales greutatea asta"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Atinge o dată ca să tai un număr, încă o dată ca să-l însemnezi ca păstrat, și încă o dată ca să-l ștergi.",
+      "tap": "Alege un număr o dată ca să-l tai, încă o dată ca să-l însemnezi ca păstrat, și încă o dată ca să-l ștergi.",
       "totals": "Numărul mic de sub fiecare țintă arată cât face linia aia acum."
     },
     "hint": {
@@ -439,12 +455,16 @@
       }
     },
     "goal": "Fiecare rând și fiecare coloană face numărul de lângă ea.",
-    "name": "Socoteala"
+    "name": "Socoteala",
+    "controls": {
+      "move": "alege un număr",
+      "mark": "taie, păstrează sau șterge"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Un semn între două pătrățele arată spre numărul mai mic dintre ele.",
-      "enter": "Atinge un pătrățel, apoi un număr. Același număr încă o dată îl scoate.",
+      "enter": "Alege un pătrățel, apoi un număr. Același număr încă o dată îl scoate.",
       "notes": "Treci pe creion ca să notezi numerele care mai pot sta într-un pătrățel. „Anulează” îți ia înapoi ultima mutare."
     },
     "hint": {
@@ -495,14 +515,22 @@
       }
     },
     "goal": "Fiecare rând și fiecare coloană are fiecare număr exact o dată.",
-    "name": "Mai mare și mai mic"
+    "name": "Mai mare și mai mic",
+    "controls": {
+      "move": "alege un pătrățel",
+      "type": "scrie un număr",
+      "choose": "alege un număr sau guma",
+      "place": "scrie-l",
+      "pencil": "creion",
+      "erase": "șterge"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "O oglindă întoarce lumina de pe oricare dintre fețele ei. Semnele mici din jurul ei arată în ce alte feluri poate sta: cele mai multe întorc lumina un sfert de tură, iar unele mai puțin și o trimit pieziș.",
       "walls": "Un bloc de piatră înghite lumina. La fel și marginea tablei.",
-      "tap": "Atinge o piesă ca s-o schimbi: o oglindă se rotește, o piesă care alunecă trece la locul următor. O margine albă înseamnă că o poți muta tu; orice altceva face parte din puzzle.",
-      "nodes": "Unele pietre sunt legate de o mufă din podea și nu le muți atingându-le. Trimite lumina peste mufă și piatra se dă la o parte."
+      "tap": "Alege o piesă ca s-o schimbi: o oglindă se rotește, o piesă care alunecă trece la locul următor. O margine albă înseamnă că o poți muta tu; orice altceva face parte din puzzle.",
+      "nodes": "Unele pietre sunt legate de o mufă din podea și nu le poți muta tu. Trimite lumina peste mufă și piatra se dă la o parte."
     },
     "hint": {
       "entryRun": "Începe de unde merge deja lumina: pleacă drept din disc până la prima piesă pe care o poți schimba. Pe pătrățelele alea trece lumina orice ai face.",
@@ -535,7 +563,7 @@
       "triple": "Trei la fel la rând nu au voie niciodată, nici orizontal, nici vertical.",
       "copies": "Nu pot fi două rânduri la fel, și nici două coloane.",
       "signs": "Un semn între două pătrățele spune cum sunt: = înseamnă la fel, × înseamnă diferit.",
-      "enter": "Atinge un pătrățel ca să pui un soare, încă o dată pentru o lună, și încă o dată ca să-l golești."
+      "enter": "Alege un pătrățel ca să pui un soare, încă o dată pentru o lună, și încă o dată ca să-l golești."
     },
     "hint": {
       "mistake": "Unul dintre aceste semne nu poate fi corect.",
@@ -560,7 +588,11 @@
       }
     },
     "goal": "Fiecare pătrățel are un soare sau o lună, și fiecare linie are tot atâția sori câte luni.",
-    "name": "Soare și lună"
+    "name": "Soare și lună",
+    "controls": {
+      "move": "alege un pătrățel",
+      "mark": "schimbă semnul"
+    }
   },
   "constellation": {
     "rules": {
@@ -568,25 +600,25 @@
         "straight": "Liniile de lumină merg drept, orizontal sau vertical, de la o stea la următoarea.",
         "pair": "Două stele pot avea între ele cel mult două linii.",
         "cross": "Liniile nu se încrucișează niciodată și nu trec niciodată printr-o stea.",
-        "enter": "Trage de la o stea spre vecina ei ca să desenezi o linie, încă o dată pentru o linie dublă, și încă o dată ca s-o ștergi."
+        "enter": "Desenează o linie de la o stea spre vecina ei, încă o dată pentru o linie dublă, și încă o dată ca s-o ștergi."
       },
       "causeway": {
         "straight": "Drumurile de cărat merg drept, orizontal sau vertical, de la un șantier la următorul.",
         "pair": "Două șantiere pot avea între ele cel mult două drumuri.",
         "cross": "Drumurile nu se încrucișează niciodată și nu trec niciodată printr-un șantier.",
-        "enter": "Trage de la un șantier spre vecinul lui ca să faci un drum, încă o dată ca să-l dublezi, și încă o dată ca să-l desfaci."
+        "enter": "Fă un drum de la un șantier spre vecinul lui, încă o dată ca să-l dublezi, și încă o dată ca să-l desfaci."
       },
       "irrigation": {
         "straight": "Canalele merg drept, orizontal sau vertical, de la un bazin la următorul.",
         "pair": "Două bazine pot avea între ele cel mult două canale.",
         "cross": "Canalele nu se încrucișează niciodată și nu trec niciodată printr-un bazin.",
-        "enter": "Trage de la un bazin spre vecinul lui ca să sapi un canal, încă o dată ca să-l lărgești, și încă o dată ca să-l astupi."
+        "enter": "Sapă un canal de la un bazin spre vecinul lui, încă o dată ca să-l lărgești, și încă o dată ca să-l astupi."
       },
       "ceiling": {
         "straight": "Sforile merg drept, orizontal sau vertical, de la o stea la următoarea.",
         "pair": "Două stele pot avea între ele cel mult două sfori.",
         "cross": "Sforile nu se încrucișează niciodată și nu trec niciodată printr-o stea.",
-        "enter": "Trage de la o stea spre vecina ei ca să pui o sfoară, încă o dată ca s-o dublezi, și încă o dată ca s-o scoți."
+        "enter": "Întinde o sfoară de la o stea spre vecina ei, încă o dată ca s-o dublezi, și încă o dată ca s-o scoți."
       }
     },
     "hint": {
@@ -682,37 +714,44 @@
       "causeway": "Drumul de piatră",
       "irrigation": "Rețeaua de apă",
       "ceiling": "Tavanul pictat"
+    },
+    "controls": {
+      "pick": "alege o stea",
+      "grab": "ia-o",
+      "draw": "desenează o linie încolo",
+      "release": "las-o",
+      "alt": "ține apăsat și arată: o linie, dublă, nimic"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Două stele nu se pot atinge — nici măcar în colțuri.",
-        "enter": "Atinge un pătrățel ca să-l excluzi, încă o dată ca să pui o stea, și încă o dată ca să-l golești."
+        "enter": "Alege un pătrățel ca să-l excluzi, încă o dată ca să pui o stea, și încă o dată ca să-l golești."
       },
       "fields": {
         "touch": "Două ferme nu se pot atinge — nici măcar în colțuri. Atât de aproape, ar trebui să împartă o fântână.",
-        "enter": "Atinge un teren ca să-l excluzi, încă o dată ca să ridici o fermă, și încă o dată ca să-l golești."
+        "enter": "Alege un teren ca să-l excluzi, încă o dată ca să ridici o fermă, și încă o dată ca să-l golești."
       },
       "lamps": {
         "touch": "Două opaițe nu pot sta unul lângă altul — nici măcar în colțuri. Luminile lor s-ar suprapune și uleiul s-ar irosi.",
         "walls": "Blocurile gri de piatră fac parte din podea: nimic nu poate sta pe ele și nu sunt pătrățele.",
-        "enter": "Atinge o dală ca s-o excluzi, încă o dată ca să pui un opaiț, și încă o dată ca s-o golești."
+        "enter": "Alege o dală ca s-o excluzi, încă o dată ca să pui un opaiț, și încă o dată ca s-o golești."
       },
       "market": {
         "touch": "Două tarabe nu pot sta una lângă alta — nici măcar în colțuri. Rivalii nu se așază niciodată unul lângă altul.",
         "walls": "Casele fac parte din piață: nimeni nu-și poate pune taraba în ele și nu sunt locuri.",
-        "enter": "Atinge un loc ca să-l excluzi, încă o dată ca să pui o tarabă, și încă o dată ca să-l golești."
+        "enter": "Alege un loc ca să-l excluzi, încă o dată ca să pui o tarabă, și încă o dată ca să-l golești."
       },
       "lotus": {
         "touch": "Doi lotuși nu pot pluti unul lângă altul — nici măcar în colțuri. Fiecare floare are nevoie de apă liberă în jur.",
         "walls": "Stâncile ies din iaz: nimic nu poate pluti pe ele și nu sunt pătrățele.",
-        "enter": "Atinge o bucată de apă ca s-o excluzi, încă o dată ca să pui un lotus, și încă o dată ca s-o golești."
+        "enter": "Alege o bucată de apă ca s-o excluzi, încă o dată ca să pui un lotus, și încă o dată ca s-o golești."
       },
       "cats": {
         "touch": "Două pisici nu pot dormi una lângă alta — nici măcar în colțuri. Fiecare pisică își are propriul ei petic de soare.",
         "walls": "Stâlpii țin templul: nicio pisică nu poate dormi pe ei și nu sunt pătrățele.",
-        "enter": "Atinge o dală ca s-o excluzi, încă o dată ca să culci o pisică acolo, și încă o dată ca s-o golești."
+        "enter": "Alege o dală ca s-o excluzi, încă o dată ca să culci o pisică acolo, și încă o dată ca s-o golești."
       }
     },
     "hint": {
@@ -854,10 +893,10 @@
         "mistake": "Semnul ăsta nu poate fi corect.",
         "touch": "Aici e {{token}}, și două opaițe nu pot sta unul lângă altul — nici măcar în colțuri.",
         "groupFull.row_one": "Rândul ăsta are deja opaițul lui.",
-        "groupFull.col_one": "Coloana asta are deja opaițul ei.",
         "groupFull.row_few": "Rândul ăsta are deja cele {{count}} opaițe ale lui.",
-        "groupFull.col_few": "Coloana asta are deja cele {{count}} opaițe ale ei.",
         "groupFull.row_other": "Rândul ăsta are deja cele {{count}} de opaițe ale lui.",
+        "groupFull.col_one": "Coloana asta are deja opaițul ei.",
+        "groupFull.col_few": "Coloana asta are deja cele {{count}} opaițe ale ei.",
         "groupFull.col_other": "Coloana asta are deja cele {{count}} de opaițe ale ei.",
         "groupTight.row_one": "În rândul ăsta a mai rămas o singură dală.",
         "groupTight.row_few": "În rândul ăsta au mai rămas {{count}} dale.",
@@ -866,16 +905,16 @@
         "groupTight.col_few": "În coloana asta au mai rămas {{count}} dale.",
         "groupTight.col_other": "În coloana asta au mai rămas {{count}} de dale.",
         "onlyWay.row_one": "Printre blocurile de piatră, în rândul ăsta a mai rămas un singur pătrățel pentru un opaiț.",
-        "onlyWay.col_one": "Printre blocurile de piatră, în coloana asta a mai rămas un singur pătrățel pentru un opaiț.",
         "onlyWay.row_few": "E un singur fel în care încap {{count}} opaițe în rândul ăsta.",
-        "onlyWay.col_few": "E un singur fel în care încap {{count}} opaițe în coloana asta.",
         "onlyWay.row_other": "E un singur fel în care încap {{count}} de opaițe în rândul ăsta.",
+        "onlyWay.col_one": "Printre blocurile de piatră, în coloana asta a mai rămas un singur pătrățel pentru un opaiț.",
+        "onlyWay.col_few": "E un singur fel în care încap {{count}} opaițe în coloana asta.",
         "onlyWay.col_other": "E un singur fel în care încap {{count}} de opaițe în coloana asta.",
         "everyWay.row_one": "Oriunde ar sta opaițul din rândul ăsta, mereu e aici.",
-        "everyWay.col_one": "Oriunde ar sta opaițul din coloana asta, mereu e aici.",
         "everyWay.row_few": "Oriunde ar sta cele {{count}} opaițe din rândul ăsta, unul e mereu aici.",
-        "everyWay.col_few": "Oriunde ar sta cele {{count}} opaițe din coloana asta, unul e mereu aici.",
         "everyWay.row_other": "Oriunde ar sta cele {{count}} de opaițe din rândul ăsta, unul e mereu aici.",
+        "everyWay.col_one": "Oriunde ar sta opaițul din coloana asta, mereu e aici.",
+        "everyWay.col_few": "Oriunde ar sta cele {{count}} opaițe din coloana asta, unul e mereu aici.",
         "everyWay.col_other": "Oriunde ar sta cele {{count}} de opaițe din coloana asta, unul e mereu aici.",
         "lineBlock.rowsToCols": "Rândurile însemnate își țin opaițele în pătrățelele acelor coloane, deci acele coloane nu mai au niciunul în plus.",
         "lineBlock.colsToRows": "Coloanele însemnate își țin opaițele în pătrățelele acelor rânduri, deci acele rânduri nu mai au niciunul în plus.",
@@ -894,10 +933,10 @@
         "mistake": "Semnul ăsta nu poate fi corect.",
         "touch": "Aici e {{token}}, și două tarabe nu pot sta una lângă alta — nici măcar în colțuri.",
         "groupFull.row_one": "Rândul ăsta are deja taraba lui.",
-        "groupFull.col_one": "Coloana asta are deja taraba ei.",
         "groupFull.row_few": "Rândul ăsta are deja cele {{count}} tarabe ale lui.",
-        "groupFull.col_few": "Coloana asta are deja cele {{count}} tarabe ale ei.",
         "groupFull.row_other": "Rândul ăsta are deja cele {{count}} de tarabe ale lui.",
+        "groupFull.col_one": "Coloana asta are deja taraba ei.",
+        "groupFull.col_few": "Coloana asta are deja cele {{count}} tarabe ale ei.",
         "groupFull.col_other": "Coloana asta are deja cele {{count}} de tarabe ale ei.",
         "groupTight.row_one": "În rândul ăsta a mai rămas un singur loc.",
         "groupTight.row_few": "În rândul ăsta au mai rămas {{count}} locuri.",
@@ -906,16 +945,16 @@
         "groupTight.col_few": "În coloana asta au mai rămas {{count}} locuri.",
         "groupTight.col_other": "În coloana asta au mai rămas {{count}} de locuri.",
         "onlyWay.row_one": "Printre case, în rândul ăsta a mai rămas un singur pătrățel pentru o tarabă.",
-        "onlyWay.col_one": "Printre case, în coloana asta a mai rămas un singur pătrățel pentru o tarabă.",
         "onlyWay.row_few": "E un singur fel în care încap {{count}} tarabe în rândul ăsta.",
-        "onlyWay.col_few": "E un singur fel în care încap {{count}} tarabe în coloana asta.",
         "onlyWay.row_other": "E un singur fel în care încap {{count}} de tarabe în rândul ăsta.",
+        "onlyWay.col_one": "Printre case, în coloana asta a mai rămas un singur pătrățel pentru o tarabă.",
+        "onlyWay.col_few": "E un singur fel în care încap {{count}} tarabe în coloana asta.",
         "onlyWay.col_other": "E un singur fel în care încap {{count}} de tarabe în coloana asta.",
         "everyWay.row_one": "Oriunde ar sta taraba din rândul ăsta, mereu e aici.",
-        "everyWay.col_one": "Oriunde ar sta taraba din coloana asta, mereu e aici.",
         "everyWay.row_few": "Oriunde ar sta cele {{count}} tarabe din rândul ăsta, una e mereu aici.",
-        "everyWay.col_few": "Oriunde ar sta cele {{count}} tarabe din coloana asta, una e mereu aici.",
         "everyWay.row_other": "Oriunde ar sta cele {{count}} de tarabe din rândul ăsta, una e mereu aici.",
+        "everyWay.col_one": "Oriunde ar sta taraba din coloana asta, mereu e aici.",
+        "everyWay.col_few": "Oriunde ar sta cele {{count}} tarabe din coloana asta, una e mereu aici.",
         "everyWay.col_other": "Oriunde ar sta cele {{count}} de tarabe din coloana asta, una e mereu aici.",
         "lineBlock.rowsToCols": "Rândurile însemnate își țin tarabele în pătrățelele acelor coloane, deci acele coloane nu mai au niciuna în plus.",
         "lineBlock.colsToRows": "Coloanele însemnate își țin tarabele în pătrățelele acelor rânduri, deci acele rânduri nu mai au niciuna în plus.",
@@ -934,10 +973,10 @@
         "mistake": "Semnul ăsta nu poate fi corect.",
         "touch": "Aici e {{token}}, și doi lotuși nu pot pluti unul lângă altul — nici măcar în colțuri.",
         "groupFull.row_one": "Rândul ăsta are deja lotusul lui.",
-        "groupFull.col_one": "Coloana asta are deja lotusul ei.",
         "groupFull.row_few": "Rândul ăsta are deja cei {{count}} lotuși ai lui.",
-        "groupFull.col_few": "Coloana asta are deja cei {{count}} lotuși ai ei.",
         "groupFull.row_other": "Rândul ăsta are deja cei {{count}} de lotuși ai lui.",
+        "groupFull.col_one": "Coloana asta are deja lotusul ei.",
+        "groupFull.col_few": "Coloana asta are deja cei {{count}} lotuși ai ei.",
         "groupFull.col_other": "Coloana asta are deja cei {{count}} de lotuși ai ei.",
         "groupTight.row_one": "În rândul ăsta a mai rămas o singură bucată de apă.",
         "groupTight.row_few": "În rândul ăsta au mai rămas {{count}} bucăți de apă.",
@@ -946,16 +985,16 @@
         "groupTight.col_few": "În coloana asta au mai rămas {{count}} bucăți de apă.",
         "groupTight.col_other": "În coloana asta au mai rămas {{count}} de bucăți de apă.",
         "onlyWay.row_one": "Printre stânci, în rândul ăsta a mai rămas un singur pătrățel pentru un lotus.",
-        "onlyWay.col_one": "Printre stânci, în coloana asta a mai rămas un singur pătrățel pentru un lotus.",
         "onlyWay.row_few": "E un singur fel în care încap {{count}} lotuși în rândul ăsta.",
-        "onlyWay.col_few": "E un singur fel în care încap {{count}} lotuși în coloana asta.",
         "onlyWay.row_other": "E un singur fel în care încap {{count}} de lotuși în rândul ăsta.",
+        "onlyWay.col_one": "Printre stânci, în coloana asta a mai rămas un singur pătrățel pentru un lotus.",
+        "onlyWay.col_few": "E un singur fel în care încap {{count}} lotuși în coloana asta.",
         "onlyWay.col_other": "E un singur fel în care încap {{count}} de lotuși în coloana asta.",
         "everyWay.row_one": "Oriunde ar sta lotusul din rândul ăsta, mereu e aici.",
-        "everyWay.col_one": "Oriunde ar sta lotusul din coloana asta, mereu e aici.",
         "everyWay.row_few": "Oriunde ar sta cei {{count}} lotuși din rândul ăsta, unul e mereu aici.",
-        "everyWay.col_few": "Oriunde ar sta cei {{count}} lotuși din coloana asta, unul e mereu aici.",
         "everyWay.row_other": "Oriunde ar sta cei {{count}} de lotuși din rândul ăsta, unul e mereu aici.",
+        "everyWay.col_one": "Oriunde ar sta lotusul din coloana asta, mereu e aici.",
+        "everyWay.col_few": "Oriunde ar sta cei {{count}} lotuși din coloana asta, unul e mereu aici.",
         "everyWay.col_other": "Oriunde ar sta cei {{count}} de lotuși din coloana asta, unul e mereu aici.",
         "lineBlock.rowsToCols": "Rândurile însemnate își țin lotușii în pătrățelele acelor coloane, deci acele coloane nu mai au niciunul în plus.",
         "lineBlock.colsToRows": "Coloanele însemnate își țin lotușii în pătrățelele acelor rânduri, deci acele rânduri nu mai au niciunul în plus.",
@@ -974,10 +1013,10 @@
         "mistake": "Semnul ăsta nu poate fi corect.",
         "touch": "Aici e {{token}}, și două pisici nu pot dormi una lângă alta — nici măcar în colțuri.",
         "groupFull.row_one": "Rândul ăsta are deja pisica lui.",
-        "groupFull.col_one": "Coloana asta are deja pisica ei.",
         "groupFull.row_few": "Rândul ăsta are deja cele {{count}} pisici ale lui.",
-        "groupFull.col_few": "Coloana asta are deja cele {{count}} pisici ale ei.",
         "groupFull.row_other": "Rândul ăsta are deja cele {{count}} de pisici ale lui.",
+        "groupFull.col_one": "Coloana asta are deja pisica ei.",
+        "groupFull.col_few": "Coloana asta are deja cele {{count}} pisici ale ei.",
         "groupFull.col_other": "Coloana asta are deja cele {{count}} de pisici ale ei.",
         "groupTight.row_one": "În rândul ăsta a mai rămas o singură dală.",
         "groupTight.row_few": "În rândul ăsta au mai rămas {{count}} dale.",
@@ -986,16 +1025,16 @@
         "groupTight.col_few": "În coloana asta au mai rămas {{count}} dale.",
         "groupTight.col_other": "În coloana asta au mai rămas {{count}} de dale.",
         "onlyWay.row_one": "Printre stâlpi, în rândul ăsta a mai rămas un singur pătrățel pentru o pisică.",
-        "onlyWay.col_one": "Printre stâlpi, în coloana asta a mai rămas un singur pătrățel pentru o pisică.",
         "onlyWay.row_few": "E un singur fel în care încap {{count}} pisici în rândul ăsta.",
-        "onlyWay.col_few": "E un singur fel în care încap {{count}} pisici în coloana asta.",
         "onlyWay.row_other": "E un singur fel în care încap {{count}} de pisici în rândul ăsta.",
+        "onlyWay.col_one": "Printre stâlpi, în coloana asta a mai rămas un singur pătrățel pentru o pisică.",
+        "onlyWay.col_few": "E un singur fel în care încap {{count}} pisici în coloana asta.",
         "onlyWay.col_other": "E un singur fel în care încap {{count}} de pisici în coloana asta.",
         "everyWay.row_one": "Oriunde ar sta pisica din rândul ăsta, mereu e aici.",
-        "everyWay.col_one": "Oriunde ar sta pisica din coloana asta, mereu e aici.",
         "everyWay.row_few": "Oriunde ar sta cele {{count}} pisici din rândul ăsta, una e mereu aici.",
-        "everyWay.col_few": "Oriunde ar sta cele {{count}} pisici din coloana asta, una e mereu aici.",
         "everyWay.row_other": "Oriunde ar sta cele {{count}} de pisici din rândul ăsta, una e mereu aici.",
+        "everyWay.col_one": "Oriunde ar sta pisica din coloana asta, mereu e aici.",
+        "everyWay.col_few": "Oriunde ar sta cele {{count}} pisici din coloana asta, una e mereu aici.",
         "everyWay.col_other": "Oriunde ar sta cele {{count}} de pisici din coloana asta, una e mereu aici.",
         "lineBlock.rowsToCols": "Rândurile însemnate își țin pisicile în pătrățelele acelor coloane, deci acele coloane nu mai au niciuna în plus.",
         "lineBlock.colsToRows": "Coloanele însemnate își țin pisicile în pătrățelele acelor rânduri, deci acele rânduri nu mai au niciuna în plus.",
@@ -1040,6 +1079,11 @@
       "market": "Tarabe în piață",
       "lotus": "Iazul cu lotuși",
       "cats": "Pisicile templului"
+    },
+    "controls": {
+      "move": "alege un pătrățel",
+      "mark": "schimbă semnul",
+      "sweep": "ține apăsat și mișcă: exclude un șir"
     }
   },
   "pairPuzzle": {
@@ -1056,13 +1100,13 @@
         "pair": "Fiecare sarcofag are o mumie care se odihnește chiar deasupra, dedesubt, la stânga sau la dreapta lui, și fiecare mumie stă lângă un sarcofag al ei.",
         "count": "Numărul de lângă un rând sau o coloană spune câte mumii are. Se face verde când linia are exact atâtea și roșu când nu se mai poate.",
         "touch": "Două mumii nu pot sta una lângă alta — nici măcar în colțuri.",
-        "enter": "Atinge un pătrățel ca să-l excluzi, încă o dată ca să culci o mumie acolo, și încă o dată ca să-l golești. Trage peste pătrățele ca să excluzi un șir întreg. Sarcofagele nu se pot atinge."
+        "enter": "Alege un pătrățel ca să-l excluzi, încă o dată ca să culci o mumie acolo, și încă o dată ca să-l golești. Poți exclude un șir de pătrățele dintr-o mișcare. Sarcofagele nu se pot însemna."
       },
       "beetles": {
         "pair": "Fiecare bilă de bălegar are un gândac chiar deasupra, dedesubt, la stânga sau la dreapta ei, și fiecare gândac stă lângă o bilă a lui, pe care s-o rostogolească.",
         "count": "Numărul de lângă un rând sau o coloană spune câți gândaci are. Se face verde când linia are exact atâția și roșu când nu se mai poate.",
         "touch": "Doi gândaci nu pot sta unul lângă altul — nici măcar în colțuri.",
-        "enter": "Atinge un pătrățel ca să-l excluzi, încă o dată ca să pui un gândac acolo, și încă o dată ca să-l golești. Trage peste pătrățele ca să excluzi un șir întreg. Bilele de bălegar nu se pot atinge."
+        "enter": "Alege un pătrățel ca să-l excluzi, încă o dată ca să pui un gândac acolo, și încă o dată ca să-l golești. Poți exclude un șir de pătrățele dintr-o mișcare. Bilele de bălegar nu se pot însemna."
       }
     },
     "hint": {
@@ -1142,6 +1186,11 @@
           "place_other": "Pune câte un gândac pe fiecare pătrățel hașurat."
         }
       }
+    },
+    "controls": {
+      "move": "alege un pătrățel",
+      "mark": "schimbă semnul",
+      "sweep": "ține apăsat și mișcă: exclude un șir"
     }
   },
   "rushHour": {
@@ -1156,11 +1205,11 @@
     "rules": {
       "default": {
         "lanes": "Un bloc alunecă doar pe culoarul lui — niciodată în lateral, niciodată în afara tablei.",
-        "shove": "Trage de un bloc ca să-l împingi. Se oprește unde dă de ceva."
+        "shove": "Împinge un bloc pe culoarul lui. Se oprește unde dă de ceva."
       },
       "market": {
         "lanes": "O sanie alunecă doar pe culoarul pe care stă — niciodată în lateral, niciodată în afara străzii.",
-        "shove": "Trage de o sanie ca s-o împingi. Se oprește unde dă de ceva."
+        "shove": "Împinge o sanie pe culoarul ei. Se oprește unde dă de ceva."
       }
     },
     "hint": {
@@ -1188,29 +1237,35 @@
           "down": "Împinge-o în jos pe stradă, până la cerc."
         }
       }
+    },
+    "controls": {
+      "pick": "alege un bloc",
+      "grab": "ia-l",
+      "slide": "alunecă",
+      "release": "lasă-l"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "Numerele care sunt deja în fagure fac parte din puzzle — rămân pe loc.",
-        "enter": "Atinge un număr ca să continui șirul de acolo, apoi atinge o celulă goală de lângă el ca să mergi mai departe — sau trage direct prin celulele pe unde trece.",
-        "back": "Atinge un număr pe care l-ai pus și atinge-l încă o dată ca să-l scoți, împreună cu tot ce atârnă de el. Dacă duci șirul în altă direcție dintr-un număr, se întâmplă la fel. „Anulează” îți ia înapoi ultima mutare."
+        "enter": "Desenează o linie de la un număr prin celulele goale de lângă el ca să duci șirul mai departe.",
+        "back": "Alege un număr pe care l-ai pus și alege-l încă o dată ca să-l scoți, împreună cu tot ce atârnă de el. Dacă duci șirul în altă direcție dintr-un număr, se întâmplă la fel. „Anulează” îți ia înapoi ultima mutare."
       },
       "channel": {
         "given": "Câmpurile care au deja număr fac parte din puzzle — rămân pe loc.",
-        "enter": "Atinge un câmp cu număr ca să iei apa de acolo, apoi atinge un câmp uscat de lângă el ca să sapi mai departe — sau trage direct de-a lungul câmpurilor pe unde trece canalul.",
-        "back": "Atinge un câmp pe care l-ai săpat și atinge-l încă o dată ca să-l astupi, împreună cu orice canal rămas tăiat de el. Dacă sapi în altă direcție dintr-un câmp, se întâmplă la fel. „Anulează” îți ia înapoi ultima mutare."
+        "enter": "Sapă un canal de la un câmp cu număr prin câmpurile uscate de lângă el ca să duci apa mai departe.",
+        "back": "Alege un câmp pe care l-ai săpat și alege-l încă o dată ca să-l astupi, împreună cu orice canal rămas tăiat de el. Dacă sapi în altă direcție dintr-un câmp, se întâmplă la fel. „Anulează” îți ia înapoi ultima mutare."
       },
       "scribe": {
         "given": "Cifrele scrise cu roșu sunt ale puzzle-ului — rămân pe loc.",
-        "enter": "Atinge o cifră ca să iei trestia de acolo, apoi atinge un loc gol de lângă ea ca să scrii mai departe — sau trage direct de-a lungul liniei.",
-        "back": "Atinge o cifră pe care ai scris-o și atinge-o încă o dată ca s-o razi, împreună cu orice linie rămasă tăiată de ea. Dacă scrii în altă direcție dintr-o cifră, se întâmplă la fel. „Anulează” îți ia înapoi ultima mutare."
+        "enter": "Scrie o linie de la o cifră prin locurile goale de lângă ea ca să duci numărătoarea mai departe.",
+        "back": "Alege o cifră pe care ai scris-o și alege-o încă o dată ca s-o razi, împreună cu orice linie rămasă tăiată de ea. Dacă scrii în altă direcție dintr-o cifră, se întâmplă la fel. „Anulează” îți ia înapoi ultima mutare."
       },
       "chambers": {
         "given": "Camerele care au deja număr au fost săpate de constructori — rămân pe loc.",
-        "enter": "Atinge o cameră cu număr ca să continui pasajul de acolo, apoi atinge o cameră sigilată de lângă ea ca să spargi zidul — sau trage direct de-a lungul camerelor pe unde trece pasajul.",
-        "back": "Atinge o cameră pe care ai deschis-o și atinge-o încă o dată ca s-o sigilezi la loc, împreună cu orice pasaj rămas tăiat de ea. Dacă spargi în altă direcție dintr-o cameră, se întâmplă la fel. „Anulează” îți ia înapoi ultima mutare."
+        "enter": "Sparge un pasaj de la o cameră cu număr prin camerele sigilate de lângă ea ca să-l duci mai departe.",
+        "back": "Alege o cameră pe care ai deschis-o și alege-o încă o dată ca s-o sigilezi la loc, împreună cu orice pasaj rămas tăiat de ea. Dacă spargi în altă direcție dintr-o cameră, se întâmplă la fel. „Anulează” îți ia înapoi ultima mutare."
       }
     },
     "goal": {
@@ -1274,6 +1329,13 @@
       "channel": "Canalul",
       "scribe": "Foaia scribului",
       "chambers": "Camere sigilate"
+    },
+    "controls": {
+      "move": "mergi la o celulă vecină; sus și jos trag spre stânga",
+      "right": "sus-dreapta sau jos-dreapta",
+      "grab": "ia șirul, sau scoate-ți numărul",
+      "carry": "cu șirul luat: du-l mai departe; sus și jos merg pe partea unde poate continua",
+      "drop": "lasă șirul jos"
     }
   },
   "sudoku": {
@@ -1281,13 +1343,13 @@
       "default": {
         "chambers": "Liniile groase împart grila în șase camere, late de două pătrățele și înalte de trei.",
         "given": "Numerele care sunt deja săpate fac parte din puzzle — rămân pe loc.",
-        "enter": "Atinge un pătrățel, apoi un număr. Același număr încă o dată îl scoate.",
+        "enter": "Alege un pătrățel, apoi un număr. Același număr încă o dată îl scoate.",
         "notes": "Treci pe creion ca să notezi numerele care mai pot sta într-un pătrățel. „Anulează” îți ia înapoi ultima mutare."
       },
       "papyrus": {
         "chambers": "Liniile groase împart foaia în șase panouri, late de două locuri și înalte de trei.",
         "given": "Semnele scrise cu roșu sunt ale puzzle-ului — rămân pe loc.",
-        "enter": "Atinge un loc, apoi un semn. Același semn încă o dată îl rade.",
+        "enter": "Alege un loc, apoi un semn. Același semn încă o dată îl rade.",
         "notes": "Ia trestia de scris ca să notezi semnele care mai pot sta într-un loc. „Anulează” îți ia înapoi ultima mutare."
       }
     },
@@ -1356,6 +1418,14 @@
     "name": {
       "default": "Șase camere",
       "papyrus": "Registrul scribului"
+    },
+    "controls": {
+      "move": "alege un pătrățel",
+      "type": "scrie un număr",
+      "choose": "alege un număr sau guma",
+      "place": "scrie-l",
+      "pencil": "creion",
+      "erase": "șterge"
     }
   },
   "crocodile": {
@@ -1369,6 +1439,10 @@
     "hint": {
       "biggest": "Crocodilul ăsta vrea răspunsul cel mai mare. Acela e {{value}}.",
       "smallest": "Crocodilul ăsta vrea răspunsul cel mai mic. Acela e {{value}}."
+    },
+    "controls": {
+      "move": "alege o piatră",
+      "step": "calcă pe ea"
     }
   },
   "canisters": {
@@ -1405,35 +1479,35 @@
         "sums": "Orice cantitate poți face din două numere de pe bancă puse împreună sau scăzute: mărimea unui vas, cât e în el sau cât loc mai are.",
         "backwards": "Așa că pornește înapoi de la cantitatea cerută — ce două numere o fac, și cum le faci pe amândouă să fie acolo în același timp?"
       },
-      "claim": "Când ai cantitatea, atinge „ăsta”. Dacă alegi vasul greșit, pierzi o mutare.",
+      "claim": "Când ai cantitatea, alege „ăsta”. Dacă alegi vasul greșit, pierzi o mutare.",
       "legs": "Apoi urmează cantitatea următoare, măsurată din ce a rămas în vase.",
       "default": {
-        "moves": "Atinge un vas ca să-l ridici, apoi atinge altul ca să torni în el. Torni până se golește primul sau se umple al doilea.",
+        "moves": "Ridică un vas, apoi alege altul ca să torni în el. Torni până se golește primul sau se umple al doilea.",
         "contents": "Asta e toată apa — un vas e plin la început, și nu poți arunca sau aduce apă.",
         "levels": "Fiecare vas arată cât are în el și cât încape în el când e plin."
       },
       "grain": {
-        "moves": "Atinge o măsură ca s-o ridici, apoi atinge alta ca să torni grânele în ea. Torni până se golește prima sau a doua e plină până la buză.",
+        "moves": "Ridică o măsură, apoi alege alta ca să torni grânele în ea. Torni până se golește prima sau a doua e plină până la buză.",
         "contents": "Astea sunt toate grânele — o măsură e plină la început, și nu poți mătura sau aduce grâne din hambar.",
         "levels": "Fiecare măsură arată cât are în ea și cât încape în ea când e plină până la buză."
       },
       "oil": {
-        "moves": "Atinge un ulcior ca să-l ridici, apoi atinge altul ca să torni în el. Torni până se golește primul sau se umple al doilea.",
+        "moves": "Ridică un ulcior, apoi alege altul ca să torni în el. Torni până se golește primul sau se umple al doilea.",
         "contents": "Ăsta e tot uleiul — un ulcior e plin la început, și nu poți vărsa sau aduce ulei.",
         "levels": "Fiecare ulcior arată cât are în el și cât încape în el când e plin."
       },
       "wine": {
-        "moves": "Atinge o amforă ca s-o ridici, apoi atinge alta ca să torni în ea. Torni până se golește prima sau se umple a doua.",
+        "moves": "Ridică o amforă, apoi alege alta ca să torni în ea. Torni până se golește prima sau se umple a doua.",
         "contents": "Ăsta e tot vinul — o amforă e plină la început, și nu poți vărsa sau aduce vin din pivniță.",
         "levels": "Fiecare amforă arată cât are în ea și cât încape în ea când e plină."
       },
       "natron": {
-        "moves": "Atinge un vas ca să-l ridici, apoi atinge altul ca să torni natronul în el. Torni până se golește primul sau al doilea e plin până la capac.",
+        "moves": "Ridică un vas, apoi alege altul ca să torni natronul în el. Torni până se golește primul sau al doilea e plin până la capac.",
         "contents": "Ăsta e tot natronul — un vas e plin la început, și nu poți mătura sau aduce natron.",
         "levels": "Fiecare vas arată cât are în el și cât încape în el când e plin până la capac."
       },
       "ink": {
-        "moves": "Atinge o călimară ca s-o ridici, apoi atinge alta ca să torni în ea. Torni până se golește prima sau se umple a doua.",
+        "moves": "Ridică o călimară, apoi alege alta ca să torni în ea. Torni până se golește prima sau se umple a doua.",
         "contents": "Asta e toată cerneala — o călimară e plină la început, și nu poți vărsa sau face cerneală nouă.",
         "levels": "Fiecare călimară arată cât are în ea și cât încape în ea când e plină."
       }
@@ -1459,7 +1533,12 @@
     "legs": "măsurat {{done}} din {{total}}",
     "wanted": "Măsoară",
     "claim": "ăsta",
-    "claimAria": "Spune că {{capacity}} are cantitatea"
+    "claimAria": "Spune că {{capacity}} are cantitatea",
+    "controls": {
+      "move": "alege un vas sau „ăsta” de sub el",
+      "press": "ridică, toarnă aici sau spune că ăsta e",
+      "putDown": "lasă jos vasul pe care îl ții"
+    }
   },
   "procession": {
     "name": {
@@ -1479,8 +1558,8 @@
     "rules": {
       "default": {
         "lengths": "Fiecare rând e o întâmplare și durează cât e de lată bara ei. Când se întâmplă — asta afli tu.",
-        "marks": "O linie de sub zi se face roșie cât timp nu se potrivește. Atinge una ca să încercuiești rândurile despre care e vorba.",
-        "drag": "Trage o bară de-a lungul rândului ei. Nu iese niciodată din zi."
+        "marks": "O linie de sub zi se face roșie cât timp nu se potrivește. Alege una ca să încercuiești rândurile despre care e vorba.",
+        "drag": "Glisează o bară de-a lungul rândului ei. Nu iese niciodată din zi."
       }
     },
     "hint": {
@@ -1489,7 +1568,7 @@
         "squeeze": "A mai rămas doar atâta zi, și asta e tot ce încape.",
         "apart": "Invers nu încape în zi.",
         "split": "Încearcă invers și se strică altceva.",
-        "move": "Trage bara încercuită pe liniuțele hașurate."
+        "move": "Glisează bara încercuită pe liniuțele hașurate."
       }
     },
     "events": {
@@ -1526,6 +1605,11 @@
       "hint": "Fiecare dală pe care calci pornește întâmplarea ei. Pune ziua în ordine, apoi calcă pe dale în ordinea aia.",
       "read": "Ziua e citită. Calcă pe dalele ei în ordinea asta, de la prima.",
       "hintButton": "Indiciu"
+    },
+    "controls": {
+      "row": "alege un rând",
+      "slide": "glisează-i bara",
+      "mark": "alege o linie de sub zi"
     }
   },
   "story": {
@@ -1548,6 +1632,13 @@
       "pick": "Pune semnul potrivit la locul lui.",
       "cannot": "Nu știi semnul care trebuie aici. Încă nu."
     },
+    "formula": {
+      "wrong": "Din rândul ăsta lipsește un semn. Nu săpat greșit — nesăpat deloc.",
+      "fixed": "Rândul e întreg.",
+      "pick": "Pune semnul pe care l-ai primit în locul gol.",
+      "cannot": "Nimeni nu ți-a dat semnul pentru locul ăsta. Încă nu.",
+      "gap": "Semnul care lipsește"
+    },
     "sphinx": {
       "wrong": "Același scris ca afară, dar aici nisipul n-a ajuns niciodată. Două semne încă se văd clar, și un loc gol unde era al treilea.",
       "fixed": "Asta e tot.",
@@ -1564,7 +1655,7 @@
       "shrines": "Un disc de lumină și câte un altar deasupra fiecărei ieșiri din intersecția asta. Oglinzile de pe jos pot duce lumina la oricare dintre ele.",
       "doors": "Ieșirea la care ajunge lumina e deschisă, iar celelalte sunt închise. Un singur drum al luminii, o singură cale mai departe.",
       "returning": "Nu pierzi nimic alegând. Te poți întoarce oricând și trimite lumina în altă parte — calea aia se deschide, iar asta se închide.",
-      "tap": "Atinge o oglindă ca s-o rotești. Dacă o atingi iar, revine cum era."
+      "tap": "Alege o oglindă ca s-o rotești. Alege-o iar ca s-o pui cum era."
     },
     "doorOpen": "Ieșirea dinspre {{way}}: deschisă",
     "doorShut": "Ieșirea dinspre {{way}}: închisă",
@@ -1573,6 +1664,10 @@
       "e": "est",
       "s": "sud",
       "w": "vest"
+    },
+    "controls": {
+      "move": "alege o oglindă",
+      "turn": "rotește-o"
     }
   },
   "handle": {
@@ -1825,5 +1920,35 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Desenul rescrie textul: toate comentariile se mută sus"
+  },
+  "saveCard": {
+    "title": "Card de călătorie",
+    "explain": "Du-ți expediția pe alt dispozitiv: fă un card aici și citește-l acolo în cel mult 15 minute.",
+    "make": "Fă un card de călătorie",
+    "share": "Trimite cardul",
+    "download": "Descarcă cardul",
+    "read": "Citește un card de călătorie",
+    "busy": "O clipă…",
+    "makeFailed": "Cardul nu a putut fi făcut.",
+    "shareFailed": "Trimiterea n-a mers; descarcă mai bine cardul.",
+    "confirm_one": "Înlocuiești expediția de pe acest dispozitiv cu cea de pe card ({{count}} călătorie)?",
+    "confirm_few": "Înlocuiești expediția de pe acest dispozitiv cu cea de pe card ({{count}} călătorii)?",
+    "confirm_other": "Înlocuiești expediția de pe acest dispozitiv cu cea de pe card ({{count}} de călătorii)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Card de călătorie · ia-ți expediția cu tine",
+    "validUntil": "valabil până la {{time}}",
+    "codes_one": "{{count}} cod",
+    "codes_few": "{{count}} coduri",
+    "codes_other": "{{count}} de coduri",
+    "refused": {
+      "notACard": "Ăsta nu e un card de călătorie.",
+      "tampered": "Cardul ăsta a fost modificat și nu mai poate fi citit.",
+      "expired": "Cardul ăsta a expirat; fă unul nou.",
+      "future": "Cardul ăsta vine din viitor: verifică ceasul pe ambele dispozitive.",
+      "otherEpoch": "Cardul ăsta e din altă versiune a jocului.",
+      "newerGame": "Cardul ăsta vine dintr-o versiune mai nouă: actualizează mai întâi jocul."
+    },
+    "writeFailed": "Salvarea nu a putut fi scrisă; dispozitivul ăsta și-a păstrat-o pe a lui.",
+    "writeLost": "Salvarea nu a putut fi înlocuită, iar salvarea de pe dispozitivul ăsta poate fi incompletă."
   }
 }

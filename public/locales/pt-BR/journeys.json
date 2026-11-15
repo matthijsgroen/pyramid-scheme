@@ -21,19 +21,24 @@
     "mapHint": "O pedaço de papel mostra uma rua de mercado e a porta de um porão. O esconderijo de um comerciante, nada de mais."
   },
   "junior_1": {
-    "name": "A Viagem dos Íbis Sagrados"
+    "name": "A Viagem dos Íbis Sagrados",
+    "description": "Brejos de junco ao longo do Nilo, e os íbis andando pela água. Aves sagradas, e não pelo motivo que você imagina."
   },
   "junior_2": {
-    "name": "Vale dos Artesãos"
+    "name": "Vale dos Artesãos",
+    "description": "Deir el-Medina, a vila dos construtores de tumbas. As oficinas deles continuam de pé, e parte do trabalho também."
   },
   "junior_3": {
-    "name": "Templo de Thoth"
+    "name": "Templo de Thoth",
+    "description": "O templo de Thoth. Todo mundo conhece o nome dele; pergunte a três pessoas de que ele era deus e você ouve três respostas."
   },
   "junior_4": {
-    "name": "Farol de Alexandria"
+    "name": "Farol de Alexandria",
+    "description": "O Farol de Alexandria, uma das sete maravilhas. O que sobrou dele está no porto, debaixo d'água."
   },
   "junior_treasure_tomb": {
     "name": "Cofre Escondido da Nobre",
+    "description": "O cofre de uma nobre, pintado do chão ao teto, e tudo lá dentro ainda onde ela deixou.",
     "mapHint": "Tinta fina, um brasão no canto: alguém importante queria que esta sala fosse esquecida."
   },
   "expert_1": {

@@ -239,6 +239,21 @@
       "description": "Kráľovská koruna s ochrannou kobrou. Faraóni ju nosili na ochranu."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Chlieb",
+      "description": "Vysoký bochník, znak pre chlieb. Dal ho Ipi, ktorý štyridsať rokov počítal obilie a raz ho daroval."
+    },
+    "o2": {
+      "name": "Ľan"
+    },
+    "o3": {
+      "name": "Voda"
+    },
+    "o4": {
+      "name": "Loď"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Trstinový list",

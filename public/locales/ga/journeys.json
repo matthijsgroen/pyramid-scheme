@@ -21,19 +21,24 @@
     "mapHint": "Tarraingíonn an blúire bóthar margaidh agus doras siléir — áit fholaigh ceannaí, faic níos mó ná sin."
   },
   "junior_1": {
-    "name": "Imirce an Íbis Naofa"
+    "name": "Imirce an Íbis Naofa",
+    "description": "Riasca giolcaí cois na Níle, agus an t-íbis ag lapadaíl tríothu. Éin naofa — agus ní ar an gcúis a cheapfá."
   },
   "junior_2": {
-    "name": "Gleann na gCeardaithe"
+    "name": "Gleann na gCeardaithe",
+    "description": "Deir el-Medina, sráidbhaile lucht déanta na dtuamaí. Tá a gceardlanna fós ina seasamh, agus cuid den obair freisin."
   },
   "junior_3": {
-    "name": "Teampall Thoth"
+    "name": "Teampall Thoth",
+    "description": "Teampall Thoth. Tá a ainm ar eolas ag gach duine; fiafraigh de thriúr cén dia a bhí ann agus gheobhaidh tú trí fhreagra."
   },
   "junior_4": {
-    "name": "Teach Solais Alexandria"
+    "name": "Teach Solais Alexandria",
+    "description": "Pharos Alexandria, ceann de sheacht n-iontas an domhain. Tá a bhfuil fágtha de ina luí sa chuan, faoin uisce."
   },
   "junior_treasure_tomb": {
     "name": "Cuas Folaithe an Uasail",
+    "description": "Seomra adhlactha mná uaisle, péinteáilte ón urlár go dtí an tsíleáil, agus gach rud ann fós san áit ar fhág sí é.",
     "mapHint": "Dúch breá, séala le suaitheantas sa chúinne — bhí duine mór ag iarraidh go ndéanfaí dearmad ar an seomra seo."
   },
   "expert_1": {

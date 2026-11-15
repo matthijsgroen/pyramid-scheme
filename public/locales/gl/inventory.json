@@ -239,6 +239,21 @@
       "description": "Coroa real coa cobra protectora. Os faraóns levábana para que os deuses os protexesen."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Pan",
+      "description": "O pan alto, o signo do pan. Deuno Ipi, que contou gran durante corenta anos e regalouno unha soa vez."
+    },
+    "o2": {
+      "name": "Liño"
+    },
+    "o3": {
+      "name": "Auga"
+    },
+    "o4": {
+      "name": "Barca"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Folla de xunco",

@@ -28,7 +28,7 @@
   "tombTutorial3": "Maži uždaviniai parodo, kai ženklas teisingas. Taip ir išsiaiškinsim, kuris ženklas kur.",
   "tombTutorial4": "Viskas užpildyta? Tada atsiras skaičių spyna. Didžiojo uždavinio atsakymas yra kodas — ir kapas atsidarys!",
   "hieroglyphUnlock": "Turime ypatingą radinį — juo galime rašyti ant vieno užantspauduoto bloko!",
-  "hieroglyphUnlock2": "Bakstelk į žibantį akmenį ir užtempk ant jo radinį, kad jį atrakintum. Vienas blokas vienoje piramidėje.",
+  "hieroglyphUnlock2": "Pasirink žibantį akmenį, tada atnešk prie jo radinį, kad jį atrakintum. Vienas blokas vienoje piramidėje.",
   "errorHighlightTutorial": "Mūsų rastas lobis turi gudrybę — įrašyk neteisingą atsakymą, ir viena klaida užsidegs raudonai!",
   "errorHighlightTutorial2": "Vienu metu šviečia tik vienas blokas, tad vis tiek reikės pagalvoti. Bet lengviau surasti klaidą!",
   "earlyFeedbackTutorial": "Matai tikrinimo blokus? Kol pildai, jie tampa žali arba raudoni — iškart matai!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Pažiūrėk, kas prie prekystalio! Dabar aš verčiuosi ir vežimu."
+      },
+      "2": {
+        "explorer": "Matau tik piešinį."
+      },
+      "3": {
+        "fez": "Originalas ėda daugiau."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "Antra eilutė. Daviau vandens ištroškusiems."
+        "explorer": "Antra eilutė. _Daviau drabužių neturintiems ką apsirengti._"
       },
       "2": {
-        "fez": "Duona, o dabar vanduo. Kažkas labai norėjo, kad jį prisimintų kaip dosnų."
+        "fez": "Duona, o dabar drabužiai. Kažkas labai norėjo, kad jį prisimintų kaip dosnų."
       },
       "3": {
         "explorer": "Tai turi visi. Kiekviena siena, kiekvienas kapas, tos pačios dvi eilutės."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Daviau drabužių neturintiems ką apsirengti. Trečia eilutė."
+        "explorer": "_Daviau vandens ištroškusiems._ Trečia eilutė."
       },
       "2": {
-        "fez": "Duona, vanduo, drabužiai. Tai sąrašas dalykų, kuriuos atidavė kitiems."
+        "fez": "Duona, drabužiai, vanduo. Tai sąrašas dalykų, kuriuos atidavė kitiems."
       },
       "3": {
         "explorer": "Kape žmogaus, kuris viską pasiėmė su savimi."
@@ -1599,8 +1605,42 @@
       "explorer": "Sueis."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Ten trūksta kažko alkaniems. Duonos, sakyčiau. O aš pažįstu žmogų, kuris keturiasdešimt metų skaičiavo kiekvieną grūdų maišą."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, mums reikia duonos. Sienai."
+        },
+        "2": {
+          "ipi": "Duonos? Mano? Ar žinai, kiek kainuoja grūdai?"
+        },
+        "3": {
+          "fez": "Tai eilutei apie tai, kaip ką nors atiduodi kitiems."
+        },
+        "4": {
+          "ipi": "…Atiduodi. Kitiems."
+        },
+        "5": {
+          "ipi": "Gerai jau. Vienas kepalas. Bet tai bus užrašyta: _Ipi davė duonos._"
+        },
+        "6": {
+          "fez": "Jis kažką atidavė! Matei?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Tas kepalas — ar kas nors jį jau suvalgė? Nes jei ne, norėčiau jį atgal."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Vis dar čia? Į šiaurę! Henut! Vienuolika debenų!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "Siena. Trečias ženklas. Tai vis dar ne mano vardas."
+          "henut": "Siena. Antras ženklas. Tai vis dar ne mano vardas."
         }
       },
       "wall2": {

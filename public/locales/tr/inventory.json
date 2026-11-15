@@ -239,6 +239,21 @@
       "description": "Üzerinde koruyucu bir kobra olan kral başlığı. Firavunlar onu tanrısal koruma için takardı."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Ekmek",
+      "description": "Uzun somun, ekmeğin işareti. Kırk yıl tahıl sayan ve onu bir kez başkasına veren Ipi verdi."
+    },
+    "o2": {
+      "name": "Keten"
+    },
+    "o3": {
+      "name": "Su"
+    },
+    "o4": {
+      "name": "Tekne"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Saz Yaprağı",

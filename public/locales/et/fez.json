@@ -3,15 +3,12 @@
   "welcome": "Egiptus! Ma olen päriselt siin.",
   "welcome2": "Ja see kaart… Ma maksin selle eest liiga palju. Parem olgu see õige.",
   "welcome3": "Lähme. Vaatame, kus see rist on.",
-
   "pyramidIntro": "Nendel kividel on numbrid. Ja mõned on puudu…",
   "pyramidIntro2": "Oota. Iga kivi on tema all olevate kahe kivi summa! Jah — siin ka!",
-
   "pyramidBlockedBlocks": "Hei, mis see on? Need kivid on pitseeritud. Nad ei näita oma numbrit!",
   "pyramidBlockedBlocks2": "Pole hullu. Vaata ümberringi olevaid kive — nende järgi saad selle välja nuputada.",
   "pyramidBlockedBlocks3": "Ainult kirja panna sa seda ei saa. Seda numbrit pead peas hoidma.",
   "pyramidBlockedBlocks4": "No kuule, sa oled juba nii kaugele jõudnud. Sa saad sellega hakkama!",
-
   "levelCompleted": "Ha! See läheb lahti! Tule, lähme sisse.",
   "exitPillar": {
     "1": { "fez": "Ha! Päevavalgus! Näed seda valgusvihku? See on meie tee välja. Astu sisse ja siin oleme valmis." },
@@ -20,24 +17,18 @@
   },
   "expeditionCompleted": "Palju õnne, retk on läbitud!",
   "expeditionCompleted2": "Nüüd saab minna uuele retkele.",
-
   "tombTutorial": "Ooh, kiri! Kas me saame seda lugeda? Nende hieroglüüfidega, mis me leidsime… võib-olla!",
   "tombTutorial2": "Vaata, tehted, mille sees on märgid! Näed neid tühje kohti? Sinna lähevad hieroglüüfid. Sinu omad, seal all.",
   "tombTutorial3": "Väikesed tehted näitavad, kas märk on õige. Nii leiame, milline märk kuhu käib.",
   "tombTutorial4": "Kõik täidetud? Siis tuleb välja numbrilukk. Suur tehe on kood — ja siis läheb hauakamber lahti!",
-
   "hieroglyphUnlock": "Meil on eriline ese — sellega saame kirjutada ühele pitseeritud kivile!",
-  "hieroglyphUnlock2": "Puuduta helendavat kivi ja lohista ese selle peale, et see lahti teha. Üks kivi püramiidi kohta.",
-
+  "hieroglyphUnlock2": "Vali helendav kivi ja vii ese selle juurde, et see lahti teha. Üks kivi püramiidi kohta.",
   "errorHighlightTutorial": "Sellel aardel, mis me leidsime, on kasulik nipp — kui paned vale vastuse, hakkab üks viga punaselt helendama!",
   "errorHighlightTutorial2": "Korraga helendab ainult üks kivi, nii et nuputamist jagub ikka. Aga see aitab otsimist kitsendada!",
-
   "earlyFeedbackTutorial": "Näed neid kontrollkive? Need muutuvad roheliseks või punaseks kohe, kui neid täidad!",
   "earlyFeedbackTutorial2": "Kasuta neid lahendades tugipunktidena. Kui mõni läheb punaseks, on kuskil lähedal midagi valesti.",
-
   "notEnoughHieroglyphs": "Selle retke saad alati pooleli jätta, kui lähed tagasi reisiekraanile.",
   "notEnoughHieroglyphs2": "Me võime retke katkestada ja mujalt otsida hieroglüüfe, mida meil veel lõpetamiseks vaja on.",
-
   "tombLoot": "Vau, meie esimene aare! Tubli!",
   "mapPiece": "Vaata! SEE on alles kaart. Päris vana! Väärt rohkem kui meie mõlema kaardid kokku!",
   "mapPiece2": "Aga ainult üks tükk. Iga retk siinkandis peidab ühe, ja koos näitavad need teed hauakambrini.",
@@ -45,39 +36,30 @@
   "mapComplete2": "Seal, kus kõik jooned kokku saavad. Seal on hauakamber.",
   "mapComplete3": "Nüüd on see meie retkede seas. Kas läheme vaatama?",
   "mapPiece3": "Pea retkede nimekirjas arvet. Mina pean kindlasti!",
-
   "mosaicIntro": "Ooh, värviline klaas! Vaata, kuidas see valgust püüab — SELLIST asja küll keegi ära ei viska!",
   "mosaicIntro2": "See on üks tükk pildist. Terve klaasaken, ja iga tükk, mille leiame, toob osa sellest tagasi.",
   "mosaicIntro3": "Sul on ju kuskil laager? Võta need kaasa, seal paneme need kokku. Ma tahan näha, mis pilt sellest tuleb!",
   "mosaicReminder": "Psst! Need klaasitükid kolisevad ikka veel meie kotis. Kas paneme need laagris aknasse?",
-
   "mosaicStarter": "Kass uksel ja madu, kellel on kiire minema saada. See oli kausitäit piima väärt.",
   "mosaicStarter2": "Egiptlased armastasid kasse just selle pärast — kassid tapsid maod ja rotid, kes vilja kallale tulid.",
   "mosaicStarter3": "Nad armastasid neid nii väga, et tegid ühest jumalanna. Bastet. Ta kaitseb maja, ust ja kõiki, kes selle taga magavad.",
-
   "mosaicJunior": "Vaata tema kätt — keegi näitab talle, kuidas sulge hoida.",
   "mosaicJunior2": "See linnupeaga on Thoth. Kirjutamine, arvutamine, arvepidamine — kõik see on tema töö.",
   "mosaicJunior3": "See iibis, kellele me jõge mööda järgnesime? See on tema lind. Iga number, mis me seina sisse kirjutasime, kuulub ka temale.",
-
   "mosaicExpert": "See valgus pole juhus. Nad ehitasid terve saali nii, et see langeks täpselt sinna, õigel hommikul.",
   "mosaicExpert2": "Päike on Amon-Ra — see, kes on peidus, ja ka valgus, mida kõik näevad. Mõlemad korraga.",
   "mosaicExpert3": "Kes oskab taevast nii täpselt mõõta, oskab mõõta kõike. Me oleme terve tee nende arvutusi lahendanud.",
-
   "mosaicMaster": "Roheline nahk ja nisu kasvab otse temast välja. See on meelega nii.",
   "mosaicMaster2": "Osiris. Ta tapeti ja pandi uuesti kokku, ja nüüd tuleb ta igal aastal tagasi, kui jõgi põllud üle ujutab.",
   "mosaicMaster3": "Siin all ongi see kogu mõte: surnud ei tähenda lõppu. Rõõmus mõte hauakambri jaoks, eks?",
-
   "mosaicWizard": "Ühel pool süda. Teisel pool üks sulg. Ja need on tasakaalus.",
   "mosaicWizard2": "Sulg on Ma'at — tõde, tasakaal, see, kuidas asjad peavad olema. Kui süda on sulest raskem, siis sa uksest läbi ei saa.",
   "mosaicWizard3": "Šaakal, kes kaalu paigal hoiab, on Anubis. Tema on see, kes sind siia saadab.",
-
   "mosaicFinale": "Astu hetkeks tagasi. Vaata, mida me oleme nendest püramiididest välja tassinud.",
   "mosaicFinale2": "Iga tükk on osa temast — sellest, kes kaalu paigal hoiab. Ta on meid terve tee vaadanud.",
   "mosaicFinale3": "See on tema kirjapanek meist. Ja mulle tundub, et see on tasakaalus.",
-
   "shopFirstVisit": "Ah, siin me oleme. Minu lett — ma ju ütlesin, et olen siin kauplemise pärast.",
   "shopFirstVisit2": "Kõik sellel letil olen ma kuskilt välja tassinud. See seal on kahe hauakambri tagant.",
-
   "shopArrival": "Ah, minu lett! Las ma laon välja, mis ma teel kokku korjasin.",
   "shopArrival2": "Haruldased leiud on kõige kallimad, aga ma maksan sulle iga pisiasja eest, mis sul kaasas on.",
   "arrival": {
@@ -97,9 +79,7 @@
       "5": { "fez": "Kolm tuhat aastat. Kaup on läinud, aga arved on ikka alles. Tüüpiline!" }
     },
     "starter_3": {
-      "1": {
-        "fez": "Vaata neid uksi! Inimesed tulid siia kaitset paluma. Ja siis jäi selline uks kinni."
-      },
+      "1": { "fez": "Vaata neid uksi! Inimesed tulid siia kaitset paluma. Ja siis jäi selline uks kinni." },
       "2": { "explorer": "Kinni kelle eest?" },
       "3": { "fez": "Kõigi eest, kes viisakalt ei palunud. Peamiselt meie eest." },
       "4": {
@@ -118,7 +98,6 @@
       "4": { "explorer": "See Sfinks… Ma tahan seda veel kord vaadata." },
       "5": { "fez": "Mitte veel. Varsti." }
     },
-
     "junior_1": {
       "1": { "fez": "Nad tulid iga aasta koos üleujutusega tagasi, peaaegu päeva pealt." },
       "2": { "fez": "Nii hakkasid inimesed vahepealseid päevi lugema. Sealt tulebki kalender — lindudest." },
@@ -142,7 +121,6 @@
       "3": { "explorer": "Kuidas siin üldse midagi leida ilma selleta?" },
       "4": { "fez": "Küsid kelleltki, kes on seal käinud. See ongi kogu minu amet." }
     },
-
     "expert_1": {
       "1": {
         "fez": "Kuuskümmend-midagi hauakambrit ühte orgu raiutud, ja iga viimane kui üks oli lahti tehtud enne, kui meie jõudsime."
@@ -171,7 +149,6 @@
       "3": { "explorer": "Kas see õnnestus?" },
       "4": { "fez": "See seisab ikka veel, tema enam mitte. Oleneb, mida sa mõtled." }
     },
-
     "master_1": {
       "1": { "fez": "Kaks miljonit kivi. Keegi luges üle." },
       "2": { "explorer": "Keegi luges üle?" },
@@ -199,7 +176,6 @@
       "2": { "explorer": "Henut oleks raevus." },
       "3": { "fez": "Henut teeks märkmeid." }
     },
-
     "wizard_1": {
       "1": { "fez": "Öösel läheb päike maailma alla ja tuleb teiselt poolt üles. See ongi kogu usk." },
       "2": { "fez": "Kaksteist tundi pimeduses, igasugu asjad ees, ja keegi peab selle läbi kandma." },
@@ -217,9 +193,7 @@
       "3": { "explorer": "Kelle nimi sellel on?" },
       "4": { "fez": "Tema enda oma. Trooni sisse raiutud, kus see on alati olnud." },
       "5": { "fez": "Keegi ei lugenud seda." },
-      "6": {
-        "fez": "Pärast maavärinat laulis põhjapoolne koidikul. Üks noot iga hommik, kui päike pragu soojendas."
-      },
+      "6": { "fez": "Pärast maavärinat laulis põhjapoolne koidikul. Üks noot iga hommik, kui päike pragu soojendas." },
       "7": { "explorer": "Ja nüüd?" },
       "8": { "fez": "Üks keiser lasi selle ära parandada. Sellest saadik pole see häält teinud." }
     },
@@ -236,7 +210,6 @@
       "3": { "fez": "Igaühe jaoks, kes vaatab. Asi oligi selles — see polnud kunagi selle mehe jaoks, kes sees on." }
     }
   },
-
   "tomb": {
     "starter": {
       "1": { "ipi": "Hei! Käed eemale! See on minu kann!" },
@@ -361,7 +334,6 @@
       "3": { "fez": "See on kogu aeg olnud pilt." }
     }
   },
-
   "cave": {
     "starter_treasure_tomb": {
       "1": { "fez": "Koobas! Kaardil oli keldriuks, ja see siin on terve küngas!" },
@@ -411,7 +383,6 @@
       "3": { "fez": "Pole aimugi. See ongi kõige hullem." }
     }
   },
-
   "pillar": {
     "starter_treasure_tomb": {
       "1": { "fez": "Kõik need kangid ja uksed ühe keldri pärast!" },
@@ -453,7 +424,6 @@
       "3": { "fez": "Ja mul oli peaaegu õigus." }
     }
   },
-
   "cavern": {
     "starter_treasure_tomb": {
       "1": { "fez": "Vaata seda! Püramiid maa all! Kaupmehe jaoks!" },
@@ -500,7 +470,6 @@
       "3": { "fez": "Kaardi lõpp, jah. Naljakas. Ma arvasin, et see tundub parem." }
     }
   },
-
   "camp": {
     "firstHome": {
       "1": { "fez": "See on sinu laager? Lõke ja kirst?" },
@@ -558,10 +527,11 @@
       "3": { "fez": "Noh. Mina peamiselt näitasin näpuga." }
     }
   },
-
   "animal": {
     "forSale": {
-      "1": { "fez": "Vaata, mis letil on! Ma teen nüüd ka vedusid." }
+      "1": { "fez": "Vaata, mis letil on! Ma teen nüüd ka vedusid." },
+      "2": { "explorer": "Ma näen ainult joonistust." },
+      "3": { "fez": "Originaal sööb rohkem." }
     },
     "boughtDonkey": {
       "1": { "fez": "Müüdud! Üks eesel. Kangekaelne, aga kannab kõike." },
@@ -572,10 +542,7 @@
       "1": { "fez": "Kõige selle kraamiga me nii kaugele ei kõnni. Selleks on eeslit vaja." },
       "2": { "fez": "Ja arva ära, kellel on üks? Minul. Minu letis Henuti kambris." }
     },
-    "throughDonkey": {
-      "1": { "explorer": "Ta on nõus." },
-      "2": { "fez": "Täna. Küsi homme uuesti." }
-    },
+    "throughDonkey": { "1": { "explorer": "Ta on nõus." }, "2": { "fez": "Täna. Küsi homme uuesti." } },
     "arrivesDonkey": {
       "1": { "fez": "Seal ta on! Jõudis enne meid kohale." },
       "2": { "explorer": "Lõkke leidis ka üles." },
@@ -690,7 +657,6 @@
       "3": { "fez": "Ei. Ei peagi." }
     }
   },
-
   "bond": {
     "starter": {
       "1": { "fez": "See läks kiiresti." },
@@ -730,7 +696,6 @@
       "3": { "fez": "Kõik need aastad kõndisid inimesed sellest mööda. Kõik need aastad!" }
     }
   },
-
   "reading": {
     "junior": {
       "1": { "explorer": "Siin on rida, mida ma nüüd oskan lugeda." },
@@ -739,15 +704,15 @@
       "4": { "explorer": "See oli ka eelmises. Ma ei teadnud, et need on sõnad." }
     },
     "expert": {
-      "1": { "explorer": "Teine rida. Vett janusele." },
-      "2": { "fez": "Leib ja nüüd vesi. Keegi tahtis väga, et teda mäletataks heldena." },
+      "1": { "explorer": "Teine rida. _Riideid alastile._" },
+      "2": { "fez": "Leib ja nüüd riided. Keegi tahtis väga, et teda mäletataks heldena." },
       "3": { "explorer": "Kõigil on see. Igal seinal, igas hauakambris, samad kaks rida." },
       "4": { "fez": "Siis olid nad kas kõik helded, või on see lihtsalt see, mida peab ütlema." },
       "5": { "explorer": "Või on see see, mille järgi neid mõõdeti." }
     },
     "master": {
-      "1": { "explorer": "Riideid alastile. Kolmas rida." },
-      "2": { "fez": "Leib, vesi, riided. See on nimekiri asjadest, mis ära anti." },
+      "1": { "explorer": "_Vett janusele._ Kolmas rida." },
+      "2": { "fez": "Leib, riided, vesi. See on nimekiri asjadest, mis ära anti." },
       "3": { "explorer": "Selle mehe hauakambris, kes võttis kõik endaga kaasa." },
       "4": { "fez": "…Jah. Ma panin seda tähele." }
     },
@@ -767,7 +732,6 @@
       "13": { "fez": "Noh. See seletab fezi ära." }
     }
   },
-
   "altar": {
     "refused": {
       "1": { "priest": "Ei." },
@@ -778,7 +742,6 @@
       "4": { "priest": "Ma olen oodanud kolm tuhat aastat. Mind ei peteta viimasel nädalal ära." }
     }
   },
-
   "meeting": {
     "starter_1": {
       "1": { "voice": "Hei! Mitte SINNA! Vaata, kuhu astud!" },
@@ -799,14 +762,29 @@
       "16": { "fez": "Neli silma näeb rohkem kui kaks. Lähme, püramiid ootab!" }
     }
   },
-
-  "end": {
-    "1": { "fez": "Kas see oli äge?" },
-    "2": { "explorer": "Kõlbab küll." }
+  "end": { "1": { "fez": "Kas see oli äge?" }, "2": { "explorer": "Kõlbab küll." } },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Seal on puudu midagi näljasele. Leib, ma ütleksin. Ja ma tean üht meest, kes luges nelikümmend aastat iga viljakoti üle."
+        }
+      },
+      "gift": {
+        "1": { "explorer": "Ipi, meil on leiba vaja. Ühe seina jaoks." },
+        "2": { "ipi": "Leiba? Minu oma? Kas sa tead, mis vili maksab?" },
+        "3": { "fez": "See on ühe rea jaoks, mis räägib asjade ära andmisest." },
+        "4": { "ipi": "…Ära. Andmisest." },
+        "5": { "ipi": "Olgu. Üks päts. Aga see pannakse kirja: _Ipi andis leiba._" },
+        "6": { "fez": "Ta andis midagi ära! Kas sa nägid?" }
+      }
+    }
   },
-
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": { "ipi": "See päts — kas keegi on selle juba ära söönud? Sest kui ei, siis tahaksin selle tagasi." }
+      },
       "north1": { "1": { "ipi": "Ikka veel siin? Põhja! Henut! Üksteist debenit!" } },
       "north2": { "1": { "ipi": "Üksteist debenit lasuriiti. Henut. Põhjas. Mida sa ootad?" } },
       "paid1": { "1": { "ipi": "Noh? Kas ta maksis? …Ei. Muidugi mitte." } },
@@ -815,7 +793,7 @@
       "later2": { "1": { "ipi": "Nelikümmend aastat arveraamatuid ja mitte ükski ei klapi. Mitte ükski!" } }
     },
     "junior": {
-      "wall1": { "1": { "henut": "Sein. Kolmas märk. See ei ole ikka veel minu nimi." } },
+      "wall1": { "1": { "henut": "Sein. Teine märk. See ei ole ikka veel minu nimi." } },
       "wall2": { "1": { "henut": "Sina oled ikka veel siin ja see hani on ikka veel minu seinal. Paranda see ära." } },
       "priest1": { "1": { "henut": "Ikka minu nimi. Ma kontrollisin. Nüüd — Karnak, preester. Mine nüüd." } },
       "priest2": { "1": { "henut": "Karnak! Ta on piisavalt kaua oodanud. Mine ja lase endast teatada." } },

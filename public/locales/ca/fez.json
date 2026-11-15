@@ -3,15 +3,12 @@
   "welcome": "Egipte! Hi soc de debò.",
   "welcome2": "I aquest mapa… vaig pagar-lo massa car. Més val que sigui bo.",
   "welcome3": "Som-hi. A veure on és aquella creu.",
-
   "pyramidIntro": "Hi ha números en aquestes pedres. I en falten uns quants…",
   "pyramidIntro2": "Espera. Cada pedra és la suma de les dues de sota! Sí, aquí també!",
-
   "pyramidBlockedBlocks": "Ei, què és això? Aquests blocs estan segellats. No ensenyen el seu número!",
   "pyramidBlockedBlocks2": "No passa res. Mira els blocs del voltant: amb ells el pots calcular.",
   "pyramidBlockedBlocks3": "Però no el pots escriure. Aquest número l'hauràs de recordar.",
   "pyramidBlockedBlocks4": "Va, que ja has arribat fins aquí. Tu pots!",
-
   "levelCompleted": "Ha! S'obre! Vinga, cap a dins.",
   "exitPillar": {
     "1": { "fez": "Ha! Llum del dia! Veus aquell raig de llum? Per allà sortim. Hi entres, i ja hem acabat aquí." },
@@ -22,24 +19,18 @@
   },
   "expeditionCompleted": "Enhorabona, has acabat l'expedició!",
   "expeditionCompleted2": "Ja tens una expedició nova.",
-
   "tombTutorial": "Ui, escriptura! La podem llegir? Amb els jeroglífics que hem trobat… potser sí!",
   "tombTutorial2": "Mira, sumes amb signes a dins! Veus aquests forats buits? Hi van els jeroglífics. Els teus, aquí baix.",
   "tombTutorial3": "Les sumes petites t'ensenyen quan un signe és correcte. Així descobrim quin signe va a cada lloc.",
   "tombTutorial4": "Tot ple? Llavors surt un cadenat de números. La suma gran és el codi… i la tomba s'obre!",
-
   "hieroglyphUnlock": "Tenim un objecte especial: ens deixa escriure en un d'aquests blocs segellats!",
-  "hieroglyphUnlock2": "Toca una pedra que brilla i arrossega-hi l'objecte per obrir-la. Un bloc per piràmide.",
-
+  "hieroglyphUnlock2": "Tria una pedra que brilla i porta-hi l'objecte per obrir-la. Un bloc per piràmide.",
   "errorHighlightTutorial": "Aquest tresor que hem trobat té un truc molt útil: si poses una resposta equivocada, un error es posarà vermell!",
   "errorHighlightTutorial2": "Només en brilla un cada vegada, així que encara és un repte. Però ajuda a saber on buscar!",
-
   "earlyFeedbackTutorial": "Veus aquests blocs de control? Es posen verds o vermells mentre els omples. T'avisen de seguida!",
   "earlyFeedbackTutorial2": "Fes-los servir com a punts de suport. Si un es posa vermell, hi ha alguna cosa a prop que s'ha d'arreglar.",
-
   "notEnoughHieroglyphs": "Sempre pots aturar aquesta expedició tornant a la pantalla del viatge.",
   "notEnoughHieroglyphs2": "Podem deixar l'expedició a mitges i anar a buscar en un altre lloc els jeroglífics que encara ens falten.",
-
   "tombLoot": "Uau, el nostre primer tresor! Molt bé!",
   "mapPiece": "Mira! AIXÒ sí que és un mapa. Vell de debò! Val més que els nostres dos junts!",
   "mapPiece2": "Però només és un tros, eh. Cada expedició d'aquí a prop n'amaga un, i junts porten fins a una tomba.",
@@ -47,39 +38,30 @@
   "mapComplete2": "Allà, on es troben totes les línies. Allà hi ha una tomba.",
   "mapComplete3": "Ja és als nostres viatges. Hi anem a mirar?",
   "mapPiece3": "A la llista d'expedicions pots comptar quants en tenim. Jo ben segur que els comptaré!",
-
   "mosaicIntro": "Ui, vidre de colors! Mira com brilla. AIXÒ no es llença pas!",
   "mosaicIntro2": "És un tros d'un dibuix. Una finestra sencera de vidre, i cada tros que trobem en torna una miqueta.",
   "mosaicIntro3": "Que no tens un campament en algun lloc? Emporta-te'ls i allà els muntarem. Vull veure què surt!",
   "mosaicReminder": "Pst! Aquests trossos de vidre encara fan soroll a la bossa. Els posem a la finestra del campament?",
-
   "mosaicStarter": "Un gat a la porta, i una serp que fuig corrents. Això valia un bol de llet.",
   "mosaicStarter2": "Als egipcis els encantaven els gats justament per això: mataven les serps i les rates que es menjaven el gra.",
   "mosaicStarter3": "Els agradaven tant que en van fer una deessa. Bastet. La protectora de la casa, de la porta i de tothom qui dorm a dins.",
-
   "mosaicJunior": "Mira-li la mà: algú li ensenya com s'agafa la ploma.",
   "mosaicJunior2": "El del cap d'ocell és Thoth. Escriure, comptar, apuntar-ho tot… tot això és cosa seva.",
   "mosaicJunior3": "L'ibis que vam seguir riu amunt? És el seu ocell. Cada número que hem escrit en una paret també és seu.",
-
   "mosaicExpert": "Aquesta llum no és casualitat. Van construir tota la sala perquè caigués just allà, el matí exacte.",
   "mosaicExpert2": "El sol és Amon-Ra: l'amagat, i alhora la llum que tothom veu. Les dues coses a la vegada.",
   "mosaicExpert3": "Qui sap mesurar el cel tan bé, sap mesurar qualsevol cosa. Tot aquest temps hem estat resolent els seus comptes.",
-
   "mosaicMaster": "Pell verda, i blat que li creix del cos. Això és expressament.",
   "mosaicMaster2": "Osiris. El van matar, el van tornar a muntar, i ara és el que torna cada any quan el riu inunda els camps.",
   "mosaicMaster3": "Aquí baix, aquesta és tota la idea: morir no és acabar. Quin pensament més alegre per a una tomba, oi?",
-
   "mosaicWizard": "Un cor en un costat. Una ploma a l'altre. I estan equilibrats.",
   "mosaicWizard2": "La ploma és Ma'at: la veritat, l'equilibri, com han de ser les coses. Si el teu cor pesa més que la ploma, no passes per la porta.",
   "mosaicWizard3": "El xacal que aguanta la balança és Anubis. És qui t'acompanya fins aquí.",
-
   "mosaicFinale": "Fes un pas enrere un moment. Mira tot el que hem anat traient d'aquelles piràmides.",
   "mosaicFinale2": "Cada tros és part d'ell, el que aguanta la balança. Ens ha estat mirant durant tot el camí.",
   "mosaicFinale3": "Aquest és el seu registre de nosaltres. I jo diria que està equilibrat.",
-
   "shopFirstVisit": "Ah, ja hi som. La meva parada. Ja t'ho vaig dir que jo hi era pel negoci.",
   "shopFirstVisit2": "Tot el que hi ha en aquest taulell ho he tret d'algun lloc. Aquell ve de dues tombes enrere.",
-
   "shopArrival": "Ah, la meva parada! Deixa'm posar a la vista el que he anat trobant pel camí.",
   "shopArrival2": "Les troballes rares són les més cares, però et pagaré per qualsevol andròmina que portis.",
   "arrival": {
@@ -112,13 +94,10 @@
         "fez": "Ai, aquest m'agrada. Aquí és on aprenien a escriure! Signe a signe, en trossos d'olla. El papir era massa car per als nens."
       },
       "2": { "explorer": "Practicaven amb escombraries?" },
-      "3": {
-        "fez": "Amb el que hi hagués! I quan en saps prou, de cop i volta una paret ja no és només decoració."
-      },
+      "3": { "fez": "Amb el que hi hagués! I quan en saps prou, de cop i volta una paret ja no és només decoració." },
       "4": { "explorer": "Aquella Esfinx… la vull tornar a mirar." },
       "5": { "fez": "Encara no. Aviat." }
     },
-
     "junior_1": {
       "1": { "fez": "Tornaven cada any amb la crescuda del riu, gairebé el mateix dia." },
       "2": { "fez": "I la gent va començar a comptar els dies d'entremig. D'aquí ve el calendari: d'uns ocells." },
@@ -144,7 +123,6 @@
       "3": { "explorer": "Com trobes res per aquí sense un far?" },
       "4": { "fez": "Ho preguntes a algú que ja hi ha estat. Aquesta és tota la meva feina." }
     },
-
     "expert_1": {
       "1": {
         "fez": "Més de seixanta tombes excavades en una sola vall, i totes, totes, obertes abans que arribéssim."
@@ -160,9 +138,7 @@
       "3": { "fez": "El mateix déu, crec. Als més famosos els afegien un altre nom." }
     },
     "expert_3": {
-      "1": {
-        "fez": "Tot el país és una ratlla verda a cada costat d'un riu, i aquí s'obre com un ventall."
-      },
+      "1": { "fez": "Tot el país és una ratlla verda a cada costat d'un riu, i aquí s'obre com un ventall." },
       "2": { "fez": "Aquí tot creix. I tot mossega." },
       "3": { "explorer": "I nosaltres per quina de les dues hem vingut?" },
       "4": { "fez": "Jo esperava que per cap." }
@@ -175,7 +151,6 @@
       "3": { "explorer": "Va funcionar?" },
       "4": { "fez": "Ella encara és dempeus, i ell no. Depèn de què vulguis dir." }
     },
-
     "master_1": {
       "1": { "fez": "Dos milions de blocs. Algú els va comptar." },
       "2": { "explorer": "Algú els va comptar?" },
@@ -203,7 +178,6 @@
       "2": { "explorer": "La Henut s'enfadaria moltíssim." },
       "3": { "fez": "La Henut estaria prenent apunts." }
     },
-
     "wizard_1": {
       "1": { "fez": "De nit, el sol passa per sota el món i surt per l'altre costat. Això és tot el que creien." },
       "2": { "fez": "Dotze hores a les fosques, amb de tot pel mig, i algú l'ha de portar fins a l'altra banda." },
@@ -240,7 +214,6 @@
       "3": { "fez": "Per a qualsevol que mirés. Aquesta era la gràcia: mai va ser per a l'home de dins." }
     }
   },
-
   "tomb": {
     "starter": {
       "1": { "ipi": "Ei! No toquis! Aquesta gerra és meva!" },
@@ -363,7 +336,6 @@
       "3": { "fez": "Ha estat un dibuix tota l'estona." }
     }
   },
-
   "cave": {
     "starter_treasure_tomb": {
       "1": { "fez": "Una cova! Al mapa hi havia la porta d'un celler, i això és un turó sencer!" },
@@ -413,7 +385,6 @@
       "3": { "fez": "Ni idea. Això és el pitjor." }
     }
   },
-
   "pillar": {
     "starter_treasure_tomb": {
       "1": { "fez": "Tantes palanques i portes, per a un sol celler!" },
@@ -455,7 +426,6 @@
       "3": { "fez": "I gairebé tenia raó." }
     }
   },
-
   "cavern": {
     "starter_treasure_tomb": {
       "1": { "fez": "Mira això! Una piràmide sota terra! Per a un mercader!" },
@@ -502,7 +472,6 @@
       "3": { "fez": "Del mapa, sí. Que estrany. Em pensava que em faria més content." }
     }
   },
-
   "camp": {
     "firstHome": {
       "1": { "fez": "Aquest és el teu campament? Un foc i un cofre?" },
@@ -560,10 +529,11 @@
       "3": { "fez": "Bé. Jo sobretot vaig assenyalar." }
     }
   },
-
   "animal": {
     "forSale": {
-      "1": { "fez": "Mira què tinc a la parada! Ara també venc transport." }
+      "1": { "fez": "Mira què tinc a la parada! Ara també venc transport." },
+      "2": { "explorer": "Només hi veig un dibuix." },
+      "3": { "fez": "L'original menja més." }
     },
     "boughtDonkey": {
       "1": { "fez": "Venut! Un ruc. Tossut, però ho porta tot." },
@@ -574,10 +544,7 @@
       "1": { "fez": "No caminarem tan lluny amb totes aquestes coses. Per això cal un ruc." },
       "2": { "fez": "I endevina qui en té un? Jo. A la meva parada, a la cambra de la Henut." }
     },
-    "throughDonkey": {
-      "1": { "explorer": "Té ganes." },
-      "2": { "fez": "Avui. Demà ja en tornarem a parlar." }
-    },
+    "throughDonkey": { "1": { "explorer": "Té ganes." }, "2": { "fez": "Avui. Demà ja en tornarem a parlar." } },
     "arrivesDonkey": {
       "1": { "fez": "Mira'l! Ha arribat abans que nosaltres." },
       "2": { "explorer": "I també ha trobat el foc." },
@@ -692,7 +659,6 @@
       "3": { "fez": "No. No li cal." }
     }
   },
-
   "bond": {
     "starter": {
       "1": { "fez": "Que ràpid." },
@@ -732,7 +698,6 @@
       "3": { "fez": "Tants anys passant-hi pel davant. Tants anys!" }
     }
   },
-
   "reading": {
     "junior": {
       "1": { "explorer": "Aquí hi ha una línia que ara ja sé llegir." },
@@ -741,15 +706,15 @@
       "4": { "explorer": "També era a l'anterior. No sabia que eren paraules." }
     },
     "expert": {
-      "1": { "explorer": "Segona línia. Aigua a qui tenia set." },
-      "2": { "fez": "Pa, i ara aigua. Algú tenia moltes ganes que el recordessin com una persona generosa." },
+      "1": { "explorer": "Segona línia. _Roba a qui no en tenia._" },
+      "2": { "fez": "Pa, i ara roba. Algú tenia moltes ganes que el recordessin com una persona generosa." },
       "3": { "explorer": "Tothom ho té. Cada paret, cada tomba, les mateixes dues línies." },
       "4": { "fez": "Doncs o bé tots eren generosos, o bé és el que tocava dir." },
       "5": { "explorer": "O és allò pel que els pesaven." }
     },
     "master": {
-      "1": { "explorer": "Roba a qui no en tenia. Tercera línia." },
-      "2": { "fez": "Pa, aigua, roba. És una llista de coses que es regalaven." },
+      "1": { "explorer": "_Aigua a qui tenia set._ Tercera línia." },
+      "2": { "fez": "Pa, roba, aigua. És una llista de coses que es regalaven." },
       "3": { "explorer": "A la tomba d'un home que s'ho va endur tot." },
       "4": { "fez": "…Sí. Ja me n'havia adonat." }
     },
@@ -769,7 +734,6 @@
       "13": { "fez": "Bé. Això explica el fes." }
     }
   },
-
   "altar": {
     "refused": {
       "1": { "priest": "No." },
@@ -780,7 +744,6 @@
       "4": { "priest": "Fa tres mil anys que espero. No em deixaré enredar l'última setmana." }
     }
   },
-
   "meeting": {
     "starter_1": {
       "1": { "voice": "Ei! Allà NO! Mira on poses els peus!" },
@@ -801,14 +764,27 @@
       "16": { "fez": "Dos hi veuen més que un. Som-hi, que la piràmide ens espera!" }
     }
   },
-
-  "end": {
-    "1": { "fez": "Ha estat xulo?" },
-    "2": { "explorer": "No ha estat malament." }
+  "end": { "1": { "fez": "Ha estat xulo?" }, "2": { "explorer": "No ha estat malament." } },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Allà hi falta alguna cosa per a qui té gana. Pa, diria jo. I conec un home que va comptar cada sac de gra durant quaranta anys."
+        }
+      },
+      "gift": {
+        "1": { "explorer": "Ipi, necessitem pa. Per a una paret." },
+        "2": { "ipi": "Pa? Meu? Saps què costa el gra?" },
+        "3": { "fez": "És per a una línia sobre regalar coses." },
+        "4": { "ipi": "…Regalar. Gratis." },
+        "5": { "ipi": "D'acord. Un pa. Però queda escrit: _Ipi va donar pa._" },
+        "6": { "fez": "Ha regalat una cosa! Ho has vist?" }
+      }
+    }
   },
-
   "revisit": {
     "starter": {
+      "gave1": { "1": { "ipi": "Aquell pa… ja se l'ha menjat algú? Perquè si no, el vull de tornada." } },
       "north1": { "1": { "ipi": "Encara aquí? Cap al nord! La Henut! Onze deben!" } },
       "north2": { "1": { "ipi": "Onze deben de lapislàtzuli. La Henut. Al nord. Què esperes?" } },
       "paid1": { "1": { "ipi": "I què? Ha pagat? …No. És clar que no." } },
@@ -819,7 +795,7 @@
       "later2": { "1": { "ipi": "Quaranta anys de comptes, i no me'n quadra ni un. Ni un!" } }
     },
     "junior": {
-      "wall1": { "1": { "henut": "La paret. El tercer signe. Encara no és el meu nom." } },
+      "wall1": { "1": { "henut": "La paret. El segon signe. Encara no és el meu nom." } },
       "wall2": { "1": { "henut": "Tu encara ets aquí, i aquella oca encara és a la meva paret. Arregla-ho." } },
       "priest1": { "1": { "henut": "Encara és el meu nom. Ho he mirat. I ara: Karnak, el sacerdot. Au, ves." } },
       "priest2": { "1": { "henut": "Karnak! Ja fa prou temps que espera. Ves que t'anunciïn." } },

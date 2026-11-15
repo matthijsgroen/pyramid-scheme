@@ -28,7 +28,7 @@
   "tombTutorial3": "As contas pequenas mostram quando um sinal está certo. É assim que descobrimos que sinal vai para onde.",
   "tombTutorial4": "Está tudo preenchido? Então aparece um cadeado de números. A conta grande é o código, e depois o túmulo abre!",
   "hieroglyphUnlock": "Temos um artefacto especial: com ele podemos escrever num daqueles blocos selados!",
-  "hieroglyphUnlock2": "Toca numa pedra a brilhar e arrasta o artefacto para cima dela para a abrir. Um bloco por pirâmide.",
+  "hieroglyphUnlock2": "Escolhe uma pedra a brilhar e leva o artefacto até ela para a abrir. Um bloco por pirâmide.",
   "errorHighlightTutorial": "Aquele tesouro que encontrámos tem um truque jeitoso: se puseres uma resposta errada, um erro fica a brilhar a vermelho!",
   "errorHighlightTutorial2": "Só brilha um bloco de cada vez, por isso continua a ser um desafio. Mas ajuda a procurar!",
   "earlyFeedbackTutorial": "Vês aqueles blocos de controlo? Ficam verdes ou vermelhos enquanto preenches. Ficas logo a saber!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Olha o que tenho na banca! Agora também vendo transporte."
+      },
+      "2": {
+        "explorer": "Só vejo um desenho."
+      },
+      "3": {
+        "fez": "O original come mais."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "Segunda linha. Água a quem tinha sede."
+        "explorer": "Segunda linha. _Roupa a quem não tinha nada vestido._"
       },
       "2": {
-        "fez": "Pão, e agora água. Alguém queria muito ser lembrado como generoso."
+        "fez": "Pão, e agora roupa. Alguém queria muito ser lembrado como generoso."
       },
       "3": {
         "explorer": "Toda a gente tem isto. Em todas as paredes, em todos os túmulos, as mesmas duas linhas."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Roupa a quem não tinha nada vestido. Terceira linha."
+        "explorer": "_Água a quem tinha sede._ Terceira linha."
       },
       "2": {
-        "fez": "Pão, água, roupa. É uma lista de coisas dadas aos outros."
+        "fez": "Pão, roupa, água. É uma lista de coisas dadas aos outros."
       },
       "3": {
         "explorer": "No túmulo de um homem que levou tudo com ele."
@@ -1599,8 +1605,42 @@
       "explorer": "Deu para o gasto."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Ali falta qualquer coisa para quem tem fome. Pão, diria eu. E conheço um homem que contou cada saco de cereal durante quarenta anos."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, precisamos de pão. Para uma parede."
+        },
+        "2": {
+          "ipi": "Pão? O meu? Sabes quanto custa o cereal?"
+        },
+        "3": {
+          "fez": "É para uma linha sobre dar coisas aos outros."
+        },
+        "4": {
+          "ipi": "…Dar. Aos outros."
+        },
+        "5": {
+          "ipi": "Está bem. Um pão. Mas fica escrito: _O Ipi deu pão._"
+        },
+        "6": {
+          "fez": "Ele deu uma coisa! Viste aquilo?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Aquele pão… já alguém o comeu? É que, se não, quero-o de volta."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Ainda aqui? Para norte! A Henut! Onze deben!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "A parede. O terceiro sinal. Continua a não ser o meu nome."
+          "henut": "A parede. O segundo sinal. Continua a não ser o meu nome."
         }
       },
       "wall2": {

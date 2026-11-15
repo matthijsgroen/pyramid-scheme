@@ -28,7 +28,7 @@
   "tombTutorial3": "Las sumas chiquitas te dicen cuándo un signo está bien. Así descubrimos qué signo va en cada lugar.",
   "tombTutorial4": "¿Ya está todo lleno? Entonces sale un candado de números. La suma grande es la clave… ¡y la tumba se abre!",
   "hieroglyphUnlock": "Tenemos un objeto especial: ¡con él podemos escribir en uno de esos bloques sellados!",
-  "hieroglyphUnlock2": "Toca una piedra que brilla y arrastra el objeto encima para abrirla. Un bloque por pirámide.",
+  "hieroglyphUnlock2": "Elige una piedra que brilla y lleva el objeto hasta ella para abrirla. Un bloque por pirámide.",
   "errorHighlightTutorial": "Ese tesoro que encontramos tiene un truco muy útil: si pones una respuesta mal, ¡un error se pone rojo!",
   "errorHighlightTutorial2": "Solo brilla un bloque a la vez, así que sigue siendo un reto. ¡Pero te ayuda a buscar!",
   "earlyFeedbackTutorial": "¿Ves esos bloques de control? Se ponen verdes o rojos mientras los llenas. ¡Así sabes al momento!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "¡Mira lo que hay en el puesto! Ahora también hago transporte."
+      },
+      "2": {
+        "explorer": "Solo veo un dibujo."
+      },
+      "3": {
+        "fez": "El original come más."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "Segunda línea. Agua al que tenía sed."
+        "explorer": "Segunda línea. _Ropa al que no tenía._"
       },
       "2": {
-        "fez": "Pan, y ahora agua. Alguien tenía muchas ganas de que lo recordaran como generoso."
+        "fez": "Pan, y ahora ropa. Alguien tenía muchas ganas de que lo recordaran como generoso."
       },
       "3": {
         "explorer": "Todos lo tienen. Cada pared, cada tumba, las mismas dos líneas."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Ropa al que no tenía. Tercera línea."
+        "explorer": "_Agua al que tenía sed._ Tercera línea."
       },
       "2": {
-        "fez": "Pan, agua, ropa. Es una lista de cosas regaladas."
+        "fez": "Pan, ropa, agua. Es una lista de cosas regaladas."
       },
       "3": {
         "explorer": "En la tumba de un hombre que se lo llevó todo."
@@ -1599,8 +1605,42 @@
       "explorer": "No estuvo mal."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Ahí falta algo para el que tiene hambre. Pan, diría yo. Y conozco a un hombre que contó cada saco de grano durante cuarenta años."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, necesitamos pan. Para una pared."
+        },
+        "2": {
+          "ipi": "¿Pan? ¿Mío? ¿Sabes lo que cuesta el grano?"
+        },
+        "3": {
+          "fez": "Es para una línea sobre regalar cosas."
+        },
+        "4": {
+          "ipi": "…Regalar. Gratis."
+        },
+        "5": {
+          "ipi": "Está bien. Un pan. Pero queda por escrito: _Ipi dio pan._"
+        },
+        "6": {
+          "fez": "¡Regaló algo! ¿Lo viste?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Ese pan… ¿ya se lo comió alguien? Porque si no, lo quiero de vuelta."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "¿Sigues aquí? ¡Al norte! ¡Henut! ¡Once deben!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "La pared. El tercer signo. Sigue sin ser mi nombre."
+          "henut": "La pared. El segundo signo. Sigue sin ser mi nombre."
         }
       },
       "wall2": {

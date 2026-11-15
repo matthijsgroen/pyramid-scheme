@@ -21,19 +21,24 @@
     "mapHint": "Lappen visar en marknadsgata och en källardörr – en handlares gömställe, inget finare än så."
   },
   "junior_1": {
-    "name": "De heliga ibisarnas flytt"
+    "name": "De heliga ibisarnas flytt",
+    "description": "Vassträsk längs Nilen, och ibisen som vadar genom dem. Heliga fåglar – och inte av den anledning du tror."
   },
   "junior_2": {
-    "name": "Hantverkarnas dal"
+    "name": "Hantverkarnas dal",
+    "description": "Deir el-Medina, gravbyggarnas by. Deras verkstäder står kvar, och en del av arbetet också."
   },
   "junior_3": {
-    "name": "Thoths tempel"
+    "name": "Thoths tempel",
+    "description": "Thoths tempel. Alla känner till hans namn; fråga tre personer vad han var gud över, så får du tre svar."
   },
   "junior_4": {
-    "name": "Fyren i Alexandria"
+    "name": "Fyren i Alexandria",
+    "description": "Faros i Alexandria, ett av de sju världsunderverken. Det som finns kvar av den ligger i hamnen, under vattnet."
   },
   "junior_treasure_tomb": {
     "name": "Adelsdamens hemliga valv",
+    "description": "En adelsdams valv, målat från golv till tak, och allt där inne ligger kvar där hon lade det.",
     "mapHint": "Fint bläck, ett sigill med vapen i hörnet – någon fin person ville att det här rummet skulle glömmas."
   },
   "expert_1": {

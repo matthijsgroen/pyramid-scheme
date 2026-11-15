@@ -239,6 +239,21 @@
       "description": "Karališkas galvos apdangalas su saugančia kobra. Faraonai jį nešiojo kaip dievų apsaugą."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Duona",
+      "description": "Aukštas kepalas, duonos ženklas. Jį davė Ipi, kuris keturiasdešimt metų skaičiavo grūdus ir vieną kartą juos atidavė."
+    },
+    "o2": {
+      "name": "Drobė"
+    },
+    "o3": {
+      "name": "Vanduo"
+    },
+    "o4": {
+      "name": "Valtis"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Nendrės lapas",

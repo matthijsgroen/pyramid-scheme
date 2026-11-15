@@ -239,6 +239,21 @@
       "description": "Kraljevo pokrivalo z zaščitno kobro, ki so ga faraoni nosili za božje varstvo."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Kruh",
+      "description": "Visok hlebec, znak za kruh. Dal ga je Ipi, ki je štirideset let štel žito in ga enkrat podaril."
+    },
+    "o2": {
+      "name": "Lan"
+    },
+    "o3": {
+      "name": "Voda"
+    },
+    "o4": {
+      "name": "Čoln"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Trstični list",
