@@ -305,6 +305,8 @@ const JourneyInspector = ({
     }
   }
 
+  const [infoOpen, setInfoOpen] = useState(() => window.innerWidth >= 640)
+
   const reset = () => {
     setSolvedEdges([])
     setCurrentFloor(0)
@@ -316,10 +318,10 @@ const JourneyInspector = ({
   if (!grid) return <div className="p-4 text-red-400">Assembly failed for {journey.id}</div>
 
   return (
-    <div className="flex h-screen gap-6 overflow-hidden bg-stone-950 p-4 text-stone-200">
+    <div className="flex h-screen flex-col gap-6 overflow-hidden bg-stone-950 p-4 text-stone-200 sm:flex-row">
       {/* Map */}
-      <div className="flex h-full flex-col gap-2 overflow-auto">
-        <div className="flex items-center gap-3 text-sm">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-auto">
+        <div className="flex flex-wrap items-center gap-3 text-sm">
           <div>
             <span className="font-bold text-amber-300">{journey.name}</span>
             <span className="ml-2 text-stone-500">
@@ -367,6 +369,16 @@ const JourneyInspector = ({
               {revealAll ? "Revealed" : "Reveal All"}
             </button>
             <button
+              onClick={() => setInfoOpen(v => !v)}
+              className={`rounded border px-2 py-0.5 text-xs ${
+                infoOpen
+                  ? "border-amber-600 text-amber-300"
+                  : "border-stone-700 text-stone-400 hover:border-stone-500 hover:text-stone-200"
+              }`}
+            >
+              Info
+            </button>
+            <button
               onClick={reset}
               className="rounded border border-stone-700 px-2 py-0.5 text-xs text-stone-400 hover:border-stone-500 hover:text-stone-200"
             >
@@ -394,58 +406,60 @@ const JourneyInspector = ({
       </div>
 
       {/* Sidebar */}
-      <div className="flex h-full w-60 flex-shrink-0 flex-col gap-4 overflow-y-auto">
-        {/* Journey info */}
-        <div>
-          <h3 className="mb-1 text-xs font-bold tracking-wider text-stone-500 uppercase">Journey</h3>
-          <div className="text-xs text-stone-400">
-            <div>{journey.id}</div>
-            <div className="mt-0.5 text-stone-600">{journey.description}</div>
-          </div>
-        </div>
-
-        {/* Floor breakdown — puzzle types, chests, rewards */}
-        <div>
-          <h3 className="mb-1 text-xs font-bold tracking-wider text-stone-500 uppercase">
-            {siteConfig.length > 1 ? "Floors" : "Layout"}
-          </h3>
-          {siteConfig.map((floor, fi) => (
-            <div key={fi}>
-              {siteConfig.length > 1 && (
-                <div
-                  className={`mb-0.5 text-xs font-semibold ${fi === currentFloor ? "text-amber-300" : "text-stone-500"}`}
-                >
-                  Floor {fi + 1}
-                </div>
-              )}
-              <FloorDetail
-                floor={floor}
-                active={fi === currentFloor || siteConfig.length === 1}
-                stairs={stairsOf(floor, fi, siteConfig)}
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Collected rewards (manual exploration mode) */}
-        {!revealAll && (
+      {infoOpen && (
+        <div className="flex max-h-[45%] w-full flex-shrink-0 flex-col gap-4 overflow-y-auto sm:h-full sm:max-h-none sm:w-60">
+          {/* Journey info */}
           <div>
-            <h3 className="mb-1 text-xs font-bold tracking-wider text-stone-500 uppercase">Collected</h3>
-            {collected.length === 0 ? (
-              <p className="text-xs text-stone-700">None yet</p>
-            ) : (
-              <ul className="space-y-0.5">
-                {collected.map((c, i) => (
-                  <li key={i} className={`text-xs ${rewardColor(c.reward)}`}>
-                    {siteConfig.length > 1 && <span className="text-stone-600">F{c.floor + 1} </span>}
-                    {rewardLabel(c.reward)}
-                  </li>
-                ))}
-              </ul>
-            )}
+            <h3 className="mb-1 text-xs font-bold tracking-wider text-stone-500 uppercase">Journey</h3>
+            <div className="text-xs text-stone-400">
+              <div>{journey.id}</div>
+              <div className="mt-0.5 text-stone-600">{journey.description}</div>
+            </div>
           </div>
-        )}
-      </div>
+
+          {/* Floor breakdown — puzzle types, chests, rewards */}
+          <div>
+            <h3 className="mb-1 text-xs font-bold tracking-wider text-stone-500 uppercase">
+              {siteConfig.length > 1 ? "Floors" : "Layout"}
+            </h3>
+            {siteConfig.map((floor, fi) => (
+              <div key={fi}>
+                {siteConfig.length > 1 && (
+                  <div
+                    className={`mb-0.5 text-xs font-semibold ${fi === currentFloor ? "text-amber-300" : "text-stone-500"}`}
+                  >
+                    Floor {fi + 1}
+                  </div>
+                )}
+                <FloorDetail
+                  floor={floor}
+                  active={fi === currentFloor || siteConfig.length === 1}
+                  stairs={stairsOf(floor, fi, siteConfig)}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Collected rewards (manual exploration mode) */}
+          {!revealAll && (
+            <div>
+              <h3 className="mb-1 text-xs font-bold tracking-wider text-stone-500 uppercase">Collected</h3>
+              {collected.length === 0 ? (
+                <p className="text-xs text-stone-700">None yet</p>
+              ) : (
+                <ul className="space-y-0.5">
+                  {collected.map((c, i) => (
+                    <li key={i} className={`text-xs ${rewardColor(c.reward)}`}>
+                      {siteConfig.length > 1 && <span className="text-stone-600">F{c.floor + 1} </span>}
+                      {rewardLabel(c.reward)}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
