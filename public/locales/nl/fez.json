@@ -818,8 +818,19 @@
 
   "formula": {
     "junior": {
-      "hint": { "1": { "fez": "[Fez at the junior wall: the slot wants bread, go back to Ipi — designer copy]" } },
-      "gift": { "1": { "ipi": "[Ipi gives bread — designer copy]" } }
+      "hint": {
+        "1": {
+          "fez": "Daar ontbreekt iets voor wie honger heeft. Brood, zou ik zeggen. En ik ken iemand die veertig jaar elke zak graan heeft geteld."
+        }
+      },
+      "gift": {
+        "1": { "explorer": "Ipi, we hebben brood nodig. Voor een muur." },
+        "2": { "ipi": "Brood? Van mij? Weet je wel wat graan kost?" },
+        "3": { "fez": "Het is voor een regel over dingen weggeven." },
+        "4": { "ipi": "…Weggeven." },
+        "5": { "ipi": "Goed dan. Eén brood. Maar het wordt opgeschreven: _Ipi gaf brood._" },
+        "6": { "fez": "Hij gaf iets weg! Zag je dat?" }
+      }
     },
     "expert": {
       "hint": { "1": { "fez": "[Fez at the expert wall: the slot wants linen, go back to Henut — designer copy]" } },
@@ -840,7 +851,7 @@
   },
   "revisit": {
     "starter": {
-      "gave1": { "1": { "ipi": "[Ipi, after giving bread — designer copy]" } },
+      "gave1": { "1": { "ipi": "Dat brood — heeft iemand het al opgegeten? Want anders wil ik het terug." } },
       "north1": { "1": { "ipi": "Nog steeds hier? Naar het noorden! Henut! Elf deben!" } },
       "north2": { "1": { "ipi": "Elf deben lapis. Henut. Noorden. Waar wacht je nog op?" } },
       "paid1": { "1": { "ipi": "En? Heeft ze betaald? …Nee. Natuurlijk niet." } },
@@ -850,7 +861,7 @@
     },
     "junior": {
       "gave1": { "1": { "henut": "[Henut, after giving linen — designer copy]" } },
-      "wall1": { "1": { "henut": "De muur. Het derde teken. Het is nog steeds mijn naam niet." } },
+      "wall1": { "1": { "henut": "De muur. Het tweede teken. Het is nog steeds mijn naam niet." } },
       "wall2": { "1": { "henut": "Jij bent er nog, en die gans staat nog steeds op mijn muur. Zet het recht." } },
       "priest1": { "1": { "henut": "Nog steeds mijn naam. Ik heb gekeken. En nu — Karnak, die priester. Hup." } },
       "priest2": { "1": { "henut": "Karnak! Hij wacht al lang genoeg. Ga je maar laten aankondigen." } },
