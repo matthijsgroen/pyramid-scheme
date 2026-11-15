@@ -41,6 +41,11 @@ jobs:
           VITE_LAST_RELEASED_DIFFICULTY: junior
           # Playtesting happens on the preview, so it carries the developer tools; the release does not.
           VITE_DEV_TOOLS: "true"
+      - name: Build Storybook
+        run: yarn build-storybook --quiet -o dist/storybook
+        env:
+          VITE_BASE: /pyramid-scheme-preview/storybook/
+          VITE_LAST_RELEASED_DIFFICULTY: junior
       - name: Add .nojekyll
         run: touch dist/.nojekyll
       - name: Publish to pyramid-scheme-preview
