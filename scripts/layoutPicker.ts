@@ -145,7 +145,7 @@ export const floorSearch = (journeyId: string, floor: FloorConfig, levelNr: numb
   // The authored packing is passed as written (possibly absent), so a floor pinned at it carves exactly as the
   // runtime carves its unstamped config. The side-path fields are written only where they say something, as the
   // bake writes them.
-  const { outsideLock: _outside, corridorsTakeTwo: _two, ...authoring } = floor
+  const { outsideLock: _outside, corridorsTakeTwo: _two, carveFrom: _from, ...authoring } = floor
   const standing = ({ outsideLock, corridorsTakeTwo }: SidePathStage): FloorConfig => ({
     ...authoring,
     ...(outsideLock.length > 0 ? { outsideLock } : {}),
@@ -292,6 +292,8 @@ export const makeLayoutPicker = ({
       })
       floor.seed = result.seed
       floor.packing = result.packing
+      if (result.carveFrom) floor.carveFrom = result.carveFrom
+      else delete floor.carveFrom
       const { sidePacking } = search.packed(result.packing)
       if (sidePacking !== undefined) floor.sidePacking = sidePacking
       if (result.sidePaths.outsideLock.length > 0) floor.outsideLock = result.sidePaths.outsideLock

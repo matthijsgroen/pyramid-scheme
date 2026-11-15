@@ -836,6 +836,7 @@ export const prepareFloor = (
         plan,
         answerStubs,
         maxAttempts,
+        carveFrom: config.carveFrom,
         onLaid,
         resolveEncounter,
         resolveKeyRequirements,

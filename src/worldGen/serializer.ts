@@ -235,6 +235,7 @@ const floorFieldEmitters: {
   outsideLock: v => (v.length ? `outsideLock: ${JSON.stringify(v)}` : null),
   corridorsTakeTwo: () => `corridorsTakeTwo: true`,
   seed: v => `seed: ${v}`,
+  carveFrom: v => `carveFrom: ${JSON.stringify(v)}`,
   sealed: v => (v ? `sealed: true` : null),
   mainEndReward: v => `mainEndReward: ${serializeReward(v)}`,
   rewards: v => (v.length ? `rewards: ${serializePuzzleRewards(v)}` : null),

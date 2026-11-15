@@ -12,6 +12,7 @@ import { freeRegions } from "./lockAuthoring"
 import { parseLock } from "./lockNotation"
 import { BINDING, carveLockFloor } from "./testSupport/lockFixtures"
 import { hallAnnexSequenceFloor, offRouteSequenceFloor } from "./testSupport/sequenceFixtures"
+import type { Rung } from "./carve/state"
 
 const SEEDS = Array.from({ length: 40 }, (_, n) => (n + 1) * 7919)
 const TIMEOUT = 120_000
@@ -166,7 +167,7 @@ describe.each(FLOORS)("forced steps over $name", ({ make, minSound }) => {
       let kept = 0
       for (const grid of grids) {
         const walk = walkFloorLock(grid)!
-        const refused = refusal({ success: true, grid, attempt: 0 }, make())
+        const refused = refusal({ success: true, grid, attempt: 0, rung: {} as Rung }, make())
         if (walk.sound) {
           kept++
           expect(refused?.criterion ?? null).toBeNull()
@@ -276,7 +277,10 @@ describe("a floor on which no walk keeps the order", () => {
       const grid = carveLockFloor(freeRegions(lock), BINDING)
       const walk = walkFloorLock(grid)
       expect(walk && !walk.sound && walk.failure.type).toBe("goalUnreachable")
-      const refused = refusal({ success: true, grid, attempt: 0 }, { locks: [{ lock: freeRegions(lock) }] })
+      const refused = refusal(
+        { success: true, grid, attempt: 0, rung: {} as Rung },
+        { locks: [{ lock: freeRegions(lock) }] }
+      )
       expect(refused?.criterion).toBe("lock walks sound")
       expect(refused?.detail).toContain("sequence order.P")
     },

@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Some pyramid floors open faster.
 - The explorer stands in front of a chest while opening it, not behind it.
 - The pyramid block you are filling in no longer pops out.
 - Typing a number on a phone no longer switches to the keyboard look.

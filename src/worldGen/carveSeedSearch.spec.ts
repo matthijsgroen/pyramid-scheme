@@ -17,9 +17,10 @@ import {
   type LayoutNotFound,
   type SidePathStage,
 } from "./carveSeedSearch"
+import type { Rung } from "@/game/carve/state"
 
 const grid = {} as FloorGrid
-const carvedAt = (attempt: number): AssemblerResult => ({ success: true, grid, attempt })
+const carvedAt = (attempt: number): AssemblerResult => ({ success: true, grid, attempt, rung: {} as Rung })
 const failed: AssemblerResult = { success: false, reasons: [] }
 // The floors these stand-ins carve author no lock.
 const judge = (result: AssemblerResult) => refusal(result, {})
@@ -169,7 +170,15 @@ describe(searchCarvePair, () => {
 
   it("asks no attempt 0 of a carve: a late carve meeting every hard criterion is accepted", () => {
     expect(
-      refusal({ success: true, grid: { cells: [], entrancePos: [0, 0] } as unknown as FloorGrid, attempt: 9 }, {})
+      refusal(
+        {
+          success: true,
+          grid: { cells: [], entrancePos: [0, 0] } as unknown as FloorGrid,
+          attempt: 9,
+          rung: {} as Rung,
+        },
+        {}
+      )
     ).toBeNull()
   })
 
@@ -259,7 +268,9 @@ describe(searchCarvePair, () => {
       expect(Number.isSafeInteger(found.seed)).toBe(true)
       const literal = Number(String(found.seed))
       expect(literal).toBe(found.seed)
-      expect(dirsOf(carve(literal, Infinity))).toEqual(dirsOf({ success: true, grid: found.grid, attempt: 0 }))
+      expect(dirsOf(carve(literal, Infinity))).toEqual(
+        dirsOf({ success: true, grid: found.grid, attempt: 0, rung: {} as Rung })
+      )
     })
   })
 })

@@ -2,7 +2,7 @@ import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
 import { prefabRoomAt, prefabRoomCells } from "@/game/roomShape"
 import { DIR_MOVES } from "./corridorRuns"
-import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
+import { CELL, COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import { shapeKindFor } from "./nodeKinds"
 import { nodeArtOffset } from "./nodeArt"
 import { opensToward, type RoomClaims } from "./roomClaims"
@@ -40,6 +40,23 @@ export const prefabArtOffset = (
   const at = offsetTo(r, c, art)
   if (room.nodeArt) return at
   const step = openStep(grid, claims, ...art, nodeArtOffset(undefined))
+  return { dx: at.dx + step.dx, dy: at.dy + step.dy }
+}
+
+/** THE EXPLORER STANDS IN FRONT OF THE CHEST HE OPENS: a chest's step never takes it south of where he stands, and
+ * lifts it a little north of that line, so the depth sort draws him over it. The step only: a chest a designed room
+ * places on a cell of its own stays on that cell. */
+const CHEST_LIFT = CELL * 0.12
+const lifted = (step: StandingOffset): StandingOffset => ({ dx: step.dx, dy: Math.min(step.dy, 0) - CHEST_LIFT })
+
+/** Where a chest is drawn, relative to its node's centre: as any node's furniture, its step lifted (`lifted`). */
+export const chestArtOffset = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): StandingOffset => {
+  const room = prefabRoomAt(grid, r, c)
+  const art = room && drawnAt(grid, [r, c])?.art
+  if (!room || !art) return lifted(nodeArtStep(grid, claims, r, c))
+  const at = offsetTo(r, c, art)
+  if (room.nodeArt) return at
+  const step = lifted(openStep(grid, claims, ...art, nodeArtOffset(undefined)))
   return { dx: at.dx + step.dx, dy: at.dy + step.dy }
 }
 

@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 417133446
+export const worldContentHash = 396053688
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -318,6 +318,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         actorByIndex: { 0: false },
         packing: 0.1,
         seed: 2975698674563320,
+        carveFrom: {
+          attempt: 15,
+          rung: { n: 19, startingN: 17, packing: 0.2, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [undefined],
       },
@@ -469,6 +473,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         packing: 0.1,
         seed: 2975698674563321,
+        carveFrom: {
+          attempt: 6,
+          rung: { n: 11, startingN: 9, packing: 0.1, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
         rewards: [
           { type: "campPart", structure: "windbreak", part: "reedBundles" },
@@ -509,6 +517,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         encountersByIndex: { 0: "balance-scale", 1: "sudoku" },
         packing: 0.1,
         seed: 2975698674563322,
+        carveFrom: {
+          attempt: 1,
+          rung: { n: 7, startingN: 7, packing: 0.1, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_c" },
         rewards: [{ type: "waterskin" }, { type: "waterskin" }],
       },
@@ -852,6 +864,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         packing: 0.1,
         seed: 2975698674563321,
+        carveFrom: {
+          attempt: 4,
+          rung: { n: 13, startingN: 11, packing: 0.1, targetDistance: 6, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
         rewards: [{ type: "money", amount: 1 }],
       },
@@ -1836,6 +1852,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         packing: 0.1,
         seed: 175768595654518,
+        carveFrom: {
+          attempt: 12,
+          rung: {
+            n: 19,
+            startingN: 17,
+            packing: 0.2,
+            targetDistance: 10,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [
           { type: "campFind", step: "gourd" },
@@ -2779,6 +2807,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         packing: 0.1,
         seed: 175768595654521,
+        carveFrom: {
+          attempt: 8,
+          rung: {
+            n: 17,
+            startingN: 17,
+            packing: 0.2,
+            targetDistance: 14,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 0 },
         rewards: [
           { type: "campPart", structure: "fire", part: "acaciaLogs" },
@@ -3108,6 +3148,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         packing: 0.1,
         seed: 9109538588672876,
+        carveFrom: {
+          attempt: 7,
+          rung: { n: 17, startingN: 15, packing: 0.1, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [
           { type: "campPart", structure: "cookingStones", part: "supportStones" },
@@ -4085,6 +4129,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         packing: 0.1,
         seed: 9109538588672880,
+        carveFrom: {
+          attempt: 6,
+          rung: {
+            n: 19,
+            startingN: 17,
+            packing: 0.1,
+            targetDistance: 11,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
         rewards: [
           { type: "money", amount: 1 },
@@ -4626,6 +4682,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.2,
         outsideLock: [4, 5],
         seed: 3205065412912520,
+        carveFrom: {
+          attempt: 2,
+          rung: {
+            n: 21,
+            startingN: 21,
+            packing: 0.2,
+            targetDistance: 12,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d2", pieceIndex: 1 },
         rewards: [
           { type: "campPart", structure: "tripod", part: "tripodPoles" },
@@ -4869,6 +4937,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.2,
         outsideLock: [2, 3, 4],
         seed: 3205065412912521,
+        carveFrom: {
+          attempt: 47,
+          rung: {
+            n: 41,
+            startingN: 33,
+            packing: 1,
+            targetDistance: 42,
+            chainWind: 0.41379310344827586,
+            chainFloor: 1,
+            recovery: true,
+          },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "junior" },
         rewards: [
           { type: "campFind", step: "pot" },
@@ -4994,6 +5074,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 2,
         packing: 0.1,
         seed: 3205065412912522,
+        carveFrom: {
+          attempt: 4,
+          rung: { n: 9, startingN: 7, packing: 0.1, targetDistance: 6, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "junior" },
         rewards: [{ type: "money", amount: 3 }],
       },
@@ -5338,6 +5422,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.2,
         outsideLock: [4],
         seed: 1491887413430960,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 19,
+            startingN: 19,
+            packing: 0.2,
+            targetDistance: 12,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art7", pieceIndex: 0 },
         rewards: [
           { type: "campFind", step: "tentRug" },
@@ -6184,6 +6280,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.2,
         outsideLock: [5],
         seed: 1491887413430962,
+        carveFrom: {
+          attempt: 3,
+          rung: {
+            n: 21,
+            startingN: 21,
+            packing: 0.2,
+            targetDistance: 14,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a2", pieceIndex: 1 },
         rewards: [
           { type: "campFind", step: "spiceRack" },
@@ -6331,6 +6439,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 2,
         packing: 0.1,
         seed: 1491887413430963,
+        carveFrom: {
+          attempt: 7,
+          rung: { n: 9, startingN: 7, packing: 0.1, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art6", pieceIndex: 2 },
         rewards: [
           { type: "money", amount: 1 },
@@ -6793,6 +6905,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 2,
         packing: 0.1,
         seed: 1491887413430964,
+        carveFrom: {
+          attempt: 4,
+          rung: { n: 9, startingN: 7, packing: 0.1, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 0 },
         rewards: [
           { type: "campPart", structure: "edgeStones", part: "riverStones" },
@@ -7516,6 +7632,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 2,
         packing: 0.1,
         seed: 390963684767489,
+        carveFrom: {
+          attempt: 4,
+          rung: { n: 9, startingN: 7, packing: 0.1, targetDistance: 6, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "junior" },
         rewards: [undefined],
       },
@@ -7800,6 +7920,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 2,
         packing: 0.1,
         seed: 390963684767490,
+        carveFrom: {
+          attempt: 4,
+          rung: { n: 9, startingN: 7, packing: 0.1, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art6", pieceIndex: 3 },
         rewards: [undefined, undefined],
       },
@@ -8127,6 +8251,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.2,
         outsideLock: [4],
         seed: 3907394367270173,
+        carveFrom: {
+          attempt: 4,
+          rung: {
+            n: 23,
+            startingN: 21,
+            packing: 0.2,
+            targetDistance: 12,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p9", pieceIndex: 1 },
         rewards: [undefined, undefined, undefined],
         locks: [
@@ -9309,6 +9445,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 2,
         packing: 0.1,
         seed: 3907394367270177,
+        carveFrom: {
+          attempt: 5,
+          rung: { n: 9, startingN: 7, packing: 0.1, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p15", pieceIndex: 1 },
         rewards: [
           { type: "campPart", structure: "post", part: "postTrunk" },
@@ -9785,6 +9925,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 2,
         packing: 0.1,
         seed: 3907394367270178,
+        carveFrom: {
+          attempt: 4,
+          rung: { n: 9, startingN: 7, packing: 0.1, targetDistance: 6, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined],
       },
@@ -10737,6 +10881,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 2816278010141109,
+        carveFrom: {
+          attempt: 4,
+          rung: { n: 9, startingN: 7, packing: 0.1, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "expert" },
         rewards: [
           { type: "money", amount: 1 },
@@ -10819,6 +10967,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 2816278010141110,
+        carveFrom: {
+          attempt: 5,
+          rung: { n: 9, startingN: 7, packing: 0.1, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
         rewards: [
           { type: "campPart", structure: "stoneRing", part: "fieldStones" },
@@ -11213,6 +11365,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 2816278010141110,
+        carveFrom: {
+          attempt: 5,
+          rung: { n: 9, startingN: 7, packing: 0.1, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d5", pieceIndex: 1 },
         rewards: [
           { type: "campPart", structure: "clayOven", part: "ovenFloor" },
@@ -12289,6 +12445,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 5207779554184530,
+        carveFrom: {
+          attempt: 6,
+          rung: { n: 9, startingN: 7, packing: 0.1, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "expert" },
         rewards: [
           { type: "money", amount: 1 },
@@ -12732,6 +12892,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 5207779554184531,
+        carveFrom: {
+          attempt: 5,
+          rung: { n: 9, startingN: 7, packing: 0.1, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d5", pieceIndex: 2 },
         rewards: [
           { type: "campPart", structure: "secondTent", part: "largeCloth" },
@@ -14055,6 +14219,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 7816500863991683,
+        carveFrom: {
+          attempt: 4,
+          rung: { n: 9, startingN: 7, packing: 0.1, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 2 },
         rewards: [
           { type: "campPart", structure: "well", part: "wellStones" },
@@ -14354,6 +14522,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.15,
         outsideLock: [4, 5, 6],
         seed: 7816500863991683,
+        carveFrom: {
+          attempt: 19,
+          rung: {
+            n: 31,
+            startingN: 31,
+            packing: 0.6,
+            targetDistance: 40,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p12", pieceIndex: 0 },
         rewards: [{ type: "waterskin" }, { type: "waterskin" }, undefined, undefined, undefined, undefined, undefined],
         locks: [
@@ -14486,6 +14666,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 7816500863991684,
+        carveFrom: {
+          attempt: 4,
+          rung: { n: 9, startingN: 7, packing: 0.1, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "sellable", itemId: "sell_silver_5" },
         rewards: [undefined, undefined],
       },
@@ -14735,6 +14919,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 7907893988303841,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 17,
+            startingN: 17,
+            packing: 0.1,
+            targetDistance: 11,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p12", pieceIndex: 1 },
         rewards: [{ type: "waterskin" }, { type: "waterskin" }, undefined, undefined],
         locks: [
@@ -15749,6 +15945,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 7907893988303845,
+        carveFrom: {
+          attempt: 6,
+          rung: { n: 9, startingN: 7, packing: 0.1, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 3 },
         rewards: [
           { type: "campPart", structure: "dryingRack", part: "rackPoles" },
@@ -16163,6 +16363,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 7907893988303846,
+        carveFrom: {
+          attempt: 8,
+          rung: { n: 9, startingN: 9, packing: 0.2, targetDistance: 10, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "sellable", itemId: "sell_silver_2" },
         rewards: [undefined, undefined],
       },
@@ -16346,6 +16550,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 4404046083800496,
+        carveFrom: {
+          attempt: 47,
+          rung: {
+            n: 45,
+            startingN: 27,
+            packing: 1,
+            targetDistance: 42,
+            chainWind: 0.41379310344827586,
+            chainFloor: 1,
+            recovery: true,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a3", pieceIndex: 0 },
         rewards: [
           { type: "waterskin" },
@@ -16591,6 +16807,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 4404046083800497,
+        carveFrom: {
+          attempt: 24,
+          rung: {
+            n: 29,
+            startingN: 29,
+            packing: 0.8,
+            targetDistance: 40,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a14", pieceIndex: 0 },
         rewards: [
           { type: "waterskin" },
@@ -16654,6 +16882,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 4404046083800498,
+        carveFrom: {
+          attempt: 4,
+          rung: { n: 11, startingN: 9, packing: 0.1, targetDistance: 12, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "master" },
         rewards: [
           { type: "money", amount: 1 },
@@ -16861,6 +17093,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 4404046083800498,
+        carveFrom: {
+          attempt: 37,
+          rung: {
+            n: 55,
+            startingN: 29,
+            packing: 1,
+            targetDistance: 48,
+            chainWind: 0.7586206896551724,
+            chainFloor: 1,
+            recovery: true,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d10", pieceIndex: 0 },
         rewards: [
           { type: "waterskin" },
@@ -16924,6 +17168,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 4404046083800499,
+        carveFrom: {
+          attempt: 4,
+          rung: { n: 11, startingN: 9, packing: 0.1, targetDistance: 12, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "master" },
         rewards: [
           { type: "money", amount: 1 },
@@ -17100,6 +17348,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.16,
         seed: 4404046083800499,
+        carveFrom: {
+          attempt: 18,
+          rung: {
+            n: 25,
+            startingN: 25,
+            packing: 0.64,
+            targetDistance: 38,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art9", pieceIndex: 0 },
         rewards: [
           { type: "waterskin" },
@@ -17343,6 +17603,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 4081382388249041,
+        carveFrom: {
+          attempt: 20,
+          rung: {
+            n: 23,
+            startingN: 21,
+            packing: 0.4,
+            targetDistance: 27,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art10", pieceIndex: 0 },
         rewards: [
           { type: "waterskin" },
@@ -17587,6 +17859,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 4081382388249042,
+        carveFrom: {
+          attempt: 29,
+          rung: {
+            n: 29,
+            startingN: 27,
+            packing: 0.8,
+            targetDistance: 50,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art15", pieceIndex: 1 },
         rewards: [
           { type: "waterskin" },
@@ -17866,6 +18150,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 4081382388249043,
+        carveFrom: {
+          attempt: 34,
+          rung: {
+            n: 57,
+            startingN: 29,
+            packing: 1,
+            targetDistance: 60,
+            chainWind: 0.8620689655172413,
+            chainFloor: 1,
+            recovery: true,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art10", pieceIndex: 2 },
         rewards: [
           { type: "waterskin" },
@@ -18121,6 +18417,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 4081382388249044,
+        carveFrom: {
+          attempt: 22,
+          rung: {
+            n: 23,
+            startingN: 21,
+            packing: 0.4,
+            targetDistance: 33,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art9", pieceIndex: 1 },
         rewards: [
           { type: "waterskin" },
@@ -18187,6 +18495,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 4081382388249045,
+        carveFrom: {
+          attempt: 3,
+          rung: { n: 9, startingN: 9, packing: 0.1, targetDistance: 11, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9", pieceIndex: 1 },
         rewards: [
           { type: "campPart", structure: "pavilion", part: "pavilionPosts" },
@@ -18363,6 +18675,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.16,
         seed: 4081382388249045,
+        carveFrom: {
+          attempt: 3,
+          rung: {
+            n: 25,
+            startingN: 25,
+            packing: 0.16,
+            targetDistance: 20,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p14", pieceIndex: 0 },
         rewards: [
           { type: "waterskin" },
@@ -18508,6 +18832,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 4081382388249046,
+        carveFrom: {
+          attempt: 4,
+          rung: {
+            n: 13,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 17,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "master" },
         rewards: [
           { type: "money", amount: 3 },
@@ -18694,6 +19030,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         corridorStraightness: 0.35,
         packing: 0.1,
         seed: 1886837787460537,
+        carveFrom: {
+          attempt: 26,
+          rung: {
+            n: 27,
+            startingN: 27,
+            packing: 0.8,
+            targetDistance: 45,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p14", pieceIndex: 1 },
         rewards: [
           { type: "waterskin" },
@@ -18951,6 +19299,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 1886837787460538,
+        carveFrom: {
+          attempt: 19,
+          rung: {
+            n: 23,
+            startingN: 23,
+            packing: 0.4,
+            targetDistance: 30,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p14", pieceIndex: 2 },
         rewards: [
           { type: "waterskin" },
@@ -19222,6 +19582,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 1886837787460539,
+        carveFrom: {
+          attempt: 37,
+          rung: {
+            n: 55,
+            startingN: 29,
+            packing: 1,
+            targetDistance: 60,
+            chainWind: 0.7586206896551724,
+            chainFloor: 1,
+            recovery: true,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art9", pieceIndex: 3 },
         rewards: [
           { type: "waterskin" },
@@ -19295,6 +19667,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 1886837787460540,
+        carveFrom: {
+          attempt: 3,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 15,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "money", amount: 3 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -19470,6 +19854,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 1886837787460540,
+        carveFrom: {
+          attempt: 28,
+          rung: {
+            n: 29,
+            startingN: 27,
+            packing: 0.8,
+            targetDistance: 55,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p14", pieceIndex: 3 },
         rewards: [
           { type: "waterskin" },
@@ -19729,6 +20125,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.16,
         seed: 1886837787460541,
+        carveFrom: {
+          attempt: 16,
+          rung: {
+            n: 25,
+            startingN: 25,
+            packing: 0.64,
+            targetDistance: 46,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p5", pieceIndex: 1 },
         rewards: [
           { type: "waterskin" },
@@ -19963,6 +20371,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         corridorStraightness: 0.35,
         packing: 0.1,
         seed: 9018423533998432,
+        carveFrom: {
+          attempt: 19,
+          rung: {
+            n: 21,
+            startingN: 21,
+            packing: 0.4,
+            targetDistance: 24,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d6", pieceIndex: 3 },
         rewards: [
           { type: "waterskin" },
@@ -20026,6 +20446,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 9018423533998432,
+        carveFrom: {
+          attempt: 3,
+          rung: { n: 9, startingN: 9, packing: 0.1, targetDistance: 12, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "money", amount: 1 },
         rewards: [undefined, undefined, undefined, undefined, undefined],
       },
@@ -20430,6 +20854,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 9018423533998432,
+        carveFrom: {
+          attempt: 31,
+          rung: {
+            n: 55,
+            startingN: 27,
+            packing: 1,
+            targetDistance: 54,
+            chainWind: 0.9655172413793104,
+            chainFloor: 1,
+            recovery: true,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art15", pieceIndex: 5 },
         rewards: [
           { type: "waterskin" },
@@ -20662,6 +21098,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 9018423533998434,
+        carveFrom: {
+          attempt: 16,
+          rung: {
+            n: 21,
+            startingN: 21,
+            packing: 0.4,
+            targetDistance: 30,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d5", pieceIndex: 4 },
         rewards: [
           { type: "waterskin" },
@@ -21231,6 +21679,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         corridorStraightness: 0.35,
         packing: 0.1,
         seed: 5743489570450040,
+        carveFrom: {
+          attempt: 24,
+          rung: {
+            n: 27,
+            startingN: 27,
+            packing: 0.8,
+            targetDistance: 50,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d14", pieceIndex: 0 },
         rewards: [
           { type: "money", amount: 2 },
@@ -21536,6 +21996,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.16,
         seed: 5743489570450041,
+        carveFrom: {
+          attempt: 30,
+          rung: { n: 57, startingN: 31, packing: 1, targetDistance: 66, chainWind: 1, chainFloor: 1, recovery: true },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p6", pieceIndex: 0 },
         rewards: [
           { type: "money", amount: 1 },
@@ -21868,6 +22332,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 5743489570450042,
+        carveFrom: {
+          attempt: 29,
+          rung: {
+            n: 29,
+            startingN: 27,
+            packing: 0.8,
+            targetDistance: 55,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9", pieceIndex: 3 },
         rewards: [
           { type: "money", amount: 3 },
@@ -21944,6 +22420,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 5743489570450043,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 17,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "wizard" },
         rewards: [
           { type: "money", amount: 3 },
@@ -22022,6 +22510,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 5743489570450042,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 18,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "wizard" },
         rewards: [
           { type: "waterskin" },
@@ -22180,6 +22680,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 5743489570450043,
+        carveFrom: {
+          attempt: 27,
+          rung: {
+            n: 25,
+            startingN: 25,
+            packing: 0.8,
+            targetDistance: 60,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "wizard" },
         rewards: [
           { type: "money", amount: 2 },
@@ -22258,6 +22770,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 5743489570450044,
+        carveFrom: {
+          attempt: 5,
+          rung: {
+            n: 13,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 18,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "wizard" },
         rewards: [
           { type: "money", amount: 1 },
@@ -22588,6 +23112,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 3796722926199438,
+        carveFrom: {
+          attempt: 19,
+          rung: {
+            n: 21,
+            startingN: 21,
+            packing: 0.4,
+            targetDistance: 30,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p6", pieceIndex: 1 },
         rewards: [
           { type: "money", amount: 3 },
@@ -22784,6 +23320,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 3796722926199438,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 17,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p6", pieceIndex: 3 },
         rewards: [
           { type: "waterskin" },
@@ -23002,6 +23550,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.16,
         seed: 3796722926199439,
+        carveFrom: {
+          attempt: 28,
+          rung: { n: 33, startingN: 31, packing: 1, targetDistance: 66, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p13", pieceIndex: 0 },
         rewards: [
           { type: "money", amount: 2 },
@@ -23101,6 +23653,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 3796722926199440,
+        carveFrom: {
+          attempt: 5,
+          rung: {
+            n: 13,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 17,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "wizard" },
         rewards: [
           { type: "money", amount: 1 },
@@ -23501,6 +24065,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 3796722926199440,
+        carveFrom: {
+          attempt: 27,
+          rung: {
+            n: 31,
+            startingN: 31,
+            packing: 0.8,
+            targetDistance: 55,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p13", pieceIndex: 1 },
         rewards: [
           { type: "money", amount: 2 },
@@ -23904,6 +24480,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.16,
         seed: 3796722926199441,
+        carveFrom: {
+          attempt: 11,
+          rung: {
+            n: 19,
+            startingN: 19,
+            packing: 0.32,
+            targetDistance: 31,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p6", pieceIndex: 4 },
         rewards: [
           { type: "money", amount: 3 },
@@ -24005,6 +24593,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 3796722926199442,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 18,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "wizard" },
         rewards: [
           { type: "money", amount: 1 },
@@ -24107,6 +24707,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 3796722926199441,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 18,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d13", pieceIndex: 2 },
         rewards: [
           { type: "waterskin" },
@@ -24310,6 +24922,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 3796722926199442,
+        carveFrom: {
+          attempt: 15,
+          rung: {
+            n: 19,
+            startingN: 17,
+            packing: 0.2,
+            targetDistance: 24,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 2 },
         rewards: [
           { type: "money", amount: 1 },
@@ -24411,6 +25035,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 3796722926199443,
+        carveFrom: {
+          attempt: 4,
+          rung: {
+            n: 13,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 18,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "mosaicPiece", tier: "wizard" },
         rewards: [
           { type: "money", amount: 2 },
@@ -24672,6 +25308,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.16,
         seed: 6887435361277314,
+        carveFrom: {
+          attempt: 16,
+          rung: {
+            n: 25,
+            startingN: 25,
+            packing: 0.64,
+            targetDistance: 42,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "money", amount: 3 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -24738,6 +25386,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 6887435361277315,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 15,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "money", amount: 3 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -24974,6 +25634,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 6887435361277315,
+        carveFrom: {
+          attempt: 32,
+          rung: {
+            n: 55,
+            startingN: 27,
+            packing: 1,
+            targetDistance: 60,
+            chainWind: 0.9310344827586207,
+            chainFloor: 1,
+            recovery: true,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a4", pieceIndex: 0 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -25293,6 +25965,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         corridorStraightness: 0.35,
         packing: 0.1,
         seed: 6887435361277316,
+        carveFrom: {
+          attempt: 25,
+          rung: {
+            n: 29,
+            startingN: 29,
+            packing: 0.8,
+            targetDistance: 55,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a10", pieceIndex: 4 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -25596,6 +26280,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.16,
         seed: 6887435361277317,
+        carveFrom: {
+          attempt: 17,
+          rung: {
+            n: 25,
+            startingN: 25,
+            packing: 0.64,
+            targetDistance: 46,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a4", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -25663,6 +26359,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 6887435361277318,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 17,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "money", amount: 3 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -26028,6 +26736,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 6887435361277318,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 18,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d12", pieceIndex: 1 },
         rewards: [
           { type: "waterskin" },
@@ -26255,6 +26975,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 6887435361277320,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 18,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "money", amount: 3 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -26601,6 +27333,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         corridorStraightness: 0.35,
         packing: 0.16,
         seed: 993470859248193,
+        carveFrom: {
+          attempt: 21,
+          rung: {
+            n: 27,
+            startingN: 25,
+            packing: 0.64,
+            targetDistance: 42,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9", pieceIndex: 4 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -26690,6 +27434,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 993470859248194,
+        carveFrom: {
+          attempt: 2,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 15,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -26997,6 +27753,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         corridorStraightness: 0.35,
         packing: 0.1,
         seed: 993470859248194,
+        carveFrom: {
+          attempt: 32,
+          rung: {
+            n: 55,
+            startingN: 27,
+            packing: 1,
+            targetDistance: 60,
+            chainWind: 0.9310344827586207,
+            chainFloor: 1,
+            recovery: true,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d11", pieceIndex: 3 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -27383,6 +28151,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         corridorStraightness: 0.35,
         packing: 0.1,
         seed: 993470859248195,
+        carveFrom: {
+          attempt: 27,
+          rung: {
+            n: 27,
+            startingN: 27,
+            packing: 0.8,
+            targetDistance: 55,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d7", pieceIndex: 4 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -27839,6 +28619,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 993470859248196,
+        carveFrom: {
+          attempt: 29,
+          rung: {
+            n: 31,
+            startingN: 29,
+            packing: 0.8,
+            targetDistance: 55,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d11", pieceIndex: 4 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -27929,6 +28721,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.1,
         seed: 993470859248197,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 17,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -28591,6 +29395,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         corridorStraightness: 0.35,
         packing: 0.1,
         seed: 993470859248198,
+        carveFrom: {
+          attempt: 18,
+          rung: {
+            n: 21,
+            startingN: 21,
+            packing: 0.4,
+            targetDistance: 36,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d12", pieceIndex: 4 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -28899,6 +29715,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "junior" },
         packing: 0.1,
         seed: 1835615271702411,
+        carveFrom: {
+          attempt: 8,
+          rung: {
+            n: 13,
+            startingN: 13,
+            packing: 0.2,
+            targetDistance: 14,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "starter_a_1" },
         rewards: [undefined, undefined, undefined, undefined],
@@ -29137,6 +29965,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "junior" },
         packing: 0.1,
         seed: 1835615271702413,
+        carveFrom: {
+          attempt: 3,
+          rung: { n: 9, startingN: 9, packing: 0.1, targetDistance: 9, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "starter_a_3" },
         rewards: [undefined, undefined, undefined],
@@ -29237,6 +30069,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "junior" },
         packing: 0.1,
         seed: 1835615271702414,
+        carveFrom: {
+          attempt: 1,
+          rung: { n: 15, startingN: 15, packing: 0.1, targetDistance: 9, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "starter_a_4" },
         rewards: [undefined, undefined, undefined],
@@ -29496,6 +30332,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "expert" },
         packing: 0.2,
         seed: 6562157303560527,
+        carveFrom: {
+          attempt: 9,
+          rung: {
+            n: 19,
+            startingN: 19,
+            packing: 0.4,
+            targetDistance: 30,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "junior_a_1" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
@@ -29627,6 +30475,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "expert" },
         packing: 0.2,
         seed: 6562157303560528,
+        carveFrom: {
+          attempt: 8,
+          rung: {
+            n: 15,
+            startingN: 15,
+            packing: 0.4,
+            targetDistance: 27,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "junior_a_2" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
@@ -29777,6 +30637,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "expert" },
         packing: 0.2,
         seed: 6562157303560529,
+        carveFrom: {
+          attempt: 6,
+          rung: {
+            n: 13,
+            startingN: 11,
+            packing: 0.2,
+            targetDistance: 16,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "junior_a_3" },
         rewards: [undefined, undefined, undefined, undefined, undefined],
@@ -29891,6 +30763,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "expert" },
         packing: 0.2,
         seed: 6562157303560530,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.2,
+            targetDistance: 16,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "junior_a_4" },
         rewards: [undefined, undefined, undefined, undefined, undefined],
@@ -30005,6 +30889,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "expert" },
         packing: 0.2,
         seed: 6562157303560531,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.2,
+            targetDistance: 16,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "junior_a_5" },
         rewards: [undefined, undefined, undefined, undefined, undefined],
@@ -30317,6 +31213,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         corridorStraightness: 0.35,
         packing: 0.1,
         seed: 7024856084026398,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 15,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "expert_a_1" },
         rewards: [undefined, { type: "waterskin" }, undefined, undefined, undefined, undefined, undefined],
@@ -30709,6 +31617,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         corridorStraightness: 0.3,
         packing: 0.16,
         seed: 1328463463578375,
+        carveFrom: {
+          attempt: 3,
+          rung: { n: 9, startingN: 9, packing: 0.16, targetDistance: 11, chainWind: 1, chainFloor: 0, recovery: false },
+        },
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined, undefined, undefined],
       },
@@ -30897,6 +31809,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "master" },
         packing: 0.16,
         seed: 1328463463578376,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.16,
+            targetDistance: 16,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "expert_b_2" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
@@ -30980,6 +31904,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "master" },
         packing: 0.16,
         seed: 1328463463578377,
+        carveFrom: {
+          attempt: 2,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.16,
+            targetDistance: 16,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "expert_b_3" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
@@ -31366,6 +32302,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "wizard" },
         packing: 0.1,
         seed: 6589218256995085,
+        carveFrom: {
+          attempt: 33,
+          rung: {
+            n: 25,
+            startingN: 21,
+            packing: 1,
+            targetDistance: 66,
+            chainWind: 0.896551724137931,
+            chainFloor: 1,
+            recovery: true,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "master_a_2" },
         rewards: [
@@ -31828,6 +32776,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "wizard" },
         packing: 0.16,
         seed: 9830847063567492,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.16,
+            targetDistance: 18,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "master_b_1" },
         rewards: [undefined, { type: "waterskin" }, undefined, undefined, undefined, undefined, undefined],
@@ -31914,6 +32874,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "wizard" },
         packing: 0.16,
         seed: 9830847063567492,
+        carveFrom: {
+          attempt: 2,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.16,
+            targetDistance: 18,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "master_b_2" },
         rewards: [
@@ -32008,6 +32980,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "wizard" },
         packing: 0.16,
         seed: 9830847063567494,
+        carveFrom: {
+          attempt: 2,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.16,
+            targetDistance: 18,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "master_b_3" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
@@ -32094,6 +33078,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "wizard" },
         packing: 0.16,
         seed: 9830847063567496,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.16,
+            targetDistance: 18,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "master_b_4" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
@@ -32181,6 +33177,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "wizard" },
         packing: 0.16,
         seed: 9830847063567496,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.16,
+            targetDistance: 18,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "master_b_5" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
@@ -32438,6 +33446,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "wizard" },
         packing: 0.1,
         seed: 6433541520964356,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 18,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "wizard_a_1" },
         rewards: [
@@ -32552,6 +33572,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "wizard" },
         packing: 0.1,
         seed: 6433541520964357,
+        carveFrom: {
+          attempt: 36,
+          rung: {
+            n: 25,
+            startingN: 21,
+            packing: 1,
+            targetDistance: 72,
+            chainWind: 0.7931034482758621,
+            chainFloor: 1,
+            recovery: true,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "wizard_a_2" },
         rewards: [
@@ -32967,6 +33999,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "wizard" },
         packing: 0.1,
         seed: 7217094877269121,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 18,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "wizard_b_1" },
         rewards: [
@@ -33063,6 +34107,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "wizard" },
         packing: 0.1,
         seed: 7217094877269122,
+        carveFrom: {
+          attempt: 2,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 17,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "wizard_b_2" },
         rewards: [undefined, { type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined],
@@ -33564,6 +34620,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "wizard" },
         packing: 0.1,
         seed: 6830267333425584,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 17,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "wizard_c_2" },
         rewards: [undefined, { type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined],
@@ -33650,6 +34718,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficultiesByIndex: { 1: "wizard" },
         packing: 0.1,
         seed: 6830267333425585,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 11,
+            startingN: 11,
+            packing: 0.1,
+            targetDistance: 17,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "wizard_c_3" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],

@@ -5,6 +5,7 @@ import type {
   ResolveKeyRequirements,
 } from "../siteAssembler"
 import type {
+  CarveStart,
   AssemblerFailure,
   AssemblerReason,
   DecorationKind,
@@ -146,6 +147,7 @@ export type FloorPrep = Readonly<{
     plan: LockPlan | undefined
     answerStubs: boolean
     maxAttempts: number
+    carveFrom: CarveStart | undefined
     onLaid: ((laid: LaidFloor) => void) | undefined
     resolveEncounter: ResolveEncounter
     resolveKeyRequirements: ResolveKeyRequirements

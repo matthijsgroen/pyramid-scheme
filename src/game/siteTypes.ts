@@ -10,6 +10,7 @@ import type { LockFault, RealisationBinding } from "./lockCompile"
 import type { ActivityId } from "./activities"
 import type { PlaceKind, PlaceLayer, Prefab } from "./prefabTypes"
 import type { WebDoorPlacement } from "./webDoors"
+import type { Rung } from "./carve/state"
 /** `chamber` is a pass-through room on a path: a corridor node widened into a room that serves an activity, holding
  * no encounter and answering to no slot. */
 export type RoomType = "portal" | "fork" | "encounter" | "chamber"
@@ -921,6 +922,9 @@ export type FloorConfig = {
    * every entry point that carves the floor (the hook, stair travel, the scanner, the bake) agrees. Baked
    * from a search that found a seed carving soundly on the first attempt. */
   seed?: number
+  /** The attempt this floor carves on and the rung it carves at, for a floor that carves only on the ladder: the carve
+   * starts there instead of climbing to it. Baked beside `seed`; a start that no longer carves climbs from attempt 0. */
+  carveFrom?: CarveStart
   /** Isolates the main path's cells from leftover maze edges, so a compact layout can't merge a shortcut around a puzzle room. */
   sealed?: boolean
   /** Opaque payload for whichever family renders the main path's rooms (e.g. a tableau's
@@ -1176,7 +1180,10 @@ export type AssemblerReason =
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 /** `attempt` is the 0-based attempt that carved the floor: anything past 0 carved on a widened grid and a
  * doubled `packing`, not the authored one. */
-export type AssemblerResult = { success: true; grid: FloorGrid; attempt: number } | AssemblerFailure
+/** Where a carve that settled on a later attempt settled: enough to carve it again without the attempts before it. */
+export type CarveStart = { attempt: number; rung: Rung }
+
+export type AssemblerResult = { success: true; grid: FloorGrid; attempt: number; rung: Rung } | AssemblerFailure
 
 // ── Detector types ────────────────────────────────────────────────────────────
 
