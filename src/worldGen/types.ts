@@ -25,7 +25,14 @@ export type Difficulty = "starter" | "junior" | "expert" | "master" | "wizard"
 
 // One open reward type, shared: worldGen re-exports game/siteTypes rather than mirroring it
 // (worldGen→game is an allowed edge). Core enumerates no reward id; see the doc comment there.
-import type { TreasureReward, FragmentSlotReward, MapPieceReward, TombKeyReward, Tileset } from "@/game/siteTypes"
+import type {
+  CarveStart,
+  TreasureReward,
+  FragmentSlotReward,
+  MapPieceReward,
+  TombKeyReward,
+  Tileset,
+} from "@/game/siteTypes"
 export type { TreasureReward, FragmentSlotReward, MapPieceReward, TombKeyReward }
 
 export type SubSection = {
@@ -149,6 +156,8 @@ export type FloorConfig = {
    * every entry point that carves the floor (the hook, stair travel, the scanner, the bake) agrees. Baked
    * from a search that found a seed carving soundly on the first attempt. */
   seed?: number
+  /** Where a floor that carves only on the ladder settles: written by the layout search. Mirrors game/siteTypes.ts. */
+  carveFrom?: CarveStart
   /** Isolates the main path's cells from leftover maze edges, so a compact layout can't merge a shortcut around a puzzle room. */
   sealed?: boolean
   /** Opaque payload for whichever family renders the main path's rooms (e.g. a tableau's

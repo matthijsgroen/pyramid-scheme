@@ -1,6 +1,6 @@
 import { walkFloorLock, describeFloorWalkFailure, deadFloorRegions } from "@/game/floorLockWalk"
 import { lockGroundUnfed } from "@/game/lockPuzzles"
-import type { AssemblerReason, AssemblerResult, FloorConfig, FloorGrid } from "@/game/siteTypes"
+import type { AssemblerReason, AssemblerResult, CarveStart, FloorConfig, FloorGrid } from "@/game/siteTypes"
 import type { CorridorAssignment } from "@/game/corridorSidePaths"
 import { roomlessRouteStubs } from "@/game/routeStubs"
 
@@ -38,6 +38,8 @@ export type LayoutFound = {
   offset: number
   /** Where the floor's side paths stand: the stage of `sidePathStages` that carved. */
   sidePaths: SidePathStage
+  /** A laddered layout's attempt and rung, so the runtime carves it without climbing to it. */
+  carveFrom?: CarveStart
 }
 /** The bounded search met no candidate: the furthest criterion any candidate reached, and how often each refused. */
 export type LayoutNotFound = {
@@ -200,6 +202,7 @@ export const verifyCarvePair = (
     grid: result.grid,
     offset: offsetOf(base, pair.seed),
     sidePaths,
+    ...(result.attempt > 0 ? { carveFrom: { attempt: result.attempt, rung: result.rung } } : {}),
   }
 }
 
@@ -261,6 +264,7 @@ export const searchCarvePair = (
         grid: ladder.grid,
         offset: 0,
         sidePaths,
+        carveFrom: { attempt: ladder.attempt, rung: ladder.rung },
       }
     return null
   }

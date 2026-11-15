@@ -30,7 +30,7 @@ describe("engines", () => {
     const prepared = prepareFloor("site", config, 1)
     if (!prepared.ok) throw new Error(JSON.stringify(prepared.reasons))
     const marks: string[] = []
-    expect(carveFloor(prepared.prep, markerEngine(marks))).toEqual({ success: true, grid, attempt: 0 })
+    expect(carveFloor(prepared.prep, markerEngine(marks))).toMatchObject({ success: true, grid, attempt: 0 })
     expect(marks).toEqual(["ran"])
   })
 

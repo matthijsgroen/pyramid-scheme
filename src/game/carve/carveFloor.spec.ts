@@ -20,13 +20,31 @@ const prep = (() => {
 })()
 
 const grid = { rows: 1, cols: 1 } as FloorGrid
+const firstRung = LATTICE_ENGINE.firstRung(prep)
 const engineOf = (passes: Engine["passes"], finish: Finish): Engine => ({ ...LATTICE_ENGINE, passes, finish })
 const refuse: Finish = () => ({ retry: [] })
 
 describe("the attempt loop", () => {
   it("hands back the grid of the first attempt that finishes one", () => {
     const finishAtThree: Finish = (_, state) => (state.attempt === 3 ? grid : { retry: [] })
-    expect(carveFloor(prep, engineOf([], finishAtThree))).toEqual({ success: true, grid, attempt: 3 })
+    expect(carveFloor(prep, engineOf([], finishAtThree))).toMatchObject({ success: true, grid, attempt: 3 })
+  })
+
+  it("carves a baked start alone, on its own attempt and rung", () => {
+    const rung: Rung = { ...firstRung, n: 43 }
+    const seen: [number, Rung][] = []
+    const finish: Finish = (_, state) => (seen.push([state.attempt, state.rung]), grid)
+    const started = { ...prep, input: { ...prep.input, carveFrom: { attempt: 47, rung } } }
+    expect(carveFloor(started, engineOf([], finish))).toEqual({ success: true, grid, attempt: 47, rung })
+    expect(seen).toEqual([[47, rung]])
+  })
+
+  it("climbs from attempt 0 when a baked start no longer carves", () => {
+    const attempts: number[] = []
+    const finish: Finish = (_, state) => (attempts.push(state.attempt), state.attempt === 2 ? grid : { retry: [] })
+    const started = { ...prep, input: { ...prep.input, carveFrom: { attempt: 47, rung: firstRung } } }
+    expect(carveFloor(started, engineOf([], finish))).toMatchObject({ success: true, attempt: 2 })
+    expect(attempts).toEqual([47, 0, 1, 2])
   })
 
   it("names what the attempts came up short on once the budget is spent", () => {
