@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Impossible de charger ta partie",
     "body": "Le navigateur ne veut pas donner ta partie sauvegardée pour le moment. Elle n’est pas perdue : recharge la page pour réessayer.",
-    "banner": "Ta partie n’est pas sauvegardée. Touche ici pour recharger.",
+    "banner": "Ta partie n’est pas sauvegardée. Recharge la page.",
     "reload": "Recharger",
     "continue": "Continuer sans sauvegarder",
     "reset": "Recommencer (effacer la sauvegarde)",
@@ -29,7 +29,6 @@
     "evening": "Soir",
     "night": "Nuit"
   },
-  "tomb": {},
   "ui": {
     "level": "Niveau",
     "symbols": "symboles",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Arrêter l’expédition",
     "confirmInterruptExpedition": "Tu veux vraiment arrêter cette expédition ? On garde ce que tu as fait dans l’expédition, mais tu perds ce que tu as fait dans ce niveau !",
     "cancel": "Annuler",
+    "leaveSite": "Quitter cet endroit ?",
+    "confirmLeaveSite": "Choisis Partir pour ressortir, ou Rester pour continuer à explorer.",
+    "leave": "Partir",
+    "stay": "Rester",
     "settings": "Réglages",
     "language": "Langue",
     "close": "Fermer",
@@ -107,8 +110,12 @@
     "solvedWithHints_one": "Résolu avec {{count}} indice",
     "solvedWithHints_many": "Résolu avec {{count}} indices",
     "solvedWithHints_other": "Résolu avec {{count}} indices",
-    "tapToContinue": "Touche pour continuer",
-    "goal": "But"
+    "tapToContinue": "Continuer",
+    "goal": "But",
+    "controls": "Commandes",
+    "controlsUndo": "annuler",
+    "controlsHint": "indice",
+    "controlsLeave": "retour à la carte"
   },
   "trap": {
     "warning": "⚠ Couloir piégé",
@@ -127,6 +134,7 @@
     "turnAround": "Faire demi-tour",
     "wardDescription": {
       "starter": "Le sceau d’un marchand bloque ce passage. Seule sa clé de garde peut l’ouvrir.",
+      "junior": "Le blason d’une noble ferme ce chemin. Seule sa clé de garde peut l’ouvrir.",
       "expert": "La protection du temple d’un grand prêtre garde cette porte. Seule la clé sacrée peut l’ouvrir.",
       "master": "Le sceau royal d’un pharaon ferme ce passage. Seule la clé du roi peut le briser.",
       "wizard": "Une protection des dieux garde cette porte. Rien ne passe, sauf la clé divine."
@@ -135,7 +143,7 @@
     "lockedColor": "Tu n’as pas encore trouvé cette clé à cet étage."
   },
   "chest": {
-    "tapToOpen": "Touche pour ouvrir",
+    "tapToOpen": "Ouvrir",
     "money_one": "{{count}} pièce",
     "money_many": "{{count}} pièces",
     "money_other": "{{count}} pièces",
@@ -143,6 +151,7 @@
     "mapPieceDescription": "Un vieux bout de carte tout fragile, qui mène à un endroit oublié depuis longtemps. Dommage qu’il en manque autant…",
     "mapPieceProgress": "{{found}} morceaux de carte sur {{required}}",
     "mapPieceComplete": "La carte est entière : elle mène à {{name}}.",
+    "hieroglyph": "Hiéroglyphe",
     "hieroglyphFragment": "Fragment de hiéroglyphe",
     "fragmentProgress": "{{found}} fragments trouvés sur {{required}}",
     "tombKey": "Clé du tombeau",
@@ -159,8 +168,9 @@
   },
   "loot": {
     "youFound": "Tu as trouvé",
+    "youReceived": "Tu as reçu",
     "expeditionReward": "Récompense en plus pour avoir terminé l’expédition",
-    "clickToContinue": "Touche n’importe où pour continuer"
+    "clickToContinue": "Continuer"
   },
   "money": {
     "label": "Pièces"
@@ -258,7 +268,7 @@
     "tabNew_other": "{{label}} · {{count}} nouveaux",
     "empty": "Ton coffre est encore vide",
     "newLabel": "NOUVEAU",
-    "clickForDetails": "Touche une case pour en savoir plus",
+    "clickForDetails": "Choisis une case pour en savoir plus",
     "categories": {
       "deities": "🏺 Dieux",
       "professions": "⚱️ Métiers",
@@ -266,6 +276,7 @@
       "artifacts": "💎 Objets sacrés",
       "treasures": "💰 Trésors",
       "junk": "🔷 Bibelots",
+      "offerings": "🍞 Offrandes",
       "signs": "✍️ Signes"
     },
     "treasureCategories": {
@@ -347,22 +358,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Touche un signe en bas, puis un nombre. Touche encore ce nombre pour l’enlever.",
+      "tap": "Choisis un signe en bas, puis un nombre. Choisis encore ce nombre pour l’enlever.",
       "same": "Un signe pèse la même chose sur toutes les balances.",
-      "cancel": "Enlève la même chose des deux plateaux, et la balance reste en équilibre. Touche un morceau marqué pour le faire : ce qui reste s’ajoute en dessous, sur une nouvelle ligne.",
-      "swap": "Touche un signe qui n’a rien de pareil en face, puis une ligne où ce signe est tout seul, pour l’échanger contre ce que vaut cette ligne."
+      "cancel": "Enlève la même chose des deux plateaux, et la balance reste en équilibre. Choisis un morceau marqué pour le faire : ce qui reste s’ajoute en dessous, sur une nouvelle ligne.",
+      "swap": "Choisis un signe qui n’a rien de pareil en face, puis une ligne où ce signe est tout seul, pour l’échanger contre ce que vaut cette ligne."
     },
     "hint": {
       "mistake": "Un des poids que tu as donnés fait pencher une balance. Enlève-le et regarde encore.",
       "alone": "Sur la ligne allumée, {{glyph}} est le seul morceau sans nombre. Calcule combien il pèse.",
       "equalShares": "La ligne allumée n’a que des {{glyph}} en face d’un nombre. Partage ce nombre entre eux.",
       "difference": "Les deux lignes allumées sont pareilles, sauf {{glyph}}. Compare-les.",
-      "cancelGlyph": "Les deux plateaux de la ligne allumée ont un {{glyph}}. Touches-en un pour l’enlever des deux côtés : la ligne reste en équilibre.",
-      "cancelStones": "Les deux plateaux de la ligne allumée ont des nombres simples. Touches-en un pour enlever la même quantité des deux côtés.",
-      "swap": "Une ligne allumée dit ce que vaut un seul {{glyph}}. Touche le {{glyph}} dans l’autre ligne allumée, puis touche cette ligne."
+      "cancelGlyph": "Les deux plateaux de la ligne allumée ont un {{glyph}}. Choisis-en un pour l’enlever des deux côtés : la ligne reste en équilibre.",
+      "cancelStones": "Les deux plateaux de la ligne allumée ont des nombres simples. Choisis-en un pour enlever la même quantité des deux côtés.",
+      "swap": "Une ligne allumée dit ce que vaut un seul {{glyph}}. Choisis le {{glyph}} dans l’autre ligne allumée, puis choisis cette ligne."
     },
     "swap": {
-      "pick": "Touche une ligne allumée pour échanger ce {{glyph}} contre ce que cette ligne dit qu’il vaut.",
+      "pick": "Choisis une ligne allumée pour échanger ce {{glyph}} contre ce que cette ligne dit qu’il vaut.",
       "none": "Rien ici ne dit ce que vaut un seul {{glyph}}, et rien de pareil n’est en face."
     },
     "goal": {
@@ -372,11 +383,16 @@
     "name": {
       "default": "La balance",
       "weighing": "La pesée du cœur"
+    },
+    "controls": {
+      "move": "choisir un morceau, une ligne ou un bouton",
+      "press": "appuyer dessus",
+      "weigh": "donner ce poids au signe choisi"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Touche une fois pour barrer un nombre, encore une fois pour le garder, et encore une fois pour l’effacer.",
+      "tap": "Choisis un nombre une fois pour le barrer, encore une fois pour le garder, et encore une fois pour l’effacer.",
       "totals": "Le petit nombre sous chaque objectif, c’est le total de cette ligne en ce moment."
     },
     "hint": {
@@ -439,12 +455,16 @@
       }
     },
     "goal": "Chaque ligne et chaque colonne fait le nombre écrit à côté.",
-    "name": "Le compte"
+    "name": "Le compte",
+    "controls": {
+      "move": "choisir un nombre",
+      "mark": "barrer, garder ou effacer"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Un signe entre deux cases pointe vers le plus petit des deux nombres.",
-      "enter": "Touche une case, puis un nombre. Le même nombre encore une fois l’enlève.",
+      "enter": "Choisis une case, puis un nombre. Le même nombre encore une fois l’enlève.",
       "notes": "Prends le crayon pour noter les nombres qui peuvent encore aller dans une case. Annuler reprend ton dernier coup."
     },
     "hint": {
@@ -495,14 +515,22 @@
       }
     },
     "goal": "Chaque ligne et chaque colonne montre chaque nombre une seule fois.",
-    "name": "Plus grand, plus petit"
+    "name": "Plus grand, plus petit",
+    "controls": {
+      "move": "choisir une case",
+      "type": "écrire un nombre",
+      "choose": "choisir un nombre ou la gomme",
+      "place": "l’écrire",
+      "pencil": "crayon",
+      "erase": "effacer"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Un miroir renvoie la lumière par ses deux faces. Les petits traits autour montrent les autres positions possibles : la plupart tournent la lumière d’un quart de tour, et certains un peu moins, pour l’envoyer en biais.",
       "walls": "Un bloc de pierre avale la lumière. Le bord du plateau aussi.",
-      "tap": "Touche une pièce pour la changer : un miroir tourne, une pièce coulissante avance à sa place suivante. Un bord blanc veut dire que tu peux la bouger ; tout le reste fait partie de l’énigme.",
-      "nodes": "Certaines pierres sont reliées à une prise dans le sol, et toucher ne les fait pas bouger. Fais passer la lumière sur la prise, et la pierre glisse sur le côté."
+      "tap": "Choisis une pièce pour la changer : un miroir tourne, une pièce coulissante avance à sa place suivante. Un bord blanc veut dire que tu peux la bouger ; tout le reste fait partie de l’énigme.",
+      "nodes": "Certaines pierres sont reliées à une prise dans le sol, et tu ne peux pas les bouger toi-même. Fais passer la lumière sur la prise, et la pierre glisse sur le côté."
     },
     "hint": {
       "entryRun": "Commence là où la lumière va déjà : elle part tout droit du disque jusqu’à la première pièce que tu peux changer. Ces cases portent la lumière, quoi que tu fasses.",
@@ -535,7 +563,7 @@
       "triple": "Trois pareils à la suite, c’est interdit, en ligne comme en colonne.",
       "copies": "Deux lignes ne peuvent pas être pareilles, et deux colonnes non plus.",
       "signs": "Un signe entre deux cases dit comment elles sont : = pour pareil, × pour différent.",
-      "enter": "Touche une case pour y mettre un soleil, touche encore pour une lune, et encore une fois pour la vider."
+      "enter": "Choisis une case pour y mettre un soleil, encore une fois pour une lune, et encore une fois pour la vider."
     },
     "hint": {
       "mistake": "Une de ces marques ne peut pas être juste.",
@@ -560,7 +588,11 @@
       }
     },
     "goal": "Chaque case a un soleil ou une lune, et chaque ligne a autant de l’un que de l’autre.",
-    "name": "Soleil et lune"
+    "name": "Soleil et lune",
+    "controls": {
+      "move": "choisir une case",
+      "mark": "changer la marque"
+    }
   },
   "constellation": {
     "rules": {
@@ -568,25 +600,25 @@
         "straight": "Les lignes de lumière vont tout droit, en ligne ou en colonne, d’une étoile à la suivante.",
         "pair": "Entre deux étoiles, il peut y avoir deux lignes au maximum.",
         "cross": "Les lignes ne se croisent jamais, et ne passent jamais à travers une étoile.",
-        "enter": "Fais glisser d’une étoile vers sa voisine pour tracer une ligne, encore une fois pour une double, et encore une fois pour l’effacer."
+        "enter": "Trace une ligne d’une étoile vers sa voisine, encore une fois pour une double, et encore une fois pour l’effacer."
       },
       "causeway": {
         "straight": "Les routes de halage vont tout droit, en ligne ou en colonne, d’un chantier au suivant.",
         "pair": "Entre deux chantiers, il peut y avoir deux routes au maximum.",
         "cross": "Les routes ne se croisent jamais, et ne passent jamais à travers un chantier.",
-        "enter": "Fais glisser d’un chantier vers son voisin pour faire une route, encore une fois pour la doubler, et encore une fois pour la défaire."
+        "enter": "Fais une route d’un chantier vers son voisin, encore une fois pour la doubler, et encore une fois pour la défaire."
       },
       "irrigation": {
         "straight": "Les canaux vont tout droit, en ligne ou en colonne, d’un bassin au suivant.",
         "pair": "Entre deux bassins, il peut y avoir deux canaux au maximum.",
         "cross": "Les canaux ne se croisent jamais, et ne passent jamais à travers un bassin.",
-        "enter": "Fais glisser d’un bassin vers son voisin pour creuser un canal, encore une fois pour l’élargir, et encore une fois pour le reboucher."
+        "enter": "Creuse un canal d’un bassin vers son voisin, encore une fois pour l’élargir, et encore une fois pour le reboucher."
       },
       "ceiling": {
         "straight": "Les cordelettes vont tout droit, en ligne ou en colonne, d’une étoile à la suivante.",
         "pair": "Entre deux étoiles, il peut y avoir deux cordelettes au maximum.",
         "cross": "Les cordelettes ne se croisent jamais, et ne passent jamais à travers une étoile.",
-        "enter": "Fais glisser d’une étoile vers sa voisine pour poser une cordelette, encore une fois pour la doubler, et encore une fois pour l’enlever."
+        "enter": "Tends une cordelette d’une étoile vers sa voisine, encore une fois pour la doubler, et encore une fois pour l’enlever."
       }
     },
     "hint": {
@@ -682,37 +714,44 @@
       "causeway": "La route de halage",
       "irrigation": "Les canaux",
       "ceiling": "Le plafond peint"
+    },
+    "controls": {
+      "pick": "choisir une étoile",
+      "grab": "la prendre",
+      "draw": "tracer une ligne dans ce sens",
+      "release": "lâcher",
+      "alt": "maintenir et viser : une ligne, une double, rien"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Deux étoiles ne peuvent jamais se toucher, même par un coin.",
-        "enter": "Touche une case pour l’exclure, touche encore pour y mettre une étoile, et encore une fois pour l’effacer."
+        "enter": "Choisis une case pour l’exclure, encore une fois pour y mettre une étoile, et encore une fois pour l’effacer."
       },
       "fields": {
         "touch": "Deux fermes ne peuvent jamais se toucher, même par un coin. Si près, elles devraient partager un seul puits.",
-        "enter": "Touche une parcelle pour l’exclure, touche encore pour y bâtir une ferme, et encore une fois pour l’effacer."
+        "enter": "Choisis une parcelle pour l’exclure, encore une fois pour y bâtir une ferme, et encore une fois pour l’effacer."
       },
       "lamps": {
         "touch": "Deux lampes à huile ne peuvent jamais être côte à côte, même en diagonale. Leurs cercles de lumière se mélangeraient, et on gaspillerait l’huile.",
         "walls": "Les blocs de pierre gris font partie du sol : rien ne peut aller dessus, et ce ne sont pas des cases.",
-        "enter": "Touche une dalle pour l’exclure, touche encore pour y poser une lampe à huile, et encore une fois pour l’effacer."
+        "enter": "Choisis une dalle pour l’exclure, encore une fois pour y poser une lampe à huile, et encore une fois pour l’effacer."
       },
       "market": {
         "touch": "Deux étals ne peuvent jamais être côte à côte, même en diagonale. Des marchands rivaux ne s’installent jamais l’un à côté de l’autre.",
         "walls": "Les maisons font partie de la place : personne ne peut y installer un étal, et ce ne sont pas des emplacements.",
-        "enter": "Touche une place pour l’exclure, touche encore pour y installer un étal, et encore une fois pour l’effacer."
+        "enter": "Choisis une place pour l’exclure, encore une fois pour y installer un étal, et encore une fois pour l’effacer."
       },
       "lotus": {
         "touch": "Deux lotus ne peuvent jamais flotter côte à côte, même en diagonale. Chaque fleur a besoin d’eau libre autour d’elle.",
         "walls": "Les rochers dépassent de la mare : rien ne peut flotter dessus, et ce ne sont pas des cases.",
-        "enter": "Touche un coin d’eau pour l’exclure, touche encore pour y faire flotter un lotus, et encore une fois pour l’effacer."
+        "enter": "Choisis un coin d’eau pour l’exclure, encore une fois pour y faire flotter un lotus, et encore une fois pour l’effacer."
       },
       "cats": {
         "touch": "Deux chats ne peuvent jamais dormir côte à côte, même en diagonale. Chaque chat garde son petit coin de soleil.",
         "walls": "Les piliers tiennent le temple : aucun chat ne peut dormir dessus, et ce ne sont pas des cases.",
-        "enter": "Touche une dalle pour l’exclure, touche encore pour y coucher un chat, et encore une fois pour l’effacer."
+        "enter": "Choisis une dalle pour l’exclure, encore une fois pour y coucher un chat, et encore une fois pour l’effacer."
       }
     },
     "hint": {
@@ -1040,6 +1079,11 @@
       "market": "Le marché",
       "lotus": "La mare aux lotus",
       "cats": "Les chats du temple"
+    },
+    "controls": {
+      "move": "choisir une case",
+      "mark": "changer la marque",
+      "sweep": "maintenir et bouger : exclure une ligne"
     }
   },
   "pairPuzzle": {
@@ -1056,13 +1100,13 @@
         "pair": "Chaque sarcophage a une momie juste au-dessus, en dessous, à gauche ou à droite, et chaque momie se repose à côté de son propre sarcophage.",
         "count": "Le nombre à côté d’une ligne ou d’une colonne dit combien de momies elle a. Il devient vert quand la ligne en a exactement autant, et rouge quand ça ne peut plus marcher.",
         "touch": "Deux momies ne peuvent jamais être côte à côte, même en diagonale.",
-        "enter": "Touche une case pour l’exclure, touche encore pour y coucher une momie, et encore une fois pour l’effacer. Fais glisser sur plusieurs cases pour les exclure d’un coup. On ne peut pas toucher les sarcophages."
+        "enter": "Choisis une case pour l’exclure, encore une fois pour y coucher une momie, et encore une fois pour l’effacer. Tu peux exclure plusieurs cases d’un seul geste. On ne peut pas marquer les sarcophages."
       },
       "beetles": {
         "pair": "Chaque boule de bouse a un scarabée juste au-dessus, en dessous, à gauche ou à droite, et chaque scarabée est à côté de sa propre boule à faire rouler.",
         "count": "Le nombre à côté d’une ligne ou d’une colonne dit combien de scarabées elle a. Il devient vert quand la ligne en a exactement autant, et rouge quand ça ne peut plus marcher.",
         "touch": "Deux scarabées ne peuvent jamais être côte à côte, même en diagonale.",
-        "enter": "Touche une case pour l’exclure, touche encore pour y mettre un scarabée, et encore une fois pour l’effacer. Fais glisser sur plusieurs cases pour les exclure d’un coup. On ne peut pas toucher les boules de bouse."
+        "enter": "Choisis une case pour l’exclure, encore une fois pour y mettre un scarabée, et encore une fois pour l’effacer. Tu peux exclure plusieurs cases d’un seul geste. On ne peut pas marquer les boules de bouse."
       }
     },
     "hint": {
@@ -1142,6 +1186,11 @@
           "place_other": "Mets un scarabée sur chaque case hachurée."
         }
       }
+    },
+    "controls": {
+      "move": "choisir une case",
+      "mark": "changer la marque",
+      "sweep": "maintenir et bouger : exclure une ligne"
     }
   },
   "rushHour": {
@@ -1156,11 +1205,11 @@
     "rules": {
       "default": {
         "lanes": "Un bloc glisse seulement dans son couloir : jamais sur le côté, jamais hors du plateau.",
-        "shove": "Fais glisser un bloc pour le pousser. Il s’arrête quand quelque chose le bloque."
+        "shove": "Pousse un bloc le long de sa voie. Il s’arrête quand quelque chose le bloque."
       },
       "market": {
         "lanes": "Un traîneau glisse seulement dans le couloir où il est : jamais sur le côté, jamais hors de la rue.",
-        "shove": "Fais glisser un traîneau pour le pousser. Il s’arrête quand quelque chose le bloque."
+        "shove": "Pousse un traîneau le long de sa voie. Il s’arrête quand quelque chose le bloque."
       }
     },
     "hint": {
@@ -1188,29 +1237,35 @@
           "down": "Pousse-le vers le bas de la rue, jusqu’au rond."
         }
       }
+    },
+    "controls": {
+      "pick": "choisir un bloc",
+      "grab": "le prendre",
+      "slide": "glisser",
+      "release": "lâcher"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "Les nombres déjà dans les alvéoles font partie de l’énigme : ils ne bougent pas.",
-        "enter": "Touche un nombre pour reprendre la suite à partir de lui, puis touche une case vide qui le touche pour continuer. Ou fais glisser d’un coup sur les cases où passe la suite.",
-        "back": "Touche un nombre que tu as posé, puis touche-le encore pour l’enlever, avec tout ce qui ne tient plus qu’à lui. Faire partir la suite dans une autre direction fait pareil. Annuler reprend ton dernier coup."
+        "enter": "Trace une ligne à partir d’un nombre, à travers les cases vides à côté, pour continuer la suite.",
+        "back": "Choisis un nombre que tu as posé, puis choisis-le encore pour l’enlever, avec tout ce qui ne tient plus qu’à lui. Faire partir la suite dans une autre direction fait pareil. Annuler reprend ton dernier coup."
       },
       "channel": {
         "given": "Les champs qui ont déjà un nombre font partie de l’énigme : ils ne bougent pas.",
-        "enter": "Touche un champ avec un nombre pour reprendre l’eau à partir de lui, puis touche un champ sec à côté pour continuer à creuser. Ou fais glisser d’un coup sur les champs où passe le canal.",
-        "back": "Touche un champ que tu as creusé, puis touche-le encore pour le reboucher, avec tout le canal qui ne tient plus qu’à lui. Creuser dans une autre direction fait pareil. Annuler reprend ton dernier coup."
+        "enter": "Creuse un canal à partir d’un champ avec un nombre, à travers les champs secs à côté, pour amener l’eau plus loin.",
+        "back": "Choisis un champ que tu as creusé, puis choisis-le encore pour le reboucher, avec tout le canal qui ne tient plus qu’à lui. Creuser dans une autre direction fait pareil. Annuler reprend ton dernier coup."
       },
       "scribe": {
         "given": "Les chiffres écrits en rouge font partie de l’énigme : ils ne bougent pas.",
-        "enter": "Touche un chiffre pour reprendre le calame à partir de lui, puis touche une place vide à côté pour continuer à écrire. Ou fais glisser d’un coup le long de la ligne.",
-        "back": "Touche un chiffre que tu as écrit, puis touche-le encore pour le gratter, avec toute la ligne qui ne tient plus qu’à lui. Écrire dans une autre direction fait pareil. Annuler reprend ton dernier coup."
+        "enter": "Écris une ligne à partir d’un chiffre, à travers les places vides à côté, pour continuer à compter.",
+        "back": "Choisis un chiffre que tu as écrit, puis choisis-le encore pour le gratter, avec toute la ligne qui ne tient plus qu’à lui. Écrire dans une autre direction fait pareil. Annuler reprend ton dernier coup."
       },
       "chambers": {
         "given": "Les salles qui ont déjà un nombre ont été creusées par les bâtisseurs : elles ne bougent pas.",
-        "enter": "Touche une salle avec un nombre pour reprendre le passage à partir d’elle, puis touche une salle fermée à côté pour percer le mur. Ou fais glisser d’un coup sur les salles où passe le passage.",
-        "back": "Touche une salle que tu as ouverte, puis touche-la encore pour la refermer, avec tout le passage qui ne tient plus qu’à elle. Percer dans une autre direction fait pareil. Annuler reprend ton dernier coup."
+        "enter": "Perce un passage à partir d’une salle avec un nombre, à travers les salles fermées à côté, pour le continuer.",
+        "back": "Choisis une salle que tu as ouverte, puis choisis-la encore pour la refermer, avec tout le passage qui ne tient plus qu’à elle. Percer dans une autre direction fait pareil. Annuler reprend ton dernier coup."
       }
     },
     "goal": {
@@ -1274,6 +1329,13 @@
       "channel": "Le canal",
       "scribe": "La feuille du scribe",
       "chambers": "Les salles scellées"
+    },
+    "controls": {
+      "move": "aller à une case voisine ; haut et bas penchent vers la gauche",
+      "right": "en haut à droite ou en bas à droite",
+      "grab": "prendre la suite, ou enlever ton nombre",
+      "carry": "avec la suite en main : la continuer ; haut et bas vont du côté où elle peut continuer",
+      "drop": "poser la suite"
     }
   },
   "sudoku": {
@@ -1281,13 +1343,13 @@
       "default": {
         "chambers": "Les traits épais coupent la grille en six salles, de deux cases de large et trois de haut.",
         "given": "Les nombres déjà gravés font partie de l’énigme : ils ne bougent pas.",
-        "enter": "Touche une case, puis un nombre. Le même nombre encore une fois l’enlève.",
+        "enter": "Choisis une case, puis un nombre. Le même nombre encore une fois l’enlève.",
         "notes": "Prends le crayon pour noter les nombres qui peuvent encore aller dans une case. Annuler reprend ton dernier coup."
       },
       "papyrus": {
         "chambers": "Les traits épais partagent la feuille en six cadres, de deux places de large et trois de haut.",
         "given": "Les signes écrits à l’encre rouge font partie de l’énigme : ils ne bougent pas.",
-        "enter": "Touche une place, puis un signe. Le même signe encore une fois le gratte.",
+        "enter": "Choisis une place, puis un signe. Le même signe encore une fois le gratte.",
         "notes": "Prends le calame pour noter les signes qui peuvent encore aller à une place. Annuler reprend ton dernier coup."
       }
     },
@@ -1356,6 +1418,14 @@
     "name": {
       "default": "Six salles",
       "papyrus": "Le registre du scribe"
+    },
+    "controls": {
+      "move": "choisir une case",
+      "type": "écrire un nombre",
+      "choose": "choisir un nombre ou la gomme",
+      "place": "l’écrire",
+      "pencil": "crayon",
+      "erase": "effacer"
     }
   },
   "crocodile": {
@@ -1369,6 +1439,10 @@
     "hint": {
       "biggest": "Ce crocodile veut la plus grande réponse. C’est {{value}}.",
       "smallest": "Ce crocodile veut la plus petite réponse. C’est {{value}}."
+    },
+    "controls": {
+      "move": "choisir une pierre",
+      "step": "marcher dessus"
     }
   },
   "canisters": {
@@ -1405,35 +1479,35 @@
         "sums": "Chaque quantité que tu peux faire, c’est deux nombres du banc additionnés ou soustraits : la taille d’une jarre, ce qu’il y a dedans, ou la place qui reste.",
         "backwards": "Alors pars de la quantité demandée et remonte : quels deux nombres la font, et comment avoir ces deux-là en même temps ?"
       },
-      "claim": "Quand tu as la quantité, touche « celle-ci ». Montrer le mauvais récipient coûte un coup.",
+      "claim": "Quand tu as la quantité, choisis « celle-ci ». Montrer le mauvais récipient coûte un coup.",
       "legs": "Puis la quantité suivante, mesurée avec ce qui reste dans les récipients.",
       "default": {
-        "moves": "Touche une jarre pour la prendre, puis touche une autre pour verser dedans. On arrête de verser quand la première est vide ou la deuxième pleine.",
+        "moves": "Prends une jarre, puis choisis-en une autre pour verser dedans. On arrête de verser quand la première est vide ou la deuxième pleine.",
         "contents": "C’est toute l’eau qu’il y a : une jarre commence pleine, et on ne peut rien jeter ni rien ajouter.",
         "levels": "Chaque jarre dit combien elle contient, et combien elle peut contenir quand elle est pleine."
       },
       "grain": {
-        "moves": "Touche une mesure pour la soulever, puis touche une autre pour y verser le grain. On arrête quand la première est vide ou la deuxième remplie jusqu’au bord.",
+        "moves": "Soulève une mesure, puis choisis-en une autre pour y verser le grain. On arrête quand la première est vide ou la deuxième remplie jusqu’au bord.",
         "contents": "C’est tout le grain qu’il y a : une mesure commence pleine, et on ne peut rien jeter ni rien ajouter du grenier.",
         "levels": "Chaque mesure dit combien elle contient, et combien elle peut contenir jusqu’au bord."
       },
       "oil": {
-        "moves": "Touche une jarre pour la soulever, puis touche une autre pour verser dedans. On arrête de verser quand la première est vide ou la deuxième pleine.",
+        "moves": "Soulève une jarre, puis choisis-en une autre pour verser dedans. On arrête de verser quand la première est vide ou la deuxième pleine.",
         "contents": "C’est toute l’huile qu’il y a : une jarre commence pleine, et on ne peut rien jeter ni rien ajouter.",
         "levels": "Chaque jarre dit combien elle contient, et combien elle peut contenir quand elle est pleine."
       },
       "wine": {
-        "moves": "Touche une amphore pour la soulever, puis touche une autre pour verser dedans. On arrête de verser quand la première est vide ou la deuxième pleine.",
+        "moves": "Soulève une amphore, puis choisis-en une autre pour verser dedans. On arrête de verser quand la première est vide ou la deuxième pleine.",
         "contents": "C’est tout le vin qu’il y a : une amphore commence pleine, et on ne peut rien renverser ni rien ajouter de la cave.",
         "levels": "Chaque amphore dit combien elle contient, et combien elle peut contenir quand elle est pleine."
       },
       "natron": {
-        "moves": "Touche un vase pour le soulever, puis touche un autre pour y verser le natron. On arrête quand le premier est vide ou le deuxième rempli jusqu’au couvercle.",
+        "moves": "Soulève un vase, puis choisis-en un autre pour y verser le natron. On arrête quand le premier est vide ou le deuxième rempli jusqu’au couvercle.",
         "contents": "C’est tout le natron qu’il y a : un vase commence plein, et on ne peut rien jeter ni rien ajouter.",
         "levels": "Chaque vase dit combien il contient, et combien il peut contenir jusqu’au couvercle."
       },
       "ink": {
-        "moves": "Touche un pot pour le soulever, puis touche un autre pour verser dedans. On arrête de verser quand le premier est vide ou le deuxième plein.",
+        "moves": "Soulève un pot, puis choisis-en un autre pour verser dedans. On arrête de verser quand le premier est vide ou le deuxième plein.",
         "contents": "C’est toute l’encre qu’il y a : un pot commence plein, et on ne peut rien jeter ni en préparer d’autre.",
         "levels": "Chaque pot dit combien il contient, et combien il peut contenir quand il est plein."
       }
@@ -1459,7 +1533,12 @@
     "legs": "{{done}} mesurées sur {{total}}",
     "wanted": "À mesurer",
     "claim": "celle-ci",
-    "claimAria": "Dire que le récipient de {{capacity}} contient la quantité"
+    "claimAria": "Dire que le récipient de {{capacity}} contient la quantité",
+    "controls": {
+      "move": "choisir un récipient ou le « celle-ci » en dessous",
+      "press": "prendre, verser ici, ou désigner",
+      "putDown": "reposer le récipient que tu tiens"
+    }
   },
   "procession": {
     "name": {
@@ -1479,7 +1558,7 @@
     "rules": {
       "default": {
         "lengths": "Chaque ligne, c’est une chose qui se passe, et elle dure aussi longtemps que sa barre est large. Quand elle se passe, c’est à toi de trouver.",
-        "marks": "Une règle sous la journée devient rouge tant qu’elle n’est pas respectée. Touche-la pour entourer les lignes dont elle parle.",
+        "marks": "Une règle sous la journée devient rouge tant qu’elle n’est pas respectée. Choisis-la pour entourer les lignes dont elle parle.",
         "drag": "Fais glisser une barre le long de sa ligne. Elle ne sort jamais de la journée."
       }
     },
@@ -1493,46 +1572,46 @@
       }
     },
     "events": {
-      "default": {
-        "0": "le feu",
-        "1": "la corvée d’eau",
-        "2": "la cuisson du pain",
-        "3": "la promenade en bateau",
-        "4": "la conduite des bœufs",
-        "5": "la garde de nuit"
-      },
-      "funerary": {
-        "0": "l’enduit",
-        "1": "le tracé de la grille",
-        "2": "la sculpture",
-        "3": "la peinture",
-        "4": "la dorure",
-        "5": "la pose de la porte"
-      },
-      "cosmos": {
-        "0": "la traversée du soleil",
-        "1": "le lever de l’étoile",
-        "2": "la veille de la lune",
-        "3": "le ciel ouvert",
-        "4": "l’aube",
-        "5": "le tour de l’année"
-      },
-      "water": {
-        "0": "la crue",
-        "1": "le creusage du canal",
-        "2": "le remplissage du bassin",
-        "3": "l’arrosage du champ",
-        "4": "la traversée en bac",
-        "5": "la moisson"
-      },
-      "trade": {
-        "0": "le tri des marchandises",
-        "1": "la vente du pain",
-        "2": "la vente de la bière",
-        "3": "la traversée en bac",
-        "4": "le transport des charges",
-        "5": "les comptes"
-      }
+      "default": [
+        "le feu",
+        "la corvée d’eau",
+        "la cuisson du pain",
+        "la promenade en bateau",
+        "la conduite des bœufs",
+        "la garde de nuit"
+      ],
+      "funerary": [
+        "l’enduit",
+        "le tracé de la grille",
+        "la sculpture",
+        "la peinture",
+        "la dorure",
+        "la pose de la porte"
+      ],
+      "cosmos": [
+        "la traversée du soleil",
+        "le lever de l’étoile",
+        "la veille de la lune",
+        "le ciel ouvert",
+        "l’aube",
+        "le tour de l’année"
+      ],
+      "water": [
+        "la crue",
+        "le creusage du canal",
+        "le remplissage du bassin",
+        "l’arrosage du champ",
+        "la traversée en bac",
+        "la moisson"
+      ],
+      "trade": [
+        "le tri des marchandises",
+        "la vente du pain",
+        "la vente de la bière",
+        "la traversée en bac",
+        "le transport des charges",
+        "les comptes"
+      ]
     },
     "marks": {
       "default": {
@@ -1554,6 +1633,11 @@
       "hint": "Chaque dalle où tu marches libère sa tâche. Mets la journée en ordre, puis marche sur les dalles dans cet ordre.",
       "read": "La journée est lue. Marche sur ses dalles dans cet ordre, en commençant par la première.",
       "hintButton": "Indice"
+    },
+    "controls": {
+      "row": "choisir une ligne",
+      "slide": "faire glisser sa barre",
+      "mark": "choisir une règle sous la journée"
     }
   },
   "story": {
@@ -1576,6 +1660,13 @@
       "pick": "Mets le bon signe à sa place.",
       "cannot": "Tu ne connais pas encore le signe qui va ici."
     },
+    "formula": {
+      "wrong": "Il manque un signe dans cette ligne. Pas mal gravé : jamais gravé du tout.",
+      "fixed": "La ligne est complète.",
+      "pick": "Mets le signe qu’on t’a donné dans la place vide.",
+      "cannot": "Personne ne t’a donné le signe pour cette place. Pas encore.",
+      "gap": "Le signe qui manque"
+    },
     "sphinx": {
       "wrong": "La même écriture que dehors, mais ici, le sable ne l’a jamais touchée. Deux signes encore bien nets, et une place vide où était le troisième.",
       "fixed": "Voilà, c’est complet.",
@@ -1592,7 +1683,7 @@
       "shrines": "Un disque de lumière, et un autel au-dessus de chaque sortie de ce carrefour. Les miroirs au sol peuvent mener la lumière vers n’importe lequel.",
       "doors": "La sortie que la lumière atteint s’ouvre, et les autres se ferment. Un chemin de lumière, une seule sortie.",
       "returning": "Choisir ne te fait rien perdre. Reviens quand tu veux et envoie la lumière ailleurs : cette sortie-là s’ouvre, et celle-ci se ferme.",
-      "tap": "Touche un miroir pour le tourner. Touche-le encore pour le remettre."
+      "tap": "Choisis un miroir pour le tourner. Choisis-le encore pour le remettre."
     },
     "doorOpen": "Sortie {{way}} : ouverte",
     "doorShut": "Sortie {{way}} : fermée",
@@ -1601,6 +1692,10 @@
       "e": "est",
       "s": "sud",
       "w": "ouest"
+    },
+    "controls": {
+      "move": "choisir un miroir",
+      "turn": "le tourner"
     }
   },
   "handle": {
@@ -1853,5 +1948,35 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Dessiner réécrit le texte : tous les commentaires vont en haut"
+  },
+  "saveCard": {
+    "title": "Carte de voyage",
+    "explain": "Emmène ton expédition sur un autre appareil : fais une carte ici et lis-la là-bas dans les 15 minutes.",
+    "make": "Faire une carte de voyage",
+    "share": "Partager la carte",
+    "download": "Télécharger la carte",
+    "read": "Lire une carte de voyage",
+    "busy": "Un instant…",
+    "makeFailed": "Impossible de faire la carte.",
+    "shareFailed": "Le partage n’a pas marché ; télécharge plutôt la carte.",
+    "confirm_one": "Remplacer l’expédition de cet appareil par celle de la carte ({{count}} voyage) ?",
+    "confirm_many": "Remplacer l’expédition de cet appareil par celle de la carte ({{count}} voyages) ?",
+    "confirm_other": "Remplacer l’expédition de cet appareil par celle de la carte ({{count}} voyages) ?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Carte de voyage · emmène ton expédition avec toi",
+    "validUntil": "valable jusqu’à {{time}}",
+    "codes_one": "{{count}} code",
+    "codes_many": "{{count}} codes",
+    "codes_other": "{{count}} codes",
+    "refused": {
+      "notACard": "Ce n’est pas une carte de voyage.",
+      "tampered": "Cette carte a été modifiée et ne peut plus être lue.",
+      "expired": "Cette carte a expiré ; fais-en une nouvelle.",
+      "future": "Cette carte vient du futur : vérifie l’heure sur les deux appareils.",
+      "otherEpoch": "Cette carte vient d’une autre version du jeu.",
+      "newerGame": "Cette carte vient d’une version plus récente : mets d’abord le jeu à jour."
+    },
+    "writeFailed": "La sauvegarde n’a pas pu être écrite ; cet appareil a gardé la sienne.",
+    "writeLost": "La sauvegarde n’a pas pu être remplacée, et celle de cet appareil est peut-être incomplète."
   }
 }

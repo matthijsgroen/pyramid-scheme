@@ -239,6 +239,21 @@
       "description": "Královská pokrývka hlavy s kobrou, která faraona chrání."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Chléb",
+      "description": "Vysoký bochník, znak pro chléb. Dal ho Ipi, který čtyřicet let počítal obilí a jednou ho daroval."
+    },
+    "o2": {
+      "name": "Len"
+    },
+    "o3": {
+      "name": "Voda"
+    },
+    "o4": {
+      "name": "Loď"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Rákosový lístek",

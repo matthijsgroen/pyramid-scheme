@@ -7,6 +7,7 @@ What each translator flagged for a native reader: terminology choices and lines 
 TEST STATUS: In the real worktree, neither spec runs yet for any language. Other languages are still being written in parallel and their folders are incomplete. public/locales/ro is in LANGUAGES but has no folder yet (ENOENT in languages.spec), and public/locales/cs has no common.json yet (ENOENT in plurals.spec). Both specs crash while loading, before any test runs. To check de anyway, I copied both specs unchanged into the scratchpad (/private/tmp/claude-501/-Users-matthijsgroen--warp-worktrees-pyramid-scheme-horned-toad-madrone/ddcadb88-ee81-4ee6-a996-623a27b667f3/scratchpad/i18ncheck) with only the en/nl/de locales and a LANGUAGES list cut down to those three. There all 19 tests pass. A separate script also confirmed that no key is missing or extra in any of the 8 files and that no placeholder drifts. Re-run the two real commands once the other languages are finished.
 
 TERMINOLOGY (one word per term in every file):
+
 - Difficulty levels: Anfänger / Junior / Experte / Meister / Genie. I used "Genie" for wizard: it avoids any magic meaning, and I believe the German SmartGames editions use it, but please confirm. "Anfänger" is used rather than "Starter" because younger kids read it more easily. Compounds are written as Experten-/Meister-/Genie-Reisen. Where a {{tier}} placeholder is used, I wrote "Reisen/Expeditionen der Stufe {{tier}}" to avoid German gender and compound problems.
 - Recurring game words: journey = Reise, expedition = Expedition, tomb = Grab, camp = Lager, floor = Stockwerk, coins = Münzen, trinkets/junk = Krimskrams, map piece = Kartenstück, hieroglyph fragment = Hieroglyphen-Bruchstück, mosaic piece = Mosaikstück, hint = Tipp, stall = Stand, health = Lebenskraft, detector = Detektor, compass = Kompass, corridor finder = Gangfinder.
 - Puzzle words: row = Reihe, column = Spalte, region = Bereich, holding (fields skin) = Gut, square = Feld, hatched = schraffiert, rule out = ausschließen.
@@ -14,11 +15,13 @@ TERMINOLOGY (one word per term in every file):
 - The hat is spelled "Fez", not "Fes". Duden accepts both, and "Fez" keeps the link with Fez's name for "Das erklärt den Fez".
 
 DIALOGUE CHOICES:
+
 - Fez, the explorer, Ipi and Henut speak to each other with "du".
 - The priest uses "Sie", like the formal "u" in the Dutch original. The pharaoh uses fairy-tale "Ihr/Euer" ("Ihr dürft näher treten. Ihr seid näher getreten. Nun gut."). Fez says "Eure Majestät".
 - "Insufferable" became "furchtbar wichtigtuerisch".
 
 LINES A NATIVE READER SHOULD CHECK:
+
 - fez.json
   - meeting.starter_1.16: "Vier Augen sehen mehr als zwei" (German idiom for "two see more than one").
   - end: "War's toll?" / "Geht so." (from "neat").
@@ -40,6 +43,7 @@ LINES A NATIVE READER SHOULD CHECK:
 I couldn't get the real specs to run, so specsPass is false. Neither spec ever reached the fr tests. Both crash while vitest is collecting tests, because of other languages being written at the same time. languages.spec.ts calls readdirSync on every code in LANGUAGE_CODES, and folders like ro and el don't exist yet. plurals.spec.ts reads common.json from every folder that exists, and cs, hu, it, pl, sk and bg have no common.json yet. So this is more than the one "are exactly the locale folders" test you said to ignore. I didn't touch anything outside public/locales/fr.
 
 What I ran instead: a node copy of every fr assertion from both specs, at /private/tmp/claude-501/-Users-matthijsgroen--warp-worktrees-pyramid-scheme-horned-toad-madrone/ddcadb88-ee81-4ee6-a996-623a27b667f3/scratchpad/check.mjs (`node <that path> fr`, from the repo root). It checks the same things the specs do:
+
 - **Keys:** no keys that English lacks, and no English key missing.
 - **Placeholders:** no drift.
 - **Plurals:** 126 plural keys, each with exactly _one/_many/_other, which is what Intl.PluralRules("fr") asks for. No English-only suffixes left over.
@@ -51,6 +55,7 @@ All of that passes. Re-run the real specs once the other locales are finished.
 Note on _many: French "many" only applies to numbers like 1 000 000, so every _many is a copy of _other.
 
 Terminology:
+
 - **Difficulty levels:** Débutant / Junior / Expert / Maître / Génie. "Génie" means genius here, not magic, so the top level doesn't read as a wizard. Used the same way in "voyages Génie", "étages Génie" and so on.
 - **Places:** expedition = expédition, journey = voyage, tomb = tombeau, floor = étage, corridor = couloir, hidden corridor = couloir secret.
 - **Puzzle words:** puzzle = énigme, hint = indice, glyph/sign = signe, row = ligne, column = colonne, square = case, hatched = hachuré, rule out = exclure.
@@ -58,10 +63,11 @@ Terminology:
 - **Shop:** trinkets = bibelots, Fez's stall = l'étal de Fez.
 - **Ward/key items:** ward key = clé de garde, sand lever = levier à sable.
 - **Gods:** French spellings: Râ, Thot, Khépri, Ouadjet, Nephtys, Amon-Râ, Maât, Apophis, Shou. Character names (Fez, Hori, Henut, Ipi) are unchanged.
-- **Address:** "tu" to the player everywhere, and Fez, Ipi and Henut use "tu". The priest and the pharaoh say "vous" to the player, and the player says "vous" back. That follows the Dutch original, which uses formal "U" for exactly these two. If you want strict "tu" everywhere, change tomb.expert.*, tomb.master.*, tomb.wizard.*, altar.*, revisit.expert.* and revisit.master.* in fez.json.
+- **Address:** "tu" to the player everywhere, and Fez, Ipi and Henut use "tu". The priest and the pharaoh say "vous" to the player, and the player says "vous" back. That follows the Dutch original, which uses formal "U" for exactly these two. If you want strict "tu" everywhere, change tomb.expert._, tomb.master._, tomb.wizard._, altar._, revisit.expert.* and revisit.master.* in fez.json.
 - **Gender:** I avoided gendered agreement for the player, e.g. "C'est sûr ?" instead of "Tu es sûr ?" and "pars quand tu veux". The star-battle {{token}} for stars and farms is treated as feminine ("une {{token}}", "sa {{token}}"), because the emoji stands for étoile / ferme. Themed boards name the object directly.
 
 Lines a native French reader should check:
+
 - **Fez's jokes:**
   - fez.arrival.starter_2.5 ("les tickets de caisse").
   - fez.animal.blockedSecondDonkey.3 ("Je parle l'âne couramment").
@@ -83,10 +89,12 @@ TEST STATUS. Neither spec can run as-is in the worktree right now. Other languag
 SHARED SCRATCHPAD. Parallel translator agents use the same scratchpad folder, and one of them overwrote my first c1.json/c2.json chunks. I redid my work in scratchpad/es_work_spanish/. Other language agents may have lost files the same way.
 
 TERMS USED THE SAME WAY IN EVERY FILE:
+
 - Difficulty levels: Principiante / Junior / Experto / Maestro / Mago. These follow nl (Beginner/Junior/Expert/Meester/Tovenaar). "Mago" sounds like magic in Spanish, just as "Tovenaar" does in Dutch. If SmartGames' official Spanish label for Wizard is something else (perhaps "Genio"), swap it in common.difficulty and in the "de nivel Mago" lines in purchases and devLockEditor. In sentences the level is written "de nivel {{tier}}", for example "Las expediciones de nivel {{tier}}" and "viajes de nivel Experto".
 - Other terms: tumba (tomb), pirámide, piso (floor), pasillo (corridor), viaje (journey), expedición, campamento (camp), puesto (Fez's stall), chucherías (trinkets/junk), pedazo de mapa (map piece), jeroglífico/signo, llave (key), sello (seal/ward), acertijo (puzzle), pista (hint), casilla (square), fila/columna, zona (region), "rayada" (hatched), "descartar" (rule out), odre de agua (waterskin), Buscapasillos (corridor finder), mosaico, baúl (chest). The fez stays "fez". Henut is "la noble", the priest "el sumo sacerdote", Pharaoh "el faraón". Hieroglyphs and emoji are untouched.
 
 LINES A NATIVE READER SHOULD CHECK:
+
 1. Register. I aimed for neutral Latin American Spanish but leaned a little Mexican in places: más chico (smaller), cobija, carreta, rechinido, "le atino", aretes, bajas/jalar (only in the dev lock editor now). I replaced the stronger regional words: padre→genial, órale→¡Epa!, ándale→vamos, apapachar→acariciar, gis→tiza, charola→bandeja, cubeta→balde, chueco→torcido, despostillado→astillado, platicar→charlar, mero→justo.
 2. Jokes I rewrote rather than translated:
    - meeting.starter_1: "Wáy too much" became "Muchíiisimo", and "Not thére!" became "¡Ahí nó!".
@@ -108,6 +116,7 @@ THE SPECS: neither spec could run, because other languages' folders are missing;
 WORKFLOW WARNING: all the parallel translators write to the same scratchpad folder. Another agent (the French one) overwrote my scratch file c1.json, so I moved my work into a separate subfolder and rewrote it. Other agents may be losing work the same way.
 
 TERMINOLOGY (one word for each term, used in every file):
+
 - Difficulty levels: Iniciante / Júnior / Especialista / Mestre / Mago. "Mago" mirrors nl "Tovenaar" and is used only as a level name. Phrased as "nível {{tier}}" (e.g. "viagens de nível Mestre").
 - Game words: expedição (expedition), viagem (journey), tumba (tomb), pirâmide, andar (floor), fase (level), hieróglifo, sinal (sign/glyph), pedaço de mapa (map piece), peça de mosaico, selo (seal), lápis-lazúli, deben (kept), acampamento (camp), baú (chest), cantil (waterskin), bugigangas (trinkets/junk), tesouro, armadilha (trap), alavanca (lever), tocha, dica (hint), jogada (move), linha/coluna (row/column), descartar (rule out), listrado (hatched).
 - Fez's shop "stall" is "banca", because "barraca" is already the camp tent. starBattle's market stalls are "bancas" too.
@@ -117,6 +126,7 @@ TERMINOLOGY (one word for each term, used in every file):
 - Fez's "Ha!" is written "Há!", not the common Brazilian "Rá!", so it can't be read as the god Rá.
 
 PLEASE CHECK (native reader):
+
 - Jokes I re-invented: "Eu falo burrês" (I speak donkey); "O chacoalho vem de brinde" (the rattle comes free); "Coisa legal vende bem!" with the final exchange "Foi legal?" / "Deu pro gasto."; "Quatro olhos veem mais que dois" (two see more than one); wizard_3 "Leve. Você quer ele LEVE."; Henut's "Segredo é o nome que as pessoas dão para a conta quando não sabem fazer."
 - The spoken style is deliberately informal, e.g. "a gente", "tá bom", "pegar ele". A stricter reviewer may want "pegá-lo" etc. in UI or rule text.
 - Puzzle names I invented: Sumplete = "A Conta Certa", Futoshiki = "Maior e Menor", Hidato = "Colmeia", Rush Hour = "O Bloqueio" / "A Rua Entupida", Constellation causeway = "Estradas de Pedra", the canisters claim button = “é aqui”.
@@ -130,18 +140,21 @@ PLEASE CHECK (native reader):
 The specs do pass for pt-PT, but only when limited to en + pt-PT. The unmodified commands currently stop at the missing ro folder and the missing cs/common.json from the other languages. They should go green for pt-PT once those exist. A few strings are the same as English on purpose: names (Thoth, Bastet, Hori, Henut and so on), "Bronze", "General", "Portal", "Ankh", the footer, and pure-placeholder strings.
 
 TERMS (one word each, used in every file):
+
 - Difficulty: starter=Iniciante, junior=Júnior, expert=Perito, master=Mestre, wizard=Mago. Mago is used only as a level name, like nl "Tovenaar". In sentences I always write "de nível {{tier}}" ("as viagens de nível Perito"), so the level name never gets an article or gender ending.
 - Game words: tomb=túmulo, pyramid=pirâmide, expedition=expedição, journey=viagem, camp=acampamento, Fez's stall=banca, trap=armadilha, hint=pista, puzzle=enigma, map piece=pedaço do mapa, hieroglyph=hieróglifo, glyph/sign=símbolo/sinal, trinkets=bugigangas, waterskin=odre, floor=andar, row/column=linha/coluna, hatched=às riscas, rule out=pôr de parte.
 - Lapis is written in full as lápis-lazúli.
 - Gods use the usual pt-PT spellings: Rá, Anúbis, Hórus, Ísis, Osíris, Néftis, Amon-Rá. The Hori line ("Hórus passa a Hori") still works this way. If gods should keep the English spelling too, change those back.
 
 FORMS OF ADDRESS:
+
 - The player is "tu" everywhere.
 - The priest uses formal third person to the explorer ("Não é a pessoa que eu estou à espera"), like the formal "U" in nl.
 - The pharaoh speaks to the pair as "vocês" ("Podem aproximar-se").
 - Henut calls Fez "meu rapaz" (for "young man").
 
 GENDER: the explorer's gender is never stated, so I reworded lines that would have forced a masculine or feminine adjective:
+
 - "Ficaste caladinho" became "Estiveste um bocado sem dizer nada".
 - "ficas bom outra vez" became "recuperas".
 - "Estás muito fraco" became "Tens muito pouca vida".
@@ -150,11 +163,13 @@ GENDER: the explorer's gender is never stated, so I reworded lines that would ha
 PLURALS: pt-PT needs one/many/other. "many" is only for compact numbers like "1 milhão", and no whole number below 200 selects it. So every _many is just a copy of _other.
 
 IN THE PUZZLES:
+
 - In starBattle, {{token}} is an emoji (⭐🛖🪔…), so I left out the article in front of it, which would have to agree in gender. Example: "Esta linha já tem {{token}}."
 - The fields skin uses quinta (farmstead), herdade (holding/region) and terreno (plot).
 - In tableaus, the oracle who is called "her" is "a profetisa". Elsewhere the oracle is "o oráculo".
 
 LINES FOR A NATIVE READER TO CHECK:
+
 - The meeting scene: "Ei! AÍ não!" and "MUITO demasiado". They copy the stressed "thére"/"wáy" from the English and Dutch.
 - "Quatro olhos veem mais do que dois", standing in for "Two see more than one".
 - "Eu falo burrês".
@@ -176,17 +191,20 @@ TEST STATUS: I could not get the real vitest runs to run at all. Both spec files
 WARNING ABOUT THE SHARED SCRATCHPAD: other language agents write to the same scratchpad root (fez.txt, build.js, tableaus.txt and others). One of my early runs called a build.js that another agent had overwritten. That script writes to fr/fez.json from that agent's own fez.flat.json, so it probably just rewrote fr/fez.json with the French agent's own content. It's worth checking fr/fez.json. After that I moved all my work into scratchpad/it_work/.
 
 TERMINOLOGY:
+
 - Difficulty levels: Principiante / Junior / Esperto / Maestro / Genio. I chose "Genio" over the literal "Mago" so the top level reads as "the best players" and doesn't suggest magic. Swap to "Mago" if you want it to match nl "Tovenaar". In running text the level goes into "di livello {{tier}}", e.g. "i viaggi di livello Esperto", "Sblocca le spedizioni di livello {{tier}}".
 - expedition = spedizione; journey = viaggio; floor = piano; tomb = tomba; trap = trappola; key = chiave; hint = aiuto ("Annulla mossa" for undo); camp = campo; Fez's stall = bancarella; trinkets/junk = cianfrusaglie; coins = monete; map piece = pezzo di mappa; mosaic piece = tessera del mosaico; hieroglyph = geroglifico; detector = rilevatore; compass = bussola; corridor finder = cercacorridoi; square = casella; region = zona; rule out = escludi; hatched = tratteggiata.
 - Tomb names are the same across journeys, tableaus and the dialogue (Inner Sanctum = il santuario segreto, Vault of the Gods = la camera degli dèi, Realm of Cosmic Forces = il regno delle forze del cielo).
 - Gods use the usual Italian names: Anubi, Iside, Osiride, Nefti, Maat, Amon-Ra, Apopi, Memnone. Ra, Horus, Thoth, Bastet, Sobek, Khepri, Wadjet, Seth, Ptah, Sekhmet and Hathor stay as they are. Fez, Hori, Henut and Ipi are unchanged.
 
 DIALOGUE CHOICES TO REVIEW:
+
 - The explorer's gender is never stated, so I reworded lines that would need a gendered ending (e.g. "Sei arrivato fin qui" → "sei già a buon punto", "Sei sicuro?" → "Dici sul serio?", "Bravissimo!" → "Che colpo!", trap.rested, camp.chapter.body). Fez is male ("giovanotto").
 - The priest uses formal Lei with the explorer, as nl uses "U". The pharaoh uses plural "voi" ("Potete avvicinarvi. Vi siete avvicinati.") so his lines also avoid a gendered participle.
 - Re-made jokes: "Wáy too much" → "Troppo, troppo!"; "Two see more than one" → "Quattro occhi vedono meglio di due"; "asinese" (donkey language); "Clienti in ritardissimo"; "Mica sono un orologio".
 
 LINES A NATIVE SPEAKER SHOULD CHECK:
+
 - tomb.juniorFixed.8: "Segreti" è come la gente chiama la matematica…
 - tomb.master.8: "a fare la figura del falso", for "being wrong".
 - tomb.expert.3, revisit.expert.seal1, wizard.later2: "benedetto con le parole giuste", for "spoken over".
@@ -211,6 +229,7 @@ TRICKY KEYS: in common.json, sumplete.hint has both nested keys (tooBig: { row }
 GENDER (please check): Polish verbs and adjectives change with gender. Following cast.md ("No gendered self-description"), the explorer never uses gendered past-tense forms or adjectives. For example, "I paid way too much" became "kosztowała majątek" (it cost a fortune), "I was counting" became "Trzeba było policzyć", and "I did not know it was words" became "A to są słowa! Kto by pomyślał." Lines from other characters to the player avoid gendered second-person past tense too: "you've come this far" became "tyle już za tobą", "Bought a map?" became "Mapa kupiona?", "set off when you are ready" became "ruszaj, kiedy zechcesz". The priest, the pharaoh, Henut and Ipi speak to the pair in the plural (wy), which is correct in Polish because Fez is male; this also stands in for the Dutch formal "U". Fez, Ipi, the priest and the pharaoh use masculine forms and Henut feminine ones. The tomb inscriptions ("I gave bread to the hungry"…) became noun phrases ("Chleb dla głodnych.", "Woda dla spragnionych.", "Ubranie dla nagich.") so the explorer doesn't seem to speak about themselves when reading them out. Please confirm this suits the story.
 
 TERMS USED THROUGHOUT:
+
 - Difficulty levels: Nowicjusz / Junior / Ekspert / Mistrz / Czarodziej. Czarodziej follows the Dutch "Tovenaar" and is used only as a level name. In sentences it is always "na poziomie {{tier}}", so the name stays in the nominative case.
 - Other words: grobowiec (tomb), wyprawa (expedition), podróż (journey), kram (Fez's stall), obóz (camp), kawałek mapy, hieroglif, podpowiedź (hint), stuknij (tap), kratka (puzzle square), rząd/kolumna (row/column), zakreskowana (hatched), osiołek / wózek / wielbłąd, monety.
 - Gods use the standard Polish names: Thot, Izyda, Ozyrys, Set, Neftyda, Sachmet, Chepri, Wadżet, Amon-Ra, Maat. Character names (Fez, Hori, Henut, Ipi) are unchanged.
@@ -221,6 +240,7 @@ PLACEHOLDERS: where a {{count}} or {{chain}} sits in a key without plural forms,
 JOKES REWORKED: "Two see more than one" became "Co dwie głowy, to nie jedna!". "Something neat" / "Neat sells!" became "Czegoś fajnego" / "Fajne się sprzedaje!", with the callback "I jak, było fajne?" / "Może być.". "Noted" is always "Zanotowane.". Ipi's "A thing written down is a thing that happened" became "Co zapisane, to się wydarzyło", and the explorer's Sphinx line "Jest zapisane." echoes it. The pharaoh's "ridiculous animal" became "ty niedorzeczny gadzie". Donkey "bray" became "ryczeć". The sturdy-cart flowers are "Dla wytrzymałości.".
 
 LINES FOR A NATIVE READER TO CHECK:
+
 - The ending: "No cóż. To wyjaśnia ten fez." — does the joke still work in Polish?
 - "Tylko ci Horiowie…": is "Horiowie" the right plural for a child to read?
 - The pharaoh's "i jest nie taka" (being wrong).
@@ -240,6 +260,7 @@ PLURALS: Czech needs _one/_few/_many/_other, and every pluralised key in all 8 f
 WHAT IS THE SAME AS ENGLISH (32 strings, on purpose): character and god names (Fez, Ipi, Henut, Ra, Anubis…), Junior/Expert, Sistrum, Obelisk, ???, ←, "…", the footer, ×{{count}}, "Hori.".
 
 TERMINOLOGY:
+
 - Difficulty levels: Začátečník / Junior / Expert / Mistr / Velmistr. "Velmistr" (grandmaster) was picked for wizard so it never sounds like magic. In sentences they appear as "cesty úrovně {{tier}}" / "výpravy úrovně {{tier}}".
 - Recurring game terms: expedition=výprava, journey=cesta, level=úroveň, floor=patro, tomb=hrobka, map piece=kousek mapy, mosaic piece=kousek mozaiky, hieroglyph=hieroglyf, trap=past, gate=brána, key=klíč, coin=mince, trinkets=cetky, stall=stánek, camp=tábor, hint=nápověda, corridor=chodba, corridor finder=hledač chodeb.
 - Puzzle words: row=řádek, column=sloupec, square=políčko, region=oblast, hatched=vyšrafované.
@@ -251,6 +272,7 @@ FORMS OF ADDRESS: The player is "ty" everywhere. Following nl, the priest and th
 GENDER: Czech past tense shows gender, and the player's gender is unknown. I reworded every line said to or by the explorer so it does not show gender: present tense, passive, or forms like "Nalezeno", "Tvoje sbírka", "Ještě nenavštíveno", "Však se počítalo". Fez stays male. A native reader should still scan for any slip.
 
 FOR A NATIVE READER TO CHECK:
+
 1. fez.json is the spoken dialogue. Key re-inventions:
    - wizard_3 ends "Lehké. Chceš ho mít LEHKÉ." This also plays on the Czech idiom "mít lehké srdce" (a light heart).
    - The meeting/end joke uses "Něco pěkného / Pěkné se dobře prodává / Bylo to pěkné? – Ujde to."
@@ -267,6 +289,7 @@ FOR A NATIVE READER TO CHECK:
 TEST STATUS: I could not run the two specs as given in the shared worktree. Other languages are being written in parallel, and some of their folders are incomplete: public/locales/bg/common.json was missing at first, and on the last try public/locales/be/common.json was missing and public/locales/hr was missing completely. Both spec files crash while loading on those files, before any sk test runs. So I ran them in a scratch copy of the project: real copies of en, nl and the final sk, plus copies of en standing in for the other 38 language codes. There, all 6 sk tests pass: languages.spec ("only translates keys English has", "keeps every placeholder") and all 4 plurals.spec tests. Run them once more in the real tree when the parallel languages are done. A structure check against en found no missing or extra keys and no incomplete plural sets. The only values identical to en are names and cognates (Ra, Junior, Expert, Fez, the footer, etc.).
 
 TERMINOLOGY (kept the same in every file):
+
 - Difficulty levels: Začiatočník / Junior / Expert / Majster / Čarodejník (following SmartGames, as nl does with Tovenaar). Where {{tier}} is filled in, I wrote "výpravy/cesty úrovne {{tier}}" so the level name never needs a grammatical case.
 - Game words: expedition = výprava, journey = cesta, tomb = hrobka, pyramid = pyramída, floor = poschodie, camp = tábor, stall = stánok, trinkets = drobnosti, map piece = kúsok mapy, hint = rada, chest = truhla, waterskin = mech s vodou, mosaic = mozaika, corridor finder = hľadač chodieb, structures = stavby, part = diel.
 - Material tiers: Kameň / Bronz / Striebro / Zlato / Božské. Lapis = lazurit, deben stays deben.
@@ -275,6 +298,7 @@ TERMINOLOGY (kept the same in every file):
 GENDER: Slovak past tense and adjectives show gender, and the explorer/player's gender is unknown. I avoided gendered forms for the explorer and in UI text addressed to the player, for example "Nájdené" instead of "Našiel si", "Tvoja zbierka", "Máš nebezpečne málo síl", "Určite?". Fez is masculine and Henut feminine. As in nl, the priest and pharaoh use formal "vy" to the explorer. A few generic "you" forms are still masculine, e.g. Henut's "Thovt zapíše, čo si urobil" and "kde si už bol" style lines in some UI text. A reviewer may want to neutralise more of these.
 
 LINES FOR A NATIVE SLOVAK READER TO CHECK:
+
 - fez meeting: "Hej! TAM nie!" and "STRAŠNE drahá" stand in for the stressed "thére"/"Wáy". The first line of the game, welcome2, reads "stála ma strašne veľa" so it avoids a gendered verb.
 - wizard_3 punchline: "Ľahké. Srdce musí byť ĽAHKÉ." Slovak "mať ľahké srdce" means feeling light-hearted, so the joke should land, but please check.
 - bond.junior: the explorer's "I was counting" became the one word "Počítanie." to avoid gender. It may sound clipped.
@@ -295,6 +319,7 @@ TEST STATUS: In the real repo, both specs fail before any test runs, so neither 
 Heads-up: the scratchpad is shared with the other translation agents (their files show up there), so I kept my working files in the hu_work/ subfolder.
 
 TERMINOLOGY:
+
 - Difficulty levels: Kezdő / Junior / Szakértő / Mester / Varázsló. Like nl's Tovenaar, wizard is a plain level name.
 - Informal "te" for the player.
 - Characters keep their own voice: Henut uses "te" (as she does in nl). The priest and the pharaoh use the formal "Ön" form, as nl uses "u".
@@ -302,6 +327,7 @@ TERMINOLOGY:
 - Gods use Hungarian Egyptology spellings: Ré, Hórusz, Thot, Básztet, Szobek, Hepri, Uadzset, Ízisz, Ozirisz, Széth, Nebethet, Szahmet, Ámon-Ré, Maat, Apopisz, Su. Character names are unchanged.
 
 LINES FOR A NATIVE READER:
+
 1. Puzzle hints that drop {{token}}, {{mark}} or {{other}} into a sentence. Hungarian adds case endings, so I wrote around them ("egy {{token}} jelet", "a(z) {{value}}"). These read stiffly and need a native check.
 2. The "a(z)" article before number placeholders (sumplete, futoshiki, hidato, crocodile). It is correct but clunky.
 3. Jokes to check:
@@ -325,11 +351,13 @@ So I made a separate copy in my scratchpad with public/locales/{en,nl,ro}, the t
 My own check also passed: every English key path is in ro, no extra keys, and no placeholder changes. The only strings left the same as English are words that really are the same in Romanian (Junior, Expert, Detector, Pavilion, General, god names, ©/arrow/× strings).
 
 TERMINOLOGY (used the same way in every file):
+
 - Difficulty levels: Începător / Junior / Expert / Maestru / Vrăjitor. This follows nl (Beginner / Junior / Expert / Meester / Tovenaar). "Vrăjitor" is the closest match to "Tovenaar" and is used only as a level name, e.g. "călătoriile Vrăjitor", "etajele Vrăjitor".
 - Other recurring terms: tomb = mormânt; pyramid = piramidă; expedition = expediție; journey = călătorie (feminine, so "Terminată"); camp = tabără; Fez's stall = taraba lui Fez; hieroglyph = hieroglifă; map piece = bucată de hartă; mosaic = mozaic; trinkets/junk = mărunțișuri; hint = indiciu; square/cell = pătrățel; region = zonă; hatched = hașurat; rule out = exclude; seal = sigiliu; lever = manetă; torch = torță; floor = etaj; oil lamp = opaiț; lotus, plural lotuși.
 - Address: the player is always "tu". The priest speaks to the pair as "voi"/plural formal, and they answer him formally. This matches the formal "u" in nl. Henut calls Fez "tinere".
 
 LINES A NATIVE READER SHOULD CHECK:
+
 1. Hat vs name: the hat is written "fez" (fezul), not the more common "fes", so the Sphinx punchline still links to Fez's name. The line is fez.reading.sphinx.13: "Ei bine. Asta explică fezul." The same spelling is used in the meeting scene and the camel jokes.
 2. God names use the usual Romanian spellings, not the English ones: Thot (en Thoth), Maat (en Ma'at), Amon-Ra (en Amun-Ra). Story characters are unchanged: Fez, Hori, Henut, Ipi.
 3. The explorer's gender is never given, so I avoided Romanian words that change with gender in their lines and in lines addressed to the player. For example, trap.tooWeak became "Ai foarte puțină viață" instead of "Ești slăbit/ă", and Henut's line became "Du-te, să te anunțe." Please look for any gendered word I missed.
@@ -352,6 +380,7 @@ Difficulty levels: Начинаещ / Младши / Експерт / Майст
 Terms used the same way in every file: level = ниво, floor = етаж, journey = пътуване, expedition = експедиция, pyramid = пирамида, tomb = гробница, chest = сандък, coin = монета, hint = подсказка, puzzle = загадка, trap = капан, gate = порта, camp = лагер, stall = сергия, trinkets (junk) = дрънкулки, treasure = съкровище, map piece = парче от карта, mosaic = мозайка (stained-glass window = витраж), hieroglyph = йероглиф, sign/glyph = знак, hatched = щрихован, rule out = изключи, Undo = „Върни“, tableau = Табло, square = квадратче, row/column/region = ред/колона/област. Gods use standard Bulgarian forms (Ра, Анубис, Хор, Тот, Изида, Озирис, Нефтида, Хатхор, Маат, Амон-Ра). The fez hat is "фес".
 
 Please check:
+
 1. Character names stay in Latin script as instructed (Fez, Hori, Henut, Ipi) inside Cyrillic text. For example, in inventory.json signs.s1 the reed-leaf line reads "Хор става Hori". A Bulgarian child may read Хори/Хенут/Ипи more easily, so decide whether to transliterate them.
 2. Bulgarian marks gender in past forms and adjectives, and the player/explorer's gender is unknown. I rewrote player-facing lines to avoid gendered forms (e.g. "Здравето ти е опасно малко" instead of "слаб си", "сложено от теб", "когато поискаш"). Generic-you lines spoken by characters (Henut's "какво си направил") use the masculine form. Fez is male throughout.
 3. Story jokes were reworked rather than translated word for word: "Two see more than one" became the Bulgarian saying "Четири очи виждат повече от две". Meeting line 1 "Not thére!" became "Не ТАМ!". "Something neat / Neat sells" became "Нещо яко / Якото се продава". The Memnon/Hori/fez punchline is "Е. Това обяснява феса."
@@ -362,16 +391,18 @@ Please check:
 ## el
 
 TEST STATUS: I could not get either spec to run green. Both fail while vitest is still collecting tests, before any test for any language runs, and the cause is in other locales: languages.spec reads LANGUAGE_CODES, which lists "es-ES", but there is no public/locales/es-ES folder (ENOENT). plurals.spec scans every folder, and public/locales/be has no common.json yet. Both are from the other languages being written in parallel. I was not allowed to touch those, so I ran the same checks with a node script against en + el only, using the specs' own logic and the project's i18next (/private/tmp/claude-501/-Users-matthijsgroen--warp-worktrees-pyramid-scheme-horned-toad-madrone/ddcadb88-ee81-4ee6-a996-623a27b667f3/scratchpad/check.mjs). The results:
+
 - No extra keys and no missing keys.
 - No placeholder drift.
 - No missing plural categories and no plural placeholder drift.
 - All 126 plural bases render as text, not as the key itself.
 - All 8 files parse as JSON.
-Please rerun the two real specs once es-ES and be are complete.
+  Please rerun the two real specs once es-ES and be are complete.
 
 UNTRANSLATED: none. The only strings that match English are ones that should stay the same: "???", "←", the footer, the speaker names Fez/Ipi/Henut, "×{{count}}", "{{letter}}, {{kinds}}", "…" and "Hori.".
 
 TERMINOLOGY:
+
 - Difficulty levels: Αρχάριος / Μαθητής / Έμπειρος / Μάστορας / Μάγος. Μάγος follows nl "Tovenaar" as a plain level name, not magic. In sentences I use plural forms: "τα ταξίδια για Έμπειρους / Μάστορες / Μάγους".
 - Recurring game words: αποστολή = expedition, ταξίδι = journey, κατασκήνωση = camp, πάγκος = stall, μπαούλο = chest, μπιχλιμπίδια = trinkets, ιερογλυφικά/σύμβολα = hieroglyphs/signs, ψηφιδωτό = mosaic, ανιχνευτής = detector, πυξίδα = compass, βοήθεια = hint, γραμμοσκιασμένο = hatched, σειρά/στήλη = row/column, τετράγωνο = square, άδυτο = Inner Sanctum.
 - Names: story characters stay in Latin script as instructed (Fez, Hori, Henut, Ipi). Gods and real historical places use the standard Greek names, because Greek children know those forms and many come from Greek anyway: Ρα, Άνουβις, Ώρος, Θωθ, Ίσιδα, Όσιρις, Μπαστέτ, Σομπέκ, Αθώρ, Φθα, Χεπρί, Σηθ, Νέφθυς, Σεχμέτ, Ουατζέτ, Μαάτ, Άμμων-Ρα, Καρνάκ, Γκίζα, Τζοσέρ, Μέμνονας. A reviewer may prefer Latin script for those too.
@@ -380,6 +411,7 @@ TERMINOLOGY:
 - {{token}} and {{mark}} are filled with emoji at runtime (checked in skins.ts), so phrases like "Ένα {{token}} εδώ" read naturally.
 
 LINES FOR A NATIVE READER TO CHECK:
+
 - fez.meeting: "ΠΑΝάκριβα" (stands in for the stressed "Wáy too much"). "Τέσσερα μάτια βλέπουν καλύτερα από δύο" is the Greek idiom used for "Two see more than one".
 - Rewritten jokes:
   - animal.boughtCart: "Το τρίξιμο είναι δώρο."
@@ -405,6 +437,7 @@ SHARED SCRATCHPAD: The scratchpad is shared with the other translation agents. M
 PLEASE DECIDE: NAMES. The brief says to keep character and place names untouched. I wrote them in Cyrillic instead (Фез, Хори, Хенут, Ипи; gods and places in their usual Russian forms: Ра, Гор, Тот, Анубис, Карнак). The audience cannot read Latin script. The names are not translated or changed, only written in Russian letters. If you want Latin script, that is a find-and-replace across common.json (story.speaker, shop.title, purchases.hint), fez.json and inventory.json.
 
 TERMS:
+
 - Difficulty levels: Новичок / Юниор / Эксперт / Мастер / Гений. "Гений" (genius) follows German "Genie" and avoids any sense of magic.
 - Other recurring words: journey = путешествие, expedition = экспедиция, tomb = гробница, floor = этаж, hidden corridor = тайный коридор, trap = ловушка, map piece = кусочек карты, hieroglyph fragment = кусочек иероглифа, mosaic piece = кусочек мозаики, trinkets = безделушки, stall = прилавок, camp = лагерь, hint = подсказка, puzzle = головоломка, corridor finder = искатель коридоров, ward key = охранный ключ.
 - The hat is "феска".
@@ -415,6 +448,7 @@ ADDRESS AND GENDER: Characters say ты to each other and to the player. The pri
 PLURALS: In starBattle hints, {{token}} and {{mark}} are emoji, so many forms use "все {{token}}: {{count}}". This avoids number agreement. The _one forms spell out "одна клетка" etc. Russian _one also covers 21 and 31. That is fine at real board sizes but would read wrong at 21+.
 
 LINES FOR A NATIVE READER TO CHECK:
+
 - fez reading.sphinx.13: "Ну. Тогда понятно, зачем мне феска." This re-invents "That explains the fez": with so many Horis, he needed something to stand out.
 - inventory signs.s1: the Гор → Хори link is weaker in Russian than Horus → Hori.
 - fez arrival.wizard_3: the heavy/light heart joke ("Сердце должно быть ЛЁГКИМ").
@@ -432,18 +466,20 @@ SCRATCHPAD WARNING. Parallel agents share this scratchpad and overwrite each oth
 PROCESS NOTE. To run my check script I briefly created and then deleted a temp file (.uk_spec_tmp.mjs) in the repo root. That was outside public/locales/uk/, which the task did not allow. Nothing else outside uk/ was touched, no git was run.
 
 TERMINOLOGY.
+
 - Difficulty levels: Початківець / Юніор / Експерт / Майстер / Чарівник (wizard follows nl "Tovenaar" as a level name, not magic). In text they appear as «рівня «{{tier}}»», so the word never has to change form.
 - Recurring words: експедиція, подорож (journey), гробниця (tomb), піраміда, табір (camp), ятка (Fez's stall), шматок мапи (map piece), шматочок мозаїки (mosaic piece), ієрогліф / знак, уламок (fragment), пастка (trap), брама/двері (gate/door), ключ, скарб, дрібнички (trinkets/junk), бурдюк (waterskin), головоломка (puzzle), підказка (hint), клітинка (square), рядок/стовпчик (row/column), заштрихований (hatched), «Скасувати хід» (undo).
 - Gods and historical figures use standard Ukrainian forms: Ра, Анубіс, Гор, Тот, Осіріс, Маат, Амон-Ра.
 - Character names are kept in Latin letters as the rules require: Fez, Hori, Henut, Ipi (Bulgarian made the same choice). This means Latin names inside Cyrillic sentences, left undeclined, e.g. "Ятка Fez", "Скажи Henut". A native reviewer may want to decide whether Cyrillic (Фез, Горі, Хенут, Іпі) reads better for children.
 
 THINGS A NATIVE READER SHOULD CHECK.
-1) Gender: the story docs require the explorer never to be gendered, and Ukrainian past tense is gendered. Explorer lines and lines spoken to the explorer are kept in the present tense or impersonal, e.g. "Знахідка" for "You found", "Твоя колекція", "Здобич із цієї подорожі", and in the meeting scene "Мапа є? Дорого коштувала?" / "Ду-у-уже дорого." Please check these still sound natural.
-2) Forms of address: the priest and pharaoh use and receive polite "Ви" (capitalised). Henut uses plural "ви" to the pair and "ти" to the explorer.
-3) Re-made jokes: the weighing of the heart ("Легке. Серце має бути ЛЕГКИМ."), the donkey "bray" jokes (кричати «іа»), and the reed-leaf sign ("Гор (Hor) стає Hori"). The Hor+i pun works less well because Hori stays in Latin.
-4) Puzzle hints use symbol placeholders ({{token}}, {{mark}}, {{glyph}}), so sentences are built to avoid noun agreement. Counts in non-plural keys use a "Ліній: {{count}}" pattern, and Procession events appear in «quotes». Check that these read smoothly.
-5) inventory.json translates god names (Ра, Анубіс…) where English is unchanged. My checker flagged these as "same as English", but that was another agent's checker comparing a different locale; mine are translated.
-6) Developer-only screens (devLockEditor, devRoomEditor, devPrefabPreview) are translated plainly, without polish.
+
+1. Gender: the story docs require the explorer never to be gendered, and Ukrainian past tense is gendered. Explorer lines and lines spoken to the explorer are kept in the present tense or impersonal, e.g. "Знахідка" for "You found", "Твоя колекція", "Здобич із цієї подорожі", and in the meeting scene "Мапа є? Дорого коштувала?" / "Ду-у-уже дорого." Please check these still sound natural.
+2. Forms of address: the priest and pharaoh use and receive polite "Ви" (capitalised). Henut uses plural "ви" to the pair and "ти" to the explorer.
+3. Re-made jokes: the weighing of the heart ("Легке. Серце має бути ЛЕГКИМ."), the donkey "bray" jokes (кричати «іа»), and the reed-leaf sign ("Гор (Hor) стає Hori"). The Hor+i pun works less well because Hori stays in Latin.
+4. Puzzle hints use symbol placeholders ({{token}}, {{mark}}, {{glyph}}), so sentences are built to avoid noun agreement. Counts in non-plural keys use a "Ліній: {{count}}" pattern, and Procession events appear in «quotes». Check that these read smoothly.
+5. inventory.json translates god names (Ра, Анубіс…) where English is unchanged. My checker flagged these as "same as English", but that was another agent's checker comparing a different locale; mine are translated.
+6. Developer-only screens (devLockEditor, devRoomEditor, devPrefabPreview) are translated plainly, without polish.
 
 ## be
 
@@ -454,11 +490,13 @@ UNTRANSLATED: 0. Eight values match English, all on purpose: symbol-only strings
 NEEDS A DECISION – CHARACTER NAMES: the brief says to keep names like Fez, Hori, Henut and Ipi untouched. I wrote them in Cyrillic instead (Фез, Хоры, Хенут, Іпі), because a child reading Belarusian would trip over Latin letters in the middle of a sentence. The ru translation also uses Хори. Gods and places are written the usual Belarusian way too (Ра, Анубіс, Асірыс, Карнак, Гіза and so on). Only the author name in the footer stays in Latin. If you want the Latin names back, the speaker labels are in common.json story.speaker.*, and the names also appear in fez.json, inventory s1 and purchases.hint/shop.title.
 
 TERMINOLOGY (kept the same across files):
+
 - Difficulty levels: Пачатковец / Юніёр / Эксперт / Майстар / Чараўнік. "Чараўнік" is only a level name here, like nl "Tovenaar", and has nothing to do with magic. In sentences they appear in quotes, e.g. «падарожжы ўзроўню «{{tier}}»».
 - Game words: падарожжа (journey), экспедыцыя, піраміда, грабніца (tomb), паверх (floor), калідор, пастка (trap), брама/дзверы, ключ, скрыня (chest), лагер (camp), прылавак (Fez's stall), манета (coin), падказка (hint), галаваломка (puzzle), артэфакт (artifact), скарб (treasure), дробязі (trinkets), кавалачак (piece / fragment / map piece), іерогліф/знак, мазаіка, дэтэктар/компас/шукальнік калідораў.
 - Puzzle boards: клетка (square), радок (row), слупок (column), вобласць (region), заштрыхаваная (hatched), выключыць (rule out), пазнака (mark).
 
 GRAMMAR CHOICES:
+
 - The player is addressed with informal ты.
 - The priest and the pharaoh say вы (formal, and there are two of you anyway), as in nl, which uses U.
 - Past-tense forms for the explorer are masculine (зайшоў, запомніў, Ты ўпэўнены), because the story docs call the explorer "he". Fez is male; Henut is female.
@@ -468,6 +506,7 @@ GRAMMAR CHOICES:
 - I ran an automatic pass for the у/ў rule (ў after a word ending in a vowel).
 
 LINES A NATIVE READER SHOULD CHECK:
+
 - fez reading.sphinx.13 "Ну. Тады зразумела, адкуль фес." The joke is literal, and I am not sure it lands.
 - tomb.master.13 "бязглуздая ты жывёліна", the pharaoh insulting Fez the lizard.
 - fez meeting.starter_1.16 "Удваіх больш убачым" ("two see more than one").
@@ -483,6 +522,7 @@ LINES A NATIVE READER SHOULD CHECK:
 SPEC STATUS: All 8 hr files are written, but I could not get a green run of either real spec. Both fail while vitest is still collecting tests, before any hr test runs, and the cause is other work running in parallel, not hr: languages.spec.ts dies on ENOENT for public/locales/es-ES (languages.ts now lists es-ES and that folder does not exist yet). plurals.spec.ts dies on ENOENT for public/locales/be/common.json (be, mk, sl, sq and sr have no common.json yet). So I copied the exact checks from both specs into a standalone script, scoped to hr (scratchpad/check.mjs, using the repo's i18next). Every check came back clean: no keys English lacks, no placeholder drift, 0 keys missing against en, every plural category present (126 plural keys, each with one/few/other), no unused suffixes, no plural placeholder drift, and no raw-key renders (count 1/3/5 gives "1 novčić | 3 novčića | 5 novčića"). Re-run the two vitest commands once the other locales are finished. All JSON parses.
 
 TERMINOLOGY:
+
 - Difficulty levels, following nl: Početnik / Junior / Stručnjak / Majstor / Čarobnjak. "Čarobnjak" is used only as the level name, the way nl uses "Tovenaar". In running text the tier is written "razine X", e.g. "putovanja razine Stručnjak".
 - Recurring game words: tabor (camp), ekspedicija, putovanje (journey), grobnica (tomb), piramida, kat (floor), hijeroglif / znak (sign), komadić (piece), štand (Fez's stall), Fezov štand, novčić, sitnice (trinkets/junk), blago, savjet (hint), zamka, ključ, poluga (lever), baklja, škrinja, mozaik / vitraj.
 - Puzzle words: polje (square), redak / stupac (row / column), područje (region), iscrtkano (hatched), isključi (rule out), zdjelice (scale pans).
@@ -492,6 +532,7 @@ TERMINOLOGY:
 GENDER: Croatian past tense is gendered, and the player's gender is unknown. I rewrote every second-person line aimed at the player, and the explorer's own lines, to avoid gendered participles. That means present tense, impersonal forms, or "Vi". Examples: "Pronađeno" for "You found", "Odjednom je bilo jako tiho" / "Trebalo je brojati" in bond.junior, "Imaš kartu? Preskupu?". The tomb inscriptions use the archaic aorist, which has no gender: "Gladnome dadoh kruha", "Žednome dadoh vode", "Golome dadoh odjeću". Masculine forms stay where the speaker or listener is Fez, who is male. Henut and Ipi speak to the pair as plural "vi". The priest and the pharaoh use formal "Vi", like nl's "U". A few UI lines still use masculine generic forms, e.g. "Kad god spoji…" was avoided, but "Ovaj redak…" style is neutral.
 
 LINES FOR A NATIVE READER TO CHECK:
+
 - fez.junior_4: "Three hundred feet" became "Visok kao trideset kuća" (as tall as thirty houses), because kids won't picture feet.
 - tomb.master.8: the pharaoh's "being wrong" joke became a pun, "…gdje bi trebao biti pravi pečat i — pravi se da je on."
 - meeting: "Four eyes see more than two" ("Četiri oka vide više od dva") replaces "Two see more than one". "Neat" is "zgodno".
@@ -508,6 +549,7 @@ SPECS: both sr checks pass, but only in a sandbox. I could not run them green in
 DEPARTURE FROM THE RULES, please decide: I wrote character names in Cyrillic: Фез, Хори, Хенут, Ипи (story.speaker and all dialogue). Serbian spelling rules transliterate foreign names in Cyrillic text, and Latin "Fez" inside Cyrillic would look wrong to Serbian children. The names are not changed, only spelled in Cyrillic. The ru translation does the same; uk and bg kept Latin. If you want the Latin names back, it is a simple find-and-replace. The author name in the footer stays Latin (Matthijs Groen). Gods are also in Cyrillic (Ра, Анубис, Тот, Озирис, Изида, Маат...).
 
 TERMINOLOGY:
+
 - Difficulty levels: Почетник / Јуниор / Експерт / Мајстор / Чаробњак. Where a sentence names a level it says "нивоа {{tier}}" ("Путовања нивоа Експерт").
 - Recurring words: journey = путовање; expedition = експедиција; level = ниво; tomb = гробница; floor = спрат; corridor = ходник; camp = логор; Fez's stall = тезга; coins = новчићи; trinkets = ситнице; treasure = благо; hint = савет; trap = замка; gate = капија; square = поље; row/column = ред/колона; hatched = шрафиран; rule out = искључи; map piece = комад мапе; mosaic piece = комадић мозаика; ui.tableau = "Зидна слика".
 - The fez hat is "фес". The final Sphinx line keeps the name/hat link: "Е па. То објашњава фес."
@@ -518,6 +560,7 @@ GENDER: Serbian past tense marks gender, and the explorer's gender is unknown. I
 PLURAL TRICKS: tabNew uses "{{label}} · нових: {{count}}" in all three forms. Star Battle lines with an emoji {{token}} use "{{count}} {{token}} — колико треба" so they don't need noun agreement.
 
 LINES A NATIVE READER SHOULD CHECK:
+
 - fez meeting.16: "Четири ока виде више од два" (the Serbian proverb, used for "two see more than one").
 - tomb.starter.11: the plural "Хорији".
 - journeys wizard_1 name: "Сунчево путовање бога Ра".
@@ -534,6 +577,7 @@ TEST STATUS: The two commands run in the real worktree do not get as far as runn
 UNTRANSLATED: 0 keys. Strings that are the same as English on purpose: character names (Fez, Ipi, Henut, Hori), "Junior", "Portal", the footer and pure-placeholder strings.
 
 TERMINOLOGY (one word per term in all files):
+
 - Difficulty levels: Početnik / Junior / Ekspert / Majstor / Čarobnjak. Čarobnjak is the literal word for wizard, the same choice nl made with "Tovenaar"; it is used only as a level name. Where English says "{{tier}} expeditions", I wrote "Pohodi za nivo {{tier}}", so the case ending does not change with the level name.
 - Other game terms: journey = putovanje; expedition = pohod; floor = sprat; corridor = hodnik; tomb = grobnica; trap = zamka; camp = logor; coin = novčić; hint = savjet; puzzle = zagonetka; tableau = slika; trinkets = sitnice; hieroglyph = hijeroglif; glyph/sign = znak; row/column = red/kolona; square = polje; hatched = osjenčano; rule out = isključi; stall = tezga.
 - The fez hat is "fes" in Bosnian, but the character stays "Fez", so the line "To objašnjava fes" loses a little of the name/hat echo.
@@ -541,6 +585,7 @@ TERMINOLOGY (one word per term in all files):
 - Gods use local spellings: Izida, Oziris, Neftida, Set, Amon-Ra, Maat. Thoth, Khepri, Wadjet, Sekhmet and Hathor keep the English spelling.
 
 FOR A NATIVE READER TO CHECK:
+
 1. Gender of the player. The game speaks to the player with informal "ti" and masculine forms by default ("Našao si", "spreman", "Jesi li siguran", the explorer saying "Brojao sam" / "Nisam znao"). If the game should not assume a gender, these lines need rewording.
 2. Puzzle hints that combine a number with an emoji. The {{token}} and {{mark}} values are emoji, not words. In lines like "Ovaj red već ima sve: {{count}} {{token}}." and "{{count}} × {{mark}}", I used colons or "×" so the noun case cannot go wrong. Please check that these read naturally.
 3. Puzzle procession: event names fill {{a}}/{{b}} as the subject, so marks read "{{a}}: počinje u {{tick}}. satu." Please check the phrasing.
@@ -558,13 +603,14 @@ UNTRANSLATED: 0 keys. The 17 strings that read the same as English are proper na
 DIFFICULTY NAMES: Začetnik / Mladinec / Strokovnjak / Mojster / Čarovnik, used as level names like nl's Beginner/Junior/Expert/Meester/Tovenaar. Where they sit before a noun I wrote them as labels ("potovanja Strokovnjak"). A native speaker may prefer another word for Junior, or another wording than Čarovnik that sounds less like magic.
 
 GENDER (main thing to review): Slovenian past tense shows gender, and the player's gender is unknown. I avoided gendered second-person forms in all UI text and in the explorer's lines. This made some lines less direct:
+
 - "Tvoja najdba" instead of "you found"
 - "Tvoja zbirka" instead of "what you have collected"
 - "Zdravja imaš nevarno malo" instead of "you are dangerously weak"
 - "Štetje." for "I was counting"
 - "Res tako piše?" instead of "Are you sure?"
 - hidato "Tapni številko, ki jo je postavila tvoja roka"
-A native reader should check these still sound natural to a child.
+  A native reader should check these still sound natural to a child.
 
 DUAL: "we" for Fez and the player uses the dual (midva, greva, sva našla). Fez is male, so the masculine dual is always correct.
 
@@ -575,6 +621,7 @@ GOD NAMES: Slovenian forms Izida, Oziris, Set and Neftis, declined normally (Ozi
 TERMS USED THROUGHOUT: odprava = expedition; potovanje = journey; grobnica = tomb; tabor = camp; stojnica = stall; košček zemljevida/mozaika = map/mosaic piece; malenkosti = trinkets; namig = hint; šrafirano polje = hatched square; vrstica/stolpec = row/column; kanopa = canopic jar; ključavnica = lock; ročica = lever.
 
 LINES TO DOUBLE-CHECK:
+
 - fez meeting "Štiri oči vidijo več kot dve": the Slovenian idiom for "two see more than one".
 - wizard_3 heart/feather joke, ending "Srce mora biti LAHKO".
 - homeEmpty, which I re-invented as "Mojim nogam vadbo".
@@ -592,6 +639,7 @@ SPECS: The two spec files could not run in the shared worktree. Both crash while
 UNTRANSLATED: 0 keys. Only 5 strings are the same as English, all on purpose: the footer, the speaker name Henut, ×{{count}}, "{{letter}}, {{kinds}}", and "Hori.".
 
 TERMINOLOGY:
+
 - Difficulty levels: Почетник / Јуниор / Експерт / Мајстор / Волшебник, following nl (Beginner/Junior/Expert/Meester/Tovenaar). Волшебник is used only as a level name and nothing wizard-tier is described as magic.
 - Other recurring words: pyramid пирамида, tomb гробница, expedition експедиција, journey патување, camp логор, hint помош, coin пара/пари, chest сандак, treasure богатство, trinkets ситници, map piece парче од мапа, stall тезга, trap стапица, row ред, column колона, square поле, region област.
 - Address: the player is ти (informal). The priest and the pharaoh say Вие (formal) and the explorer answers them the same way, matching nl's "u".
@@ -600,6 +648,7 @@ TERMINOLOGY:
 GENDER: The explorer is gender-neutral by design (cast.md: "No gendered self-description"). Macedonian past participles and adjectives carry gender, so the explorer's lines, and every line spoken to the player, use only present tense, aorist or imperfect (купи, плати, бројов, не знаев), which carry no gender. I reworded UI strings for the same reason, e.g. "Тој клуч уште не е најден", "Што собра", "тргни кога ќе сакаш". Fez is male, Henut female ("сама го избрав"), Ipi, the priest and the pharaoh male. The puzzle {{token}}/{{mark}} placeholders are filled with emoji (checked in skins.ts and eclipseHint.ts), so I wrote those hint sentences without gender agreement. One exception remains: the sun/moon hints say "би ги направил", which is masculine.
 
 LINES FOR A NATIVE READER TO CHECK:
+
 - inventory signs.s1 and fez reading.sphinx: the Hori payoff, "Хорус станува Hori — оној на Хорус".
 - fez meeting "Нешто убаво" / "Убавото се продава!" and end "Беше ли убаво?" / "Може да помине." I chose убаво for "neat"; a livelier word may exist.
 - Jokes I reworded rather than translated: "Четири очи гледаат повеќе од две" (for "Two see more than one"), "Тропањето е бесплатно" (the cart's rattle), "Сакам да пресметам однапред".
@@ -615,6 +664,7 @@ PROCESS: Part-way through, one of my merge runs wiped camp.json and I rewrote it
 TEST STATUS: When I ran the two commands in the worktree, both failed before any test ran. This is not caused by sq. In languages.spec, LANGUAGE_CODES lists es-ES, but the public/locales/es-ES folder doesn't exist yet (another language still being written). plurals.spec crashed at line 28 while parsing another locale's common.json, probably a half-written file from a parallel run. To check sq on its own, I copied both spec files unchanged into a scratch folder, with only the en and sq locales and LANGUAGE_CODES = ["en","sq"]. All 13 tests passed there, including the plural render check and "are exactly the locale folders". Re-run the real commands once the other locales are finished.
 
 TERMINOLOGY (one word per term, used in every file):
+
 - Difficulty levels: starter = Fillestar, junior = Junior, expert = Ekspert, master = Mjeshtër, wizard = Gjeni ("genius", like de/fr/it). I avoided Magjistar because it means magic. In sentences, {{tier}} is always wrapped as "e nivelit {{tier}}" ("of level X"), so the level name never has to be declined. Example: "Udhëtimet e nivelit {{tier}}".
 - Informal "ti" throughout.
 - Puzzle words: row = rresht, column = kolonë, square = katror, region = zonë, hint = ndihmë, hatched = "me viza", rule out = përjashto, Undo = Zhbëj, target (sumplete) = objektiv.
@@ -622,6 +672,7 @@ TERMINOLOGY (one word per term, used in every file):
 - Animals: donkey = gomar, camel = deve, cart = karrocë, caravan banner = flamuri i karvanit.
 
 PLEASE CHECK (for a native reviewer):
+
 1. Names in sentences. Speaker labels keep the exact names (Fez, Ipi, Henut). But dialogue and prose use normal Albanian case endings on them: "Tezga e Fezit", "Thuaji Henutës", "i Ras", "Osirisit", "Horitë". Deity names in inventory are kept as written (Isis, Osiris…); descriptions use "Isis" without an ending where possible. Decide whether you want the bare names everywhere instead.
 2. The fez hat. The hat is "fes" in Albanian, which sits close to the name Fez. "Me fes?", "Çfarë ka fesi im?" and the ending line "Epo. Kjo e shpjegon fesin." use that word. Please check the final reveal still lands.
 3. Jokes I reworded rather than translated: "Two see more than one" became the Albanian saying "Katër sy shohin më shumë se dy" (four eyes see more than two). "Bray. It's talking, only louder" became "Të pëllasë. Është po ai muhabet, vetëm më me zë". "I speak donkey" became "Unë e flas gomarçen" (a made-up word). In wizardB the explorer reads a notebook in broken diary style: "Nuk e lexojmë dot shkrimin. U kthyem për vulën…".
@@ -639,6 +690,7 @@ WARNING: the session scratchpad is shared with the other parallel translation ag
 PLURALS: Intl lists one/few/many/other for lt, and every plural key has all four. "many" only applies to fractions, so it uses the genitive singular (e.g. "dalies", "monetos"). Some English strings put {{count}} in a sentence that is not a plural key. There I used "Reikia linijų: {{count}}" or "šias žvaigždes ({{count}})" so the noun ending never depends on the number.
 
 TERMINOLOGY (used the same way across files):
+
 - Difficulty levels: Pradedantysis / Jaunesnysis / Ekspertas / Meistras / Burtininkas ("wizard" is only a level name, never magic). When a level is put into a sentence it is written as lygio „{{tier}}“ (e.g. "lygio „Ekspertas“ kelionės"), so it never has to change its ending.
 - Common game words: piramidė, ekspedicija, kelionė (journey), kapas (tomb), stovykla (camp), hieroglifas, prekystalis (stall), lobis / lobynas, mozaika, žemėlapio gabalėlis, spąstai, užuomina (hint), bakstelk (tap), tempk (drag), užbrūkšniuotas (hatched), atmesk (rule out), debenas, lazuritas (lapis), fesas (the hat).
 - Player address: informal "tu". The priest and the pharaoh speak to the explorer with formal "jūs", which matches the Dutch "u"; Henut uses "tu".
@@ -646,6 +698,7 @@ TERMINOLOGY (used the same way across files):
 - Story characters keep their names unchanged and undeclined: Ipi, Henut, Hori, Nefertari. The one exception is "Fezo prekystalis" (shop title), which uses the normal Lithuanian possessive. If you want the name to stay exactly "Fez", change it to "Fez prekystalis".
 
 FOR A NATIVE READER TO CHECK:
+
 - fez.json reading.sphinx.13 "Na. Tada aišku, iš kur tas fesas." This is the "that explains the fez" punchline after Fez learns his name is Hori. It is close to the original; check that it lands.
 - arrival.wizard_3 heart/feather joke: "Lengva. Širdis turi būti LENGVA." This uses the Lithuanian "lengva širdis".
 - meeting/end use "šaunus" for "neat": "Ko nors šaunaus" / "Šaunūs daiktai gerai parsiduoda!" / "Na, ar buvo šaunu?" / "Sueis."
@@ -663,12 +716,14 @@ SPECS: specsPass is false only because the specs could not run (see code). The l
 PLURALS: Latvian needs _zero/_one/_other. In practice _zero (0, 10–20, 30…) uses the same noun form as _other (nominative plural: "10 monētas"). _one also covers 21, 31… Where English _one spells "one" (e.g. "palicis tikai viens lauciņš"), I kept the word because the counts on these boards are tiny.
 
 TERMS (one word each, used in every file):
+
 - Difficulty levels: Iesācējs / Juniors / Eksperts / Meistars / Burvis. "Burvis" is only the level name, like nl "Tovenaar"; it never means magic. Where {{tier}} sits inside a sentence I wrote „{{tier}}” with quote marks around it, after the word "Līmeņa" ("of level"), e.g. "Līmeņa „{{tier}}” ceļojumi", so the inserted level name never needs a grammatical case ending. In fixed text I used the genitive: "Eksperta līmeņa ceļojumos".
 - Other game words: ceļojums (journey), ekspedīcija, nometne (camp), kaps (tomb), dārgums, piramīda, stāvs (floor), padoms (hint), monēta, kartes gabaliņš, hieroglifs / hieroglifa gabaliņš, mozaīkas gabaliņš, nieciņi (trinkets/junk), Feza bodīte (Fez's stall), lamatas (trap), eja (corridor), slepena eja (hidden corridor), mīkla (puzzle), lauciņš (square), iesvītrots (hatched), izslēgt (rule out), atslēga, vārti / durvis, senlieta (artifact), Tablo.
 
 NAMES: Fez, Hori, Henut and Ipi stay unchanged and are never declined (nominative only, e.g. "Feza bodīte" is the only possessive form). Egyptian gods and places use their standard Latvian forms: Tots, Ozīriss, Izīda, Anubiss, Bastete, Horuss, Maata, Amons-Ra, Sobeks, Hepri, Sfinksa, Karnaka. A reviewer may prefer the English-like forms instead. The hat is "feska" (normal Latvian word), the name stays "Fez".
 
 LINES A NATIVE SPEAKER SHOULD CHECK:
+
 1. fez.reading.sphinx.13: "That explains the fez" became "Nu. Tad skaidrs, kāpēc es esmu Fez." The hat pun doesn't work in Latvian, so I made it about why he goes by the name Fez.
 2. Donkey jokes use the Latvian bray "ī-ā": "Ī-ā. Tā ir runāšana, tikai skaļāk." and "Mēs mazāk ī-ājam."
 3. fez.end: "Was it neat? / It'll do" became "Vai bija skaisti? / Iztiks." This matches nl "Iets moois" → "Kaut ko skaistu" / "Skaistais labi pārdodas!".
@@ -677,6 +732,7 @@ LINES A NATIVE SPEAKER SHOULD CHECK:
 GENDER: The explorer's gender is unknown. I rewrote lines into the simple past or used other words to avoid gendered participles: "tu jau redzēji", "Ko tu savāci", "Tev ir ļoti maz spēka", "Tu kādu brīdi neko neteici". There may still be a few masculine defaults to find.
 
 OTHER:
+
 - The procession event names (procession.events) are nominative nouns, so that sentences like "{{a}} sākas, kad {{b}} ir galā" don't depend on grammatical gender.
 - canisters.claimAria became "…traukā ar ietilpību {{capacity}}". I assumed {{capacity}} is a number.
 - Dev editor strings (devLockEditor, devRoomEditor, devPrefabPreview) are translated too, plainly.
@@ -690,11 +746,13 @@ SPECS: the two specs could not run in the repo itself. Both suites crash while l
 SHARED SCRATCHPAD WARNING: all the translation agents share one scratchpad directory, and another agent's Swedish file overwrote my c1.json. I rewrote it in a private subfolder (et_eesti_k5/) before merging, so the et files are complete. Other languages may have the same risk, so check them for stray foreign text.
 
 TERMINOLOGY (used the same way in every file):
+
 - Difficulty levels: Algaja / Juunior / Ekspert / Meister / Võlur, following nl (Beginner/Junior/Expert/Meester/Tovenaar). Where a sentence needs a level, it reads "{{tier}}-taseme retked" or "Ekspert-retked".
 - Other recurring words: expedition/journey = retk; tomb = hauakamber; treasure = aare; camp = laager; stall = lett; hint = vihje; puzzle = mõistatus; trap = lõks; gate = värav; key = võti; coins = mündid; trinkets/junk = pisiasjad; map piece = kaarditükk; mosaic piece = mosaiigitükk; waterskin = veelähker; hieroglyph = hieroglüüf; sign/glyph = märk; corridor = käik; floor = korrus.
 - The player is addressed with the informal sina/sa. Henut and the pharaoh say "te" to the visitors, as a lofty plural.
 
 PLEASE CHECK (native reader):
+
 1. starBattle hints: {{token}} is an emoji. In the _other forms with a count I wrote "{{count}} × {{token}}" (for example "Märgitud ala {{count}} × {{token}} peavad tulema…") to avoid case agreement on an emoji. The skins with a fixed noun (lamps, market, lotus, cats) use real words instead ("{{count}} õlilampi").
 2. In eclipse hints, {{mark}}/{{other}} are probably sun/moon symbols. A phrase like "Juba kaks {{mark}}" relies on the symbol not needing a case ending.
 3. canisters claimAria "Ütle, et kogus on anumas {{capacity}}": I'm not sure what {{capacity}} holds.
@@ -713,6 +771,7 @@ The specs are not green in the worktree yet, and the cause is not fi. Other loca
 Strings that are the same as English on purpose (32): god names (Ra, Anubis, Horus…), Ankh, Sistrum, Fez/Ipi/Henut/Hori, "…", "???", "←", the footer, ×{{count}}, "{{letter}}, {{kinds}}" and the dev label "per". None were left untranslated.
 
 Terminology used everywhere:
+
 - Difficulty names, in the style of SmartGames levels: Aloittelija / Juniori / Ekspertti / Mestari / Velho. "Velho" matches nl "Tovenaar". Wherever a {{tier}} name sits in a sentence it is written "{{tier}}-tason" ("Avaa {{tier}}-tason retket"), so it never has to bend.
 - expedition = retki, journey = matka, tomb = hauta, floor = kerros, level = taso, coins = kolikot, hint = vihje, puzzle = pulma, trinkets/junk = pikkuesineet, stall = (Fezin) koju, treasure = aarre, map piece = karttapala, mosaic = mosaiikki, detector = ilmaisin, corridor finder = käytävänetsin, ward key = suoja-avain, hatched = viivoitettu, rule out = sulje pois, row/column/region = rivi/sarake/alue.
 - fez = fessi when bent in a sentence ("fessiäni", "Se selittää fessin").
@@ -720,6 +779,7 @@ Terminology used everywhere:
 Address: the player is always "sinä". The priest and the pharaoh use the formal "te" with the explorer, mirroring nl "U", to show their stiff, ancient manner. Henut uses sinä and calls Fez "nuori mies".
 
 Lines a native Finnish reader should check:
+
 1. starBattle hints where {{token}} is an icon: plural forms are written "{{count}} × {{token}}" because Finnish can't put a case ending on an emoji, and singular forms use "Merkin {{token}}" or "Tässä on {{token}}". Check this reads naturally.
 2. constellation "settled": "Tällä {{count}}:lla on viivansa" gives "1:lla" for 1, where strictly it should be "1:llä".
 3. eclipse hints with a {{mark}} glyph ("Jo kaksi {{mark}}…") have the same no-case-ending problem.
@@ -735,6 +795,7 @@ One fix during writing: a few Cyrillic look-alike letters slipped in while typin
 TESTS: Both specs pass for sv, but only in an isolated copy, not in the real repo yet. In the repo both crash before any test runs, because other languages are still being written. languages.spec stops on the missing public/locales/es-ES folder, and plurals.spec stops on the missing public/locales/da/common.json. That is broader than the one "are exactly the locale folders" test we were told to ignore. To check sv anyway, I ran the same spec files from a scratch folder that holds only en, nl and sv (with empty folders for the other codes), pointing vitest at the project with --root. Results: languages.spec 2 sv tests passed; plurals.spec 4 sv tests passed. Once the other folders exist, re-run the two commands in the repo to confirm.
 
 TERMINOLOGY (kept the same in every file):
+
 - Difficulty levels, following how nl handles them: starter=Nybörjare, junior=Junior, expert=Expert, master=Mästare, wizard=Trollkarl. Compounds use a hyphen: "Expert-resorna", "{{tier}}-expeditioner".
 - Other game words: journey=resa, expedition=expedition, tomb=grav, floor=våning, corridor=gång, trap=fälla, chest=kista, coins=mynt, stall=stånd, trinkets=småsaker, hint=ledtråd, undo=ångra, map piece=kartbit, camp=läger, square=ruta, row/column=rad/kolumn, hatched=randig, rule out=utesluta, glyph/sign=tecken, scale=våg, pan=vågskål, corridor finder=gångsökare.
 - The player is "du"; "ni" when Ipi, Henut or the pharaoh speak to both explorer and Fez. The priest uses "du", since Swedish has no living formal form.
@@ -743,6 +804,7 @@ TERMINOLOGY (kept the same in every file):
 PUZZLE PLACEHOLDERS: In starBattle and sudoku, {{token}} is filled with an emoji, and in eclipse {{mark}} is ☀️ or 🌙. So hints say "{{token}} här" with no article, to avoid wrong en/ett agreement.
 
 LINES A NATIVE SWEDISH READER SHOULD CHECK:
+
 - fez.json meeting: "Neat" became "häftigt" ("Något häftigt." / "Häftigt säljer!" / "Var det häftigt?"), and "Two see more than one" became the Swedish saying "Fyra ögon ser mer än två".
 - fez.json donkeys: the "bray" joke uses "skria" ("Vi skriar mindre", "Jag pratar åsniska").
 - fez.json reading.sphinx.13: "Det förklarar fezen" (Hori and the fez).
@@ -764,6 +826,7 @@ SHARED SCRATCHPAD WARNING: The scratchpad folder is shared with the other transl
 GIT: I ran one read-only `git status` to confirm I had changed no tracked files. The only changes outside da/ are CHANGELOG.md and src/i18n/languages.ts, which were already modified before I started.
 
 TERMINOLOGY (one word each, used across all files):
+
 - difficulty names: Begynder / Junior / Ekspert / Mester / Troldmand. This follows nl's Beginner/Tovenaar; "Troldmand" is only the top level's name.
 - tomb = grav; floor = etage; level = bane; puzzle = opgave; hint = hjælp
 - trap = fælde; health = liv; stall = bod; camp = lejr; journey = rejse; expedition = ekspedition
@@ -775,6 +838,7 @@ TERMINOLOGY (one word each, used across all files):
 - the player is addressed as "du" throughout. The priest and pharaoh also say "du" (nl uses formal "U"); formal "De" felt too old-fashioned and confusing for children, so their stiffness comes from word choice instead.
 
 LINES A NATIVE DANISH READER SHOULD CHECK:
+
 1. Jokes I rewrote:
    - the "something neat / neat sells / was it neat?" running joke became "Noget fedt" / "Fedt sælger!" / "Var det fedt?" – "Det kan gå an."
    - the sturdy-cart "for sturdiness" joke became "For at gøre den stærkere" / "Kan du se? Stærk."
@@ -795,6 +859,7 @@ LINES A NATIVE DANISH READER SHOULD CHECK:
 TESTS: In the shared worktree, both commands (yarn vitest run src/i18n/languages.spec.ts -t "nb" and plurals.spec.ts -t "nb") fail before a single test runs. The failures come from other languages still being written in parallel, not from nb: languages.spec cannot find the folder public/locales/es-ES, which languages.ts lists, and plurals.spec breaks because da/ has no common.json yet. So that the nb result could be checked, I copied both specs unchanged into a scratch folder. I gave them only the en and nb locale folders and a two-line languages.ts listing just en and nb, then ran vitest there: 2 files, 13 tests, all passed, including "are exactly the locale folders" for that reduced set. I also ran my own comparison of all 8 files against en: 0 missing keys, 0 extra keys, 0 placeholder mismatches. The only values identical to English are names and words that are spelled the same in Norwegian (Junior, Hint, Portal, god names, Ankh, Sistrum, Obelisk, General, footer). Nothing outside public/locales/nb/ was touched.
 
 TERMINOLOGY (one word for each game term, used in every file):
+
 - Difficulty levels: starter=Nybegynner, junior=Junior, expert=Ekspert, master=Mester, wizard=Trollmann. Trollmann is used as a plain level name, the same way nl uses Tovenaar. It appears in compounds such as "Trollmann-reisene" and "{{tier}}-ekspedisjoner".
 - journey=reise, expedition=ekspedisjon, floor=etasje, tomb=grav, camp=leir, stall=bod, coins=mynter, trinkets=småtteri, map piece=kartbit, hieroglyph fragment=hieroglyfbit, mosaic piece=mosaikkbit, corridor=gang, corridor finder=gangfinner, seal=segl, lever=spak, key=nøkkel, trap=felle, cart=kjerre.
 - Puzzle language: hatched=skravert, rule out=stryk, square=rute, row/column=rad/kolonne, region=område, glyph/sign=tegn.
@@ -803,11 +868,13 @@ TERMINOLOGY (one word for each game term, used in every file):
 - The player is always addressed as "du". The priest and the pharaoh also say "du"; Dutch has them use the formal "U", but the Norwegian formal "De" is too old-fashioned for children. Their stiffness comes from word choice instead ("Du kan tre nærmere. Du har tredd nærmere.").
 
 JOKES RE-INVENTED:
+
 - Donkeys braying is "skryte", which also means "to boast". So "Vi skryter mindre" ("we bray/boast less") works as a pun in Norwegian.
 - "Two see more than one" became the Norwegian idiom "Fire øyne ser mer enn to" ("four eyes see more than two").
 - Ipi's "Hands off!" became "Fingrene av fatet!" (a set phrase, roughly "fingers off the dish").
 
 PLEASE HAVE A NATIVE SPEAKER CHECK:
+
 1. fez master_3: "Recent-ish" became "Sånn passe ny" ("sort of new"). Check that it sounds natural.
 2. fez reading.sphinx.13: "Ja ja. Det forklarer fezen." The pun on the name Hori is carried by the name itself, as in nl.
 3. common starBattle hints with "En {{token}} her" and "sin/sine {{token}}". The tokens are emoji (⭐🛖🪔🏪🪷🐈), so I used a common-gender article everywhere. Check that this reads well.
@@ -824,6 +891,7 @@ SPECS: Running the two commands as given in the real repo crashes before any tes
 UNCHANGED FROM ENGLISH ON PURPOSE: names (Fez, Ipi, Henut, Hori, Bastet, Wadjet, Seth, Ptah, Hathor), Ankh, Sistrum, footer, and pure-placeholder strings. Nothing was left untranslated.
 
 TERMINOLOGY (one word per game term):
+
 - Difficulty levels: Byrjandi / Nemi / Sérfræðingur / Meistari / Töframaður. Töframaður is the literal word for wizard, matching nl "Tovenaar". Compounds use a hyphen: "{{tier}}-ferðir".
 - Game terms: journey = ferð, expedition = leiðangur, level = borð, floor = hæð, corridor = gangur, tomb = grafhýsi, hieroglyph = myndtákn (writing = myndletur), coin = peningur/peningar, hint = vísbending, trap = gildra, camp = búðirnar, trinkets = glingur, mosaic = mósaík, map piece = kortabútur, waterskin = vatnsbelgur.
 - Detectors: compass = áttaviti, corridor finder = gangaleitari, detector = leitartæki.
@@ -835,6 +903,7 @@ GENDER: Icelandic adjectives and participles show gender, and the player's gende
 PLURAL _one FORMS: In Icelandic the "one" category also covers 21, 31 and so on. Some _one strings spell out "einn" or "ein" the way English spells out "one". That is only safe because puzzle counts stay small.
 
 LINES A NATIVE READER SHOULD CHECK:
+
 1. The joke at fez camp.homeEmpty: "Telur fyrir hvað?" / "Fæturna á mér…" is a rewrite.
 2. meeting.starter_1.16 uses the proverb "Betur sjá augu en auga" for "Two see more than one".
 3. wizard_3 (heavy vs light heart) is translated directly, þungt/LÉTT.
@@ -851,6 +920,7 @@ TESTS: I could not run the specs in the real worktree. Other agents had left hal
 COLLISION IN SHARED SCRATCHPAD: The scratchpad folder is shared by every parallel translator. My first chunk, written as scratchpad/c1.json, overwrote a c1.json that another language's agent had already put there. I then moved all my work into scratchpad/mt-i18n/. If some other locale's common.json comes out broken, that overwritten c1.json may be why.
 
 PLURALS: Maltese uses one/two/few/many/other. Every pluralised key has all five forms.
+
 - few (0 and 3-10) and two take the plural noun: "{{count}} muniti".
 - many (11-19) and other (20+) take the singular noun, as Maltese does after 11+: "{{count}} munita".
 - one is mostly spelled out ("biċċa waħda", "ħjiel wieħed").
@@ -858,12 +928,14 @@ PLURALS: Maltese uses one/two/few/many/other. Every pluralised key has all five 
 - many-forms use the plain digit plus a singular noun, without the "-il" link ("11-il"). A native reader may prefer it.
 
 TERMINOLOGY (kept the same across all files):
+
 - Difficulty levels follow how nl handles them: Prinċipjant / Junior / Espert / Mgħallem / Saħħar. Saħħar mirrors nl "Tovenaar" and is used only as a level name. Please check "Mgħallem" for master and "Saħħar" for wizard.
 - Game words: piramida, qabar/oqbra (tomb), teżor, kamp, spedizzjoni, vjaġġ (journey), sular (floor), muftieħ/imfietaħ (key), munita/muniti (coin), ħjiel/ħjiliet (hint), ġeroglifu, mużajk, biċċa tal-mappa, nassa (trap), Fez's stall = "il-mejda ta' Fez", "puzzle" kept as a loanword.
 - Grid words: ringiela (row), kolonna (column), kaxxa (square), żona (region), "bl-istrixxi" (hatched). Temple pillars in the cats skin are "pilastri", so they don't clash with kolonna.
 - Fez is a lizard: "gremxula".
 
 LINES A NATIVE READER SHOULD CHECK:
+
 - fez.json: the whole dialogue. Main ones: the meeting scene ("Mhux HEMM!", "WISQ wisq" for the stressed words); Ipi's "u dak il-Hori L-IEĦOR"; the pharaoh's "annimal redikolu"; Henut's arithmetic line; the closing "Dak jispjega l-fez", kept literal like nl.
 - Jokes I reworked rather than translated:
   - "the rattle comes free" → "Il-ħoss b'xejn"
@@ -881,6 +953,7 @@ SPECS: I could not run the two vitest specs as given. Other languages' folders a
 SCRATCHPAD CLASH: the scratchpad directory is shared with the other parallel translation agents. Before I noticed, I overwrote four files in its root: tab1.json, tab2.json, check.js and merge.js. Other agents may have been using those names; their output may need checking. My own work files are in the tr_turkce_z3/ subfolder.
 
 TERMINOLOGY (one word each, used across all files):
+
 - Difficulty levels: starter=Başlangıç, junior=Çırak, expert=Uzman, master=Usta, wizard=Dahi. I chose "Dahi" (genius) over "Büyücü"/"Sihirbaz" so the top level never reads as magic. A native reviewer might prefer the SmartGames Turkish names if those exist.
 - Other terms: expedition=keşif, journey=yolculuk, tomb=mezar, floor=kat, level=seviye, trap=tuzak, chest=sandık, coin=sikke, hint=ipucu, save=kayıt, map piece=harita parçası, hieroglyph=hiyeroglif, row/column=satır/sütun, square=kare, region=bölge, hatched=taralı, rule out=ele, shrine (lightbeam)=mabet, stall=tezgâh, trinkets=ufak tefek, ward key=koruma anahtarı.
 - Fez the hat is "fes" (fesim, fesine) and Fez the character stays "Fez". The ending line "That explains the fez" became "Eh. Fes meselesi de böylece anlaşıldı."
@@ -889,6 +962,7 @@ TERMINOLOGY (one word each, used across all files):
 TONE: the player is always "sen". The priest and the pharaoh speak to the explorer with formal "siz", and the explorer answers them the same way. This follows the Dutch "U" and fits their stiff characters. Fez, Ipi and Henut speak informally.
 
 LINES FOR A NATIVE READER TO CHECK:
+
 - fez wizard_treasure_tomb_b.2 ("Pek bir şeye benzemeyen bir malı satmam gerekse...") and the "Hesap Defteri"/"Kâtibin Defteri" names for the sumplete and papyrus sudoku puzzles.
 - Re-invented jokes: starter_2.5 receipts ("Tam da beklediğim gibi!"), junior_4.2 ("kıyıyı ona çarparak bulurlardı"), "İki göz bir gözden iyidir", the camel looking down on Fez ("tepeden bakıyor", which works as both literal and idiom), and "Takırtı bedava".
 - Sentences built around emoji placeholders ({{token}}, {{mark}}, {{glyph}}): Turkish case suffixes can't attach to an emoji, so I worded around them ("{{mark}} işaretini", "Bu satırda gereken {{token}} zaten var"). Check the eclipse hints loneMark and linePairing.differentTakesOne, and starBattle spanning.fromRows/fromCols.
@@ -904,6 +978,7 @@ Untranslated keys: 0.
 SPEC STATUS: in the real repo both specs currently fail before any test runs, and the cause is not Catalan. Other languages are still being written in parallel. languages.ts now lists "es-ES", but public/locales/es-ES does not exist yet, so languages.spec cannot load. public/locales/cy has no common.json yet, so plurals.spec cannot load. To check ca anyway, I copied both spec files unchanged into a sandbox in my scratchpad. The sandbox held only public/locales/en and ca, plus a languages.ts that lists just en and ca. Result there: 2 files, 13 tests, all passed. Re-run the real specs once the parallel locales are complete. A separate script also confirmed: no missing or extra keys in any of the 8 files, all plural sets complete, all JSON valid.
 
 TERMINOLOGY (kept the same across files):
+
 - Difficulty levels: Principiant / Júnior / Expert / Mestre / Mag. "Mag" follows nl "Tovenaar". It is only the top level's name. Elsewhere I write "de nivell X", e.g. "viatges de nivell Mag".
 - Puzzle words: pyramid floor = pis; journey = viatge; expedition = expedició; tomb = tomba; vault = cambra; trinkets/junk = andròmines; stall = parada; coin = moneda; map piece = tros de mapa; hint = pista; puzzle = trencaclosques; tableau = quadre; square/cell = casella; region = zona.
 - "Hatched" squares in hints = "assenyalat/assenyalada". Tiers: Pedra / Bronze / Plata / Or / Diví.
@@ -914,6 +989,7 @@ TERMINOLOGY (kept the same across files):
 - Star-battle hints put an emoji in {{token}}. I set Catalan articles by that emoji's gender: ⭐ estrella, 🛖 granja, 🪔 llàntia and 🏪 parada are feminine; 🪷 lotus and 🐈 gat are masculine.
 
 FOR A NATIVE READER TO CHECK:
+
 1. I avoided gendered adjectives aimed at the player, e.g. "Allà has estat una estona sense dir res" and "Segur?". Please look for any I missed.
 2. fez wizard_3: the heart and feather joke now hinges on "Lleuger. El vols LLEUGER."
 3. Camel lines: "look down on you" became "et miren per sobre l'espatlla".
@@ -935,6 +1011,7 @@ TERMINOLOGY (used the same in every file): piramidea, hilobia (tomb), altxorra (
 PLACEHOLDER GRAMMAR: Basque case endings make placeholders awkward. Where possible I kept them in a form that needs no ending (procession marks use "{{a}}: …" with event names in plain form). A few still carry a hyphenated ending ({{name}}-ra, {{last}}-raino, %{{pct}}-an); please check that these read well. The _one forms spell out "bat" ("Txanpon bat", "Pista bakar batekin"); the tests allow dropping {{count}} in plural keys.
 
 WORDPLAY TO CHECK:
+
 - The ending: "Hori" also means "that" in Basque. The Sphinx reveal "Hori." can read as "That.", and the closing line is "Horrek azaltzen du txapela" ("that explains the hat"). Ipi's line became "Hori izeneko horiek, ordea…" ("but those ones called Hori…"). A native reader could make more of this double meaning, or decide to soften it.
 - Ipi's "eleven deben" became "hamaika deben". "Hamaika" also means "lots", which happens to fit.
 - Explorer's "Wáy too much" became "GEHIEGI-GEHIEGI"; the voice's "Not thére!" became "HOR ez!".
@@ -942,6 +1019,7 @@ WORDPLAY TO CHECK:
 - wizard_3 heavy/light heart joke: "Arina. ARINA nahi duzu."
 
 LINES WORTH A NATIVE LOOK:
+
 - I wrote starBattle and pairPuzzle hints with templates, because most lines are near-repeats. One example: "Errenkada honek baditu jada bere {{count}} {{token}}" — {{token}} is an emoji there.
 - Canisters claimAria: "Esan {{capacity}} edukierako ontziak duela kopurua" ({{capacity}} is the capacity number, so this reads as "say the {{capacity}}-size vessel holds the amount").
 - Henut calls Fez "gazte" ("young one") for "young man", so it stays gender-neutral.
@@ -957,12 +1035,14 @@ SPEC STATUS: Both specs pass for gl, but I could only show that in a copy, not i
 Other checks: a script compared every key path with en and found nothing missing or extra (the arrays in procession.events were checked too). No stray non-Latin characters. Galician plurals are one/other (same as English), so the _one/_other keys are kept as they are. Only names (gods, Fez/Ipi/Henut, Ankh, Hori), symbols (???, arrows, …) and words spelled the same in Galician (Detector, Portal) are left as in English.
 
 TERMINOLOGY (used the same way in every file):
+
 - Difficulty levels: Principiante / Xúnior / Experto / Mestre / Mago. These match the es and pt-PT files and nl's "Tovenaar". {{tier}} is always written as "expedicións/viaxes de nivel {{tier}}" so it reads as a level name, never as magic. A native reader might prefer "Xenio" over "Mago" for wizard. If so, change it in common.difficulty, purchases.secondDonkey.opens and devLockEditor.worldCarved.
 - journey = viaxe; expedition = expedición; tomb = tumba; floor = piso; corridor = corredor; camp = campamento; stall = posto; trinkets/junk = bagatelas; coins = moedas; hint = Pista; puzzle = crebacabezas; glyph = símbolo; sign = signo/símbolo; hieroglyph = xeroglífico; map piece = anaco de mapa; key = chave; lever = panca; torch = facho; chest = baúl.
 - Puzzle boards: square = cadro; hatched = raiado; region = zona; farmstead/plot/holding = granxa/parcela/finca; flagstone = lousa; oil lamp = candil.
 - Name clash to check: in Galician the frog is "Rá", which looks almost like the god Ra. I kept the correct word (inventory a10 and the wizard tableau lines) but the two may confuse children. "Sapo" would avoid it, though it is technically a toad.
 
 LINES FOR A NATIVE READER TO CHECK:
+
 - The explorer and Fez use "tu". Henut speaks to both visitors at once with "vós" (Viñestes, Xa vos dixen).
 - fez.meeting.starter_1.16 ("Two see more than one") became the Galician saying "Catro ollos ven máis ca dous". The emphatic "thére"/"Wáy" became capitals: "AÍ non!" and "MOITÍSIMO".
 - fez.reading.sphinx.13 is a literal "Bueno. Iso explica o fez.", as in nl. I kept "Bueno" in casual dialogue because it is common spoken Galician. A purist may want "Ben" or "Vaia".
@@ -984,6 +1064,7 @@ A separate i18next check rendered every cy plural at every Welsh category and fo
 PLURALS: English only has _one/_other. I wrote _one as number + singular ("{{count}} darn arian") and _other as "{{count}} o + soft-mutated plural" ("{{count}} o ddarnau arian"). A script then copied _other into _zero/_two/_few/_many. Where the "o + plural" form read badly in puzzle hints, I used number + singular instead ("{{count}} lamp olew", "{{count}} sgwâr"); that is grammatical for any count. A native reader may prefer real dual/few forms with mutation ("dau ddarn", "tri darn"), but with digits mutation can't be shown cleanly.
 
 TERMINOLOGY:
+
 - Difficulty levels, following nl (wizard = Tovenaar): starter = Dechreuwr, junior = Iau, expert = Arbenigwr, master = Meistr, wizard = Dewin. "Dewin" means wizard but is used only as a level name, never as magic.
 - Expedition and journey are both "taith" (pl. teithiau). I picked one word so kids aren't confused; "alldaith" is the formal word for expedition if a split is wanted.
 - tomb = bedd, pyramid = pyramid, floor = llawr, level = lefel, puzzle = pos, hint = cliw, coin = darn arian, trinkets = trugareddau, treasure = trysor, artifact = arteffact in the collection tab but "trysor (arbennig)" in dialogue, map piece = darn o fap, mosaic = mosaig, camp = gwersyll, stall = stondin, chest = cist, key = allwedd, gate = giât, trap = trap, corridor = coridor, detector = synhwyrydd, compass = cwmpawd, hieroglyph = hieroglyff, seal = sêl.
@@ -992,6 +1073,7 @@ TERMINOLOGY:
 REGISTER: The player is addressed as "ti" everywhere. The priest and the pharaoh say "chi" to the explorers, and the explorers say "chi" back, matching the Dutch "u". Fez and Henut use "ti". The spoken style is southern-leaning (e, nawr, dere, mas, 'nôl, bant). A northern reviewer might prefer o/fo, rŵan, tyrd, allan.
 
 LINES FOR A NATIVE TO CHECK:
+
 - meeting.starter_1 and end: "Something neat" became "Rhywbeth gwych", with Fez answering "Mae gwych yn gwerthu!" and later "Oedd e'n wych?" / "Fe wnaiff y tro." Check that the joke lands.
 - tomb.juniorFixed.12, "Basech. A finnau hefyd.": Henut switches to "chi" toward Fez on purpose, to make the moment feel more formal.
 - tomb.master.13, "Mae e'n WYRDD, y creadur hurt!"
@@ -1009,6 +1091,7 @@ Spec status: plurals.spec -t "ga" passes. languages.spec stops before any test r
 Difficulty level names, used the same way everywhere: starter=Tosaitheoir, junior=Sóisear, expert=Saineolaí, master=Máistir, wizard=Draoi. "Draoi" (druid/wizard) mirrors nl "Tovenaar" and is used only as a level name ("turais Draoi").
 
 Recurring terms:
+
 - pyramid=pirimid, tomb=tuama, journey/expedition=turas
 - treasure=stór (Treasures tab = Seoda), chest=cófra, coin=bonn, key=eochair
 - trap=gaiste, corridor/passage=pasáiste, floor=urlár, camp=campa
@@ -1019,6 +1102,7 @@ Recurring terms:
 Plurals: Irish needs one/two/few/many/other. Where a noun follows {{count}}, the sound change is written in: bonn (bhonn/mbonn/bonn), píosa, páirt, pasáiste, cearnóg, ceapach, cat, ciaróg, mumaí, doras, beart. Hours use "uair/huaire/n-uaire an chloig". When the noun is an emoji {{token}} or a placeholder, the forms are the same. A few _one forms spell out the number ("Beart amháin fágtha", "Doras amháin in úsáid"), which the spec allows.
 
 Lines for a native reader to check:
+
 1. fez.json is spoken dialogue. Check that it sounds natural, especially the jokes:
    - wizard_3: "Éadrom. Ba cheart dó a bheith ÉADROM."
    - the camel and donkey lines ("Grágaíl. Is caint í, ach níos airde.")
@@ -1040,6 +1124,7 @@ The specs have not been run in the repo yet. They pass 13/13 in an isolated copy
 Every one of the 2611 strings is translated. A few are the same as English on purpose: god names, Hori, "Junior", "Master", "Hint", the footer, "×{{count}}", "{{letter}}, {{kinds}}", "per". I translated mostly from the Dutch, which is very close to Frisian, and checked the English for structure.
 
 Words used the same way everywhere:
+
 - Difficulty levels (following nl Beginner/Junior/Expert/Meester/Tovenaar): Begjinner / Junior / Ekspert / Master / Tsjoender. "Tsjoender" is only the level name, as nl uses "Tovenaar".
 - Player address: do/dy/dyn, with spoken forms like bisto, witsto, kinst, hast, witst.
 - The priest and the pharaoh say formal "jo" to the explorer, matching nl "U". Ipi, Henut and Fez say "do".
@@ -1047,6 +1132,7 @@ Words used the same way everywhere:
 - Animals: ezel, kamiel, karre (cart), banier (banner).
 
 Lines a native Frisian reader should check:
+
 1. "Fâlstrik" for trap. Is "strik" or "fâle" more natural?
 2. "Tsjoender" as a level name. Does it read too much like real magic for children?
 3. "arsearre" for "gearceerd" (shaded). It is a loanword and may sound odd; maybe "skaad" or "griis makke"?
@@ -1076,6 +1162,7 @@ TEST STATUS: I could not run the two specs in the real repo. Other languages are
 Strings left the same as English on purpose: names (Ra, Anubis, Fez, Hori, Ipi, Henut and so on), Ankh, Sistrum, Obelisk, Junior, Master, Level, Portal, "per", "Oh.", "…", and the footer. They are names or are also ordinary Indonesian words.
 
 TERMINOLOGY:
+
 - Player is addressed informally with "kamu/-mu". Characters say "aku" with light spoken particles (kok, sih, lho, ya). I avoided Jakarta slang (gue/lo) so any Indonesian child can read it.
 - Difficulty levels: Pemula / Junior / Ahli / Master / Penyihir. "Penyihir" follows the Dutch "Tovenaar" (a literal "wizard"), but it can sound magical. A native reviewer might prefer to keep the loanword "Wizard". Expedition names follow the same pattern, e.g. "perjalanan Ahli".
 - Recurring game words: perkemahan (camp), lapak (stall), ekspedisi, perjalanan (journey), makam (tomb), lorong (corridor), lantai (floor), potongan peta (map piece), pecahan hieroglif, potongan mosaik, pernak-pernik (trinkets), harta (treasure), petunjuk (hint), kotak (puzzle square), baris/kolom (row/column), diarsir (hatched), tanda (sign), stempel (seal ring), segel (seal on a door or gate), imam besar (high priest), firaun, juru tulis (scribe), Ruang Paling Suci (Inner Sanctum), Aula Osiris, Ruang Harta Para Dewa, Alam Kekuatan Semesta.
@@ -1083,6 +1170,7 @@ TERMINOLOGY:
 PLURAL KEYS TO CHECK: some English _one forms said something different from _other. For example, fields "This row is already worked", or canisters goal_one, which talks about a single measure. Indonesian has only _other, so I wrote one sentence that has to read well for any count. Please check canisters.goal.*_other: it says "satu per satu" (one by one), which sounds slightly odd when there is only one amount to measure.
 
 LINES A NATIVE READER SHOULD CHECK:
+
 - fez.json arrival.wizard_3: the heavy-versus-light heart joke ("Ringan. Jantungnya harus RINGAN.").
 - tomb.junior/juniorFixed: Henut's "Rahasia itu cuma sebutan orang untuk berhitung…" line.
 - meeting.starter_1: the stressed words ("Jangan DI SITU!", "Kemahalan BANGET").
@@ -1096,3 +1184,251 @@ OTHER: rushHour market "sledge" is "kereta luncur". The procession event names i
 ## es-ES
 
 Adapted from `es` (Latin American): vosotros in the plural dialogue (Henut, the priest, the pharaoh), planta for a pyramid floor and suelo for the ground, sala for rooms, coger for taking, tirar de for levers, pequeño, manta, cuenco, pendiente, lápiz de ojos, encender, hacerse daño, volver andando; five lines moved to the Spain-style perfect (spot check, not exhaustive). Check: "capte la primera luz" (capstone), "monte" (cave hill), "cuenquito", the vosotros imperatives "Llevádsela" and "Traed", and the planta/suelo split in the hint strings.
+
+# Junior round
+
+Lines from the junior translation round (controls, choose-not-tap rules, travel card, formula wall) for a native reader. Delete a language’s section once a native speaker has read it.
+
+### hr
+
+- `common:saveCard›*`: "Putna kartica"; "kartica" because "karta" already means map.
+- `fez:formula›junior›gift›5›ipi`: "_Ipi dade kruha._" uses the archaic aorist to echo "Gladnome dadoh kruha". Check that it reads well.
+- `fez:formula›junior›gift›3/4`: reworked "Giving. Away." beat ("…Poklanjanju. Stvari.").
+- `fez:formula›junior›gift›6›fez`: "Vidiš li ti to?" present tense on purpose, so the explorer has no gender.
+
+### sr
+
+- Inscription lines use _underscores_ instead of the „…“ quotes the file used (e.g. `fez:reading›expert›1›explorer`).
+- `fez:reading›master›2›fez`: "које си поклонио" became "које је неко поклонио", matching the English.
+- `common:saveCard›*`: "Путна картица"; save = "сачувана игра".
+- `fez:formula›junior›gift›3/4`: "…Поклањању. Ствари."
+
+### bs
+
+- `fez:reading›master›2›fez`: "koje si poklonio" became "koje je neko poklonio", matching the English.
+- `common:loot›youReceived`: "Dobio si", masculine generic like "Našao si".
+- `inventory:offerings›o2›name`: "Lan"; a reviewer might prefer "Platno".
+
+### mk
+
+- `common:loot›youReceived`: "Доби" (aorist, no gender, like "Најде").
+- `fez:formula›junior›gift›3/4`: joke simplified ("…Подарување.").
+- `common:saveCard›codes_other`: "{{count}} кода" (counting form); check for all numbers.
+
+### bg
+
+- `common:saveCard›*`: "Пътна картичка"; "пътна карта" would read as "roadmap".
+- `common:loot›youReceived`: "Получаваш", present tense to avoid gender.
+- `common:saveCard›writeFailed/writeLost`: repeats "запис"; check that it flows.
+
+### fr
+
+- `common:ui›leave` / `ui›stay` ("Partir" / "Rester"): the button names inside `confirmLeaveSite` must match the buttons.
+- `fez:formula›junior›gift›4›ipi`: "…Donner. Pour rien." adapts "…Giving. Away."; check the joke lands.
+- `common:lightbeam›rules›tap`: kept "pièce" for a puzzle piece, though the notes reserve "pièces" for coins.
+- `common:hidato›controls›move` / `carry`: "haut et bas penchent vers la gauche"; check it reads clearly.
+- Controls labels are lowercase infinitives ("choisir une case").
+
+### es
+
+- `common:ui›stay` = "Quedarse", `confirmLeaveSite` "regresar caminando": check the button wording.
+- `fez:formula›junior›gift›4›ipi`: "…Regalar. Gratis.", adapted joke.
+- `common:hidato›controls›*`: "tomar la fila"; check it reads naturally.
+- `inventory:offerings›o4›name`: "Barca", matching procession.
+
+### es-ES
+
+- Uses coger, pulsar, suelo, "volver andando", "Has recibido", "Vale". Check `common:ui›confirmLeaveSite` and `fez:formula›junior›gift›5/6`.
+- Some lines keep the simple past from es ("que pusiste"), as the file already does; a Spain reader may prefer the perfect.
+
+### ca
+
+- Controls labels are lowercase imperatives ("tria una casella"), matching ca's buttons.
+- `fez:formula›junior›gift›5›ipi`: "_Ipi va donar pa._" without the personal article; should it be "l'Ipi"?
+- `common:hidato›controls›move`: "amunt i avall tiren cap a l'esquerra".
+
+### gl
+
+- `common:ui›stay` = "Quedar" as a button; "Controis" for `ui›controls`.
+- `fez:formula›junior›gift›4›ipi`: "…Regalar. De balde.", adapted joke.
+- `journeys:junior_1›description`: "Brañas de canas" for reed marshes.
+
+### pl
+
+- `fez:formula›junior›gift›4›ipi` "…Roz. Dawaniu.": split word, like "Giving. Away."; check the joke lands.
+- `common:saveCard›title` "Karta podróżna": new term; check it doesn't clash with podróż (journey).
+- `fez:formula›junior›gift›6›fez` "Widzisz to?": present tense so the explorer's gender doesn't show.
+
+### cs
+
+- `common:story›formula›pick` "Dej darovaný znak…": reworded so the player's gender doesn't show.
+- `fez:animal›forSale›3›fez` "Originál víc žere.": "žere" is deliberate; check the tone.
+- `common:hidato›controls›move/carry`: hex-grid arrow wording needs a native check.
+- `journeys:junior_2/4`: "Dér el-Medína", "Faru"; check against Czech convention.
+
+### sk
+
+- `common:story›formula›pick` "Daj darovaný znak…": reworded to avoid gender.
+- `common:canisters›rules›claim` "táto": keeps the existing feminine label, wrong for the džbán/kalamár skins.
+- `journeys:junior_4` "Maják na Fare": check the place-name form.
+
+### hu
+
+- `common:ui›leave/stay` "Távozom"/"Maradok": first person, like the existing ui.prompt strings.
+- `fez:formula›junior›gift›3/4`: "…Oda. Adunk." split-word joke; check it reads naturally.
+- Controls strings are verbal nouns ("mező kiválasztása", "megfogás"); check they suit a short list.
+
+### sl
+
+- `fez:formula›junior›gift›1›explorer` "kruh potrebujeva": dual "we" for explorer and Fez.
+- `journeys:junior_1`: end reworded ("ki ti najprej pade na misel") so the reader's gender doesn't show.
+- New terms: `ui›leave/stay` "Odidi"/"Ostani", `ui›controls` "Upravljanje", `saveCard›title` "Popotna kartica".
+
+### de
+
+- `common:collection›categories›offerings`: "🍞 Opfergaben" (sacrificial); the Dutch has the plainer "Gaven". "Gaben" may fit better.
+- `fez:formula›junior›gift›4›ipi`: "…Ver. Schenken." adapts "Giving. Away."
+- `common:futoshiki/sudoku›controls›erase/choose`: "radieren"; the existing UI button says "Löschen".
+- `common:canisters›controls›press`: check that "nennen" (for claim) is clear.
+
+### fy
+
+- `common:futoshiki/sudoku›controls›choose`: "de gom" for eraser; unsure it is the usual Frisian word.
+- `common:constellation›rules›*›enter`: "Lûk in line" / "Grou in kanaal"; check the verb forms.
+- `common:saveCard›*`: "fuortgong" for the save; check it reads naturally.
+
+### da
+
+- `common:ui›controlsHint`: "hjælp", matching the existing UI word.
+- `common:saveCard›writeLost`: "er måske ikke helt"; check it reads naturally.
+- `fez:formula›junior›gift›4›ipi`: "…Give. Væk."
+
+### nb
+
+- `inventory:offerings›o2›name`: "Lin"; "Lintøy" may be clearer for children.
+- `common:ui›controls`: "Styring".
+
+### sv
+
+- `fez:formula›junior›gift›2›ipi`: "ni", as Ipi addresses explorer and Fez together.
+- `common:ui›controls`: "Kontroller"; "Styrning" is the alternative.
+- `journeys:junior_4›description`: check that "den" agrees with "Faros".
+
+### ru
+
+- `fez:formula›junior›gift›3/4`: joke rebuilt as "…Отдают. Даром."; check it lands.
+- `fez:formula›junior›gift›6`: "Нет, ты это видишь?" so the explorer is not gendered.
+- `fez:animal›forSale›3`: "Настоящий ест побольше."; check the drawing-vs-real-animal joke.
+- `common:loot›youReceived`: "Ты получаешь" (present, avoids gender).
+
+### uk
+
+- Gift joke: "…Віддають. Задарма."
+- `gate›wardDescription›junior`: "лише її ключ"; no fixed "ward key" term in uk, check against the other tiers.
+- `common:saveCard›codes_other` "коду", `confirm_other` "подорожі" (fractional counts); check.
+
+### be
+
+- The ў/у rule after vowels needs a native check ("і ўніз", "уверх-управа або ўніз-управа").
+- `fez:formula›junior›gift›6`: "Ты бачыў?" masculine, following the be notes.
+- Gift joke: "…Аддаюць. Задарма."; check.
+
+### el
+
+- `fez:formula›junior›gift›3/4`: "…Να χαρίζεις."; check the joke.
+- Control labels are lowercase imperatives ("διάλεξε τετράγωνο", "γράψ' τον"); check the style.
+- `common:collection›categories›offerings`: "Προσφορές"; possibly "Αφιερώματα".
+
+### tr
+
+- `fez:formula›junior›gift›3/4`: "…Başkasına. Vermek."; check the joke.
+- `common:ui›confirmLeaveSite`: "Ayrıl'a … Kal'a bas", suffixes on the button names.
+- `common:saveCard›title`: "Yol kartı"; "Seyahat kartı" may read more naturally.
+
+### pt-BR
+
+- `fez:formula›junior›gift›3/4/6`: joke rebuilt around "de graça" ("…De. Graça."); check it lands.
+- `common:pairPuzzle/starBattle›controls›sweep`: "descartar uma fileira"; glossary row is "linha", check "fileira".
+- `inventory:offerings›o1›description`: check "deu alguma coisa de graça uma única vez".
+
+### pt-PT
+
+- `fez:formula›junior›gift›4›ipi`: "…Dar. Aos outros." is weaker than the English; a native reader may find better.
+- `common:hidato›controls›right/move`: terse direction wording; check it reads clearly.
+
+### it
+
+- `fez:formula›junior›gift›3/4`: "…Regalare. Le cose."; check the joke.
+- `common:canisters›controls›press`: check "dichiara" for "claim".
+- `common:collection›categories›offerings`: "Offerte"; "Offerte votive" would be more specific.
+
+### ro
+
+- `common:ui›leave`: "Pleacă" as a button label; check.
+- `common:story›formula›wrong`: "Nu săpat greșit — nesăpat deloc." unusual construction; check.
+- `inventory:offerings›o2›name`: "In" (linen) may be too short or ambiguous.
+
+### mt
+
+- Lower confidence: every mt line is worth a native read.
+- `inventory:offerings›o2›name`: "Kittien" may mean only the flax plant; check first.
+- `fez:formula›junior›gift›3/4/6`: "…Tagħti. B'xejn."; check the joke.
+- `common:constellation›rules›ceiling›enter`: "Iġbed kurdun" for "stretch a cord".
+
+### eu
+
+- `common:ui›leave/stay` "Irten"/"Geratu": "Irten" so Leave differs from Cancel ("Utzi"); check the pair.
+- `common:collection›categories›offerings` "Eskaintzak" (religious offerings); confirm.
+- `fez:formula›junior›gift›4›ipi` "…Eman. Dohainik."; check the joke.
+
+### cy
+
+- Soft mutations after "Dewisa" (ddarn, res, lain, lechen, ddrych, floc, garreg, lestr): please check.
+- `common:saveCard›confirm_*`: "gêm" for the save, since "taith" is both expedition and journey.
+- Short control verbs ("pwysa fe", "ysgrifenna fe", "troi fe") and `ui›controls` "Rheolyddion": check.
+
+### ga
+
+- `common:saveCard›confirm_*`/`codes_*`: initial mutations written in, like money_*; "Dul chun cinn" for expedition.
+- `common:gate›wardDescription›junior`: check the "suaitheantas mná uaisle … a heochair chosanta" phrasing.
+- `fez:formula›junior›gift›4›ipi` "…A thabhairt. Uait."; check the joke.
+
+### sq
+
+- `common:collection›categories›offerings` "Blatime"; check the word.
+- `common:canisters›controls›press`: "claim" rendered as "say 'this one'".
+- `fez:formula›junior›gift›4›ipi` "…Dhënien. Falas."; check the joke.
+
+### id
+
+- `common:gate›wardDescription›junior`: "ward key" = "kunci segelnya", following the starter line.
+- `common:canisters›controls›press`: check the "claim" wording ("pilih sebagai jawaban").
+- `fez:formula›junior›gift›4›ipi` "…Memberi. Cuma-cuma."; check the joke.
+
+### is
+
+- `fez:formula›junior›gift›3/4`: "…Gefa. Frá sér."; check it lands.
+- `fez:animal›forSale›3›fez` "Frumritið étur meira." puns on "original document"; check it reads as a joke.
+- `common:hidato›controls›move/carry`: "upp og niður halla til vinstri" may read stiffly.
+
+### fi
+
+- `common:ui›controls` "Ohjaus"; "Ohjaimet" or "Näppäimet" are alternatives.
+- `common:constellation›rules›default›enter`: mixed forms ("uudelleen saat tuplaviivan, ja vielä kerran viiva poistuu").
+- `common:canisters›controls›press`: "ilmoita" for "claim".
+
+### et
+
+- `common:saveCard›confirm`: "retk" is both expedition and journey ("selle seadme retk … ({{count}} retk)").
+- `inventory:offerings›o2›name` "Linane riie"; a shorter word may be better.
+
+### lv
+
+- `fez:formula›junior›gift›3/4`: "…Atdod. Prom." ("atdod prom" is colloquial).
+- `common:collection›categories›offerings` "Ziedojumi"; "Upuri" is the alternative.
+
+### lt
+
+- `common:canisters›rules›grain/natron›moves`: existing "suberum" changed to "subertum" (believed typo); please confirm.
+- `fez:reading›expert›1›explorer`: kept the existing long wall line.
+- `common:saveCard›confirm_many`: "kelionės", same as `_few`.

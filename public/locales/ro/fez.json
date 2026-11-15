@@ -3,15 +3,12 @@
   "welcome": "Egipt! Chiar sunt aici.",
   "welcome2": "Și harta asta… am dat mult prea mulți bani pe ea. Sper să fie bună.",
   "welcome3": "Haide. Să vedem unde e crucea aia.",
-
   "pyramidIntro": "Pe pietrele astea sunt numere. Și lipsesc câteva…",
   "pyramidIntro2": "Stai. Fiecare piatră e suma celor două de sub ea! Da — și aici!",
-
   "pyramidBlockedBlocks": "Hei, ce-i asta? Blocurile alea sunt sigilate. Nu-și arată numărul!",
   "pyramidBlockedBlocks2": "Nu-i nimic. Uită-te la blocurile din jur — din ele îl poți afla.",
   "pyramidBlockedBlocks3": "Doar că nu-l poți scrie. Numărul ăla trebuie să-l ții minte.",
   "pyramidBlockedBlocks4": "Haide, ai ajuns până aici. Poți s-o faci!",
-
   "levelCompleted": "Ha! Se deschide! Hai, înăuntru.",
   "exitPillar": {
     "1": {
@@ -22,24 +19,18 @@
   },
   "expeditionCompleted": "Bravo, ai terminat expediția!",
   "expeditionCompleted2": "Te așteaptă o expediție nouă.",
-
   "tombTutorial": "Ooo, scris! Putem să-l citim? Cu hieroglifele pe care le-am găsit… poate!",
   "tombTutorial2": "Ia uite, socoteli cu semne în ele! Vezi locurile goale? Acolo intră hieroglifele. Ale tale, de jos.",
   "tombTutorial3": "Socotelile mici îți arată când un semn e pus bine. Așa aflăm care semn unde merge.",
   "tombTutorial4": "Ai completat tot? Atunci apare un lacăt cu cifru. Socoteala mare e codul — și mormântul se deschide!",
-
   "hieroglyphUnlock": "Avem un obiect special — cu el putem scrie pe unul dintre blocurile sigilate!",
-  "hieroglyphUnlock2": "Atinge o piatră care strălucește, apoi trage obiectul pe ea ca s-o deblochezi. Un bloc pe piramidă.",
-
+  "hieroglyphUnlock2": "Alege o piatră care strălucește, apoi du obiectul la ea ca s-o deblochezi. Un bloc pe piramidă.",
   "errorHighlightTutorial": "Comoara pe care am găsit-o are un truc tare — dacă scrii un răspuns greșit, o greșeală se aprinde roșu!",
   "errorHighlightTutorial2": "Doar un bloc se aprinde odată, deci tot e greu. Dar te ajută să știi unde să cauți!",
-
   "earlyFeedbackTutorial": "Vezi blocurile de control? Se fac verzi sau roșii pe măsură ce le completezi — afli pe loc!",
   "earlyFeedbackTutorial2": "Sprijină-te pe ele când rezolvi. Dacă unul se face roșu, ceva de lângă el trebuie reparat.",
-
   "notEnoughHieroglyphs": "Poți opri oricând expediția asta dacă te întorci la ecranul de călătorie.",
   "notEnoughHieroglyphs2": "Putem întrerupe expediția ca să căutăm în altă parte hieroglifele care ne mai lipsesc.",
-
   "tombLoot": "Uau, prima noastră comoară! Bravo!",
   "mapPiece": "Uite! Asta DA hartă. Veche de-a binelea! Valorează mai mult decât amândouă ale noastre la un loc!",
   "mapPiece2": "E doar o bucată, totuși. Fiecare expediție de pe aici ascunde una, și împreună arată spre un mormânt.",
@@ -47,39 +38,30 @@
   "mapComplete2": "Acolo, unde se întâlnesc toate liniile. Acolo e un mormânt.",
   "mapComplete3": "Acum e în călătoriile noastre. Mergem să vedem?",
   "mapPiece3": "Ține socoteala în lista de expediții. Eu sigur o țin!",
-
   "mosaicIntro": "Ooo, sticlă colorată! Uite cum prinde lumina — așa ceva nu arunci!",
   "mosaicIntro2": "E o bucată dintr-o imagine. O fereastră întreagă de sticlă, și fiecare bucată găsită aduce înapoi o părticică din ea.",
   "mosaicIntro3": "Tu n-ai o tabără pe undeva? Ia-le cu tine și le punem cap la cap acolo. Vreau să văd ce iese!",
   "mosaicReminder": "Pst! Bucățile de sticlă încă zornăie în traista noastră. Le punem în fereastra din tabără?",
-
   "mosaicStarter": "O pisică în prag și un șarpe care o ia la fugă. Asta merita un bol cu lapte.",
   "mosaicStarter2": "Egiptenii iubeau pisicile tocmai pentru asta — prindeau șerpii și șobolanii care intrau în grâne.",
   "mosaicStarter3": "Le iubeau atât de mult încât au făcut din una o zeiță. Bastet. Ocrotitoarea casei, a ușii și a tuturor celor care dorm în spatele ei.",
-
   "mosaicJunior": "Uită-te la mâna lui — cineva îi arată cum să țină condeiul.",
   "mosaicJunior2": "Cel cu cap de pasăre e Thot. Scrisul, număratul, ținutul socotelilor — toate sunt ale lui.",
   "mosaicJunior3": "Ibisul pe care l-am urmărit pe râu? E pasărea lui. Și fiecare număr pe care l-am scris pe un zid e tot al lui.",
-
   "mosaicExpert": "Lumina aia nu e noroc. Au construit toată sala ca să cadă exact acolo, în dimineața potrivită.",
   "mosaicExpert2": "Soarele e Amon-Ra — cel ascuns și lumina pe care o vede toată lumea. Amândouă deodată.",
   "mosaicExpert3": "Cine poate măsura cerul atât de exact poate măsura orice. Le-am tot rezolvat socotelile tot drumul.",
-
   "mosaicMaster": "Piele verde și grâu care crește direct din el. E făcut special.",
   "mosaicMaster2": "Osiris. A fost omorât și pus la loc bucată cu bucată, iar acum el e ce se întoarce în fiecare an, când râul inundă câmpurile.",
   "mosaicMaster3": "Aici jos asta e toată ideea: mort nu înseamnă terminat. Ce gând vesel pentru un mormânt, nu?",
-
   "mosaicWizard": "O inimă pe o parte. O pană pe cealaltă. Și stau în echilibru.",
   "mosaicWizard2": "Pana e Maat — adevărul, echilibrul, felul în care ar trebui să fie lucrurile. Dacă inima e mai grea decât pana, nu treci de ușă.",
   "mosaicWizard3": "Șacalul care ține cântarul e Anubis. El e cel care te aduce aici.",
-
   "mosaicFinale": "Dă-te puțin înapoi. Uită-te la ce am tot scos din piramidele alea.",
   "mosaicFinale2": "Fiecare bucată e o parte din el — cel care ține cântarul drept. Ne-a privit tot drumul.",
   "mosaicFinale3": "Asta e socoteala lui despre noi. Și aș zice că iese la egalitate.",
-
   "shopFirstVisit": "Aha, am ajuns. Taraba mea — doar ți-am zis că eu sunt aici pentru negoț.",
   "shopFirstVisit2": "Tot ce e pe tejgheaua asta am cărat eu de undeva. Aia e de acum două morminte.",
-
   "shopArrival": "Aha, taraba mea! Stai să întind ce am adunat pe drum.",
   "shopArrival2": "Lucrurile rare costă cel mai mult, dar îți dau bani pe orice mărunțiș pe care îl cari.",
   "arrival": {
@@ -110,13 +92,10 @@
         "fez": "Oo, asta îmi place. Aici au învățat să scrie! Semn cu semn, pe cioburi de oale — papirusul era mult prea scump pentru copii."
       },
       "2": { "explorer": "Exersau pe gunoaie?" },
-      "3": {
-        "fez": "Pe ce aveau! Și dacă înveți destule semne, deodată un zid nu mai e doar decor."
-      },
+      "3": { "fez": "Pe ce aveau! Și dacă înveți destule semne, deodată un zid nu mai e doar decor." },
       "4": { "explorer": "Sfinxul ăla… vreau să mă mai uit o dată la el." },
       "5": { "fez": "Nu încă. Curând." }
     },
-
     "junior_1": {
       "1": { "fez": "Se întorceau în fiecare an odată cu revărsarea, aproape în aceeași zi." },
       "2": { "fez": "Așa că oamenii au început să numere zilele dintre ele. De aici vine calendarul — de la păsări." },
@@ -142,7 +121,6 @@
       "3": { "explorer": "Cum găsești ceva pe aici fără un far?" },
       "4": { "fez": "Întrebi pe cineva care a mai fost. Asta e toată meseria mea." }
     },
-
     "expert_1": {
       "1": {
         "fez": "Vreo șaizeci de morminte săpate într-o singură vale, și toate au fost deschise înainte să ajungem noi."
@@ -171,7 +149,6 @@
       "3": { "explorer": "Și a mers?" },
       "4": { "fez": "Ea stă încă în picioare, el nu. Depinde ce înțelegi prin „a mers”." }
     },
-
     "master_1": {
       "1": { "fez": "Două milioane de blocuri. Le-a numărat cineva." },
       "2": { "explorer": "Le-a numărat cineva?" },
@@ -199,7 +176,6 @@
       "2": { "explorer": "Henut ar fi furioasă." },
       "3": { "fez": "Henut și-ar lua notițe." }
     },
-
     "wizard_1": {
       "1": { "fez": "Noaptea, soarele coboară sub lume și răsare în partea cealaltă. Asta e toată credința." },
       "2": {
@@ -238,7 +214,6 @@
       "3": { "fez": "Pentru oricine se uită. Asta era ideea — n-a fost niciodată pentru omul dinăuntru." }
     }
   },
-
   "tomb": {
     "starter": {
       "1": { "ipi": "Hei! Jos labele! Ăla e ulciorul meu!" },
@@ -359,7 +334,6 @@
       "3": { "fez": "A fost o imagine tot timpul." }
     }
   },
-
   "cave": {
     "starter_treasure_tomb": {
       "1": { "fez": "O peșteră! Pe hartă era ușa unei pivnițe, și asta e un deal întreg!" },
@@ -409,7 +383,6 @@
       "3": { "fez": "Habar n-am. Asta e partea cea mai rea." }
     }
   },
-
   "pillar": {
     "starter_treasure_tomb": {
       "1": { "fez": "Atâtea manete și uși, pentru o pivniță!" },
@@ -451,7 +424,6 @@
       "3": { "fez": "Și aproape am avut dreptate." }
     }
   },
-
   "cavern": {
     "starter_treasure_tomb": {
       "1": { "fez": "Ia uite! O piramidă, sub pământ! Pentru un negustor!" },
@@ -498,7 +470,6 @@
       "3": { "fez": "Al hărții, da. Ciudat. Credeam că o să mă simt mai bine." }
     }
   },
-
   "camp": {
     "firstHome": {
       "1": { "fez": "Asta e tabăra ta? Un foc și un cufăr?" },
@@ -556,10 +527,11 @@
       "3": { "fez": "Ei. Eu mai mult am arătat cu degetul." }
     }
   },
-
   "animal": {
     "forSale": {
-      "1": { "fez": "Uite ce am la tarabă! Acum fac și transport." }
+      "1": { "fez": "Uite ce am la tarabă! Acum fac și transport." },
+      "2": { "explorer": "Eu văd doar un desen." },
+      "3": { "fez": "Originalul mănâncă mai mult." }
     },
     "boughtDonkey": {
       "1": { "fez": "Vândut! Un măgar. Încăpățânat, dar duce orice." },
@@ -570,10 +542,7 @@
       "1": { "fez": "Nu mergem atât de departe cu toate lucrurile astea. Ne trebuie un măgar." },
       "2": { "fez": "Și ghici cine are unul? Eu. La taraba mea din seiful lui Henut." }
     },
-    "throughDonkey": {
-      "1": { "explorer": "E de acord." },
-      "2": { "fez": "Azi. Mai întreabă-l și mâine." }
-    },
+    "throughDonkey": { "1": { "explorer": "E de acord." }, "2": { "fez": "Azi. Mai întreabă-l și mâine." } },
     "arrivesDonkey": {
       "1": { "fez": "Uite-l! A ajuns înaintea noastră." },
       "2": { "explorer": "A găsit și focul." },
@@ -688,7 +657,6 @@
       "3": { "fez": "Nu. Nici nu trebuie." }
     }
   },
-
   "bond": {
     "starter": {
       "1": { "fez": "Asta a fost repede." },
@@ -728,7 +696,6 @@
       "3": { "fez": "Atâția ani au trecut oamenii pe lângă el. Atâția ani!" }
     }
   },
-
   "reading": {
     "junior": {
       "1": { "explorer": "Aici e un rând pe care acum îl pot citi." },
@@ -737,15 +704,15 @@
       "4": { "explorer": "Era și în cel de dinainte. Nu știam că sunt cuvinte." }
     },
     "expert": {
-      "1": { "explorer": "Al doilea rând. Apă celui însetat." },
-      "2": { "fez": "Pâine, și acum apă. Cineva voia tare mult să fie ținut minte ca darnic." },
+      "1": { "explorer": "Al doilea rând. _Haine celui gol._" },
+      "2": { "fez": "Pâine, și acum haine. Cineva voia tare mult să fie ținut minte ca darnic." },
       "3": { "explorer": "Toți îl au. Fiecare zid, fiecare mormânt, aceleași două rânduri." },
       "4": { "fez": "Atunci ori erau toți darnici, ori asta e ce trebuia să spui." },
       "5": { "explorer": "Sau asta e după care erau cântăriți." }
     },
     "master": {
-      "1": { "explorer": "Haine celui gol. Al treilea rând." },
-      "2": { "fez": "Pâine, apă, haine. E o listă de lucruri date altora." },
+      "1": { "explorer": "_Apă celui însetat._ Al treilea rând." },
+      "2": { "fez": "Pâine, haine, apă. E o listă de lucruri date altora." },
       "3": { "explorer": "În mormântul unui om care a luat totul cu el." },
       "4": { "fez": "…Da. Am observat și eu." }
     },
@@ -765,7 +732,6 @@
       "13": { "fez": "Ei bine. Asta explică fezul." }
     }
   },
-
   "altar": {
     "refused": {
       "1": { "priest": "Nu." },
@@ -776,7 +742,6 @@
       "4": { "priest": "Aștept de trei mii de ani. Nu mă las păcălit tocmai în ultima săptămână." }
     }
   },
-
   "meeting": {
     "starter_1": {
       "1": { "voice": "Hei! Nu ACOLO! Uită-te pe unde calci!" },
@@ -797,14 +762,27 @@
       "16": { "fez": "Doi văd mai mult decât unul. Hai, piramida aia ne așteaptă!" }
     }
   },
-
-  "end": {
-    "1": { "fez": "A fost tare?" },
-    "2": { "explorer": "Merge." }
+  "end": { "1": { "fez": "A fost tare?" }, "2": { "explorer": "Merge." } },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Acolo lipsește ceva pentru cel flămând. Pâine, aș zice. Și știu un om care a numărat fiecare sac de grâne timp de patruzeci de ani."
+        }
+      },
+      "gift": {
+        "1": { "explorer": "Ipi, avem nevoie de pâine. Pentru un zid." },
+        "2": { "ipi": "Pâine? A mea? Știi cât costă grânele?" },
+        "3": { "fez": "E pentru un rând despre a da lucruri altora." },
+        "4": { "ipi": "…A da. Altora." },
+        "5": { "ipi": "Bine. O pâine. Dar se trece în scris: _Ipi a dat pâine._" },
+        "6": { "fez": "A dat ceva! Ai văzut?" }
+      }
+    }
   },
-
   "revisit": {
     "starter": {
+      "gave1": { "1": { "ipi": "Pâinea aia — a mâncat-o cineva? Că dacă nu, aș vrea-o înapoi." } },
       "north1": { "1": { "ipi": "Tot aici? La nord! Henut! Unsprezece deben!" } },
       "north2": { "1": { "ipi": "Unsprezece deben de lapis. Henut. La nord. Ce mai aștepți?" } },
       "paid1": { "1": { "ipi": "Ei? A plătit? …Nu. Sigur că nu." } },
@@ -813,7 +791,7 @@
       "later2": { "1": { "ipi": "Patruzeci de ani de socoteli, și niciuna nu iese. Niciuna!" } }
     },
     "junior": {
-      "wall1": { "1": { "henut": "Zidul. Al treilea semn. Tot nu e numele meu." } },
+      "wall1": { "1": { "henut": "Zidul. Al doilea semn. Tot nu e numele meu." } },
       "wall2": { "1": { "henut": "Tu ești tot aici, și gâsca aia e tot pe zidul meu. Repar-o." } },
       "priest1": { "1": { "henut": "Tot numele meu. Am verificat. Acum — Karnak, preotul. Hai, du-te." } },
       "priest2": { "1": { "henut": "La Karnak! A așteptat destul. Du-te, să te anunțe." } },

@@ -28,7 +28,7 @@
   "tombTutorial3": "Litlu dæmin sýna þér hvenær tákn er rétt. Þannig finnum við hvaða tákn fer hvert.",
   "tombTutorial4": "Allt útfyllt? Þá birtist talnalás. Stóra dæmið er kóðinn, og þá opnast grafhýsið!",
   "hieroglyphUnlock": "Við erum með sérstakan grip. Með honum getum við skrifað á einn af innsigluðu steinunum!",
-  "hieroglyphUnlock2": "Ýttu á glóandi stein og dragðu svo gripinn á hann til að opna hann. Einn steinn í hverjum pýramída.",
+  "hieroglyphUnlock2": "Veldu glóandi stein og færðu svo gripinn að honum til að opna hann. Einn steinn í hverjum pýramída.",
   "errorHighlightTutorial": "Fjársjóðurinn sem við fundum kann sniðugt bragð. Ef þú skrifar rangt svar glóir ein villa rauð!",
   "errorHighlightTutorial2": "Bara einn steinn glóir í einu, svo þetta er enn áskorun. En það hjálpar að þrengja hringinn!",
   "earlyFeedbackTutorial": "Sérðu prófsteinana? Þeir verða grænir eða rauðir um leið og þú fyllir í þá!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Sjáðu hvað er á básnum! Ég er kominn í flutninga."
+      },
+      "2": {
+        "explorer": "Ég sé bara teikningu."
+      },
+      "3": {
+        "fez": "Frumritið étur meira."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "Önnur lína. Vatn handa þeim sem voru þyrstir."
+        "explorer": "Önnur lína. _Föt handa þeim sem voru naktir._"
       },
       "2": {
-        "fez": "Brauð, og nú vatn. Einhver vildi endilega að fólk myndi eftir honum sem gjafmildum."
+        "fez": "Brauð, og nú föt. Einhver vildi endilega að fólk myndi eftir honum sem gjafmildum."
       },
       "3": {
         "explorer": "Allir hafa þetta. Hver veggur, hvert grafhýsi, sömu tvær línurnar."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Föt handa þeim sem voru naktir. Þriðja lína."
+        "explorer": "_Vatn handa þeim sem voru þyrstir._ Þriðja lína."
       },
       "2": {
-        "fez": "Brauð, vatn, föt. Þetta er listi yfir hluti sem voru gefnir."
+        "fez": "Brauð, föt, vatn. Þetta er listi yfir hluti sem voru gefnir."
       },
       "3": {
         "explorer": "Í grafhýsi manns sem tók allt með sér."
@@ -1599,8 +1605,42 @@
       "explorer": "Það sleppur."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Þarna vantar eitthvað handa þeim sem eru svangir. Brauð, myndi ég segja. Og ég þekki mann sem taldi hvern einasta kornpoka í fjörutíu ár."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, okkur vantar brauð. Fyrir vegg."
+        },
+        "2": {
+          "ipi": "Brauð? Mitt? Veistu hvað korn kostar?"
+        },
+        "3": {
+          "fez": "Það er fyrir línu um að gefa hluti frá sér."
+        },
+        "4": {
+          "ipi": "…Gefa. Frá sér."
+        },
+        "5": {
+          "ipi": "Jæja þá. Eitt brauð. En það verður skrifað niður: _Ipi gaf brauð._"
+        },
+        "6": {
+          "fez": "Hann gaf eitthvað frá sér! Sástu þetta?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Þetta brauð — er einhver búinn að borða það? Því ef ekki, þá vil ég fá það aftur."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Enn hérna? Norður! Henut! Ellefu deben!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "Veggurinn. Þriðja táknið. Það er enn ekki nafnið mitt."
+          "henut": "Veggurinn. Annað táknið. Það er enn ekki nafnið mitt."
         }
       },
       "wall2": {

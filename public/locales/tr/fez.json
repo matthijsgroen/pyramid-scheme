@@ -28,7 +28,7 @@
   "tombTutorial3": "Küçük işlemler bir işaretin doğru yerde olup olmadığını gösterir. Hangi işaret nereye gidiyor, böyle buluruz.",
   "tombTutorial4": "Hepsi doldu mu? O zaman bir şifreli kilit çıkar. Büyük işlem şifreyi verir. Sonra da mezar açılır!",
   "hieroglyphUnlock": "Özel bir eşyamız var. Onunla o mühürlü bloklardan birine yazabiliriz!",
-  "hieroglyphUnlock2": "Parlayan bir taşa dokun, sonra eşyayı üstüne sürükle ve kilidini aç. Her piramitte bir blok.",
+  "hieroglyphUnlock2": "Parlayan bir taş seç, sonra kilidini açmak için eşyayı ona getir. Her piramitte bir blok.",
   "errorHighlightTutorial": "Bulduğumuz o hazinenin işe yarar bir hilesi var. Yanlış bir cevap yazarsan, bir hata kırmızı parlar!",
   "errorHighlightTutorial2": "Bir seferde sadece bir blok parlar, yani yine de zor. Ama hatayı aramayı kolaylaştırır!",
   "earlyFeedbackTutorial": "Şu kontrol bloklarını görüyor musun? Sen doldurdukça yeşil ya da kırmızı olurlar. Hemen anlarsın!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Bak tezgâhta ne var! Artık taşımacılık da yapıyorum."
+      },
+      "2": {
+        "explorer": "Ben sadece bir resim görüyorum."
+      },
+      "3": {
+        "fez": "Aslı daha çok yiyor."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "İkinci satır. Susuzlara su."
+        "explorer": "İkinci satır. _Çıplaklara giysi._"
       },
       "2": {
-        "fez": "Ekmek, şimdi de su. Biri cömert biri olarak hatırlanmayı çok istemiş."
+        "fez": "Ekmek, şimdi de giysi. Biri cömert biri olarak hatırlanmayı çok istemiş."
       },
       "3": {
         "explorer": "Herkeste var. Her duvarda, her mezarda aynı iki satır."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Çıplaklara giysi. Üçüncü satır."
+        "explorer": "_Susuzlara su._ Üçüncü satır."
       },
       "2": {
-        "fez": "Ekmek, su, giysi. Bu, verilip dağıtılan şeylerin bir listesi."
+        "fez": "Ekmek, giysi, su. Bu, verilip dağıtılan şeylerin bir listesi."
       },
       "3": {
         "explorer": "Hem de her şeyi yanına alan bir adamın mezarında."
@@ -1599,8 +1605,42 @@
       "explorer": "Fena değildi."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Orada açlar için bir şey eksik. Ekmek, derim ben. Ve kırk yıl boyunca her tahıl çuvalını tek tek sayan birini tanıyorum."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, ekmeğe ihtiyacımız var. Bir duvar için."
+        },
+        "2": {
+          "ipi": "Ekmek mi? Benim ekmeğim mi? Tahılın kaça olduğunu biliyor musun sen?"
+        },
+        "3": {
+          "fez": "Bir şeyleri başkasına vermekle ilgili bir satır için."
+        },
+        "4": {
+          "ipi": "…Başkasına. Vermek."
+        },
+        "5": {
+          "ipi": "Peki. Bir somun. Ama yazılacak: _Ipi ekmek verdi._"
+        },
+        "6": {
+          "fez": "Bir şey verdi! Gördün mü bunu?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "O somun — yiyen oldu mu? Olmadıysa geri istiyorum."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Hâlâ burada mısın? Kuzeye! Henut! On bir deben!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "Duvar. Üçüncü işaret. Hâlâ benim adım değil."
+          "henut": "Duvar. İkinci işaret. Hâlâ benim adım değil."
         }
       },
       "wall2": {

@@ -239,6 +239,21 @@
       "description": "Kuninglik peakate kaitsva kobraga, mida vaaraod kandsid jumaliku kaitse saamiseks."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Leib",
+      "description": "Kõrge päts, leiva märk. Selle andis Ipi, kes luges nelikümmend aastat vilja ja andis seda ühe korra ära."
+    },
+    "o2": {
+      "name": "Linane riie"
+    },
+    "o3": {
+      "name": "Vesi"
+    },
+    "o4": {
+      "name": "Paat"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Pillirooleht",

@@ -239,6 +239,21 @@
       "description": "Königlicher Kopfschmuck mit einer schützenden Kobra, den Pharaonen als göttlichen Schutz trugen."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Brot",
+      "description": "Das hohe Brot, das Zeichen für Brot. Von Ipi, der vierzig Jahre lang Korn gezählt und es ein einziges Mal verschenkt hat."
+    },
+    "o2": {
+      "name": "Leinen"
+    },
+    "o3": {
+      "name": "Wasser"
+    },
+    "o4": {
+      "name": "Boot"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Schilfblatt",

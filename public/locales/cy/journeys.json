@@ -21,19 +21,24 @@
     "mapHint": "Mae'r darn papur yn dangos ffordd farchnad a drws seler — cuddfan masnachwr, dim byd mwy crand."
   },
   "junior_1": {
-    "name": "Taith yr Ibis Sanctaidd"
+    "name": "Taith yr Ibis Sanctaidd",
+    "description": "Corsydd cyrs ar hyd afon Nîl, a'r ibis yn rhydio drwyddyn nhw. Adar sanctaidd — a ddim am y rheswm rwyt ti'n ei feddwl."
   },
   "junior_2": {
-    "name": "Dyffryn y Crefftwyr"
+    "name": "Dyffryn y Crefftwyr",
+    "description": "Deir el-Medina, pentref y rhai oedd yn adeiladu'r beddau. Mae eu gweithdai'n dal i sefyll, a rhywfaint o'r gwaith hefyd."
   },
   "junior_3": {
-    "name": "Teml Thoth"
+    "name": "Teml Thoth",
+    "description": "Teml Thoth. Mae pawb yn gwybod ei enw; gofynna i dri pherson beth oedd e'n dduw arno a chei di dri ateb gwahanol."
   },
   "junior_4": {
-    "name": "Goleudy Alecsandria"
+    "name": "Goleudy Alecsandria",
+    "description": "Pharos Alexandria, un o saith rhyfeddod y byd. Mae beth sydd ar ôl ohono'n gorwedd yn yr harbwr, o dan y dŵr."
   },
   "junior_treasure_tomb": {
     "name": "Claddgell Gudd yr Uchelwraig",
+    "description": "Claddgell uchelwraig, wedi'i phaentio o'r llawr i'r nenfwd, a phopeth ynddi'n dal lle rhoddodd hi e.",
     "mapHint": "Inc da, a sêl gydag arfbais yn y gornel — roedd rhywun pwysig eisiau i bawb anghofio'r stafell hon."
   },
   "expert_1": {

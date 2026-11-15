@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Progresmu tidak bisa dimuat",
     "body": "Browser belum mau memberikan permainan yang tersimpan. Simpananmu tidak hilang: muat ulang halaman untuk mencoba lagi.",
-    "banner": "Progres tidak tersimpan. Ketuk untuk memuat ulang.",
+    "banner": "Progres tidak tersimpan. Muat ulang.",
     "reload": "Muat ulang",
     "continue": "Main terus tanpa menyimpan",
     "reset": "Mulai dari awal (hapus simpanan)",
@@ -29,7 +29,6 @@
     "evening": "Sore",
     "night": "Malam"
   },
-  "tomb": {},
   "ui": {
     "level": "Level",
     "symbols": "simbol",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Hentikan ekspedisi",
     "confirmInterruptExpedition": "Yakin mau menghentikan ekspedisi ini? Progres ekspedisi tetap disimpan, tapi progres level ini akan hilang!",
     "cancel": "Batal",
+    "leaveSite": "Tinggalkan tempat ini?",
+    "confirmLeaveSite": "Tekan Keluar untuk kembali ke luar, atau Tetap untuk terus menjelajah.",
+    "leave": "Keluar",
+    "stay": "Tetap",
     "settings": "Pengaturan",
     "language": "Bahasa",
     "close": "Tutup",
@@ -105,8 +108,12 @@
     "notes": "Catatan",
     "solvedUnaided": "Selesai tanpa satu petunjuk pun",
     "solvedWithHints_other": "Selesai dengan {{count}} petunjuk",
-    "tapToContinue": "Ketuk untuk lanjut",
-    "goal": "Tujuan"
+    "tapToContinue": "Lanjut",
+    "goal": "Tujuan",
+    "controls": "Kontrol",
+    "controlsUndo": "batalkan",
+    "controlsHint": "petunjuk",
+    "controlsLeave": "kembali ke peta"
   },
   "trap": {
     "warning": "⚠ Lorong Berjebakan",
@@ -125,6 +132,7 @@
     "turnAround": "Putar balik",
     "wardDescription": {
       "starter": "Segel seorang pedagang menutup lorong ini. Hanya kunci segelnya yang bisa membukanya.",
+      "junior": "Lambang seorang bangsawan wanita mengunci jalan ini. Hanya kunci segelnya yang bisa mengangkatnya.",
       "expert": "Segel kuil seorang imam besar menjaga pintu ini. Kunci sucinya yang harus membukanya.",
       "master": "Segel kerajaan seorang firaun mengikat lorong ini. Hanya kunci sang raja yang bisa mematahkannya.",
       "wizard": "Segel para dewa menahan gerbang ini. Tidak ada yang bisa lewat kecuali dengan kunci dewanya."
@@ -133,12 +141,13 @@
     "lockedColor": "Kamu belum menemukan kunci itu di lantai ini."
   },
   "chest": {
-    "tapToOpen": "Ketuk untuk membuka",
+    "tapToOpen": "Buka",
     "money_other": "{{count}} koin",
     "mapPiece": "Potongan Peta",
     "mapPieceDescription": "Sobekan peta yang rapuh, menuju suatu tempat yang sudah lama terlupakan. Sayang belum lengkap…",
     "mapPieceProgress": "{{found}} dari {{required}} potongan peta terkumpul",
     "mapPieceComplete": "Petanya sudah lengkap. Peta ini menuju {{name}}.",
+    "hieroglyph": "Hieroglif",
     "hieroglyphFragment": "Pecahan Hieroglif",
     "fragmentProgress": "{{found}} dari {{required}} pecahan ditemukan",
     "tombKey": "Kunci Makam",
@@ -155,8 +164,9 @@
   },
   "loot": {
     "youFound": "Kamu menemukan",
+    "youReceived": "Kamu menerima",
     "expeditionReward": "Hadiah tambahan karena menyelesaikan ekspedisi",
-    "clickToContinue": "Ketuk di mana saja untuk lanjut"
+    "clickToContinue": "Lanjut"
   },
   "money": {
     "label": "Koin"
@@ -246,7 +256,7 @@
     "tabNew_other": "{{label}} · {{count}} baru",
     "empty": "Petimu masih kosong",
     "newLabel": "BARU",
-    "clickForDetails": "Ketuk satu kotak untuk melihat keterangannya",
+    "clickForDetails": "Pilih satu kotak untuk melihat keterangannya",
     "categories": {
       "deities": "🏺 Dewa-dewi",
       "professions": "⚱️ Pekerjaan",
@@ -254,6 +264,7 @@
       "artifacts": "💎 Benda Kuno",
       "treasures": "💰 Harta",
       "junk": "🔷 Pernak-pernik",
+      "offerings": "🍞 Persembahan",
       "signs": "✍️ Tanda"
     },
     "treasureCategories": {
@@ -333,22 +344,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Ketuk sebuah simbol di bawah, lalu sebuah angka. Ketuk angka itu lagi untuk melepasnya.",
+      "tap": "Pilih sebuah simbol di bawah, lalu sebuah angka. Pilih angka itu lagi untuk melepasnya.",
       "same": "Satu simbol beratnya sama di setiap timbangan.",
-      "cancel": "Ambil benda yang sama dari kedua piring, dan timbangannya tetap seimbang. Ketuk benda yang bertanda untuk melakukannya. Sisanya disimpan sebagai baris baru.",
-      "swap": "Ketuk simbol yang tidak punya pasangan di seberangnya, lalu ketuk baris tempat simbol itu berdiri sendirian, untuk menukarnya dengan nilai baris itu."
+      "cancel": "Ambil benda yang sama dari kedua piring, dan timbangannya tetap seimbang. Pilih benda yang bertanda untuk melakukannya. Sisanya disimpan sebagai baris baru.",
+      "swap": "Pilih simbol yang tidak punya pasangan di seberangnya, lalu pilih baris tempat simbol itu berdiri sendirian, untuk menukarnya dengan nilai baris itu."
     },
     "hint": {
       "mistake": "Salah satu berat yang kamu isi membuat timbangan miring. Lepas dan lihat lagi.",
       "alone": "Di baris yang menyala, {{glyph}} satu-satunya benda yang belum punya angka. Cari tahu beratnya.",
       "equalShares": "Baris yang menyala cuma berisi {{glyph}} melawan sebuah angka. Bagi angka itu sama rata.",
       "difference": "Dua baris yang menyala sama persis, kecuali {{glyph}}. Bandingkan keduanya.",
-      "cancelGlyph": "Kedua piring di baris yang menyala berisi {{glyph}}. Ketuk satu untuk mengambilnya dari kedua sisi. Barisnya tetap seimbang.",
-      "cancelStones": "Kedua piring di baris yang menyala berisi angka biasa. Ketuk satu untuk mengambil jumlah yang sama dari kedua sisi.",
-      "swap": "Satu baris yang menyala memberi tahu berapa nilai satu {{glyph}} sendirian. Ketuk {{glyph}} di baris menyala yang lain, lalu ketuk baris itu."
+      "cancelGlyph": "Kedua piring di baris yang menyala berisi {{glyph}}. Pilih satu untuk mengambilnya dari kedua sisi. Barisnya tetap seimbang.",
+      "cancelStones": "Kedua piring di baris yang menyala berisi angka biasa. Pilih satu untuk mengambil jumlah yang sama dari kedua sisi.",
+      "swap": "Satu baris yang menyala memberi tahu berapa nilai satu {{glyph}} sendirian. Pilih {{glyph}} di baris menyala yang lain, lalu pilih baris itu."
     },
     "swap": {
-      "pick": "Ketuk baris yang menyala untuk menukar {{glyph}} ini dengan nilai yang disebut baris itu.",
+      "pick": "Pilih baris yang menyala untuk menukar {{glyph}} ini dengan nilai yang disebut baris itu.",
       "none": "Tidak ada yang memberi tahu berapa nilai satu {{glyph}} sendirian, dan tidak ada yang cocok di seberangnya."
     },
     "goal": {
@@ -358,11 +369,16 @@
     "name": {
       "default": "Timbangan",
       "weighing": "Penimbangan Jantung"
+    },
+    "controls": {
+      "move": "pilih benda, baris, atau tombol",
+      "press": "tekan",
+      "weigh": "beri simbol yang dipilih bobot itu"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Ketuk sekali untuk mencoret angka, sekali lagi untuk menandainya sebagai angka yang tetap, sekali lagi untuk menghapus tandanya.",
+      "tap": "Pilih sebuah angka sekali untuk mencoretnya, sekali lagi untuk menandainya sebagai angka yang tetap, sekali lagi untuk menghapus tandanya.",
       "totals": "Angka kecil di bawah setiap target adalah jumlah baris itu sekarang."
     },
     "hint": {
@@ -421,12 +437,16 @@
       }
     },
     "goal": "Setiap baris dan setiap kolom jumlahnya sama dengan angka di sampingnya.",
-    "name": "Hitungan"
+    "name": "Hitungan",
+    "controls": {
+      "move": "pilih angka",
+      "mark": "coret, tetapkan, atau hapus"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Tanda di antara dua kotak menunjuk ke angka yang lebih kecil.",
-      "enter": "Ketuk sebuah kotak, lalu ketuk sebuah angka. Angka yang sama sekali lagi akan menghapusnya.",
+      "enter": "Pilih sebuah kotak, lalu sebuah angka. Angka yang sama sekali lagi akan menghapusnya.",
       "notes": "Pakai pensil untuk mencatat angka-angka yang masih mungkin di sebuah kotak. Batalkan untuk membatalkan langkah terakhirmu."
     },
     "hint": {
@@ -477,14 +497,22 @@
       }
     },
     "goal": "Setiap baris dan setiap kolom berisi setiap angka tepat satu kali.",
-    "name": "Lebih Besar dan Lebih Kecil"
+    "name": "Lebih Besar dan Lebih Kecil",
+    "controls": {
+      "move": "pilih kotak",
+      "type": "tulis angka",
+      "choose": "pilih angka atau penghapus",
+      "place": "tulis",
+      "pencil": "pensil",
+      "erase": "hapus"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Cermin membelokkan cahaya dari kedua sisinya. Tanda kecil di sekelilingnya menunjukkan posisi lain yang bisa dipakai: kebanyakan membelokkan cahaya seperempat putaran, dan ada yang kurang dari itu sehingga cahayanya miring.",
       "walls": "Balok batu menelan cahaya. Begitu juga pinggir papan.",
-      "tap": "Ketuk sebuah benda untuk mengubahnya: cermin berputar, benda geser pindah ke tempat berikutnya. Pinggiran putih berarti benda itu boleh kamu gerakkan; yang lain adalah bagian dari teka-teki.",
-      "nodes": "Ada batu yang tersambung ke lubang di lantai, dan tidak bisa digerakkan dengan ketukan. Arahkan cahaya melewati lubang itu, dan batunya bergeser minggir."
+      "tap": "Pilih sebuah benda untuk mengubahnya: cermin berputar, benda geser pindah ke tempat berikutnya. Pinggiran putih berarti benda itu boleh kamu gerakkan; yang lain adalah bagian dari teka-teki.",
+      "nodes": "Ada batu yang tersambung ke lubang di lantai, dan tidak akan bergerak untukmu. Arahkan cahaya melewati lubang itu, dan batunya bergeser minggir."
     },
     "hint": {
       "entryRun": "Mulai dari tempat cahaya sudah lewat: cahaya berjalan lurus dari cakram sampai bertemu benda pertama yang bisa kamu ubah. Kotak-kotak itu selalu kena cahaya, apa pun yang kamu lakukan.",
@@ -517,7 +545,7 @@
       "triple": "Tiga yang sama berturut-turut tidak pernah boleh, mendatar maupun menurun.",
       "copies": "Tidak boleh ada dua baris yang sama persis, begitu juga dua kolom.",
       "signs": "Tanda di antara dua kotak menunjukkan hubungannya: = berarti sama, × berarti berbeda.",
-      "enter": "Ketuk sebuah kotak untuk menaruh matahari, ketuk lagi untuk bulan, ketuk sekali lagi untuk mengosongkannya."
+      "enter": "Pilih sebuah kotak untuk menaruh matahari, sekali lagi untuk bulan, sekali lagi untuk mengosongkannya."
     },
     "hint": {
       "mistake": "Salah satu tanda ini pasti salah.",
@@ -540,7 +568,11 @@
       }
     },
     "goal": "Setiap kotak berisi matahari atau bulan, dan setiap garis berisi matahari dan bulan sama banyak.",
-    "name": "Matahari dan Bulan"
+    "name": "Matahari dan Bulan",
+    "controls": {
+      "move": "pilih kotak",
+      "mark": "ubah tanda"
+    }
   },
   "constellation": {
     "rules": {
@@ -548,25 +580,25 @@
         "straight": "Garis cahaya berjalan lurus mendatar atau menurun, dari satu bintang ke bintang berikutnya.",
         "pair": "Dua bintang bisa berbagi paling banyak dua garis.",
         "cross": "Garis tidak pernah bersilangan, dan tidak pernah melewati bintang.",
-        "enter": "Seret dari sebuah bintang ke tetangganya untuk menggambar garis, sekali lagi untuk garis ganda, sekali lagi untuk menghapusnya."
+        "enter": "Gambar garis dari sebuah bintang ke tetangganya, sekali lagi untuk garis ganda, sekali lagi untuk menghapusnya."
       },
       "causeway": {
         "straight": "Jalan angkut berjalan lurus mendatar atau menurun, dari satu tempat ke tempat berikutnya.",
         "pair": "Dua tempat bisa berbagi paling banyak dua jalan.",
         "cross": "Jalan tidak pernah bersilangan, dan tidak pernah melewati tempat lain.",
-        "enter": "Seret dari sebuah tempat ke tetangganya untuk membuat jalan, sekali lagi untuk menggandakannya, sekali lagi untuk membongkarnya."
+        "enter": "Buat jalan dari sebuah tempat ke tetangganya, sekali lagi untuk menggandakannya, sekali lagi untuk membongkarnya."
       },
       "irrigation": {
         "straight": "Saluran air berjalan lurus mendatar atau menurun, dari satu kolam ke kolam berikutnya.",
         "pair": "Dua kolam bisa berbagi paling banyak dua saluran.",
         "cross": "Saluran tidak pernah bersilangan, dan tidak pernah melewati kolam.",
-        "enter": "Seret dari sebuah kolam ke tetangganya untuk menggali saluran, sekali lagi untuk melebarkannya, sekali lagi untuk menimbunnya."
+        "enter": "Gali saluran dari sebuah kolam ke tetangganya, sekali lagi untuk melebarkannya, sekali lagi untuk menimbunnya."
       },
       "ceiling": {
         "straight": "Tali berjalan lurus mendatar atau menurun, dari satu bintang ke bintang berikutnya.",
         "pair": "Dua bintang bisa berbagi paling banyak dua tali.",
         "cross": "Tali tidak pernah bersilangan, dan tidak pernah melewati bintang.",
-        "enter": "Seret dari sebuah bintang ke tetangganya untuk memasang tali, sekali lagi untuk menggandakannya, sekali lagi untuk melepasnya."
+        "enter": "Bentangkan tali dari sebuah bintang ke tetangganya, sekali lagi untuk menggandakannya, sekali lagi untuk melepasnya."
       }
     },
     "hint": {
@@ -646,37 +678,44 @@
       "causeway": "Jalan Batu",
       "irrigation": "Jaringan Air",
       "ceiling": "Langit-langit Berlukis"
+    },
+    "controls": {
+      "pick": "pilih bintang",
+      "grab": "ambil",
+      "draw": "gambar garis ke arah itu",
+      "release": "lepaskan",
+      "alt": "tahan dan arahkan: garis, ganda, tidak ada"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Dua bintang tidak boleh bersentuhan, termasuk di sudut.",
-        "enter": "Ketuk sebuah kotak untuk menyingkirkannya, ketuk lagi untuk menaruh bintang, sekali lagi untuk mengosongkannya."
+        "enter": "Pilih sebuah kotak untuk menyingkirkannya, sekali lagi untuk menaruh bintang, sekali lagi untuk mengosongkannya."
       },
       "fields": {
         "touch": "Dua rumah ladang tidak boleh bersentuhan, termasuk di sudut. Kalau sedekat itu, mereka harus berbagi satu sumur.",
-        "enter": "Ketuk sebidang tanah untuk menyingkirkannya, ketuk lagi untuk membangun rumah ladang, sekali lagi untuk mengosongkannya."
+        "enter": "Pilih sebidang tanah untuk menyingkirkannya, sekali lagi untuk membangun rumah ladang, sekali lagi untuk mengosongkannya."
       },
       "lamps": {
         "touch": "Dua lampu minyak tidak boleh berdiri bersebelahan, termasuk di sudut. Cahayanya akan bertumpuk, dan minyaknya terbuang sia-sia.",
         "walls": "Balok batu abu-abu adalah bagian dari lantai: tidak ada yang bisa berdiri di atasnya, dan itu bukan kotak.",
-        "enter": "Ketuk sebuah ubin batu untuk menyingkirkannya, ketuk lagi untuk menaruh lampu minyak, sekali lagi untuk mengosongkannya."
+        "enter": "Pilih sebuah ubin batu untuk menyingkirkannya, sekali lagi untuk menaruh lampu minyak, sekali lagi untuk mengosongkannya."
       },
       "market": {
         "touch": "Dua lapak tidak boleh berdiri bersebelahan, termasuk di sudut. Pedagang yang bersaing tidak pernah berjualan berdampingan.",
         "walls": "Rumah-rumah adalah bagian dari alun-alun: tidak ada yang bisa membuka lapak di dalamnya, dan itu bukan tempat.",
-        "enter": "Ketuk sebuah tempat untuk menyingkirkannya, ketuk lagi untuk membuka lapak, sekali lagi untuk mengosongkannya."
+        "enter": "Pilih sebuah tempat untuk menyingkirkannya, sekali lagi untuk membuka lapak, sekali lagi untuk mengosongkannya."
       },
       "lotus": {
         "touch": "Dua teratai tidak boleh mengapung bersebelahan, termasuk di sudut. Setiap bunga butuh air terbuka di sekelilingnya.",
         "walls": "Batu-batu mencuat dari kolam: tidak ada yang bisa mengapung di atasnya, dan itu bukan kotak.",
-        "enter": "Ketuk sepetak air untuk menyingkirkannya, ketuk lagi untuk mengapungkan teratai, sekali lagi untuk mengosongkannya."
+        "enter": "Pilih sepetak air untuk menyingkirkannya, sekali lagi untuk mengapungkan teratai, sekali lagi untuk mengosongkannya."
       },
       "cats": {
         "touch": "Dua kucing tidak boleh tidur bersebelahan, termasuk di sudut. Setiap kucing punya tempat berjemurnya sendiri.",
         "walls": "Tiang-tiang menopang kuil: tidak ada kucing yang bisa tidur di atasnya, dan itu bukan kotak.",
-        "enter": "Ketuk sebuah ubin batu untuk menyingkirkannya, ketuk lagi untuk menidurkan kucing di situ, sekali lagi untuk mengosongkannya."
+        "enter": "Pilih sebuah ubin batu untuk menyingkirkannya, sekali lagi untuk menidurkan kucing di situ, sekali lagi untuk mengosongkannya."
       }
     },
     "hint": {
@@ -848,6 +887,11 @@
       "market": "Lapak Pasar",
       "lotus": "Kolam Teratai",
       "cats": "Kucing Kuil"
+    },
+    "controls": {
+      "move": "pilih kotak",
+      "mark": "ubah tanda",
+      "sweep": "tahan dan gerakkan: singkirkan satu baris"
     }
   },
   "pairPuzzle": {
@@ -864,13 +908,13 @@
         "pair": "Setiap sarkofagus punya satu mumi tepat di atas, bawah, kiri, atau kanannya, dan setiap mumi beristirahat di samping sarkofagusnya sendiri.",
         "count": "Angka di samping baris atau kolom menunjukkan berapa mumi di dalamnya. Angkanya jadi hijau kalau jumlahnya pas, dan merah kalau tidak mungkin lagi.",
         "touch": "Dua mumi tidak boleh bersebelahan, termasuk di sudut.",
-        "enter": "Ketuk sebuah kotak untuk menyingkirkannya, ketuk lagi untuk membaringkan mumi, sekali lagi untuk mengosongkannya. Seret melewati beberapa kotak untuk menyingkirkan semuanya. Sarkofagus tidak bisa diketuk."
+        "enter": "Pilih sebuah kotak untuk menyingkirkannya, sekali lagi untuk membaringkan mumi, sekali lagi untuk mengosongkannya. Singkirkan sederet kotak dalam satu sapuan. Sarkofagus tidak bisa ditandai."
       },
       "beetles": {
         "pair": "Setiap bola kotoran punya satu kumbang tepat di atas, bawah, kiri, atau kanannya, dan setiap kumbang berdiri di samping bolanya sendiri untuk digulirkan.",
         "count": "Angka di samping baris atau kolom menunjukkan berapa kumbang di dalamnya. Angkanya jadi hijau kalau jumlahnya pas, dan merah kalau tidak mungkin lagi.",
         "touch": "Dua kumbang tidak boleh bersebelahan, termasuk di sudut.",
-        "enter": "Ketuk sebuah kotak untuk menyingkirkannya, ketuk lagi untuk menaruh kumbang, sekali lagi untuk mengosongkannya. Seret melewati beberapa kotak untuk menyingkirkan semuanya. Bola kotoran tidak bisa diketuk."
+        "enter": "Pilih sebuah kotak untuk menyingkirkannya, sekali lagi untuk menaruh kumbang, sekali lagi untuk mengosongkannya. Singkirkan sederet kotak dalam satu sapuan. Bola kotoran tidak bisa ditandai."
       }
     },
     "hint": {
@@ -918,6 +962,11 @@
           "place_other": "Taruh kumbang di setiap kotak yang diarsir."
         }
       }
+    },
+    "controls": {
+      "move": "pilih kotak",
+      "mark": "ubah tanda",
+      "sweep": "tahan dan gerakkan: singkirkan satu baris"
     }
   },
   "rushHour": {
@@ -932,11 +981,11 @@
     "rules": {
       "default": {
         "lanes": "Balok hanya bisa bergeser di jalurnya sendiri. Tidak pernah ke samping, tidak pernah keluar papan.",
-        "shove": "Seret sebuah balok untuk mendorongnya. Balok berhenti kalau ada yang menghalangi."
+        "shove": "Dorong sebuah balok di sepanjang jalurnya. Balok berhenti kalau ada yang menghalangi."
       },
       "market": {
         "lanes": "Kereta luncur hanya bisa bergeser di jalurnya sendiri. Tidak pernah ke samping, tidak pernah keluar jalan.",
-        "shove": "Seret sebuah kereta luncur untuk mendorongnya. Kereta berhenti kalau ada yang menghalangi."
+        "shove": "Dorong sebuah kereta luncur di sepanjang jalurnya. Kereta berhenti kalau ada yang menghalangi."
       }
     },
     "hint": {
@@ -964,29 +1013,35 @@
           "down": "Dorong ke bawah jalan, sampai ke lingkaran."
         }
       }
+    },
+    "controls": {
+      "pick": "pilih balok",
+      "grab": "ambil",
+      "slide": "geser",
+      "release": "lepaskan"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "Angka yang sudah ada di sarang adalah bagian dari teka-teki. Angka itu tidak bisa diubah.",
-        "enter": "Ketuk sebuah angka untuk melanjutkan urutan dari situ, lalu ketuk sel kosong yang bersentuhan untuk menyambungnya. Atau seret langsung melewati sel-selnya.",
-        "back": "Ketuk angka yang kamu taruh, lalu ketuk lagi untuk menghapusnya, bersama semua yang tersambung sesudahnya. Melanjutkan urutan ke arah lain dari sebuah angka juga begitu. Batalkan untuk membatalkan langkah terakhirmu."
+        "enter": "Gambar garis dari sebuah angka melewati sel kosong di sebelahnya untuk melanjutkan urutan.",
+        "back": "Pilih angka yang kamu taruh, lalu pilih lagi untuk menghapusnya, bersama semua yang tersambung sesudahnya. Melanjutkan urutan ke arah lain dari sebuah angka juga begitu. Batalkan untuk membatalkan langkah terakhirmu."
       },
       "channel": {
         "given": "Ladang yang sudah bernomor adalah bagian dari teka-teki. Ladang itu tidak bisa diubah.",
-        "enter": "Ketuk ladang bernomor untuk mengalirkan air dari situ, lalu ketuk ladang kering di sebelahnya untuk terus menggali. Atau seret langsung di sepanjang ladang yang dilewati saluran.",
-        "back": "Ketuk ladang yang kamu gali, lalu ketuk lagi untuk menimbunnya, bersama saluran yang terputus darinya. Menggali ke arah lain dari sebuah ladang juga begitu. Batalkan untuk membatalkan langkah terakhirmu."
+        "enter": "Gali saluran dari ladang bernomor melewati ladang kering di sebelahnya untuk mengalirkan air lebih jauh.",
+        "back": "Pilih ladang yang kamu gali, lalu pilih lagi untuk menimbunnya, bersama saluran yang terputus darinya. Menggali ke arah lain dari sebuah ladang juga begitu. Batalkan untuk membatalkan langkah terakhirmu."
       },
       "scribe": {
         "given": "Angka bertinta merah adalah milik teka-teki. Angka itu tidak bisa diubah.",
-        "enter": "Ketuk sebuah angka untuk mengambil pena alang-alang di situ, lalu ketuk tempat kosong di sebelahnya untuk menulis. Atau seret langsung di sepanjang barisnya.",
-        "back": "Ketuk angka yang kamu tulis, lalu ketuk lagi untuk mengeriknya, bersama tulisan yang terputus darinya. Menulis ke arah lain dari sebuah angka juga begitu. Batalkan untuk membatalkan langkah terakhirmu."
+        "enter": "Tulis garis dari sebuah angka melewati tempat kosong di sebelahnya untuk melanjutkan hitungan.",
+        "back": "Pilih angka yang kamu tulis, lalu pilih lagi untuk mengeriknya, bersama tulisan yang terputus darinya. Menulis ke arah lain dari sebuah angka juga begitu. Batalkan untuk membatalkan langkah terakhirmu."
       },
       "chambers": {
         "given": "Ruangan yang sudah bernomor dipahat oleh para pembangun. Ruangan itu tidak bisa diubah.",
-        "enter": "Ketuk ruangan bernomor untuk melanjutkan lorong dari situ, lalu ketuk ruangan tersegel di sebelahnya untuk menembusnya. Atau seret langsung di sepanjang ruangan yang dilewati lorong.",
-        "back": "Ketuk ruangan yang kamu buka, lalu ketuk lagi untuk menyegelnya, bersama lorong yang terputus darinya. Menembus ke arah lain dari sebuah ruangan juga begitu. Batalkan untuk membatalkan langkah terakhirmu."
+        "enter": "Tembus lorong dari ruangan bernomor melewati ruangan tersegel di sebelahnya untuk melanjutkannya.",
+        "back": "Pilih ruangan yang kamu buka, lalu pilih lagi untuk menyegelnya, bersama lorong yang terputus darinya. Menembus ke arah lain dari sebuah ruangan juga begitu. Batalkan untuk membatalkan langkah terakhirmu."
       }
     },
     "goal": {
@@ -1050,6 +1105,13 @@
       "channel": "Saluran Air",
       "scribe": "Lembaran Juru Tulis",
       "chambers": "Ruangan Tersegel"
+    },
+    "controls": {
+      "move": "pindah ke sel di sebelahnya; atas dan bawah condong ke kiri",
+      "right": "kanan atas atau kanan bawah",
+      "grab": "ambil urutan, atau hapus angkamu",
+      "carry": "sambil memegang urutan: lanjutkan; atas dan bawah pindah ke sisi tempat urutan bisa berlanjut",
+      "drop": "lepaskan urutan"
     }
   },
   "sudoku": {
@@ -1057,13 +1119,13 @@
       "default": {
         "chambers": "Garis tebal membagi kotak-kotak menjadi enam ruangan, masing-masing dua kotak lebar dan tiga kotak tinggi.",
         "given": "Angka yang sudah terpahat adalah bagian dari teka-teki. Angka itu tidak bisa diubah.",
-        "enter": "Ketuk sebuah kotak, lalu ketuk sebuah angka. Angka yang sama sekali lagi akan menghapusnya.",
+        "enter": "Pilih sebuah kotak, lalu sebuah angka. Angka yang sama sekali lagi akan menghapusnya.",
         "notes": "Pakai pensil untuk mencatat angka-angka yang masih mungkin di sebuah kotak. Batalkan untuk membatalkan langkah terakhirmu."
       },
       "papyrus": {
         "chambers": "Garis tebal membagi lembaran menjadi enam bagian, masing-masing dua tempat lebar dan tiga tempat tinggi.",
         "given": "Tanda bertinta merah adalah milik teka-teki. Tanda itu tidak bisa diubah.",
-        "enter": "Ketuk sebuah tempat, lalu ketuk sebuah tanda. Tanda yang sama sekali lagi akan mengeriknya.",
+        "enter": "Pilih sebuah tempat, lalu sebuah tanda. Tanda yang sama sekali lagi akan mengeriknya.",
         "notes": "Ambil pena alang-alang untuk mencatat tanda-tanda yang masih mungkin di sebuah tempat. Batalkan untuk membatalkan langkah terakhirmu."
       }
     },
@@ -1128,6 +1190,14 @@
     "name": {
       "default": "Enam Ruangan",
       "papyrus": "Catatan Juru Tulis"
+    },
+    "controls": {
+      "move": "pilih kotak",
+      "type": "tulis angka",
+      "choose": "pilih angka atau penghapus",
+      "place": "tulis",
+      "pencil": "pensil",
+      "erase": "hapus"
     }
   },
   "crocodile": {
@@ -1141,6 +1211,10 @@
     "hint": {
       "biggest": "Buaya ini mau jawaban yang paling besar. Itu {{value}}.",
       "smallest": "Buaya ini mau jawaban yang paling kecil. Itu {{value}}."
+    },
+    "controls": {
+      "move": "pilih batu",
+      "step": "injak"
     }
   },
   "canisters": {
@@ -1165,35 +1239,35 @@
         "sums": "Setiap jumlah yang bisa kamu buat adalah dua angka di meja yang dijumlahkan atau dikurangkan: ukuran tabung, isinya, atau sisa ruangnya.",
         "backwards": "Jadi hitung mundur dari jumlah yang diminta: dua angka mana yang membentuknya, dan bagaimana caranya supaya dua angka itu ada bersamaan?"
       },
-      "claim": "Kalau jumlahnya sudah dapat, ketuk “yang ini”. Kalau salah menyebut wadah, satu langkahmu hilang.",
+      "claim": "Kalau jumlahnya sudah dapat, pilih “yang ini”. Kalau salah menyebut wadah, satu langkahmu hilang.",
       "legs": "Lalu jumlah berikutnya, ditakar dari apa yang tersisa di wadah-wadah.",
       "default": {
-        "moves": "Ketuk sebuah tabung untuk mengangkatnya, lalu ketuk tabung lain untuk menuang ke dalamnya. Tuangan berhenti kalau yang pertama kosong atau yang kedua penuh.",
+        "moves": "Angkat sebuah tabung, lalu pilih tabung lain untuk menuang ke dalamnya. Tuangan berhenti kalau yang pertama kosong atau yang kedua penuh.",
         "contents": "Hanya ini air yang ada. Satu tabung mulai dalam keadaan penuh, dan tidak ada yang bisa dibuang atau diambil lagi.",
         "levels": "Setiap tabung menunjukkan berapa isinya, dibanding berapa isinya kalau penuh."
       },
       "grain": {
-        "moves": "Ketuk sebuah takaran untuk mengangkatnya, lalu ketuk takaran lain untuk menuang gandumnya. Tuangan berhenti kalau yang pertama kosong atau yang kedua sudah rata dengan bibirnya.",
+        "moves": "Angkat sebuah takaran, lalu pilih takaran lain untuk menuang gandumnya. Tuangan berhenti kalau yang pertama kosong atau yang kedua sudah rata dengan bibirnya.",
         "contents": "Hanya ini gandum yang ada. Satu takaran mulai dalam keadaan penuh, dan tidak ada yang bisa disapu atau diambil dari lumbung.",
         "levels": "Setiap takaran menunjukkan berapa isinya, dibanding berapa isinya kalau rata dengan bibirnya."
       },
       "oil": {
-        "moves": "Ketuk sebuah kendi untuk mengangkatnya, lalu ketuk kendi lain untuk menuang ke dalamnya. Tuangan berhenti kalau yang pertama kosong atau yang kedua penuh.",
+        "moves": "Angkat sebuah kendi, lalu pilih kendi lain untuk menuang ke dalamnya. Tuangan berhenti kalau yang pertama kosong atau yang kedua penuh.",
         "contents": "Hanya ini minyak yang ada. Satu kendi mulai dalam keadaan penuh, dan tidak ada yang bisa dibuang atau diambil lagi.",
         "levels": "Setiap kendi menunjukkan berapa isinya, dibanding berapa isinya kalau penuh."
       },
       "wine": {
-        "moves": "Ketuk sebuah amfora untuk mengangkatnya, lalu ketuk amfora lain untuk menuang ke dalamnya. Tuangan berhenti kalau yang pertama kosong atau yang kedua penuh.",
+        "moves": "Angkat sebuah amfora, lalu pilih amfora lain untuk menuang ke dalamnya. Tuangan berhenti kalau yang pertama kosong atau yang kedua penuh.",
         "contents": "Hanya ini anggur yang ada. Satu amfora mulai dalam keadaan penuh, dan tidak ada yang bisa tumpah atau diambil dari gudang.",
         "levels": "Setiap amfora menunjukkan berapa isinya, dibanding berapa isinya kalau penuh."
       },
       "natron": {
-        "moves": "Ketuk sebuah guci untuk mengangkatnya, lalu ketuk guci lain untuk menuang natronnya. Tuangan berhenti kalau yang pertama kosong atau yang kedua terisi sampai tutupnya.",
+        "moves": "Angkat sebuah guci, lalu pilih guci lain untuk menuang natronnya. Tuangan berhenti kalau yang pertama kosong atau yang kedua terisi sampai tutupnya.",
         "contents": "Hanya ini natron yang ada. Satu guci mulai dalam keadaan penuh, dan tidak ada yang bisa disapu atau diambil lagi.",
         "levels": "Setiap guci menunjukkan berapa isinya, dibanding berapa isinya kalau terisi sampai tutupnya."
       },
       "ink": {
-        "moves": "Ketuk sebuah pot untuk mengangkatnya, lalu ketuk pot lain untuk menuang ke dalamnya. Tuangan berhenti kalau yang pertama kosong atau yang kedua penuh.",
+        "moves": "Angkat sebuah pot, lalu pilih pot lain untuk menuang ke dalamnya. Tuangan berhenti kalau yang pertama kosong atau yang kedua penuh.",
         "contents": "Hanya ini tinta yang ada. Satu pot mulai dalam keadaan penuh, dan tidak ada yang bisa dibuang atau dibuat baru.",
         "levels": "Setiap pot menunjukkan berapa isinya, dibanding berapa isinya kalau penuh."
       }
@@ -1217,7 +1291,12 @@
     "legs": "{{done}} dari {{total}} sudah ditakar",
     "wanted": "Takar",
     "claim": "yang ini",
-    "claimAria": "Sebutkan bahwa {{capacity}} berisi jumlah itu"
+    "claimAria": "Sebutkan bahwa {{capacity}} berisi jumlah itu",
+    "controls": {
+      "move": "pilih wadah atau “yang ini” di bawahnya",
+      "press": "angkat, tuang ke sini, atau pilih sebagai jawaban",
+      "putDown": "taruh lagi wadah yang kamu pegang"
+    }
   },
   "procession": {
     "name": {
@@ -1237,8 +1316,8 @@
     "rules": {
       "default": {
         "lengths": "Setiap baris adalah satu kejadian, dan lamanya sepanjang batangnya. Kapan kejadiannya, itulah yang harus kamu cari.",
-        "marks": "Garis di bawah hari itu jadi merah selama belum terpenuhi. Ketuk satu untuk melingkari baris-baris yang dimaksud.",
-        "drag": "Seret batang di sepanjang barisnya sendiri. Batang itu tidak pernah keluar dari hari itu."
+        "marks": "Garis di bawah hari itu jadi merah selama belum terpenuhi. Pilih satu untuk melingkari baris-baris yang dimaksud.",
+        "drag": "Geser batang di sepanjang barisnya sendiri. Batang itu tidak pernah keluar dari hari itu."
       }
     },
     "hint": {
@@ -1247,7 +1326,7 @@
         "squeeze": "Sisa harinya tinggal sedikit, dan cuma ini yang muat.",
         "apart": "Kalau dibalik, tidak muat dalam hari itu.",
         "split": "Coba dibalik, dan ada hal lain yang jadi salah.",
-        "move": "Seret batang yang dilingkari ke garis-garis yang diarsir."
+        "move": "Geser batang yang dilingkari ke garis-garis yang diarsir."
       }
     },
     "events": {
@@ -1294,6 +1373,11 @@
       "hint": "Setiap ubin yang kamu injak menjalankan kegiatannya. Atur harinya, lalu injak ubin-ubinnya sesuai urutan itu.",
       "read": "Harinya sudah terbaca. Injak ubin-ubinnya dengan urutan ini, mulai dari yang pertama.",
       "hintButton": "Petunjuk"
+    },
+    "controls": {
+      "row": "pilih baris",
+      "slide": "geser batangnya",
+      "mark": "pilih garis di bawah hari itu"
     }
   },
   "story": {
@@ -1316,6 +1400,13 @@
       "pick": "Taruh tanda yang benar di tempatnya.",
       "cannot": "Kamu belum tahu tanda yang seharusnya ada di sini. Belum."
     },
+    "formula": {
+      "wrong": "Ada satu tanda yang hilang dari baris ini. Bukan salah pahat — memang tidak pernah dipahat.",
+      "fixed": "Barisnya sudah utuh.",
+      "pick": "Taruh tanda yang kamu terima di tempat yang kosong.",
+      "cannot": "Belum ada yang memberimu tanda untuk tempat ini. Belum.",
+      "gap": "Tanda yang hilang"
+    },
     "sphinx": {
       "wrong": "Tulisan yang sama seperti di luar, tapi pasir tidak pernah sampai ke sini. Dua tanda masih terpahat jelas, dan ada tempat kosong bekas tanda ketiga.",
       "fixed": "Itulah semuanya.",
@@ -1332,7 +1423,7 @@
       "shrines": "Satu cakram cahaya, dan sebuah kuil di atas setiap jalan keluar dari persimpangan ini. Cermin-cermin di lantai bisa membawa cahaya ke kuil mana saja.",
       "doors": "Jalan keluar yang kena cahaya terbuka, yang lain tertutup. Satu arah cahaya, satu jalan lanjut.",
       "returning": "Memilih tidak membuatmu rugi. Kamu boleh kembali kapan saja dan mengarahkan cahaya ke tempat lain. Jalan itu terbuka, dan yang ini tertutup.",
-      "tap": "Ketuk sebuah cermin untuk memutarnya. Ketuk lagi untuk mengembalikannya."
+      "tap": "Pilih sebuah cermin untuk memutarnya. Pilih lagi untuk mengembalikannya."
     },
     "doorOpen": "Jalan keluar {{way}}: terbuka",
     "doorShut": "Jalan keluar {{way}}: tertutup",
@@ -1341,6 +1432,10 @@
       "e": "timur",
       "s": "selatan",
       "w": "barat"
+    },
+    "controls": {
+      "move": "pilih cermin",
+      "turn": "putar"
     }
   },
   "handle": {
@@ -1587,5 +1682,31 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Menggambar menulis ulang teksnya: semua komentar pindah ke atas"
+  },
+  "saveCard": {
+    "title": "Kartu perjalanan",
+    "explain": "Bawa ekspedisimu ke perangkat lain: buat kartu di sini dan baca di sana dalam 15 menit.",
+    "make": "Buat kartu perjalanan",
+    "share": "Bagikan kartu",
+    "download": "Unduh kartu",
+    "read": "Baca kartu perjalanan",
+    "busy": "Sebentar…",
+    "makeFailed": "Kartu tidak bisa dibuat.",
+    "shareFailed": "Gagal membagikan; unduh saja kartunya.",
+    "confirm_other": "Ganti ekspedisi di perangkat ini dengan yang ada di kartu ({{count}} perjalanan)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Kartu perjalanan · bawa ekspedisimu",
+    "validUntil": "berlaku sampai {{time}}",
+    "codes_other": "{{count}} kode",
+    "refused": {
+      "notACard": "Ini bukan kartu perjalanan.",
+      "tampered": "Kartu ini sudah diubah dan tidak bisa dibaca lagi.",
+      "expired": "Kartu ini sudah kedaluwarsa; buat yang baru.",
+      "future": "Kartu ini datang dari masa depan: periksa jam di kedua perangkat.",
+      "otherEpoch": "Kartu ini dari versi permainan yang lain.",
+      "newerGame": "Kartu ini dari versi yang lebih baru: perbarui permainannya dulu."
+    },
+    "writeFailed": "Simpanan tidak bisa ditulis; perangkat ini tetap memakai simpanannya sendiri.",
+    "writeLost": "Simpanan tidak bisa diganti, dan simpanan di perangkat ini mungkin tidak lengkap."
   }
 }

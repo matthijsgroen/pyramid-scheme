@@ -21,19 +21,24 @@
     "mapHint": "Útržek ukazuje tržní cestu a dveře do sklepa – skrýš kupce, nic víc."
   },
   "junior_1": {
-    "name": "Let posvátných ibisů"
+    "name": "Let posvátných ibisů",
+    "description": "Rákosové močály podél Nilu a ibisové, kteří jimi brodí. Posvátní ptáci – a ne z důvodu, který by tě napadl."
   },
   "junior_2": {
-    "name": "Údolí řemeslníků"
+    "name": "Údolí řemeslníků",
+    "description": "Dér el-Medína, vesnice stavitelů hrobek. Jejich dílny pořád stojí, a s nimi i kus jejich práce."
   },
   "junior_3": {
-    "name": "Thothův chrám"
+    "name": "Thothův chrám",
+    "description": "Thothův chrám. Jeho jméno zná každý; zeptej se tří lidí, čeho byl bohem, a dostaneš tři odpovědi."
   },
   "junior_4": {
-    "name": "Maják v Alexandrii"
+    "name": "Maják v Alexandrii",
+    "description": "Maják na Faru v Alexandrii, jeden ze sedmi divů světa. Co z něj zbylo, leží v přístavu pod vodou."
   },
   "junior_treasure_tomb": {
     "name": "Skrytá komnata šlechtičny",
+    "description": "Komnata šlechtičny, pomalovaná od podlahy až ke stropu, a všechno v ní leží pořád tam, kam to dala.",
     "mapHint": "Jemný inkoust, pečeť se znakem v rohu – někdo urozený chtěl, aby se na tuhle místnost zapomnělo."
   },
   "expert_1": {

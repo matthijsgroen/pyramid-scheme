@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Tvoj napredak se ne može učitati",
     "body": "Preglednik trenutno ne želi dati tvoju sačuvanu igru. Ali nije nestala: ponovo učitaj stranicu i probaj još jednom.",
-    "banner": "Napredak se ne čuva. Dodirni da ponovo učitaš.",
+    "banner": "Napredak se ne čuva. Učitaj ponovo.",
     "reload": "Učitaj ponovo",
     "continue": "Igraj dalje bez čuvanja",
     "reset": "Počni ispočetka (obriši sačuvano)",
@@ -29,7 +29,6 @@
     "evening": "Veče",
     "night": "Noć"
   },
-  "tomb": {},
   "ui": {
     "level": "Nivo",
     "symbols": "znakova",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Prekini pohod",
     "confirmInterruptExpedition": "Sigurno želiš prekinuti ovaj pohod? Napredak na pohodu ostaje, ali napredak na ovom nivou se gubi!",
     "cancel": "Odustani",
+    "leaveSite": "Napustiti ovo mjesto?",
+    "confirmLeaveSite": "Izaberi Napusti da izađeš vani ili Ostani da istražuješ dalje.",
+    "leave": "Napusti",
+    "stay": "Ostani",
     "settings": "Postavke",
     "language": "Jezik",
     "close": "Zatvori",
@@ -107,8 +110,12 @@
     "solvedWithHints_one": "Riješeno uz {{count}} savjet",
     "solvedWithHints_few": "Riješeno uz {{count}} savjeta",
     "solvedWithHints_other": "Riješeno uz {{count}} savjeta",
-    "tapToContinue": "Dodirni za dalje",
-    "goal": "Cilj"
+    "tapToContinue": "Dalje",
+    "goal": "Cilj",
+    "controls": "Kontrole",
+    "controlsUndo": "vrati",
+    "controlsHint": "savjet",
+    "controlsLeave": "nazad na mapu"
   },
   "trap": {
     "warning": "⚠ Hodnik sa zamkom",
@@ -127,6 +134,7 @@
     "turnAround": "Okreni se",
     "wardDescription": {
       "starter": "Trgovčev pečat zatvara ovaj prolaz — otvara ga samo njegov ključ.",
+      "junior": "Grb jedne plemkinje zatvara ovaj prolaz — otvara ga samo njen ključ.",
       "expert": "Zaštita vrhovnog svećenika čuva ova vrata — mora ih otvoriti sveti ključ.",
       "master": "Faraonov kraljevski pečat drži ovaj prolaz — slomiti ga može samo kraljev ključ.",
       "wizard": "Zaštita bogova drži ovu kapiju — proći se može samo s ključem bogova."
@@ -135,7 +143,7 @@
     "lockedColor": "Taj ključ još nisi našao na ovom spratu."
   },
   "chest": {
-    "tapToOpen": "Dodirni da otvoriš",
+    "tapToOpen": "Otvori",
     "money_one": "{{count}} novčić",
     "money_few": "{{count}} novčića",
     "money_other": "{{count}} novčića",
@@ -143,6 +151,7 @@
     "mapPieceDescription": "Krhki komadić mape do nekog davno zaboravljenog mjesta. Šteta što je mapa još daleko od cijele...",
     "mapPieceProgress": "Skupljeno {{found}} od {{required}} komada mape",
     "mapPieceComplete": "Mapa je cijela — vodi do mjesta {{name}}.",
+    "hieroglyph": "Hijeroglif",
     "hieroglyphFragment": "Komadić hijeroglifa",
     "fragmentProgress": "Nađeno {{found}} od {{required}} komadića",
     "tombKey": "Ključ grobnice",
@@ -159,8 +168,9 @@
   },
   "loot": {
     "youFound": "Našao si",
+    "youReceived": "Dobio si",
     "expeditionReward": "Dodatna nagrada za završen pohod",
-    "clickToContinue": "Dodirni bilo gdje za dalje"
+    "clickToContinue": "Dalje"
   },
   "money": {
     "label": "Novčići"
@@ -258,7 +268,7 @@
     "tabNew_other": "{{label}} · {{count}} novih",
     "empty": "Tvoj kovčeg je još prazan",
     "newLabel": "NOVO",
-    "clickForDetails": "Dodirni pločicu za više",
+    "clickForDetails": "Izaberi pločicu za više",
     "categories": {
       "deities": "🏺 Bogovi",
       "professions": "⚱️ Zanimanja",
@@ -266,6 +276,7 @@
       "artifacts": "💎 Predmeti",
       "treasures": "💰 Blago",
       "junk": "🔷 Sitnice",
+      "offerings": "🍞 Darovi",
       "signs": "✍️ Znakovi"
     },
     "treasureCategories": {
@@ -347,22 +358,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Dodirni znak dolje, pa onda broj. Dodirni taj broj opet da ga skineš.",
+      "tap": "Izaberi znak dolje, pa onda broj. Izaberi taj broj opet da ga skineš.",
       "same": "Jedan znak je jednako težak na svakoj vagi.",
-      "cancel": "Skini isto s obje strane i vaga ostaje u ravnoteži. Dodirni označeni dio da to uradiš — ono što ostane čuva se kao novi red.",
-      "swap": "Dodirni znak koji nema para na drugoj strani, pa onda red gdje taj znak stoji sam, da ga zamijeniš za ono što taj red vrijedi."
+      "cancel": "Skini isto s obje strane i vaga ostaje u ravnoteži. Izaberi označeni dio da to uradiš — ono što ostane čuva se kao novi red.",
+      "swap": "Izaberi znak koji nema para na drugoj strani, pa onda red gdje taj znak stoji sam, da ga zamijeniš za ono što taj red vrijedi."
     },
     "hint": {
       "mistake": "Jedna od težina koje si dao naginje vagu. Skini je i pogledaj opet.",
       "alone": "U osvijetljenom redu {{glyph}} je jedini dio bez broja. Izračunaj koliko je težak.",
       "equalShares": "U osvijetljenom redu je samo {{glyph}} naspram broja. Podijeli taj broj među njima.",
       "difference": "Dva osvijetljena reda su ista, osim {{glyph}}. Uporedi ih.",
-      "cancelGlyph": "Na obje strane osvijetljenog reda je {{glyph}}. Dodirni jedan da ga skineš s obje strane — red ostaje u ravnoteži.",
-      "cancelStones": "Na obje strane osvijetljenog reda su obični brojevi. Dodirni jedan da skineš isto s obje strane.",
-      "swap": "Jedan osvijetljeni red kaže koliko vrijedi jedan {{glyph}} sam. Dodirni {{glyph}} u drugom osvijetljenom redu, pa onda taj red."
+      "cancelGlyph": "Na obje strane osvijetljenog reda je {{glyph}}. Izaberi jedan da ga skineš s obje strane — red ostaje u ravnoteži.",
+      "cancelStones": "Na obje strane osvijetljenog reda su obični brojevi. Izaberi jedan da skineš istu količinu s obje strane.",
+      "swap": "Jedan osvijetljeni red kaže koliko vrijedi jedan {{glyph}} sam. Izaberi {{glyph}} u drugom osvijetljenom redu, pa onda taj red."
     },
     "swap": {
-      "pick": "Dodirni osvijetljeni red da zamijeniš ovaj {{glyph}} za ono što taj red kaže da vrijedi.",
+      "pick": "Izaberi osvijetljeni red da ovaj {{glyph}} zamijeniš za ono što taj red kaže da vrijedi.",
       "none": "Ništa ovdje ne kaže koliko vrijedi jedan {{glyph}} sam, i ništa na drugoj strani mu ne odgovara."
     },
     "goal": {
@@ -372,11 +383,16 @@
     "name": {
       "default": "Vaga",
       "weighing": "Vaganje srca"
+    },
+    "controls": {
+      "move": "izaberi dio, red ili dugme",
+      "press": "pritisni ga",
+      "weigh": "daj izabranom znaku tu težinu"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Dodirni jednom da precrtaš broj, opet da ga označiš kao broj koji ostaje, i još jednom da ga očistiš.",
+      "tap": "Izaberi broj jednom da ga precrtaš, opet da ga označiš kao broj koji ostaje, i još jednom da ga očistiš.",
       "totals": "Mali broj ispod svakog cilja pokazuje koliko taj red sada daje kad sabereš."
     },
     "hint": {
@@ -439,12 +455,16 @@
       }
     },
     "goal": "Svaki red i svaka kolona daju broj koji stoji pored njih.",
-    "name": "Zbir"
+    "name": "Zbir",
+    "controls": {
+      "move": "izaberi broj",
+      "mark": "precrtaj, zadrži ili očisti"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Znak između dva polja pokazuje na manji od ta dva broja.",
-      "enter": "Dodirni polje, pa onda broj. Isti broj još jednom ga opet uklanja.",
+      "enter": "Izaberi polje, pa onda broj. Isti broj još jednom ga opet uklanja.",
       "notes": "Uzmi olovku da zapišeš koji brojevi još mogu stati u polje. Vrati poništava tvoj zadnji potez."
     },
     "hint": {
@@ -495,14 +515,22 @@
       }
     },
     "goal": "U svakom redu i svakoj koloni svaki broj je tačno jednom.",
-    "name": "Veće i manje"
+    "name": "Veće i manje",
+    "controls": {
+      "move": "izaberi polje",
+      "type": "upiši broj",
+      "choose": "izaberi broj ili gumicu",
+      "place": "upiši ga",
+      "pencil": "olovka",
+      "erase": "obriši"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Ogledalo odbija svjetlo s obje svoje strane. Male oznake oko njega pokazuju kako još može stajati: većina okreće svjetlo za četvrtinu kruga, a neka manje od toga, pa ga šalju ukoso.",
       "walls": "Kameni blok guta svjetlo. Isto radi i rub ploče.",
-      "tap": "Dodirni dio da ga promijeniš: ogledalo se okrene, a klizni dio pređe na sljedeće mjesto. Bijeli rub znači da ga ti smiješ pomjerati; sve ostalo je dio zagonetke.",
-      "nodes": "Neki kamen je povezan s otvorom u podu i ne pomjera se kad ga dodirneš. Pošalji svjetlo preko otvora i kamen klizne u stranu."
+      "tap": "Izaberi dio da ga promijeniš: ogledalo se okrene, a klizni dio pređe na sljedeće mjesto. Bijeli rub znači da ga ti smiješ pomjerati; sve ostalo je dio zagonetke.",
+      "nodes": "Neki kamen je povezan s otvorom u podu i ti ga ne možeš pomjeriti. Pošalji svjetlo preko otvora i kamen klizne u stranu."
     },
     "hint": {
       "entryRun": "Počni tamo gdje svjetlo već ide: ide pravo od diska dok ne naiđe na prvi dio koji možeš mijenjati. Kroz ta polja svjetlo prolazi šta god da uradiš.",
@@ -535,7 +563,7 @@
       "triple": "Tri ista zaredom nikad nisu dozvoljena, ni vodoravno ni okomito.",
       "copies": "Nijedna dva reda ne smiju biti ista, a ni dvije kolone.",
       "signs": "Znak između dva polja kaže kakva su: = znači ista, × znači različita.",
-      "enter": "Dodirni polje da staviš sunce, opet za mjesec, i još jednom da ga isprazniš."
+      "enter": "Izaberi polje da staviš sunce, opet za mjesec, i još jednom da ga isprazniš."
     },
     "hint": {
       "mistake": "Jedna od ovih oznaka ne može biti tačna.",
@@ -560,7 +588,11 @@
       }
     },
     "goal": "U svakom polju je sunce ili mjesec, i u svakoj liniji ima jednako sunaca i mjeseca.",
-    "name": "Sunce i mjesec"
+    "name": "Sunce i mjesec",
+    "controls": {
+      "move": "izaberi polje",
+      "mark": "promijeni oznaku"
+    }
   },
   "constellation": {
     "rules": {
@@ -568,25 +600,25 @@
         "straight": "Linije svjetla idu pravo, vodoravno ili okomito, od jedne zvijezde do sljedeće.",
         "pair": "Dvije zvijezde mogu dijeliti najviše dvije linije.",
         "cross": "Linije se nikad ne sijeku i nikad ne prolaze kroz zvijezdu.",
-        "enter": "Povuci od zvijezde prema susjedu da nacrtaš liniju, opet za duplu, i još jednom da je obrišeš."
+        "enter": "Nacrtaj liniju od zvijezde prema susjedu, opet za duplu, i još jednom da je obrišeš."
       },
       "causeway": {
         "straight": "Putevi za vuču idu pravo, vodoravno ili okomito, od jednog gradilišta do sljedećeg.",
         "pair": "Dva gradilišta mogu dijeliti najviše dva puta.",
         "cross": "Putevi se nikad ne sijeku i nikad ne idu kroz gradilište.",
-        "enter": "Povuci od gradilišta prema susjedu da napraviš put, opet da ga udvostručiš, i još jednom da ga srušiš."
+        "enter": "Napravi put od gradilišta prema susjedu, opet da ga udvostručiš, i još jednom da ga srušiš."
       },
       "irrigation": {
         "straight": "Kanali idu pravo, vodoravno ili okomito, od jednog bazena do sljedećeg.",
         "pair": "Dva bazena mogu dijeliti najviše dva kanala.",
         "cross": "Kanali se nikad ne sijeku i nikad ne idu kroz bazen.",
-        "enter": "Povuci od bazena prema susjedu da iskopaš kanal, opet da ga proširiš, i još jednom da ga zatrpaš."
+        "enter": "Iskopaj kanal od bazena prema susjedu, opet da ga proširiš, i još jednom da ga zatrpaš."
       },
       "ceiling": {
         "straight": "Uzice idu pravo, vodoravno ili okomito, od jedne zvijezde do sljedeće.",
         "pair": "Dvije zvijezde mogu dijeliti najviše dvije uzice.",
         "cross": "Uzice se nikad ne sijeku i nikad ne idu kroz zvijezdu.",
-        "enter": "Povuci od zvijezde prema susjedu da postaviš uzicu, opet da je udvostručiš, i još jednom da je skineš."
+        "enter": "Razvuci uzicu od zvijezde prema susjedu, opet da je udvostručiš, i još jednom da je skineš."
       }
     },
     "hint": {
@@ -682,37 +714,44 @@
       "causeway": "Nasip",
       "irrigation": "Vodovod",
       "ceiling": "Oslikani strop"
+    },
+    "controls": {
+      "pick": "izaberi zvijezdu",
+      "grab": "uhvati je",
+      "draw": "nacrtaj liniju na tu stranu",
+      "release": "pusti",
+      "alt": "drži i pokaži: linija, dupla, nijedna"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Dvije zvijezde se ne smiju dodirivati — ni ćoškovima.",
-        "enter": "Dodirni polje da ga isključiš, opet da staviš zvijezdu, i još jednom da ga očistiš."
+        "enter": "Izaberi polje da ga isključiš, opet da staviš zvijezdu, i još jednom da ga očistiš."
       },
       "fields": {
         "touch": "Dvije farme se ne smiju dodirivati — ni ćoškovima. Tako blizu, morale bi dijeliti jedan bunar.",
-        "enter": "Dodirni parcelu da je isključiš, opet da sagradiš farmu, i još jednom da je očistiš."
+        "enter": "Izaberi parcelu da je isključiš, opet da sagradiš farmu, i još jednom da je očistiš."
       },
       "lamps": {
         "touch": "Dvije uljanice ne smiju stajati jedna do druge — ni ćoškovima. Njihovo svjetlo bi se preklapalo, a ulje bi se trošilo uzalud.",
         "walls": "Sivi kameni blokovi su dio poda: na njih se ništa ne može staviti, i oni nisu polja.",
-        "enter": "Dodirni ploču da je isključiš, opet da tu staviš uljanicu, i još jednom da je očistiš."
+        "enter": "Izaberi ploču da je isključiš, opet da tu staviš uljanicu, i još jednom da je očistiš."
       },
       "market": {
         "touch": "Dvije tezge ne smiju stajati jedna do druge — ni ćoškovima. Suparnici nikad ne prodaju jedan pored drugog.",
         "walls": "Kuće su dio trga: u njima niko ne može postaviti tezgu, i one nisu mjesta.",
-        "enter": "Dodirni mjesto da ga isključiš, opet da tu postaviš tezgu, i još jednom da ga očistiš."
+        "enter": "Izaberi mjesto da ga isključiš, opet da tu postaviš tezgu, i još jednom da ga očistiš."
       },
       "lotus": {
         "touch": "Dva lotosa ne smiju plutati jedan do drugog — ni ćoškovima. Svakom cvijetu treba slobodne vode oko njega.",
         "walls": "Stijene vire iz ribnjaka: na njima ništa ne može plutati, i one nisu polja.",
-        "enter": "Dodirni komadić vode da ga isključiš, opet da tu pustiš lotos, i još jednom da ga očistiš."
+        "enter": "Izaberi komadić vode da ga isključiš, opet da tu pustiš lotos, i još jednom da ga očistiš."
       },
       "cats": {
         "touch": "Dvije mačke ne smiju spavati jedna do druge — ni ćoškovima. Svaka mačka ima svoje mjesto na suncu.",
         "walls": "Stubovi drže hram: na njima nijedna mačka ne može spavati, i oni nisu polja.",
-        "enter": "Dodirni ploču da je isključiš, opet da tu legne mačka, i još jednom da je očistiš."
+        "enter": "Izaberi ploču da je isključiš, opet da tu legne mačka, i još jednom da je očistiš."
       }
     },
     "hint": {
@@ -854,10 +893,10 @@
         "mistake": "Ova oznaka ne može biti tačna.",
         "touch": "Ovdje je {{token}}, a nijedna uljanica ne smije stajati do druge — ni ćoškovima.",
         "groupFull.row_one": "Ovaj red već ima svoju uljanicu.",
-        "groupFull.col_one": "Ova kolona već ima svoju uljanicu.",
         "groupFull.row_few": "Ovaj red već ima svoje {{count}} uljanice.",
-        "groupFull.col_few": "Ova kolona već ima svoje {{count}} uljanice.",
         "groupFull.row_other": "Ovaj red već ima svojih {{count}} uljanica.",
+        "groupFull.col_one": "Ova kolona već ima svoju uljanicu.",
+        "groupFull.col_few": "Ova kolona već ima svoje {{count}} uljanice.",
         "groupFull.col_other": "Ova kolona već ima svojih {{count}} uljanica.",
         "groupTight.row_one": "U ovom redu ostala je još samo jedna ploča.",
         "groupTight.row_few": "U ovom redu ostale su još samo {{count}} ploče.",
@@ -866,16 +905,16 @@
         "groupTight.col_few": "U ovoj koloni ostale su još samo {{count}} ploče.",
         "groupTight.col_other": "U ovoj koloni ostalo je još samo {{count}} ploča.",
         "onlyWay.row_one": "Između kamenih blokova u ovom redu ostalo je samo jedno polje za uljanicu.",
-        "onlyWay.col_one": "Između kamenih blokova u ovoj koloni ostalo je samo jedno polje za uljanicu.",
         "onlyWay.row_few": "Samo je jedan način da {{count}} uljanice stanu u ovaj red.",
-        "onlyWay.col_few": "Samo je jedan način da {{count}} uljanice stanu u ovu kolonu.",
         "onlyWay.row_other": "Samo je jedan način da {{count}} uljanica stane u ovaj red.",
+        "onlyWay.col_one": "Između kamenih blokova u ovoj koloni ostalo je samo jedno polje za uljanicu.",
+        "onlyWay.col_few": "Samo je jedan način da {{count}} uljanice stanu u ovu kolonu.",
         "onlyWay.col_other": "Samo je jedan način da {{count}} uljanica stane u ovu kolonu.",
         "everyWay.row_one": "Gdje god da stane uljanica ovog reda, uvijek je ovdje.",
-        "everyWay.col_one": "Gdje god da stane uljanica ove kolone, uvijek je ovdje.",
         "everyWay.row_few": "Gdje god da stanu {{count}} uljanice ovog reda, jedna je uvijek ovdje.",
-        "everyWay.col_few": "Gdje god da stanu {{count}} uljanice ove kolone, jedna je uvijek ovdje.",
         "everyWay.row_other": "Gdje god da stane {{count}} uljanica ovog reda, jedna je uvijek ovdje.",
+        "everyWay.col_one": "Gdje god da stane uljanica ove kolone, uvijek je ovdje.",
+        "everyWay.col_few": "Gdje god da stanu {{count}} uljanice ove kolone, jedna je uvijek ovdje.",
         "everyWay.col_other": "Gdje god da stane {{count}} uljanica ove kolone, jedna je uvijek ovdje.",
         "lineBlock.rowsToCols": "Označeni redovi drže svoje uljanice u poljima tih kolona, pa tim kolonama ne ostaje nijedna viška.",
         "lineBlock.colsToRows": "Označene kolone drže svoje uljanice u poljima tih redova, pa tim redovima ne ostaje nijedna viška.",
@@ -894,10 +933,10 @@
         "mistake": "Ova oznaka ne može biti tačna.",
         "touch": "Ovdje je {{token}}, a nijedna tezga ne smije stajati do druge — ni ćoškovima.",
         "groupFull.row_one": "Ovaj red već ima svoju tezgu.",
-        "groupFull.col_one": "Ova kolona već ima svoju tezgu.",
         "groupFull.row_few": "Ovaj red već ima svoje {{count}} tezge.",
-        "groupFull.col_few": "Ova kolona već ima svoje {{count}} tezge.",
         "groupFull.row_other": "Ovaj red već ima svojih {{count}} tezgi.",
+        "groupFull.col_one": "Ova kolona već ima svoju tezgu.",
+        "groupFull.col_few": "Ova kolona već ima svoje {{count}} tezge.",
         "groupFull.col_other": "Ova kolona već ima svojih {{count}} tezgi.",
         "groupTight.row_one": "U ovom redu ostalo je još samo jedno mjesto.",
         "groupTight.row_few": "U ovom redu ostala su još samo {{count}} mjesta.",
@@ -906,16 +945,16 @@
         "groupTight.col_few": "U ovoj koloni ostala su još samo {{count}} mjesta.",
         "groupTight.col_other": "U ovoj koloni ostalo je još samo {{count}} mjesta.",
         "onlyWay.row_one": "Između kuća u ovom redu ostalo je samo jedno polje za tezgu.",
-        "onlyWay.col_one": "Između kuća u ovoj koloni ostalo je samo jedno polje za tezgu.",
         "onlyWay.row_few": "Samo je jedan način da {{count}} tezge stanu u ovaj red.",
-        "onlyWay.col_few": "Samo je jedan način da {{count}} tezge stanu u ovu kolonu.",
         "onlyWay.row_other": "Samo je jedan način da {{count}} tezgi stane u ovaj red.",
+        "onlyWay.col_one": "Između kuća u ovoj koloni ostalo je samo jedno polje za tezgu.",
+        "onlyWay.col_few": "Samo je jedan način da {{count}} tezge stanu u ovu kolonu.",
         "onlyWay.col_other": "Samo je jedan način da {{count}} tezgi stane u ovu kolonu.",
         "everyWay.row_one": "Gdje god da stane tezga ovog reda, uvijek je ovdje.",
-        "everyWay.col_one": "Gdje god da stane tezga ove kolone, uvijek je ovdje.",
         "everyWay.row_few": "Gdje god da stanu {{count}} tezge ovog reda, jedna je uvijek ovdje.",
-        "everyWay.col_few": "Gdje god da stanu {{count}} tezge ove kolone, jedna je uvijek ovdje.",
         "everyWay.row_other": "Gdje god da stane {{count}} tezgi ovog reda, jedna je uvijek ovdje.",
+        "everyWay.col_one": "Gdje god da stane tezga ove kolone, uvijek je ovdje.",
+        "everyWay.col_few": "Gdje god da stanu {{count}} tezge ove kolone, jedna je uvijek ovdje.",
         "everyWay.col_other": "Gdje god da stane {{count}} tezgi ove kolone, jedna je uvijek ovdje.",
         "lineBlock.rowsToCols": "Označeni redovi drže svoje tezge u poljima tih kolona, pa tim kolonama ne ostaje nijedna viška.",
         "lineBlock.colsToRows": "Označene kolone drže svoje tezge u poljima tih redova, pa tim redovima ne ostaje nijedna viška.",
@@ -934,10 +973,10 @@
         "mistake": "Ova oznaka ne može biti tačna.",
         "touch": "Ovdje je {{token}}, a nijedan lotos ne smije plutati do drugog — ni ćoškovima.",
         "groupFull.row_one": "Ovaj red već ima svoj lotos.",
-        "groupFull.col_one": "Ova kolona već ima svoj lotos.",
         "groupFull.row_few": "Ovaj red već ima svoja {{count}} lotosa.",
-        "groupFull.col_few": "Ova kolona već ima svoja {{count}} lotosa.",
         "groupFull.row_other": "Ovaj red već ima svojih {{count}} lotosa.",
+        "groupFull.col_one": "Ova kolona već ima svoj lotos.",
+        "groupFull.col_few": "Ova kolona već ima svoja {{count}} lotosa.",
         "groupFull.col_other": "Ova kolona već ima svojih {{count}} lotosa.",
         "groupTight.row_one": "U ovom redu ostao je još samo jedan komadić vode.",
         "groupTight.row_few": "U ovom redu ostala su još samo {{count}} komadića vode.",
@@ -946,16 +985,16 @@
         "groupTight.col_few": "U ovoj koloni ostala su još samo {{count}} komadića vode.",
         "groupTight.col_other": "U ovoj koloni ostalo je još samo {{count}} komadića vode.",
         "onlyWay.row_one": "Između stijena u ovom redu ostalo je samo jedno polje za lotos.",
-        "onlyWay.col_one": "Između stijena u ovoj koloni ostalo je samo jedno polje za lotos.",
         "onlyWay.row_few": "Samo je jedan način da {{count}} lotosa stanu u ovaj red.",
-        "onlyWay.col_few": "Samo je jedan način da {{count}} lotosa stanu u ovu kolonu.",
         "onlyWay.row_other": "Samo je jedan način da {{count}} lotosa stane u ovaj red.",
+        "onlyWay.col_one": "Između stijena u ovoj koloni ostalo je samo jedno polje za lotos.",
+        "onlyWay.col_few": "Samo je jedan način da {{count}} lotosa stanu u ovu kolonu.",
         "onlyWay.col_other": "Samo je jedan način da {{count}} lotosa stane u ovu kolonu.",
         "everyWay.row_one": "Gdje god da pluta lotos ovog reda, uvijek je ovdje.",
-        "everyWay.col_one": "Gdje god da pluta lotos ove kolone, uvijek je ovdje.",
         "everyWay.row_few": "Gdje god da plutaju {{count}} lotosa ovog reda, jedan je uvijek ovdje.",
-        "everyWay.col_few": "Gdje god da plutaju {{count}} lotosa ove kolone, jedan je uvijek ovdje.",
         "everyWay.row_other": "Gdje god da pluta {{count}} lotosa ovog reda, jedan je uvijek ovdje.",
+        "everyWay.col_one": "Gdje god da pluta lotos ove kolone, uvijek je ovdje.",
+        "everyWay.col_few": "Gdje god da plutaju {{count}} lotosa ove kolone, jedan je uvijek ovdje.",
         "everyWay.col_other": "Gdje god da pluta {{count}} lotosa ove kolone, jedan je uvijek ovdje.",
         "lineBlock.rowsToCols": "Označeni redovi drže svoje lotose u poljima tih kolona, pa tim kolonama ne ostaje nijedan viška.",
         "lineBlock.colsToRows": "Označene kolone drže svoje lotose u poljima tih redova, pa tim redovima ne ostaje nijedan viška.",
@@ -974,10 +1013,10 @@
         "mistake": "Ova oznaka ne može biti tačna.",
         "touch": "Ovdje je {{token}}, a nijedna mačka ne smije spavati do druge — ni ćoškovima.",
         "groupFull.row_one": "Ovaj red već ima svoju mačku.",
-        "groupFull.col_one": "Ova kolona već ima svoju mačku.",
         "groupFull.row_few": "Ovaj red već ima svoje {{count}} mačke.",
-        "groupFull.col_few": "Ova kolona već ima svoje {{count}} mačke.",
         "groupFull.row_other": "Ovaj red već ima svojih {{count}} mačaka.",
+        "groupFull.col_one": "Ova kolona već ima svoju mačku.",
+        "groupFull.col_few": "Ova kolona već ima svoje {{count}} mačke.",
         "groupFull.col_other": "Ova kolona već ima svojih {{count}} mačaka.",
         "groupTight.row_one": "U ovom redu ostala je još samo jedna ploča.",
         "groupTight.row_few": "U ovom redu ostale su još samo {{count}} ploče.",
@@ -986,16 +1025,16 @@
         "groupTight.col_few": "U ovoj koloni ostale su još samo {{count}} ploče.",
         "groupTight.col_other": "U ovoj koloni ostalo je još samo {{count}} ploča.",
         "onlyWay.row_one": "Između stubova u ovom redu ostalo je samo jedno polje za mačku.",
-        "onlyWay.col_one": "Između stubova u ovoj koloni ostalo je samo jedno polje za mačku.",
         "onlyWay.row_few": "Samo je jedan način da {{count}} mačke stanu u ovaj red.",
-        "onlyWay.col_few": "Samo je jedan način da {{count}} mačke stanu u ovu kolonu.",
         "onlyWay.row_other": "Samo je jedan način da {{count}} mačaka stane u ovaj red.",
+        "onlyWay.col_one": "Između stubova u ovoj koloni ostalo je samo jedno polje za mačku.",
+        "onlyWay.col_few": "Samo je jedan način da {{count}} mačke stanu u ovu kolonu.",
         "onlyWay.col_other": "Samo je jedan način da {{count}} mačaka stane u ovu kolonu.",
         "everyWay.row_one": "Gdje god da legne mačka ovog reda, uvijek je ovdje.",
-        "everyWay.col_one": "Gdje god da legne mačka ove kolone, uvijek je ovdje.",
         "everyWay.row_few": "Gdje god da legnu {{count}} mačke ovog reda, jedna je uvijek ovdje.",
-        "everyWay.col_few": "Gdje god da legnu {{count}} mačke ove kolone, jedna je uvijek ovdje.",
         "everyWay.row_other": "Gdje god da legne {{count}} mačaka ovog reda, jedna je uvijek ovdje.",
+        "everyWay.col_one": "Gdje god da legne mačka ove kolone, uvijek je ovdje.",
+        "everyWay.col_few": "Gdje god da legnu {{count}} mačke ove kolone, jedna je uvijek ovdje.",
         "everyWay.col_other": "Gdje god da legne {{count}} mačaka ove kolone, jedna je uvijek ovdje.",
         "lineBlock.rowsToCols": "Označeni redovi drže svoje mačke u poljima tih kolona, pa tim kolonama ne ostaje nijedna viška.",
         "lineBlock.colsToRows": "Označene kolone drže svoje mačke u poljima tih redova, pa tim redovima ne ostaje nijedna viška.",
@@ -1040,6 +1079,11 @@
       "market": "Tezge na pijaci",
       "lotus": "Ribnjak s lotosima",
       "cats": "Mačke iz hrama"
+    },
+    "controls": {
+      "move": "izaberi polje",
+      "mark": "promijeni oznaku",
+      "sweep": "drži i pomjeraj: isključi cijeli niz"
     }
   },
   "pairPuzzle": {
@@ -1056,13 +1100,13 @@
         "pair": "Svaki sarkofag ima jednu mumiju odmah iznad, ispod, lijevo ili desno od sebe, a svaka mumija leži pored svog sarkofaga.",
         "count": "Broj pored reda ili kolone kaže koliko mumija ima u njemu. Pozeleni kad linija ima tačno toliko, a pocrveni kad to više ne može biti.",
         "touch": "Dvije mumije ne smiju stajati jedna do druge — ni ćoškovima.",
-        "enter": "Dodirni polje da ga isključiš, opet da tu položiš mumiju, i još jednom da ga očistiš. Povuci preko polja da isključiš cijeli niz. Sarkofage ne možeš dodirivati."
+        "enter": "Izaberi polje da ga isključiš, opet da tu položiš mumiju, i još jednom da ga očistiš. Cijeli niz polja možeš isključiti u jednom potezu. Sarkofazi se ne mogu označiti."
       },
       "beetles": {
         "pair": "Svaka kuglica balege ima jednog balegara odmah iznad, ispod, lijevo ili desno od sebe, a svaki balegar stoji pored svoje kuglice koju gura.",
         "count": "Broj pored reda ili kolone kaže koliko balegara ima u njemu. Pozeleni kad linija ima tačno toliko, a pocrveni kad to više ne može biti.",
         "touch": "Dva balegara ne smiju stajati jedan do drugog — ni ćoškovima.",
-        "enter": "Dodirni polje da ga isključiš, opet da tu staviš balegara, i još jednom da ga očistiš. Povuci preko polja da isključiš cijeli niz. Kuglice balege ne možeš dodirivati."
+        "enter": "Izaberi polje da ga isključiš, opet da tu staviš balegara, i još jednom da ga očistiš. Cijeli niz polja možeš isključiti u jednom potezu. Kuglice balege se ne mogu označiti."
       }
     },
     "hint": {
@@ -1142,6 +1186,11 @@
           "place_other": "Stavi balegara na svako osjenčano polje."
         }
       }
+    },
+    "controls": {
+      "move": "izaberi polje",
+      "mark": "promijeni oznaku",
+      "sweep": "drži i pomjeraj: isključi cijeli niz"
     }
   },
   "rushHour": {
@@ -1156,11 +1205,11 @@
     "rules": {
       "default": {
         "lanes": "Blok klizi samo svojom trakom — nikad u stranu, nikad van ploče.",
-        "shove": "Povuci blok da ga gurneš. Stane tamo gdje mu nešto smeta."
+        "shove": "Gurni blok duž njegove trake. Stane tamo gdje mu nešto smeta."
       },
       "market": {
         "lanes": "Sanke klize samo trakom u kojoj stoje — nikad u stranu, nikad van ulice.",
-        "shove": "Povuci sanke da ih gurneš. Stanu tamo gdje im nešto smeta."
+        "shove": "Gurni sanke duž njihove trake. Stanu tamo gdje im nešto smeta."
       }
     },
     "hint": {
@@ -1188,29 +1237,35 @@
           "down": "Gurni ga niz ulicu, do kružića."
         }
       }
+    },
+    "controls": {
+      "pick": "izaberi blok",
+      "grab": "uhvati ga",
+      "slide": "pomjeri",
+      "release": "pusti"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "Brojevi koji su već u saću dio su zagonetke — ostaju gdje jesu.",
-        "enter": "Dodirni broj da odatle nastaviš niz, pa dodirni prazno polje koje ga dodiruje — ili samo povuci prstom kroz polja kuda niz ide.",
-        "back": "Dodirni broj koji si stavio, pa ga dodirni opet da ga skineš, zajedno sa svim što visi na njemu. Isto se desi ako niz od nekog broja nastaviš drugim putem. Vrati poništava tvoj zadnji potez."
+        "enter": "Nacrtaj liniju od broja kroz prazna polja pored njega da nastaviš niz.",
+        "back": "Izaberi broj koji si stavio, pa ga izaberi opet da ga skineš, zajedno sa svim što visi na njemu. Isto se desi ako niz od nekog broja nastaviš drugim putem. Vrati poništava tvoj zadnji potez."
       },
       "channel": {
         "given": "Polja koja već imaju broj dio su zagonetke — ostaju gdje jesu.",
-        "enter": "Dodirni polje s brojem da odatle povedeš vodu, pa dodirni suho polje pored da kopaš dalje — ili samo povuci prstom duž polja kuda ide kanal.",
-        "back": "Dodirni polje koje si iskopao, pa ga dodirni opet da ga zatrpaš, zajedno sa svakim kanalom koji ostane odsječen. Isto se desi ako od nekog polja kopaš drugim putem. Vrati poništava tvoj zadnji potez."
+        "enter": "Iskopaj kanal od polja s brojem kroz suha polja pored njega da vodu povedeš dalje.",
+        "back": "Izaberi polje koje si iskopao, pa ga izaberi opet da ga zatrpaš, zajedno sa svakim kanalom koji ostane odsječen. Isto se desi ako od nekog polja kopaš drugim putem. Vrati poništava tvoj zadnji potez."
       },
       "scribe": {
         "given": "Brojevi napisani crvenim mastilom pripadaju zagonetki — ostaju gdje jesu.",
-        "enter": "Dodirni broj da tu uzmeš pero od trske, pa dodirni prazno mjesto pored da pišeš dalje — ili samo povuci prstom duž linije.",
-        "back": "Dodirni broj koji si napisao, pa ga dodirni opet da ga ostružeš, zajedno sa svakom linijom koja ostane odsječena. Isto se desi ako od nekog broja pišeš drugim putem. Vrati poništava tvoj zadnji potez."
+        "enter": "Napiši liniju od broja kroz prazna mjesta pored njega da nastaviš brojanje.",
+        "back": "Izaberi broj koji si napisao, pa ga izaberi opet da ga ostružeš, zajedno sa svakom linijom koja ostane odsječena. Isto se desi ako od nekog broja pišeš drugim putem. Vrati poništava tvoj zadnji potez."
       },
       "chambers": {
         "given": "Odaje koje već imaju broj iskopali su graditelji — ostaju gdje jesu.",
-        "enter": "Dodirni odaju s brojem da odatle nastaviš prolaz, pa dodirni zatvorenu odaju pored da se probiješ — ili samo povuci prstom duž odaja kuda ide prolaz.",
-        "back": "Dodirni odaju koju si otvorio, pa je dodirni opet da je zatvoriš, zajedno sa svakim prolazom koji ostane odsječen. Isto se desi ako se od neke odaje probiješ drugim putem. Vrati poništava tvoj zadnji potez."
+        "enter": "Probij prolaz od odaje s brojem kroz zatvorene odaje pored nje da ga nastaviš.",
+        "back": "Izaberi odaju koju si otvorio, pa je izaberi opet da je zatvoriš, zajedno sa svakim prolazom koji ostane odsječen. Isto se desi ako se od neke odaje probiješ drugim putem. Vrati poništava tvoj zadnji potez."
       }
     },
     "goal": {
@@ -1274,6 +1329,13 @@
       "channel": "Kanal",
       "scribe": "Pisarev list",
       "chambers": "Zapečaćene odaje"
+    },
+    "controls": {
+      "move": "idi na polje pored; gore i dole idu ukoso lijevo",
+      "right": "ukoso desno gore ili dole",
+      "grab": "uzmi niz ili skini svoj broj",
+      "carry": "s uzetim nizom: nastavi ga; gore i dole biraju stranu gdje niz može dalje",
+      "drop": "spusti niz"
     }
   },
   "sudoku": {
@@ -1281,13 +1343,13 @@
       "default": {
         "chambers": "Debele linije dijele mrežu na šest odaja, svaka je široka dva polja i visoka tri.",
         "given": "Brojevi koji su već uklesani dio su zagonetke — ostaju gdje jesu.",
-        "enter": "Dodirni polje, pa onda broj. Isti broj još jednom ga opet uklanja.",
+        "enter": "Izaberi polje, pa onda broj. Isti broj još jednom ga opet uklanja.",
         "notes": "Uzmi olovku da zapišeš koji brojevi još mogu stati u polje. Vrati poništava tvoj zadnji potez."
       },
       "papyrus": {
         "chambers": "Debele linije dijele list na šest dijelova, svaki je širok dva mjesta i visok tri.",
         "given": "Znakovi napisani crvenim mastilom pripadaju zagonetki — ostaju gdje jesu.",
-        "enter": "Dodirni mjesto, pa onda znak. Isti znak još jednom ga ostruže.",
+        "enter": "Izaberi mjesto, pa onda znak. Isti znak još jednom ga ostruže.",
         "notes": "Uzmi pero od trske da tanko zapišeš koji znakovi još mogu stati na mjesto. Vrati poništava tvoj zadnji potez."
       }
     },
@@ -1356,6 +1418,14 @@
     "name": {
       "default": "Šest odaja",
       "papyrus": "Pisareva knjiga"
+    },
+    "controls": {
+      "move": "izaberi polje",
+      "type": "upiši broj",
+      "choose": "izaberi broj ili gumicu",
+      "place": "upiši ga",
+      "pencil": "olovka",
+      "erase": "obriši"
     }
   },
   "crocodile": {
@@ -1369,6 +1439,10 @@
     "hint": {
       "biggest": "Ovaj krokodil želi najveći odgovor. To je {{value}}.",
       "smallest": "Ovaj krokodil želi najmanji odgovor. To je {{value}}."
+    },
+    "controls": {
+      "move": "izaberi kamen",
+      "step": "stani na njega"
     }
   },
   "canisters": {
@@ -1405,35 +1479,35 @@
         "sums": "Svaka količina koju možeš dobiti su dva broja s police, sabrana ili oduzeta: veličina posude, ono što je u njoj, ili koliko još mjesta ima.",
         "backwards": "Zato idi unazad od tražene količine — koja dva broja je daju, i kako da ta dva imaš u isto vrijeme?"
       },
-      "claim": "Kad imaš količinu, dodirni „ova“. Ako izabereš pogrešnu posudu, gubiš jedan potez.",
+      "claim": "Kad imaš količinu, izaberi „ova“. Ako izabereš pogrešnu posudu, gubiš jedan potez.",
       "legs": "Onda sljedeća količina, mjerena od onoga što je ostalo u posudama.",
       "default": {
-        "moves": "Dodirni posudu da je podigneš, pa dodirni drugu da sipaš u nju. Sipanje stane kad se prva isprazni ili se druga napuni.",
+        "moves": "Podigni posudu, pa izaberi drugu da sipaš u nju. Sipanje stane kad se prva isprazni ili se druga napuni.",
         "contents": "Ovo je sva voda koja postoji — jedna posuda je na početku puna, i nijedna se ne može prosuti ni dopuniti.",
         "levels": "Na svakoj posudi piše koliko je u njoj i koliko stane kad je puna."
       },
       "grain": {
-        "moves": "Dodirni mjericu da je podigneš, pa dodirni drugu da u nju sasipaš žito. Sipanje stane kad se prva isprazni ili je druga puna do vrha.",
+        "moves": "Podigni mjericu, pa izaberi drugu da u nju sasipaš žito. Sipanje stane kad se prva isprazni ili je druga puna do vrha.",
         "contents": "Ovo je sve žito koje postoji — jedna mjerica je na početku puna, i nijedna se ne može pomesti ni dopuniti iz ambara.",
         "levels": "Na svakoj mjerici piše koliko je u njoj i koliko stane kad je puna do vrha."
       },
       "oil": {
-        "moves": "Dodirni ćup da ga podigneš, pa dodirni drugi da sipaš u njega. Sipanje stane kad se prvi isprazni ili se drugi napuni.",
+        "moves": "Podigni ćup, pa izaberi drugi da sipaš u njega. Sipanje stane kad se prvi isprazni ili se drugi napuni.",
         "contents": "Ovo je sve ulje koje postoji — jedan ćup je na početku pun, i nijedan se ne može prosuti ni dopuniti.",
         "levels": "Na svakom ćupu piše koliko je u njemu i koliko stane kad je pun."
       },
       "wine": {
-        "moves": "Dodirni amforu da je podigneš, pa dodirni drugu da preliješ u nju. Prelijevanje stane kad se prva isprazni ili se druga napuni.",
+        "moves": "Podigni amforu, pa izaberi drugu da preliješ u nju. Prelijevanje stane kad se prva isprazni ili se druga napuni.",
         "contents": "Ovo je sve vino koje postoji — jedna amfora je na početku puna, i nijedna se ne može prosuti ni dopuniti iz podruma.",
         "levels": "Na svakoj amfori piše koliko je u njoj i koliko stane kad je puna."
       },
       "natron": {
-        "moves": "Dodirni posudu da je podigneš, pa dodirni drugu da u nju sasipaš natron. Sipanje stane kad se prva isprazni ili je druga puna do poklopca.",
+        "moves": "Podigni posudu, pa izaberi drugu da u nju sasipaš natron. Sipanje stane kad se prva isprazni ili je druga puna do poklopca.",
         "contents": "Ovo je sav natron koji postoji — jedna posuda je na početku puna, i nijedna se ne može pomesti ni dopuniti.",
         "levels": "Na svakoj posudi piše koliko je u njoj i koliko stane kad je puna do poklopca."
       },
       "ink": {
-        "moves": "Dodirni posudicu da je podigneš, pa dodirni drugu da sipaš u nju. Sipanje stane kad se prva isprazni ili se druga napuni.",
+        "moves": "Podigni posudicu, pa izaberi drugu da sipaš u nju. Sipanje stane kad se prva isprazni ili se druga napuni.",
         "contents": "Ovo je sve mastilo koje postoji — jedna posudica je na početku puna, i nijedna se ne može izliti ni napraviti nova.",
         "levels": "Na svakoj posudici piše koliko je u njoj i koliko stane kad je puna."
       }
@@ -1459,7 +1533,12 @@
     "legs": "izmjereno {{done}} od {{total}}",
     "wanted": "Izmjeri",
     "claim": "ova",
-    "claimAria": "Reci da je količina u posudi od {{capacity}}"
+    "claimAria": "Reci da je količina u posudi od {{capacity}}",
+    "controls": {
+      "move": "izaberi posudu ili „ova“ ispod nje",
+      "press": "podigni, sipaj ovdje ili potvrdi",
+      "putDown": "spusti posudu koju držiš"
+    }
   },
   "procession": {
     "name": {
@@ -1479,8 +1558,8 @@
     "rules": {
       "default": {
         "lengths": "Svaki red je jedan događaj, i traje onoliko koliko je široka njegova traka. Kada se desi, to ti trebaš otkriti.",
-        "marks": "Linija ispod dana je crvena dok nije tačna. Dodirni je da zaokružiš redove na koje se odnosi.",
-        "drag": "Povuci traku duž njenog reda. Nikad ne izlazi iz dana."
+        "marks": "Linija ispod dana je crvena dok nije tačna. Izaberi je da zaokružiš redove na koje se odnosi.",
+        "drag": "Pomjeri traku duž njenog reda. Nikad ne izlazi iz dana."
       }
     },
     "hint": {
@@ -1489,7 +1568,7 @@
         "squeeze": "Ostalo je još samo malo dana, i ovo je sve što stane.",
         "apart": "Obrnuto ne stane u dan.",
         "split": "Probaj obrnuto i nešto drugo se pokvari.",
-        "move": "Povuci zaokruženu traku na osjenčane crtice."
+        "move": "Pomjeri zaokruženu traku na osjenčane crtice."
       }
     },
     "events": {
@@ -1526,6 +1605,11 @@
       "hint": "Svaka pločica na koju staneš pokrene svoj posao. Složi dan, pa onda hodaj po pločicama tim redom.",
       "read": "Dan je pročitan. Hodaj po njegovim pločicama ovim redom, od prve.",
       "hintButton": "Savjet"
+    },
+    "controls": {
+      "row": "izaberi red",
+      "slide": "pomjeri njegovu traku",
+      "mark": "izaberi liniju ispod dana"
     }
   },
   "story": {
@@ -1548,6 +1632,13 @@
       "pick": "Stavi pravi znak na njegovo mjesto.",
       "cannot": "Ne znaš znak koji ovdje ide. Još ne."
     },
+    "formula": {
+      "wrong": "U ovom redu nedostaje jedan znak. Nije pogrešno uklesan — nikad nije ni uklesan.",
+      "fixed": "Red je potpun.",
+      "pick": "Stavi znak koji si dobio na prazno mjesto.",
+      "cannot": "Niko ti još nije dao znak za ovo mjesto. Još ne.",
+      "gap": "Znak koji nedostaje"
+    },
     "sphinx": {
       "wrong": "Isto pismo kao vani, ali ovdje pijesak nikad nije stigao. Dva znaka su još čisto uklesana, a tamo gdje je bio treći je prazno mjesto.",
       "fixed": "To je cijelo ime.",
@@ -1564,7 +1655,7 @@
       "shrines": "Jedan disk svjetla, i svetište iznad svakog izlaza s ove raskrsnice. Ogledala na podu mogu odnijeti svjetlo do bilo kojeg od njih.",
       "doors": "Izlaz do kojeg svjetlo stigne je otvoren, a ostali su zatvoreni. Jedan put svjetla, jedan put dalje.",
       "returning": "Ništa ne gubiš kad biraš. Vrati se kad god hoćeš i pošalji svjetlo drugim putem — taj izlaz se otvori, a ovaj se zatvori.",
-      "tap": "Dodirni ogledalo da ga okreneš. Kad ga opet dodirneš, vrati se nazad."
+      "tap": "Izaberi ogledalo da ga okreneš. Izaberi ga opet da ga vratiš."
     },
     "doorOpen": "{{way}} izlaz: otvoren",
     "doorShut": "{{way}} izlaz: zatvoren",
@@ -1573,6 +1664,10 @@
       "e": "Istočni",
       "s": "Južni",
       "w": "Zapadni"
+    },
+    "controls": {
+      "move": "izaberi ogledalo",
+      "turn": "okreni ga"
     }
   },
   "handle": {
@@ -1825,5 +1920,35 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Crtanje prepisuje tekst: svaki komentar ide na vrh"
+  },
+  "saveCard": {
+    "title": "Putna kartica",
+    "explain": "Ponesi svoj pohod na drugi uređaj: napravi karticu ovdje i učitaj je tamo u roku od 15 minuta.",
+    "make": "Napravi putnu karticu",
+    "share": "Podijeli karticu",
+    "download": "Preuzmi karticu",
+    "read": "Učitaj putnu karticu",
+    "busy": "Samo trenutak…",
+    "makeFailed": "Kartica se nije mogla napraviti.",
+    "shareFailed": "Dijeljenje nije uspjelo; umjesto toga preuzmi karticu.",
+    "confirm_one": "Zamijeniti pohod na ovom uređaju onim s kartice ({{count}} putovanje)?",
+    "confirm_few": "Zamijeniti pohod na ovom uređaju onim s kartice ({{count}} putovanja)?",
+    "confirm_other": "Zamijeniti pohod na ovom uređaju onim s kartice ({{count}} putovanja)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Putna kartica · ponesi svoj pohod sa sobom",
+    "validUntil": "važi do {{time}}",
+    "codes_one": "{{count}} kod",
+    "codes_few": "{{count}} koda",
+    "codes_other": "{{count}} kodova",
+    "refused": {
+      "notACard": "Ovo nije putna kartica.",
+      "tampered": "Ova kartica je izmijenjena i više se ne može pročitati.",
+      "expired": "Ova kartica je istekla; napravi novu.",
+      "future": "Ova kartica dolazi iz budućnosti: provjeri sat na oba uređaja.",
+      "otherEpoch": "Ova kartica je iz druge verzije igre.",
+      "newerGame": "Ova kartica dolazi iz novije verzije: prvo ažuriraj igru."
+    },
+    "writeFailed": "Sačuvana igra se nije mogla upisati; ovaj uređaj je zadržao svoju.",
+    "writeLost": "Sačuvana igra se nije mogla zamijeniti, pa ona na ovom uređaju možda nije potpuna."
   }
 }

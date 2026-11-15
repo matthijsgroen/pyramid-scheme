@@ -239,6 +239,21 @@
       "description": "Coroa do faraó com uma cobra protetora na frente, para a proteção dos deuses."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Pão",
+      "description": "O pão alto, o sinal de pão. Dado por Ipi, que contou grãos durante quarenta anos e deu alguma coisa de graça uma única vez."
+    },
+    "o2": {
+      "name": "Linho"
+    },
+    "o3": {
+      "name": "Água"
+    },
+    "o4": {
+      "name": "Barco"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Folha de junco",

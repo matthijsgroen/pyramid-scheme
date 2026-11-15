@@ -239,6 +239,21 @@
       "description": "Kuruna tar-re bil-kobra li tħares, li l-fargħuni kienu jilbsu bħala ħarsien mill-allat."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Ħobż",
+      "description": "Il-ħobża twila, is-sinjal tal-ħobż. Ingħatat minn Ipi, li għadd il-qamħ għal erbgħin sena u darba biss ta xi ħaġa b'xejn."
+    },
+    "o2": {
+      "name": "Kittien"
+    },
+    "o3": {
+      "name": "Ilma"
+    },
+    "o4": {
+      "name": "Dgħajsa"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Werqa tal-Qasab",

@@ -239,6 +239,21 @@
       "description": "En kongelig krone med en kobra foran. Faraoene bar den for å bli beskyttet av gudene."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Brød",
+      "description": "Det høye brødet, tegnet for brød. Gitt av Ipi, som telte korn i førti år og ga det bort én gang."
+    },
+    "o2": {
+      "name": "Lin"
+    },
+    "o3": {
+      "name": "Vann"
+    },
+    "o4": {
+      "name": "Båt"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Sivblad",

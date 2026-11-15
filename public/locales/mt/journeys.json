@@ -21,19 +21,24 @@
     "mapHint": "Il-biċċa karta turi triq tas-suq u bieb ta' kantina — moħba ta' bejjiegħ, xejn aktar."
   },
   "junior_1": {
-    "name": "It-Titjira tal-Ibis Qaddis"
+    "name": "It-Titjira tal-Ibis Qaddis",
+    "description": "Bwar tal-qasab tul in-Nil, u l-ibis jimxu fl-ilma tagħhom. Għasafar qaddisa — u mhux għar-raġuni li taħseb."
   },
   "junior_2": {
-    "name": "Il-Wied tal-Artiġjani"
+    "name": "Il-Wied tal-Artiġjani",
+    "description": "Deir el-Medina, ir-raħal ta' dawk li kienu jibnu l-oqbra. Il-ħwienet tax-xogħol tagħhom għadhom wieqfa, u ftit mix-xogħol ukoll."
   },
   "junior_3": {
-    "name": "It-Tempju ta' Thoth"
+    "name": "It-Tempju ta' Thoth",
+    "description": "It-tempju ta' Thoth. Kulħadd jaf ismu; staqsi tliet persuni ta' xiex kien alla u jkollok tliet tweġibiet."
   },
   "junior_4": {
-    "name": "Il-Fanal ta' Lixandra"
+    "name": "Il-Fanal ta' Lixandra",
+    "description": "Il-Fanal ta' Lixandra, wieħed mis-seba' għeġubijiet. Dak li fadal minnu jinsab fil-port, taħt l-ilma."
   },
   "junior_treasure_tomb": {
     "name": "Il-Kamra Moħbija tan-Nobbli",
+    "description": "Il-kamra ta' nobbli, miżbugħa mill-art sas-saqaf, u kollox fiha għadu fejn poġġietu hi.",
     "mapHint": "Linka fina, siġill b'arma fil-kantuniera — xi ħadd importanti ried li din il-kamra tintesa."
   },
   "expert_1": {

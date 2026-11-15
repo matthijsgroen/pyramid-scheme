@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Dyn fuortgong kin net laden wurde",
     "body": "De browser jout dyn bewarre spul no net frij. Dyn spul is net fuort: laad de side opnij om it nochris te besykjen.",
-    "banner": "Fuortgong wurdt net bewarre. Tik om opnij te laden.",
+    "banner": "Fuortgong wurdt net bewarre. Opnij lade.",
     "reload": "Opnij laden",
     "continue": "Spylje fierder sûnder bewarjen",
     "reset": "Begjin opnij (bewarre spul wiskje)",
@@ -29,7 +29,6 @@
     "evening": "Jûn",
     "night": "Nacht"
   },
-  "tomb": {},
   "ui": {
     "level": "Nivo",
     "symbols": "symboalen",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Ekspedysje ûnderbrekke",
     "confirmInterruptExpedition": "Witst wis datst dizze ekspedysje ûnderbrekke wolst? De ekspedysje wurdt bewarre, mar wat'st op dit nivo dien hast, giet ferlern!",
     "cancel": "Ôfbrekke",
+    "leaveSite": "Dit plak ferlitte?",
+    "confirmLeaveSite": "Kies Ferlitte om wer nei bûten te rinnen, of Bliuwe om fierder te sykjen.",
+    "leave": "Ferlitte",
+    "stay": "Bliuwe",
     "settings": "Ynstellings",
     "language": "Taal",
     "close": "Slute",
@@ -106,8 +109,12 @@
     "solvedUnaided": "Oplost sûnder ek mar ien hint",
     "solvedWithHints_one": "Oplost mei {{count}} hint",
     "solvedWithHints_other": "Oplost mei {{count}} hints",
-    "tapToContinue": "Tik om fierder te gean",
-    "goal": "Doel"
+    "tapToContinue": "Fierder",
+    "goal": "Doel",
+    "controls": "Betsjinning",
+    "controlsUndo": "werom",
+    "controlsHint": "hint",
+    "controlsLeave": "werom nei de kaart"
   },
   "trap": {
     "warning": "⚠ Gefaarlike gong",
@@ -126,6 +133,7 @@
     "turnAround": "Omkeare",
     "wardDescription": {
       "starter": "In segel fan in hanneler slút dizze trochgong ôf — allinnich syn wachtkaai docht him iepen.",
+      "junior": "It wapen fan in eallefrou slút dizze wei ôf — allinnich har wachtkaai lichtet it op.",
       "expert": "De timpelban fan in hegepryster bewekket dizze doar — allinnich de hillige kaai docht him iepen.",
       "master": "It keninklike segel fan in farao slút dizze trochgong — allinnich de kaai fan de kening brekt it.",
       "wizard": "In ban fan de goaden hâldt dizze poarte ticht — allinnich de godlike kaai komt der lâns."
@@ -134,13 +142,14 @@
     "lockedColor": "Dy kaai hast op dizze ferdjipping noch net fûn."
   },
   "chest": {
-    "tapToOpen": "Tik om iepen te meitsjen",
+    "tapToOpen": "Iepenje",
     "money_one": "{{count}} munt",
     "money_other": "{{count}} munten",
     "mapPiece": "Kaartstik",
     "mapPieceDescription": "In brokkelich stik fan in kaart nei in plak dat lang ferjitten is. Spitich dat it lang net kompleet is...",
     "mapPieceProgress": "{{found}} fan {{required}} kaartstikken sammele",
     "mapPieceComplete": "De kaart is kompleet — hy liedt nei {{name}}.",
+    "hieroglyph": "Hiëroglyf",
     "hieroglyphFragment": "Stikje hiëroglyf",
     "fragmentProgress": "{{found}} fan {{required}} stikjes fûn",
     "tombKey": "Grêfkaai",
@@ -157,8 +166,9 @@
   },
   "loot": {
     "youFound": "Do hast fûn",
+    "youReceived": "Do krigest",
     "expeditionReward": "Ekstra beleanning foar it heljen fan de ekspedysje",
-    "clickToContinue": "Tik earne om fierder te gean"
+    "clickToContinue": "Fierder"
   },
   "money": {
     "label": "Munten"
@@ -252,7 +262,7 @@
     "tabNew_other": "{{label}} · {{count}} nij",
     "empty": "Dyn kiste is noch leech",
     "newLabel": "NIJ",
-    "clickForDetails": "Tik op in tegel foar mear",
+    "clickForDetails": "Kies in tegel foar mear",
     "categories": {
       "deities": "🏺 Goaden",
       "professions": "⚱️ Beroppen",
@@ -260,6 +270,7 @@
       "artifacts": "💎 Artefakten",
       "treasures": "💰 Skatten",
       "junk": "🔷 Snypsnaren",
+      "offerings": "🍞 Jeften",
       "signs": "✍️ Tekens"
     },
     "treasureCategories": {
@@ -276,9 +287,9 @@
     "pickTarget": "Kies in hiëroglyf by de kaartetafel yn it kamp",
     "allCollected": "Noch gjin stik te berikken yn in piramide dêr'tst al west hast",
     "more": "+{{count}} mear",
-    "corridorNearby": "In ferburgen gong is tichtby",
     "corridorHere": "Hjir sit in ferburgen gong",
     "revealCorridor": "Iepenmeitsje",
+    "corridorNearby": "In ferburgen gong is tichtby",
     "corridorOnFloor": "In ferburgen gong wachtet op dizze ferdjipping",
     "lookingFor": "Op syk nei {{symbol}}",
     "access": {
@@ -340,22 +351,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Tik hjirûnder op in teken en dan op in getal. Tik nochris op dat getal om it fuort te heljen.",
+      "tap": "Kies hjirûnder in teken en dan in getal. Kies dat getal nochris om it fuort te heljen.",
       "same": "In teken weaget op elke weachskaal like folle.",
-      "cancel": "Helje oan beide kanten itselde fuort en in weachskaal bliuwt kloppen. Tik op in markearre stik: wat oerbliuwt, komt as nije rige derûnder.",
-      "swap": "Tik op in teken dêr't neat gelyks tsjinoer leit, en dan op in rige dêr't dat teken allinnich stiet, om it te ruiljen foar wat dy rige wurdich is."
+      "cancel": "Helje oan beide kanten itselde fuort en in weachskaal bliuwt kloppen. Kies in markearre stik: wat oerbliuwt, komt as nije rige derûnder.",
+      "swap": "Kies in teken dêr't neat gelyks tsjinoer leit, en dan in rige dêr't dat teken allinnich stiet, om it te ruiljen foar wat dy rige wurdich is."
     },
     "hint": {
       "mistake": "Ien fan de gewichten dy'tst joegest, lit in weachskaal trochslaan. Helje it fuort en sjoch nochris.",
       "alone": "Yn 'e ferljochte rige is {{glyph}} it iennichste stik sûnder getal derop. Rekkenje út wat it weaget.",
       "equalShares": "Yn 'e ferljochte rige steane allinnich mar {{glyph}} tsjinoer in getal. Diel dat getal earlik.",
       "difference": "De twa ferljochte rigen binne itselde, útsein {{glyph}}. Fergelykje se.",
-      "cancelGlyph": "Oan beide kanten fan de ferljochte rige leit {{glyph}}. Tik der ien oan om him oan beide kanten fuort te heljen — de rige bliuwt kloppen.",
-      "cancelStones": "Oan beide kanten fan de ferljochte rige lizze gewoane getallen. Tik der ien oan om oan beide kanten like folle fuort te heljen.",
-      "swap": "Ien ferljochte rige seit wat ien {{glyph}} allinnich wurdich is. Tik op de {{glyph}} yn 'e oare ferljochte rige en dan op dy rige."
+      "cancelGlyph": "Oan beide kanten fan de ferljochte rige leit {{glyph}}. Kies der ien om him oan beide kanten fuort te heljen — de rige bliuwt kloppen.",
+      "cancelStones": "Oan beide kanten fan de ferljochte rige lizze gewoane getallen. Kies der ien om oan beide kanten like folle fuort te heljen.",
+      "swap": "Ien ferljochte rige seit wat ien {{glyph}} allinnich wurdich is. Kies de {{glyph}} yn 'e oare ferljochte rige en dan dy rige."
     },
     "swap": {
-      "pick": "Tik op in ferljochte rige om dizze {{glyph}} te ruiljen foar wat dy rige seit dat er wurdich is.",
+      "pick": "Kies in ferljochte rige om dizze {{glyph}} te ruiljen foar wat dy rige seit dat er wurdich is.",
       "none": "Neat hjir seit wat ien {{glyph}} allinnich wurdich is, en der leit neat gelyks tsjinoer."
     },
     "goal": {
@@ -365,11 +376,16 @@
     "name": {
       "default": "Weachskaal",
       "weighing": "It Weagjen fan it Hert"
+    },
+    "controls": {
+      "move": "kies in stik, rige of knop",
+      "press": "drukke",
+      "weigh": "jou it keazen teken dat gewicht"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Tik ien kear om in getal troch te strepen, nochris om it te hâlden, nochris om it leech te meitsjen.",
+      "tap": "Kies in getal ien kear om it troch te strepen, nochris om it te hâlden, nochris om it leech te meitsjen.",
       "totals": "It lytse getal ûnder elk doel is wat dy line no optelt."
     },
     "hint": {
@@ -430,12 +446,16 @@
       }
     },
     "goal": "Elke rige en elke kolom komt op it getal dêrneist út.",
-    "name": "De Telling"
+    "name": "De Telling",
+    "controls": {
+      "move": "kies in getal",
+      "mark": "trochstrepe, hâlde of leech"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "In teken tusken twa fakjes wiist nei it lytste getal fan de twa.",
-      "enter": "Tik op in fakje en dan op in getal. Itselde getal nochris hellet it der wer út.",
+      "enter": "Kies in fakje en dan in getal. Itselde getal nochris hellet it der wer út.",
       "notes": "Set it potlead oan om op te skriuwen hokker getallen noch yn in fakje kinne. Mei werom nimst dyn lêste set werom."
     },
     "hint": {
@@ -486,14 +506,22 @@
       }
     },
     "goal": "Elke rige en elke kolom lit elk getal krekt ien kear sjen.",
-    "name": "Grutter en Lytser"
+    "name": "Grutter en Lytser",
+    "controls": {
+      "move": "kies in fakje",
+      "type": "skriuw in getal",
+      "choose": "kies in getal of de gom",
+      "place": "skriuw it",
+      "pencil": "potlead",
+      "erase": "wiskje"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "In spegel bûcht it ljocht lâns elk fan syn kanten. De streekjes deromhinne litte sjen hoe't er noch lizze kin: de measte jouwe in kwartslach, guon bliuwe dêr krekt ûnder en stjoere it ljocht skean fuort.",
       "walls": "In blok stien slokt it ljocht op. De râne fan it boerd ek.",
-      "tap": "Tik op in stik om it te feroarjen: in spegel draait, in skowend stik giet nei it folgjende plak. In wite râne betsjut dat do it ferpleatse meist; al it oare heart by de puzel.",
-      "nodes": "Guon stiennen sitte fêst oan in kontaktpunt yn 'e flier; dêr helpt gjin inkele tik tsjin. Stjoer it ljocht oer it kontaktpunt en de stien skuft op side."
+      "tap": "Kies in stik om it te feroarjen: in spegel draait, in skowend stik giet nei it folgjende plak. In wite râne betsjut dat do it ferpleatse meist; al it oare heart by de puzel.",
+      "nodes": "Guon stiennen sitte fêst oan in kontaktpunt yn 'e flier; dy krijst sels net fan har plak. Stjoer it ljocht oer it kontaktpunt en de stien skuft op side."
     },
     "hint": {
       "entryRun": "Begjin dêr't it ljocht al komt: it rint rjocht fan de skiif ôf oant it earste stik datst feroarje kinst. Dy fakjes drage it ljocht, wat'st ek dochst.",
@@ -526,7 +554,7 @@
       "triple": "Trije deselde op in rige mei nea, net horizontaal en net fertikaal.",
       "copies": "Gjin twa rigen meie itselde wêze, en gjin twa kolommen.",
       "signs": "In teken tusken twa fakjes seit hoe't se by inoar hearre: = foar gelyk, × foar oars.",
-      "enter": "Tik op in fakje foar in sinne, tik nochris foar in moanne, en nochris om it leech te meitsjen."
+      "enter": "Kies in fakje foar in sinne, nochris foar in moanne, en nochris om it leech te meitsjen."
     },
     "hint": {
       "mistake": "Ien fan dizze tekens kin net goed wêze.",
@@ -550,7 +578,11 @@
       }
     },
     "goal": "Elk fakje hat in sinne of in moanne, en elke line hat like folle fan de iene as fan de oare.",
-    "name": "Sinne en Moanne"
+    "name": "Sinne en Moanne",
+    "controls": {
+      "move": "kies in fakje",
+      "mark": "oar teken"
+    }
   },
   "constellation": {
     "rules": {
@@ -558,25 +590,25 @@
         "straight": "Ljochtlinen rinne rjocht, horizontaal of fertikaal, fan de iene stjer nei de folgjende.",
         "pair": "Tusken twa stjerren passe maksimaal twa linen.",
         "cross": "Linen krúsje inoar nea, en rinne nea troch in stjer hinne.",
-        "enter": "Sleep fan in stjer nei syn buorman foar in line, nochris foar in dûbele, en nochris om him fuort te heljen."
+        "enter": "Lûk in line fan in stjer nei syn buorman, nochris foar in dûbele, en nochris om him fuort te heljen."
       },
       "causeway": {
         "straight": "Sleepwegen rinne rjocht, horizontaal of fertikaal, fan it iene plak nei it folgjende.",
         "pair": "Tusken twa plakken passe maksimaal twa wegen.",
         "cross": "Wegen krúsje inoar nea, en rinne nea troch in plak hinne.",
-        "enter": "Sleep fan in plak nei syn buorman om in wei oan te lizzen, nochris om him dûbel te meitsjen, en nochris om him op te brekken."
+        "enter": "Lis in wei fan in plak nei syn buorman, nochris om him dûbel te meitsjen, en nochris om him op te brekken."
       },
       "irrigation": {
         "straight": "Kanalen rinne rjocht, horizontaal of fertikaal, fan it iene bekken nei it folgjende.",
         "pair": "Tusken twa bekkens passe maksimaal twa kanalen.",
         "cross": "Kanalen krúsje inoar nea, en rinne nea troch in bekken hinne.",
-        "enter": "Sleep fan in bekken nei syn buorman om in kanaal te graven, nochris om it breder te meitsjen, en nochris om it ticht te gooien."
+        "enter": "Grou in kanaal fan in bekken nei syn buorman, nochris om it breder te meitsjen, en nochris om it ticht te gooien."
       },
       "ceiling": {
         "straight": "Snoeren rinne rjocht, horizontaal of fertikaal, fan de iene stjer nei de folgjende.",
         "pair": "Tusken twa stjerren passe maksimaal twa snoeren.",
         "cross": "Snoeren krúsje inoar nea, en rinne nea troch in stjer hinne.",
-        "enter": "Sleep fan in stjer nei syn buorman om in snoer te lizzen, nochris om it dûbel te meitsjen, en nochris om it fuort te heljen."
+        "enter": "Span in snoer fan in stjer nei syn buorman, nochris om it dûbel te meitsjen, en nochris om it fuort te heljen."
       }
     },
     "hint": {
@@ -664,37 +696,44 @@
       "causeway": "Sleepwei",
       "irrigation": "Wetterwurk",
       "ceiling": "Beskildere Plafond"
+    },
+    "controls": {
+      "pick": "kies in stjer",
+      "grab": "oppakke",
+      "draw": "lûk in line dy kant op",
+      "release": "loslitte",
+      "alt": "fêsthâlde en wize: in line, in dûbele, gjin"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Twa stjerren meie inoar nea reitsje — ek net mei in punt.",
-        "enter": "Tik in fakje om it ôf te strepen, tik wer foar in stjer, en nochris om it te wiskjen."
+        "enter": "Kies in fakje om it ôf te strepen, nochris foar in stjer, en nochris om it te wiskjen."
       },
       "fields": {
         "touch": "Twa pleatsen meie inoar nea reitsje — ek net mei in punt. Sa ticht byinoar diele se ien put.",
-        "enter": "Tik in fjild om it ôf te strepen, tik wer foar in pleats, en nochris om it te wiskjen."
+        "enter": "Kies in fjild om it ôf te strepen, nochris foar in pleats, en nochris om it te wiskjen."
       },
       "lamps": {
         "touch": "Twa oaljelampen meie nea neistinoar stean — ek net skean. Harren ljochtrûnten rinne dan oer inoar, en de oalje is fergriemd.",
         "walls": "De grize stiennen blokken hearre by de flier: der kin neat op stean, en it is gjin fakje.",
-        "enter": "Tik in tegel om him ôf te strepen, tik wer foar in oaljelampe, en nochris om it te wiskjen."
+        "enter": "Kies in tegel om him ôf te strepen, nochris foar in oaljelampe, en nochris om it te wiskjen."
       },
       "market": {
         "touch": "Twa kreamen meie nea neistinoar stean — ek net skean. Konkurrinten steane nea neistinoar.",
         "walls": "De huzen hearre by it plein: dêr kin gjinien in kream delsette, en it is gjin plak.",
-        "enter": "Tik in plak om it ôf te strepen, tik wer foar in kream, en nochris om it te wiskjen."
+        "enter": "Kies in plak om it ôf te strepen, nochris foar in kream, en nochris om it te wiskjen."
       },
       "lotus": {
         "touch": "Twa lotussen meie nea neistinoar driuwe — ek net skean. Elke blom hat iepen wetter om him hinne nedich.",
         "walls": "De rotsen stekke boppe de fiver út: der kin neat op driuwe, en it is gjin fakje.",
-        "enter": "Tik in stikje wetter om it ôf te strepen, tik wer foar in lotus, en nochris om it te wiskjen."
+        "enter": "Kies in stikje wetter om it ôf te strepen, nochris foar in lotus, en nochris om it te wiskjen."
       },
       "cats": {
         "touch": "Twa katten meie nea neistinoar sliepe — ek net skean. Elke kat hâldt syn eigen plakje sinne.",
         "walls": "De pylders drage de timpel: der kin gjin kat op sliepe, en it is gjin fakje.",
-        "enter": "Tik in tegel om him ôf te strepen, tik wer foar in kat, en nochris om it te wiskjen."
+        "enter": "Kies in tegel om him ôf te strepen, nochris foar in kat, en nochris om it te wiskjen."
       }
     },
     "hint": {
@@ -800,20 +839,20 @@
         "mistake": "Dit teken kin net kloppe.",
         "touch": "Hjir in {{token}}, en gjin inkele oaljelampe mei dêrneist stean — ek net skean.",
         "groupFull.row_one": "Dizze rige hat syn oaljelampe al.",
-        "groupFull.col_one": "Dizze kolom hat syn oaljelampe al.",
         "groupFull.row_other": "Dizze rige hat syn {{count}} oaljelampen al.",
+        "groupFull.col_one": "Dizze kolom hat syn oaljelampe al.",
         "groupFull.col_other": "Dizze kolom hat syn {{count}} oaljelampen al.",
         "groupTight.row_one": "Dizze rige hat noch ien tegel oer.",
         "groupTight.row_other": "Dizze rige hat noch {{count}} tegels oer.",
         "groupTight.col_one": "Dizze kolom hat noch ien tegel oer.",
         "groupTight.col_other": "Dizze kolom hat noch {{count}} tegels oer.",
         "onlyWay.row_one": "Tusken de stiennen blokken is der yn dizze rige noch mar ien fakje foar in oaljelampe.",
-        "onlyWay.col_one": "Tusken de stiennen blokken is der yn dizze kolom noch mar ien fakje foar in oaljelampe.",
         "onlyWay.row_other": "Der is mar ien manier om {{count}} oaljelampen yn dizze rige te setten.",
+        "onlyWay.col_one": "Tusken de stiennen blokken is der yn dizze kolom noch mar ien fakje foar in oaljelampe.",
         "onlyWay.col_other": "Der is mar ien manier om {{count}} oaljelampen yn dizze kolom te setten.",
         "everyWay.row_one": "Wêr't de oaljelampe fan dizze rige ek stiet, hy stiet altyd hjir.",
-        "everyWay.col_one": "Wêr't de oaljelampe fan dizze kolom ek stiet, hy stiet altyd hjir.",
         "everyWay.row_other": "Wêr't de {{count}} oaljelampen fan dizze rige ek steane, ien stiet altyd hjir.",
+        "everyWay.col_one": "Wêr't de oaljelampe fan dizze kolom ek stiet, hy stiet altyd hjir.",
         "everyWay.col_other": "Wêr't de {{count}} oaljelampen fan dizze kolom ek steane, ien stiet altyd hjir.",
         "lineBlock.rowsToCols": "De markearre rigen hawwe harren oaljelampen yn 'e fakjes fan dy kolommen, dus dy kolommen hawwe der neat mear oer.",
         "lineBlock.colsToRows": "De markearre kolommen hawwe harren oaljelampen yn 'e fakjes fan dy rigen, dus dy rigen hawwe der neat mear oer.",
@@ -830,20 +869,20 @@
         "mistake": "Dit teken kin net kloppe.",
         "touch": "Hjir in {{token}}, en gjin inkele kream mei dêrneist stean — ek net skean.",
         "groupFull.row_one": "Dizze rige hat syn kream al.",
-        "groupFull.col_one": "Dizze kolom hat syn kream al.",
         "groupFull.row_other": "Dizze rige hat syn {{count}} kreamen al.",
+        "groupFull.col_one": "Dizze kolom hat syn kream al.",
         "groupFull.col_other": "Dizze kolom hat syn {{count}} kreamen al.",
         "groupTight.row_one": "Dizze rige hat noch ien plak oer.",
         "groupTight.row_other": "Dizze rige hat noch {{count}} plakken oer.",
         "groupTight.col_one": "Dizze kolom hat noch ien plak oer.",
         "groupTight.col_other": "Dizze kolom hat noch {{count}} plakken oer.",
         "onlyWay.row_one": "Tusken de huzen is der yn dizze rige noch mar ien fakje foar in kream.",
-        "onlyWay.col_one": "Tusken de huzen is der yn dizze kolom noch mar ien fakje foar in kream.",
         "onlyWay.row_other": "Der is mar ien manier om {{count}} kreamen yn dizze rige te setten.",
+        "onlyWay.col_one": "Tusken de huzen is der yn dizze kolom noch mar ien fakje foar in kream.",
         "onlyWay.col_other": "Der is mar ien manier om {{count}} kreamen yn dizze kolom te setten.",
         "everyWay.row_one": "Wêr't de kream fan dizze rige ek stiet, hy stiet altyd hjir.",
-        "everyWay.col_one": "Wêr't de kream fan dizze kolom ek stiet, hy stiet altyd hjir.",
         "everyWay.row_other": "Wêr't de {{count}} kreamen fan dizze rige ek steane, ien stiet altyd hjir.",
+        "everyWay.col_one": "Wêr't de kream fan dizze kolom ek stiet, hy stiet altyd hjir.",
         "everyWay.col_other": "Wêr't de {{count}} kreamen fan dizze kolom ek steane, ien stiet altyd hjir.",
         "lineBlock.rowsToCols": "De markearre rigen hawwe harren kreamen yn 'e fakjes fan dy kolommen, dus dy kolommen hawwe der neat mear oer.",
         "lineBlock.colsToRows": "De markearre kolommen hawwe harren kreamen yn 'e fakjes fan dy rigen, dus dy rigen hawwe der neat mear oer.",
@@ -860,20 +899,20 @@
         "mistake": "Dit teken kin net kloppe.",
         "touch": "Hjir in {{token}}, en gjin inkele lotus mei dêrneist driuwe — ek net skean.",
         "groupFull.row_one": "Dizze rige hat syn lotus al.",
-        "groupFull.col_one": "Dizze kolom hat syn lotus al.",
         "groupFull.row_other": "Dizze rige hat syn {{count}} lotussen al.",
+        "groupFull.col_one": "Dizze kolom hat syn lotus al.",
         "groupFull.col_other": "Dizze kolom hat syn {{count}} lotussen al.",
         "groupTight.row_one": "Dizze rige hat noch ien stikje wetter oer.",
         "groupTight.row_other": "Dizze rige hat noch {{count}} stikjes wetter oer.",
         "groupTight.col_one": "Dizze kolom hat noch ien stikje wetter oer.",
         "groupTight.col_other": "Dizze kolom hat noch {{count}} stikjes wetter oer.",
         "onlyWay.row_one": "Tusken de rotsen is der yn dizze rige noch mar ien fakje foar in lotus.",
-        "onlyWay.col_one": "Tusken de rotsen is der yn dizze kolom noch mar ien fakje foar in lotus.",
         "onlyWay.row_other": "Der is mar ien manier om {{count}} lotussen yn dizze rige te setten.",
+        "onlyWay.col_one": "Tusken de rotsen is der yn dizze kolom noch mar ien fakje foar in lotus.",
         "onlyWay.col_other": "Der is mar ien manier om {{count}} lotussen yn dizze kolom te setten.",
         "everyWay.row_one": "Wêr't de lotus fan dizze rige ek stiet, hy stiet altyd hjir.",
-        "everyWay.col_one": "Wêr't de lotus fan dizze kolom ek stiet, hy stiet altyd hjir.",
         "everyWay.row_other": "Wêr't de {{count}} lotussen fan dizze rige ek steane, ien stiet altyd hjir.",
+        "everyWay.col_one": "Wêr't de lotus fan dizze kolom ek stiet, hy stiet altyd hjir.",
         "everyWay.col_other": "Wêr't de {{count}} lotussen fan dizze kolom ek steane, ien stiet altyd hjir.",
         "lineBlock.rowsToCols": "De markearre rigen hawwe harren lotussen yn 'e fakjes fan dy kolommen, dus dy kolommen hawwe der neat mear oer.",
         "lineBlock.colsToRows": "De markearre kolommen hawwe harren lotussen yn 'e fakjes fan dy rigen, dus dy rigen hawwe der neat mear oer.",
@@ -890,20 +929,20 @@
         "mistake": "Dit teken kin net kloppe.",
         "touch": "Hjir in {{token}}, en gjin inkele kat mei dêrneist sliepe — ek net skean.",
         "groupFull.row_one": "Dizze rige hat syn kat al.",
-        "groupFull.col_one": "Dizze kolom hat syn kat al.",
         "groupFull.row_other": "Dizze rige hat syn {{count}} katten al.",
+        "groupFull.col_one": "Dizze kolom hat syn kat al.",
         "groupFull.col_other": "Dizze kolom hat syn {{count}} katten al.",
         "groupTight.row_one": "Dizze rige hat noch ien tegel oer.",
         "groupTight.row_other": "Dizze rige hat noch {{count}} tegels oer.",
         "groupTight.col_one": "Dizze kolom hat noch ien tegel oer.",
         "groupTight.col_other": "Dizze kolom hat noch {{count}} tegels oer.",
         "onlyWay.row_one": "Tusken de pylders is der yn dizze rige noch mar ien fakje foar in kat.",
-        "onlyWay.col_one": "Tusken de pylders is der yn dizze kolom noch mar ien fakje foar in kat.",
         "onlyWay.row_other": "Der is mar ien manier om {{count}} katten yn dizze rige te setten.",
+        "onlyWay.col_one": "Tusken de pylders is der yn dizze kolom noch mar ien fakje foar in kat.",
         "onlyWay.col_other": "Der is mar ien manier om {{count}} katten yn dizze kolom te setten.",
         "everyWay.row_one": "Wêr't de kat fan dizze rige ek stiet, hy stiet altyd hjir.",
-        "everyWay.col_one": "Wêr't de kat fan dizze kolom ek stiet, hy stiet altyd hjir.",
         "everyWay.row_other": "Wêr't de {{count}} katten fan dizze rige ek steane, ien stiet altyd hjir.",
+        "everyWay.col_one": "Wêr't de kat fan dizze kolom ek stiet, hy stiet altyd hjir.",
         "everyWay.col_other": "Wêr't de {{count}} katten fan dizze kolom ek steane, ien stiet altyd hjir.",
         "lineBlock.rowsToCols": "De markearre rigen hawwe harren katten yn 'e fakjes fan dy kolommen, dus dy kolommen hawwe der neat mear oer.",
         "lineBlock.colsToRows": "De markearre kolommen hawwe harren katten yn 'e fakjes fan dy rigen, dus dy rigen hawwe der neat mear oer.",
@@ -944,6 +983,11 @@
       "market": "Merkekreamen",
       "lotus": "Lotusfiver",
       "cats": "Timpelkatten"
+    },
+    "controls": {
+      "move": "kies in fakje",
+      "mark": "oar teken",
+      "sweep": "fêsthâlde en bewege: strepe in rige ôf"
     }
   },
   "pairPuzzle": {
@@ -960,13 +1004,13 @@
         "pair": "By elke sarkofaach rêst krekt ien mummy, direkt derboppe, derûnder, links of rjochts derfan, en elke mummy rêst neist in eigen sarkofaach.",
         "count": "It getal neist in rige of kolom seit hoefolle mummys der yn lizze. It wurdt grien as de line krekt dat tal hat, en read as it net mear kloppe kin.",
         "touch": "Gjin twa mummys meie neistinoar lizze — hoeken telle mei.",
-        "enter": "Tik in fakje oan om it út te sluten, nochris om der in mummy del te lizzen, en nochris om it te wiskjen. Sleep oer fakjes om in rige út te sluten. Sarkofagen kinst net oantikje."
+        "enter": "Kies in fakje om it út te sluten, nochris om der in mummy del te lizzen, en nochris om it te wiskjen. Slút in rige fakjes yn ien kear út. Sarkofagen kinst net markearje."
       },
       "beetles": {
         "pair": "By elke dongbal stiet krekt ien kever, direkt derboppe, derûnder, links of rjochts derfan, en elke kever stiet neist in eigen bal om te rôljen.",
         "count": "It getal neist in rige of kolom seit hoefolle kevers der yn steane. It wurdt grien as de line krekt dat tal hat, en read as it net mear kloppe kin.",
         "touch": "Gjin twa kevers meie neistinoar stean — hoeken telle mei.",
-        "enter": "Tik in fakje oan om it út te sluten, nochris om der in kever del te setten, en nochris om it te wiskjen. Sleep oer fakjes om in rige út te sluten. Dongballen kinst net oantikje."
+        "enter": "Kies in fakje om it út te sluten, nochris om der in kever del te setten, en nochris om it te wiskjen. Slút in rige fakjes yn ien kear út. Dongballen kinst net markearje."
       }
     },
     "hint": {
@@ -1030,6 +1074,11 @@
           "place_other": "Set in kever op elk arsearre fakje."
         }
       }
+    },
+    "controls": {
+      "move": "kies in fakje",
+      "mark": "oar teken",
+      "sweep": "fêsthâlde en bewege: strepe in rige ôf"
     }
   },
   "rushHour": {
@@ -1044,11 +1093,11 @@
     "rules": {
       "default": {
         "lanes": "In blok skowt allinnich oer syn eigen baan — nea op side, nea fan it boerd ôf.",
-        "shove": "Sleep in blok om it te triuwen. It stopet dêr't wat yn 'e wei stiet."
+        "shove": "Triuw in blok lâns syn baan. It stopet dêr't wat yn 'e wei stiet."
       },
       "market": {
         "lanes": "In slide skowt allinnich oer de baan dêr't er yn stiet — nea op side, nea de strjitte út.",
-        "shove": "Sleep in slide om him te triuwen. Hy stopet dêr't wat yn 'e wei stiet."
+        "shove": "Triuw in slide lâns syn baan. Hy stopet dêr't wat yn 'e wei stiet."
       }
     },
     "hint": {
@@ -1076,29 +1125,35 @@
           "down": "Triuw him de strjitte ôf, oant de ring ta."
         }
       }
+    },
+    "controls": {
+      "pick": "kies in blok",
+      "grab": "pakke",
+      "slide": "skowe",
+      "release": "loslitte"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "De getallen dy't al yn 'e raat steane, hearre by de puzel — dy bliuwe stean.",
-        "enter": "Tik op in getal om de rige dêr op te pakken en tik dan op in leech fakje dêrneist om fierder te gean — of sleep yn ien kear troch de fakjes dêr't de rige lâns giet.",
-        "back": "Tik op in getal datst sels leist en tik nochris om it der wer ôf te heljen, mei alles wat der los fan komt te lizzen. De rige in oare kant op lizze docht itselde. Mei werom nimst dyn lêste set werom."
+        "enter": "Lûk in line fan in getal troch de lege fakjes dêrneist om de rige fierder te lizzen.",
+        "back": "Kies in getal datst sels leist en kies it nochris om it der wer ôf te heljen, mei alles wat der los fan komt te lizzen. De rige in oare kant op lizze docht itselde. Mei werom nimst dyn lêste set werom."
       },
       "channel": {
         "given": "De fjilden dy't al in getal hawwe, hearre by de puzel — dy bliuwe stean.",
-        "enter": "Tik op in fjild mei in getal om it wetter dêr op te pakken en tik dan op in droech fjild dêrneist om fierder te graven — of sleep yn ien kear lâns de fjilden dêr't it kanaal lâns rint.",
-        "back": "Tik op in fjild datst groeven hast en tik nochris om it wer ticht te gooien, mei it kanaal dat der los fan komt te lizzen. In oare kant op graven docht itselde. Mei werom nimst dyn lêste set werom."
+        "enter": "Grou in kanaal fan in fjild mei in getal troch de droege fjilden dêrneist om it wetter fierder te lieden.",
+        "back": "Kies in fjild datst groeven hast en kies it nochris om it wer ticht te gooien, mei it kanaal dat der los fan komt te lizzen. In oare kant op graven docht itselde. Mei werom nimst dyn lêste set werom."
       },
       "scribe": {
         "given": "De tekens dy't yn read steane, hearre by de puzel — dy bliuwe stean.",
-        "enter": "Tik op in teken om dêr de reidpinne op te pakken en tik dan op in leech plak dêrneist om fierder te skriuwen — of sleep yn ien kear lâns de rigel.",
-        "back": "Tik op in teken datst sels skreaun hast en tik nochris om it fuort te skraabjen, mei de rigel dy't der los fan komt te lizzen. In oare kant op skriuwe docht itselde. Mei werom nimst dyn lêste set werom."
+        "enter": "Skriuw in rigel fan in teken troch de lege plakken dêrneist om fierder te tellen.",
+        "back": "Kies in teken datst sels skreaun hast en kies it nochris om it fuort te skraabjen, mei de rigel dy't der los fan komt te lizzen. In oare kant op skriuwe docht itselde. Mei werom nimst dyn lêste set werom."
       },
       "chambers": {
         "given": "De keamers dy't al in getal hawwe, binne troch de bouwers úthouwen — dy bliuwe stean.",
-        "enter": "Tik op in keamer mei in getal om de gong dêr op te pakken en tik dan op in tichte keamer dêrneist om troch te brekken — of sleep yn ien kear lâns de keamers dêr't de gong lâns rint.",
-        "back": "Tik op in keamer datst iepene hast en tik nochris om him wer ticht te meitsjen, mei de gong dy't der los fan komt te lizzen. In oare kant op trochbrekke docht itselde. Mei werom nimst dyn lêste set werom."
+        "enter": "Brek in gong fan in keamer mei in getal troch de tichte keamers dêrneist om fierder te kommen.",
+        "back": "Kies in keamer datst iepene hast en kies him nochris om him wer ticht te meitsjen, mei de gong dy't der los fan komt te lizzen. In oare kant op trochbrekke docht itselde. Mei werom nimst dyn lêste set werom."
       }
     },
     "goal": {
@@ -1162,6 +1217,13 @@
       "channel": "It Kanaal",
       "scribe": "Skriuwersfel",
       "chambers": "Tichte Keamers"
+    },
+    "controls": {
+      "move": "nei in fakje dêrneist; op en del geane skeef nei links",
+      "right": "skeef nei rjochts op of del",
+      "grab": "rige oppakke, of dyn getal fuortnimme",
+      "carry": "mei de rige yn 'e hân: fierder lizze; op en del kieze de kant dêr't de rige fierder kin",
+      "drop": "rige dellizze"
     }
   },
   "sudoku": {
@@ -1169,13 +1231,13 @@
       "default": {
         "chambers": "De tsjokke linen diele it roaster yn seis keamers, twa fakjes breed en trije heech.",
         "given": "De getallen dy't der al ynhakt binne, hearre by de puzel — dy bliuwe stean.",
-        "enter": "Tik op in fakje en tik dêrnei op in getal. Itselde getal nochris hellet it der wer út.",
+        "enter": "Kies in fakje en dan in getal. Itselde getal nochris hellet it der wer út.",
         "notes": "Skeakelje oer op it potlead om de getallen op te skriuwen dy't noch yn in fakje kinne. Mei werom nimst dyn lêste set werom."
       },
       "papyrus": {
         "chambers": "De tsjokke pinnestreken diele it fel yn seis panielen, twa plakken breed en trije heech.",
         "given": "De tekens yn reade inket hearre by de puzel — dy bliuwe stean.",
-        "enter": "Tik op in plak en tik dêrnei op in teken. Itselde teken nochris skraabt it wer fuort.",
+        "enter": "Kies in plak en dan in teken. Itselde teken nochris skraabt it wer fuort.",
         "notes": "Nim de reidpinne op om de tekens op te skriuwen dy't noch op in plak kinne. Mei werom nimst dyn lêste set werom."
       }
     },
@@ -1242,6 +1304,14 @@
     "name": {
       "default": "Seis Keamers",
       "papyrus": "It Register fan de Skriuwer"
+    },
+    "controls": {
+      "move": "kies in fakje",
+      "type": "skriuw in getal",
+      "choose": "kies in getal of de gom",
+      "place": "skriuw it",
+      "pencil": "potlead",
+      "erase": "wiskje"
     }
   },
   "crocodile": {
@@ -1255,6 +1325,10 @@
     "hint": {
       "biggest": "Dizze krokodil wol it grutste antwurd. Dat is {{value}}.",
       "smallest": "Dizze krokodil wol it lytste antwurd. Dat is {{value}}."
+    },
+    "controls": {
+      "move": "kies in stien",
+      "step": "derop stappe"
     }
   },
   "canisters": {
@@ -1285,35 +1359,35 @@
         "sums": "Elke hoemannichte datst meitsje kinst, is twa getallen fan de bank, byinoar op of fan inoar ôf: de maat fan in krûk, wat der yn sit, of de romte dy't der noch by kin.",
         "backwards": "Wurkje dus werom fan de frege hoemannichte ôf — hokker twa getallen meitsje dy, en hoe krijst dy twa tagelyk op 'e bank?"
       },
-      "claim": "Hast de hoemannichte? Tik dan op “dizze”. It ferkearde fet oanwize kostet in set.",
+      "claim": "Hast de hoemannichte? Kies dan “dizze”. It ferkearde fet oanwize kostet in set.",
       "legs": "Dêrnei de folgjende hoemannichte, metten út wat der noch yn 'e fetten stiet.",
       "default": {
-        "moves": "Tik op in krûk om him op te pakken en tik dan op in oare om oer te jitten. It jitten stopet sa gau't de earste leech is of de twadde fol.",
+        "moves": "Pak in krûk op en kies dan in oare om oer te jitten. It jitten stopet sa gau't de earste leech is of de twadde fol.",
         "contents": "Dit is al it wetter dat der is — ien krûk begjint fol, en der kin neat ôf en neat by.",
         "levels": "Op elke krûk stiet hoefolle der yn sit, en hoefolle der fol yn giet."
       },
       "grain": {
-        "moves": "Tik op in mjitte om him op te tillen en tik dan op in oare om it nôt deryn te stoartsjen. It stoartsjen stopet sa gau't de earste leech is of de twadde oant de râne stiet.",
+        "moves": "Til in mjitte op en kies dan in oare om it nôt deryn te stoartsjen. It stoartsjen stopet sa gau't de earste leech is of de twadde oant de râne stiet.",
         "contents": "Dit is al it nôt dat der is — ien mjitte begjint fol, en der kin neat ôf en neat by út 'e skuorre.",
         "levels": "Op elke mjitte stiet hoefolle der yn sit, en hoefolle der oant de râne yn giet."
       },
       "oil": {
-        "moves": "Tik op in krûk om him op te tillen en tik dan op in oare om oer te jitten. It jitten stopet sa gau't de earste leech is of de twadde fol.",
+        "moves": "Til in krûk op en kies dan in oare om oer te jitten. It jitten stopet sa gau't de earste leech is of de twadde fol.",
         "contents": "Dit is alle oalje dy't der is — ien krûk begjint fol, en der kin neat ôf en neat by.",
         "levels": "Op elke krûk stiet hoefolle der yn sit, en hoefolle der fol yn giet."
       },
       "wine": {
-        "moves": "Tik op in amfoar om him op te tillen en tik dan op in oare om oer te skinken. It skinken stopet sa gau't de earste leech is of de twadde fol.",
+        "moves": "Til in amfoar op en kies dan in oare om oer te skinken. It skinken stopet sa gau't de earste leech is of de twadde fol.",
         "contents": "Dit is alle wyn dy't der is — ien amfoar begjint fol, en der kin neat ôf en neat by út 'e kelder.",
         "levels": "Op elke amfoar stiet hoefolle der yn sit, en hoefolle der fol yn giet."
       },
       "natron": {
-        "moves": "Tik op in kanoop om him op te tillen en tik dan op in oare om it natron deryn te stoartsjen. It stoartsjen stopet sa gau't de earste leech is of de twadde oant it deksel stiet.",
+        "moves": "Til in kanoop op en kies dan in oare om it natron deryn te stoartsjen. It stoartsjen stopet sa gau't de earste leech is of de twadde oant it deksel stiet.",
         "contents": "Dit is al it natron dat der is — ien kanoop begjint fol, en der kin neat ôf en neat by.",
         "levels": "Op elke kanoop stiet hoefolle der yn sit, en hoefolle der oant it deksel yn giet."
       },
       "ink": {
-        "moves": "Tik op in pot om him op te tillen en tik dan op in oare om oer te jitten. It jitten stopet sa gau't de earste leech is of de twadde fol.",
+        "moves": "Til in pot op en kies dan in oare om oer te jitten. It jitten stopet sa gau't de earste leech is of de twadde fol.",
         "contents": "Dit is alle inket dy't der is — ien pot begjint fol, en der kin neat ôf en der kin neat by wreaun wurde.",
         "levels": "Op elke pot stiet hoefolle der yn sit, en hoefolle der fol yn giet."
       }
@@ -1338,7 +1412,12 @@
     "legs": "{{done}} fan {{total}} ôfmetten",
     "wanted": "Mjit ôf",
     "claim": "dizze",
-    "claimAria": "Sis dat de {{capacity}} de hoemannichte hat"
+    "claimAria": "Sis dat de {{capacity}} de hoemannichte hat",
+    "controls": {
+      "move": "kies in fet of de “dizze” derûnder",
+      "press": "oppakke, hjiryn jitte of oanwize",
+      "putDown": "it oppakte fet wer delsette"
+    }
   },
   "procession": {
     "name": {
@@ -1358,8 +1437,8 @@
     "rules": {
       "default": {
         "lengths": "Elke rige is ien ding dat bart, en it duorret sa lang as syn balke breed is. Wannear't it bart, sikest do út.",
-        "marks": "In rigel ûnder de dei kleurt read salang't er net klopt. Tik derop om de rigen te omrûnen dêr't er oer giet.",
-        "drag": "Sleep in balke oer syn eigen rige. Hy giet de dei nea út."
+        "marks": "In rigel ûnder de dei kleurt read salang't er net klopt. Kies him om de rigen te omrûnen dêr't er oer giet.",
+        "drag": "Skow in balke oer syn eigen rige. Hy giet de dei nea út."
       }
     },
     "hint": {
@@ -1368,7 +1447,7 @@
         "squeeze": "Der is noch mar safolle dei oer, en dit is alles wat der past.",
         "apart": "Oarsom past it net yn 'e dei.",
         "split": "Besykje it oarsom en der brekt wat oars.",
-        "move": "Sleep de omrûne balke op 'e arsearre streekjes."
+        "move": "Skow de omrûne balke op 'e arsearre streekjes."
       }
     },
     "events": {
@@ -1424,6 +1503,11 @@
       "hint": "Elke tegel dêr'tst op stapst, makket syn taak frij. Oarderje de dei en rin dan de tegels yn dy folchoarder.",
       "read": "De dei is lêzen. Rin de tegels yn dizze folchoarder, fan de earste ôf.",
       "hintButton": "Hint"
+    },
+    "controls": {
+      "row": "kies in rige",
+      "slide": "balke skowe",
+      "mark": "kies in rigel ûnder de dei"
     }
   },
   "story": {
@@ -1446,6 +1530,13 @@
       "pick": "Set it goede teken op syn plak.",
       "cannot": "Do kenst it teken dat hjir heart noch net."
     },
+    "formula": {
+      "wrong": "Yn dizze rigel mist in teken. Net ferkeard hakt — nea hakt.",
+      "fixed": "De rigel is hiel.",
+      "pick": "Set it teken datst krigen hast op it lege plak.",
+      "cannot": "Nimmen hat dy it teken foar dit plak jûn. Noch net.",
+      "gap": "It ûntbrekkende teken"
+    },
     "sphinx": {
       "wrong": "Itselde skrift as bûten, mar hjir is it sân der nea by kommen. Twa tekens noch skerp hakt, en in leech plak dêr't it tredde stie.",
       "fixed": "Dat is it, hielendal.",
@@ -1462,7 +1553,7 @@
       "shrines": "Ien skiif ljocht, en in hillichdom boppe elke trochgong fan dit krúspunt. De spegels op 'e flier kinne it ljocht nei elk derfan bringe.",
       "doors": "De trochgong dêr't it ljocht komt, stiet iepen, de oaren binne ticht. Ien rûte, ien wei fierder.",
       "returning": "Kieze kostet dy neat. Rin wannear'tst wolst wer nei binnen en stjoer it ljocht in oare kant op — dy giet iepen, en dizze giet ticht.",
-      "tap": "Tik op in spegel om him te draaien. Noch in tik set him werom."
+      "tap": "Kies in spegel om him te draaien. Kies him nochris om him werom te setten."
     },
     "doorOpen": "{{way}} trochgong: iepen",
     "doorShut": "{{way}} trochgong: ticht",
@@ -1471,6 +1562,10 @@
       "e": "Eastlike",
       "s": "Súdlike",
       "w": "Westlike"
+    },
+    "controls": {
+      "move": "kies in spegel",
+      "turn": "draaie"
     }
   },
   "handle": {
@@ -1720,5 +1815,33 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Tekenjen skriuwt de tekst opnij: elk kommentaar giet nei boppen"
+  },
+  "saveCard": {
+    "title": "Reiskaart",
+    "explain": "Nim dyn ekspedysje mei nei in oar apparaat: meitsje hjir in kaart en lês him dêr binnen 15 minuten yn.",
+    "make": "Meitsje reiskaart",
+    "share": "Diel kaart",
+    "download": "Download kaart",
+    "read": "Lês reiskaart",
+    "busy": "Efkes geduld…",
+    "makeFailed": "De kaart koe net makke wurde.",
+    "shareFailed": "Diele slagge net; download de kaart.",
+    "confirm_one": "De ekspedysje op dit apparaat ferfange troch dy op 'e kaart ({{count}} reis)?",
+    "confirm_other": "De ekspedysje op dit apparaat ferfange troch dy op 'e kaart ({{count}} reizen)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Reiskaart · nim dyn ekspedysje mei",
+    "validUntil": "jildich oant {{time}}",
+    "codes_one": "{{count}} koade",
+    "codes_other": "{{count}} koades",
+    "refused": {
+      "notACard": "Dit is gjin reiskaart.",
+      "tampered": "Dizze kaart is oanpast en net mear te lêzen.",
+      "expired": "Dizze kaart is ferrûn; meitsje in nije.",
+      "future": "Dizze kaart komt út 'e takomst: sjoch oft de klok op beide apparaten goed stiet.",
+      "otherEpoch": "Dizze kaart komt út in oare ferzje fan it spul.",
+      "newerGame": "Dizze kaart komt út in nijere ferzje: wurkje earst it spul by."
+    },
+    "writeFailed": "De fuortgong koe net bewarre wurde; dit apparaat hâldt syn eigen.",
+    "writeLost": "De fuortgong koe net ferfongen wurde; de fuortgong op dit apparaat is miskien net folslein."
   }
 }

@@ -21,19 +21,24 @@
     "mapHint": "El tros de paper dibuixa un camí de mercat i la porta d'un celler. L'amagatall d'un comerciant, res més."
   },
   "junior_1": {
-    "name": "El viatge dels ibis sagrats"
+    "name": "El viatge dels ibis sagrats",
+    "description": "Aiguamolls de canyes al llarg del Nil, i els ibis que hi caminen. Ocells sagrats, i no pel motiu que et penses."
   },
   "junior_2": {
-    "name": "La vall dels artesans"
+    "name": "La vall dels artesans",
+    "description": "Deir el-Medina, el poble dels qui feien les tombes. Els seus tallers encara són drets, i una part de la feina també."
   },
   "junior_3": {
-    "name": "Temple de Thoth"
+    "name": "Temple de Thoth",
+    "description": "El temple de Thoth. Tothom coneix el seu nom; pregunta a tres persones de què era déu i tindràs tres respostes."
   },
   "junior_4": {
-    "name": "El far d'Alexandria"
+    "name": "El far d'Alexandria",
+    "description": "El far d'Alexandria, una de les set meravelles. El que en queda és al port, sota l'aigua."
   },
   "junior_treasure_tomb": {
     "name": "La cambra amagada de la noble",
+    "description": "La cambra d'una noble, pintada de terra a sostre, i tot el que hi ha encara és on ella ho va deixar.",
     "mapHint": "Tinta fina i un segell amb escut al racó. Algú important volia que oblidessin aquesta cambra."
   },
   "expert_1": {

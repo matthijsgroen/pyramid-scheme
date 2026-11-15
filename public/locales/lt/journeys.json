@@ -21,19 +21,24 @@
     "mapHint": "Skiautėje nupieštas turgaus kelias ir rūsio durys. Prekeivio slėptuvė, nieko daugiau."
   },
   "junior_1": {
-    "name": "Šventųjų ibisų kelionė"
+    "name": "Šventųjų ibisų kelionė",
+    "description": "Nendrių pelkės palei Nilą ir per jas bridantis ibis. Šventi paukščiai — ir ne dėl tos priežasties, kurią manai."
   },
   "junior_2": {
-    "name": "Meistrų slėnis"
+    "name": "Meistrų slėnis",
+    "description": "Deir el-Medina, kapų statytojų kaimas. Jų dirbtuvės tebestovi, kaip ir dalis darbų."
   },
   "junior_3": {
-    "name": "Toto šventykla"
+    "name": "Toto šventykla",
+    "description": "Toto šventykla. Visi žino jo vardą; paklausk trijų žmonių, ko dievas jis buvo, ir gausi tris atsakymus."
   },
   "junior_4": {
-    "name": "Aleksandrijos švyturys"
+    "name": "Aleksandrijos švyturys",
+    "description": "Aleksandrijos švyturys, vienas iš septynių pasaulio stebuklų. Tai, kas iš jo liko, guli uoste po vandeniu."
   },
   "junior_treasure_tomb": {
     "name": "Slaptas didikės lobynas",
+    "description": "Didikės skliautas, ištapytas nuo grindų iki lubų, ir viskas jame tebėra ten, kur ji padėjo.",
     "mapHint": "Dailus rašalas, kampe herbinis antspaudas. Kažkas svarbus norėjo, kad šis kambarys būtų pamirštas."
   },
   "expert_1": {

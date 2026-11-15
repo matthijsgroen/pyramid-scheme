@@ -28,7 +28,7 @@
   "tombTutorial3": "Pienet laskut näyttävät, milloin merkki on oikein. Niin selvitämme, mikä merkki menee mihinkin.",
   "tombTutorial4": "Kaikki täytetty? Sitten tulee numerolukko. Iso lasku on koodi, ja sitten hauta aukeaa!",
   "hieroglyphUnlock": "Meillä on erityinen esine. Sillä voi kirjoittaa yhteen niistä sinetöidyistä palikoista!",
-  "hieroglyphUnlock2": "Napauta hohtavaa kiveä ja vedä esine sen päälle, niin se aukeaa. Yksi palikka pyramidia kohti.",
+  "hieroglyphUnlock2": "Valitse hohtava kivi ja tuo esine sen luo, niin se aukeaa. Yksi palikka pyramidia kohti.",
   "errorHighlightTutorial": "Siinä aarteessa, jonka löysimme, on kätevä temppu: jos täytät väärän vastauksen, yksi virhe hehkuu punaisena!",
   "errorHighlightTutorial2": "Vain yksi palikka hehkuu kerrallaan, joten se on yhä haastavaa. Mutta se auttaa rajaamaan!",
   "earlyFeedbackTutorial": "Näetkö nuo tarkistuspalikat? Ne muuttuvat vihreiksi tai punaisiksi, kun täytät niitä. Näet heti, menikö oikein!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Katso, mitä kojussa on! Myyn nyt myös kyytejä."
+      },
+      "2": {
+        "explorer": "Näen vain piirroksen."
+      },
+      "3": {
+        "fez": "Alkuperäinen syö enemmän."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "Toinen rivi. Vettä janoisille."
+        "explorer": "Toinen rivi. _Vaatteita alastomille._"
       },
       "2": {
-        "fez": "Leipää, ja nyt vettä. Joku halusi kovasti, että hänet muistetaan anteliaana."
+        "fez": "Leipää, ja nyt vaatteita. Joku halusi kovasti, että hänet muistetaan anteliaana."
       },
       "3": {
         "explorer": "Se on kaikilla. Joka seinässä, joka haudassa, samat kaksi riviä."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Vaatteita alastomille. Kolmas rivi."
+        "explorer": "_Vettä janoisille._ Kolmas rivi."
       },
       "2": {
-        "fez": "Leipää, vettä, vaatteita. Se on lista asioista, jotka annettiin pois."
+        "fez": "Leipää, vaatteita, vettä. Se on lista asioista, jotka annettiin pois."
       },
       "3": {
         "explorer": "Sellaisen miehen haudassa, joka otti kaiken mukaansa."
@@ -1599,8 +1605,42 @@
       "explorer": "Menettelee."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Sieltä puuttuu jotain nälkäisille. Leipää, sanoisin. Ja tiedän miehen, joka laski jokaisen viljasäkin neljäkymmentä vuotta."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, me tarvitsemme leipää. Seinää varten."
+        },
+        "2": {
+          "ipi": "Leipää? Minunko? Tiedätkö, mitä vilja maksaa?"
+        },
+        "3": {
+          "fez": "Se on riviin, jossa annetaan asioita pois."
+        },
+        "4": {
+          "ipi": "…Annetaan. Pois."
+        },
+        "5": {
+          "ipi": "No hyvä. Yksi leipä. Mutta se kirjataan ylös: _Ipi antoi leipää._"
+        },
+        "6": {
+          "fez": "Hän antoi jotain pois! Näitkö?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Se leipä — onko kukaan vielä syönyt sitä? Jos ei, haluaisin sen takaisin."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Vieläkö täällä? Pohjoiseen! Henut! Yksitoista debeniä!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "Seinä. Kolmas merkki. Se ei vieläkään ole minun nimeni."
+          "henut": "Seinä. Toinen merkki. Se ei vieläkään ole minun nimeni."
         }
       },
       "wall2": {

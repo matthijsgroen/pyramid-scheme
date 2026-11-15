@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Dein Spielstand kann nicht geladen werden",
     "body": "Der Browser gibt deinen gespeicherten Spielstand gerade nicht heraus. Er ist aber nicht weg: Lade die Seite neu, um es noch einmal zu versuchen.",
-    "banner": "Der Spielstand wird nicht gespeichert. Tippe zum Neuladen.",
+    "banner": "Der Spielstand wird nicht gespeichert. Neu laden.",
     "reload": "Neu laden",
     "continue": "Ohne Speichern weiterspielen",
     "reset": "Neu anfangen (Spielstand löschen)",
@@ -29,7 +29,6 @@
     "evening": "Abend",
     "night": "Nacht"
   },
-  "tomb": {},
   "ui": {
     "level": "Level",
     "symbols": "Symbole",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Expedition unterbrechen",
     "confirmInterruptExpedition": "Willst du diese Expedition wirklich unterbrechen? Was du auf der Expedition geschafft hast, bleibt erhalten, aber das aktuelle Level geht verloren!",
     "cancel": "Abbrechen",
+    "leaveSite": "Diesen Ort verlassen?",
+    "confirmLeaveSite": "Wähle „Verlassen“, um wieder hinauszugehen, oder „Bleiben“, um weiter zu erkunden.",
+    "leave": "Verlassen",
+    "stay": "Bleiben",
     "settings": "Einstellungen",
     "language": "Sprache",
     "close": "Schließen",
@@ -106,8 +109,12 @@
     "solvedUnaided": "Ganz ohne Tipp gelöst",
     "solvedWithHints_one": "Mit {{count}} Tipp gelöst",
     "solvedWithHints_other": "Mit {{count}} Tipps gelöst",
-    "tapToContinue": "Tippe, um weiterzumachen",
-    "goal": "Ziel"
+    "tapToContinue": "Weiter",
+    "goal": "Ziel",
+    "controls": "Steuerung",
+    "controlsUndo": "rückgängig",
+    "controlsHint": "Tipp",
+    "controlsLeave": "zurück zur Karte"
   },
   "trap": {
     "warning": "⚠ Gang mit Falle",
@@ -126,6 +133,7 @@
     "turnAround": "Umkehren",
     "wardDescription": {
       "starter": "Das Siegel eines Händlers versperrt diesen Gang – nur sein Schutzschlüssel öffnet ihn.",
+      "junior": "Das Wappen einer Edeldame versperrt diesen Weg – nur ihr Schutzschlüssel öffnet ihn.",
       "expert": "Der Tempelbann eines Hohepriesters bewacht diese Tür – nur sein heiliger Schlüssel öffnet sie.",
       "master": "Das königliche Siegel eines Pharaos verschließt diesen Gang – nur der Schlüssel des Herrschers bricht es.",
       "wizard": "Ein Bann der Götter hält dieses Tor – nur der göttliche Schlüssel kommt hindurch."
@@ -134,13 +142,14 @@
     "lockedColor": "Diesen Schlüssel hast du auf diesem Stockwerk noch nicht gefunden."
   },
   "chest": {
-    "tapToOpen": "Tippe zum Öffnen",
+    "tapToOpen": "Öffnen",
     "money_one": "{{count}} Münze",
     "money_other": "{{count}} Münzen",
     "mapPiece": "Kartenstück",
     "mapPieceDescription": "Ein bröckeliges Stück einer Karte zu einem längst vergessenen Ort. Schade, dass sie noch lange nicht vollständig ist …",
     "mapPieceProgress": "{{found}} von {{required}} Kartenstücken gesammelt",
     "mapPieceComplete": "Die Karte ist ganz – sie führt zu {{name}}.",
+    "hieroglyph": "Hieroglyphe",
     "hieroglyphFragment": "Hieroglyphen-Bruchstück",
     "fragmentProgress": "{{found}} von {{required}} Bruchstücken gefunden",
     "tombKey": "Grabschlüssel",
@@ -157,8 +166,9 @@
   },
   "loot": {
     "youFound": "Du hast gefunden",
+    "youReceived": "Du hast bekommen",
     "expeditionReward": "Extra-Belohnung für die geschaffte Expedition",
-    "clickToContinue": "Tippe irgendwo, um weiterzumachen"
+    "clickToContinue": "Weiter"
   },
   "money": {
     "label": "Münzen"
@@ -252,7 +262,7 @@
     "tabNew_other": "{{label}} · {{count}} neu",
     "empty": "Deine Truhe ist noch leer",
     "newLabel": "NEU",
-    "clickForDetails": "Tippe auf ein Feld für mehr Infos",
+    "clickForDetails": "Wähle ein Feld für mehr Infos",
     "categories": {
       "deities": "🏺 Götter",
       "professions": "⚱️ Berufe",
@@ -260,6 +270,7 @@
       "artifacts": "💎 Artefakte",
       "treasures": "💰 Schätze",
       "junk": "🔷 Krimskrams",
+      "offerings": "🍞 Opfergaben",
       "signs": "✍️ Zeichen"
     },
     "treasureCategories": {
@@ -340,22 +351,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Tippe unten auf ein Zeichen, dann auf eine Zahl. Tippe noch einmal auf die Zahl, um sie wieder wegzunehmen.",
+      "tap": "Wähle unten ein Zeichen, dann eine Zahl. Wähle die Zahl noch einmal, um sie wieder wegzunehmen.",
       "same": "Ein Zeichen wiegt auf jeder Waage gleich viel.",
-      "cancel": "Nimmst du von beiden Schalen dasselbe weg, bleibt die Waage im Gleichgewicht. Tippe dafür auf ein markiertes Stück – was übrig bleibt, kommt als neue Reihe dazu.",
-      "swap": "Tippe auf ein Zeichen, dem nichts Gleiches gegenübersteht, und dann auf eine Reihe, in der dieses Zeichen allein steht. So tauschst du es gegen das, was diese Reihe wert ist."
+      "cancel": "Nimmst du von beiden Schalen dasselbe weg, bleibt die Waage im Gleichgewicht. Wähle dafür ein markiertes Stück – was übrig bleibt, kommt als neue Reihe dazu.",
+      "swap": "Wähle ein Zeichen, dem nichts Gleiches gegenübersteht, und dann eine Reihe, in der dieses Zeichen allein steht. So tauschst du es gegen das, was diese Reihe wert ist."
     },
     "hint": {
       "mistake": "Eines deiner Gewichte bringt eine Waage zum Kippen. Nimm es weg und schau noch einmal.",
       "alone": "In der leuchtenden Reihe ist {{glyph}} das einzige Stück ohne Zahl. Rechne aus, wie viel es wiegt.",
       "equalShares": "In der leuchtenden Reihe steht nur {{glyph}} gegen eine Zahl. Teile die Zahl gleichmäßig auf sie auf.",
       "difference": "Die zwei leuchtenden Reihen sind bis auf {{glyph}} gleich. Vergleiche sie.",
-      "cancelGlyph": "Auf beiden Schalen der leuchtenden Reihe liegt {{glyph}}. Tippe auf eins, um es von beiden Seiten wegzunehmen – die Reihe bleibt im Gleichgewicht.",
-      "cancelStones": "Auf beiden Schalen der leuchtenden Reihe liegen nur Zahlen. Tippe auf eine, um von beiden Seiten gleich viel wegzunehmen.",
-      "swap": "Eine leuchtende Reihe sagt, was ein einzelnes {{glyph}} allein wert ist. Tippe auf {{glyph}} in der anderen leuchtenden Reihe und dann auf diese Reihe."
+      "cancelGlyph": "Auf beiden Schalen der leuchtenden Reihe liegt {{glyph}}. Wähle eins, um es von beiden Seiten wegzunehmen – die Reihe bleibt im Gleichgewicht.",
+      "cancelStones": "Auf beiden Schalen der leuchtenden Reihe liegen nur Zahlen. Wähle eine, um von beiden Seiten gleich viel wegzunehmen.",
+      "swap": "Eine leuchtende Reihe sagt, was ein einzelnes {{glyph}} allein wert ist. Wähle {{glyph}} in der anderen leuchtenden Reihe und dann diese Reihe."
     },
     "swap": {
-      "pick": "Tippe auf eine leuchtende Reihe, um dieses {{glyph}} gegen das zu tauschen, was die Reihe als seinen Wert angibt.",
+      "pick": "Wähle eine leuchtende Reihe, um dieses {{glyph}} gegen das zu tauschen, was die Reihe als seinen Wert angibt.",
       "none": "Nichts hier sagt, was ein einzelnes {{glyph}} allein wert ist, und gegenüber passt nichts dazu."
     },
     "goal": {
@@ -365,11 +376,16 @@
     "name": {
       "default": "Die Waage",
       "weighing": "Das Wiegen des Herzens"
+    },
+    "controls": {
+      "move": "ein Stück, eine Reihe oder einen Knopf wählen",
+      "press": "drücken",
+      "weigh": "dem gewählten Zeichen dieses Gewicht geben"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Tippe einmal, um eine Zahl durchzustreichen, nochmal, um sie als behalten zu markieren, und nochmal, um sie wieder freizumachen.",
+      "tap": "Wähle eine Zahl einmal, um sie durchzustreichen, nochmal, um sie als behalten zu markieren, und nochmal, um sie wieder freizumachen.",
       "totals": "Die kleine Zahl unter jedem Ziel zeigt, was diese Linie gerade zusammen ergibt."
     },
     "hint": {
@@ -430,12 +446,16 @@
       }
     },
     "goal": "Jede Reihe und jede Spalte ergibt zusammen die Zahl daneben.",
-    "name": "Die Zählung"
+    "name": "Die Zählung",
+    "controls": {
+      "move": "eine Zahl wählen",
+      "mark": "durchstreichen, behalten oder freimachen"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Ein Zeichen zwischen zwei Feldern zeigt auf die kleinere der beiden Zahlen.",
-      "enter": "Tippe auf ein Feld, dann auf eine Zahl. Dieselbe Zahl nochmal nimmt sie wieder heraus.",
+      "enter": "Wähle ein Feld, dann eine Zahl. Dieselbe Zahl nochmal nimmt sie wieder heraus.",
       "notes": "Nimm den Bleistift, um dir die Zahlen zu notieren, die in ein Feld noch passen könnten. Rückgängig nimmt deinen letzten Zug zurück."
     },
     "hint": {
@@ -486,14 +506,22 @@
       }
     },
     "goal": "In jeder Reihe und jeder Spalte steht jede Zahl genau einmal.",
-    "name": "Größer und Kleiner"
+    "name": "Größer und Kleiner",
+    "controls": {
+      "move": "ein Feld wählen",
+      "type": "eine Zahl schreiben",
+      "choose": "eine Zahl oder den Radiergummi wählen",
+      "place": "hineinschreiben",
+      "pencil": "Bleistift",
+      "erase": "radieren"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Ein Spiegel lenkt das Licht mit jeder seiner Seiten um. Die kleinen Striche drumherum zeigen, wie er sonst noch liegen kann: Die meisten drehen das Licht um eine Vierteldrehung, manche weniger und schicken es schräg weiter.",
       "walls": "Ein Steinblock schluckt das Licht. Der Rand des Spielfelds auch.",
-      "tap": "Tippe auf ein Teil, um es zu ändern: Ein Spiegel dreht sich, ein Schiebeteil rutscht an seine nächste Stelle. Ein weißer Rand heißt: Das darfst du bewegen. Alles andere gehört zum Rätsel.",
-      "nodes": "Manche Steine sind mit einer Fassung im Boden verbunden und lassen sich nicht antippen. Schick das Licht über die Fassung, und der Stein rutscht zur Seite."
+      "tap": "Wähle ein Teil, um es zu ändern: Ein Spiegel dreht sich, ein Schiebeteil rutscht an seine nächste Stelle. Ein weißer Rand heißt: Das darfst du bewegen. Alles andere gehört zum Rätsel.",
+      "nodes": "Manche Steine sind mit einer Fassung im Boden verbunden und lassen sich von dir nicht bewegen. Schick das Licht über die Fassung, und der Stein rutscht zur Seite."
     },
     "hint": {
       "entryRun": "Fang da an, wo das Licht sowieso hingeht: Es läuft geradeaus von der Scheibe, bis es auf das erste Teil trifft, das du ändern kannst. Diese Felder sind immer beleuchtet, egal was du machst.",
@@ -526,7 +554,7 @@
       "triple": "Drei Gleiche hintereinander sind nie erlaubt, weder quer noch senkrecht.",
       "copies": "Keine zwei Reihen dürfen gleich aussehen, und keine zwei Spalten auch nicht.",
       "signs": "Ein Zeichen zwischen zwei Feldern sagt, wie sie zueinander stehen: = heißt gleich, × heißt verschieden.",
-      "enter": "Tippe auf ein Feld für eine Sonne, nochmal für einen Mond und noch einmal, um es zu leeren."
+      "enter": "Wähle ein Feld für eine Sonne, nochmal für einen Mond und noch einmal, um es zu leeren."
     },
     "hint": {
       "mistake": "Eine dieser Markierungen kann nicht stimmen.",
@@ -550,7 +578,11 @@
       }
     },
     "goal": "In jedem Feld steht eine Sonne oder ein Mond, und in jeder Linie gibt es genauso viele Sonnen wie Monde.",
-    "name": "Sonne und Mond"
+    "name": "Sonne und Mond",
+    "controls": {
+      "move": "ein Feld wählen",
+      "mark": "Zeichen wechseln"
+    }
   },
   "constellation": {
     "rules": {
@@ -558,25 +590,25 @@
         "straight": "Lichtlinien laufen gerade quer oder senkrecht, von einem Stern zum nächsten.",
         "pair": "Zwei Sterne können höchstens zwei Linien teilen.",
         "cross": "Linien kreuzen sich nie und laufen nie durch einen Stern.",
-        "enter": "Zieh von einem Stern zu seinem Nachbarn, um eine Linie zu zeichnen, nochmal für eine doppelte und noch einmal, um sie zu löschen."
+        "enter": "Zeichne eine Linie von einem Stern zu seinem Nachbarn, nochmal für eine doppelte und noch einmal, um sie zu löschen."
       },
       "causeway": {
         "straight": "Transportwege laufen gerade quer oder senkrecht, von einer Baustelle zur nächsten.",
         "pair": "Zwei Baustellen können höchstens zwei Wege teilen.",
         "cross": "Wege kreuzen sich nie und laufen nie durch eine Baustelle.",
-        "enter": "Zieh von einer Baustelle zu ihrer Nachbarin, um einen Weg anzulegen, nochmal, um ihn zu verdoppeln, und noch einmal, um ihn wieder aufzureißen."
+        "enter": "Leg einen Weg von einer Baustelle zu ihrer Nachbarin, nochmal, um ihn zu verdoppeln, und noch einmal, um ihn wieder aufzureißen."
       },
       "irrigation": {
         "straight": "Kanäle laufen gerade quer oder senkrecht, von einem Becken zum nächsten.",
         "pair": "Zwei Becken können höchstens zwei Kanäle teilen.",
         "cross": "Kanäle kreuzen sich nie und laufen nie durch ein Becken.",
-        "enter": "Zieh von einem Becken zu seinem Nachbarn, um einen Kanal zu graben, nochmal, um ihn zu verbreitern, und noch einmal, um ihn wieder zuzuschütten."
+        "enter": "Grab einen Kanal von einem Becken zu seinem Nachbarn, nochmal, um ihn zu verbreitern, und noch einmal, um ihn wieder zuzuschütten."
       },
       "ceiling": {
         "straight": "Schnüre laufen gerade quer oder senkrecht, von einem Stern zum nächsten.",
         "pair": "Zwei Sterne können höchstens zwei Schnüre teilen.",
         "cross": "Schnüre kreuzen sich nie und laufen nie durch einen Stern.",
-        "enter": "Zieh von einem Stern zu seinem Nachbarn, um eine Schnur zu spannen, nochmal, um sie zu verdoppeln, und noch einmal, um sie wieder abzunehmen."
+        "enter": "Spann eine Schnur von einem Stern zu seinem Nachbarn, nochmal, um sie zu verdoppeln, und noch einmal, um sie wieder abzunehmen."
       }
     },
     "hint": {
@@ -664,37 +696,44 @@
       "causeway": "Der Dammweg",
       "irrigation": "Die Bewässerung",
       "ceiling": "Die bemalte Decke"
+    },
+    "controls": {
+      "pick": "einen Stern wählen",
+      "grab": "aufnehmen",
+      "draw": "eine Linie in diese Richtung ziehen",
+      "release": "loslassen",
+      "alt": "halten und zeigen: eine Linie, eine doppelte, keine"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Keine zwei Sterne dürfen sich berühren – auch nicht an den Ecken.",
-        "enter": "Tippe auf ein Feld, um es auszuschließen, nochmal, um einen Stern hinzusetzen, und noch einmal, um es zu leeren."
+        "enter": "Wähle ein Feld, um es auszuschließen, nochmal, um einen Stern hinzusetzen, und noch einmal, um es zu leeren."
       },
       "fields": {
         "touch": "Keine zwei Bauernhöfe dürfen sich berühren – auch nicht an den Ecken. So nah beieinander müssten sie sich einen Brunnen teilen.",
-        "enter": "Tippe auf ein Stück Land, um es auszuschließen, nochmal, um einen Bauernhof zu bauen, und noch einmal, um es zu leeren."
+        "enter": "Wähle ein Stück Land, um es auszuschließen, nochmal, um einen Bauernhof zu bauen, und noch einmal, um es zu leeren."
       },
       "lamps": {
         "touch": "Keine zwei Öllampen dürfen nebeneinanderstehen – auch nicht an den Ecken. Ihr Licht würde sich überlappen, und das Öl wäre verschwendet.",
         "walls": "Die grauen Steinblöcke gehören zum Boden: Darauf kann nichts stehen, und sie zählen nicht als Feld.",
-        "enter": "Tippe auf eine Steinplatte, um sie auszuschließen, nochmal, um eine Öllampe hinzustellen, und noch einmal, um sie zu leeren."
+        "enter": "Wähle eine Steinplatte, um sie auszuschließen, nochmal, um eine Öllampe hinzustellen, und noch einmal, um sie zu leeren."
       },
       "market": {
         "touch": "Keine zwei Stände dürfen nebeneinanderstehen – auch nicht an den Ecken. Konkurrenten bauen nie direkt nebeneinander auf.",
         "walls": "Die Häuser gehören zum Platz: Darin kann niemand einen Stand aufbauen, und sie zählen nicht als Platz.",
-        "enter": "Tippe auf einen Platz, um ihn auszuschließen, nochmal, um einen Stand aufzubauen, und noch einmal, um ihn zu leeren."
+        "enter": "Wähle einen Platz, um ihn auszuschließen, nochmal, um einen Stand aufzubauen, und noch einmal, um ihn zu leeren."
       },
       "lotus": {
         "touch": "Keine zwei Lotusblumen dürfen nebeneinander schwimmen – auch nicht an den Ecken. Jede Blume braucht freies Wasser um sich herum.",
         "walls": "Die Felsen ragen aus dem Teich: Darauf kann nichts schwimmen, und sie zählen nicht als Feld.",
-        "enter": "Tippe auf ein Stück Wasser, um es auszuschließen, nochmal, um eine Lotusblume hinzusetzen, und noch einmal, um es zu leeren."
+        "enter": "Wähle ein Stück Wasser, um es auszuschließen, nochmal, um eine Lotusblume hinzusetzen, und noch einmal, um es zu leeren."
       },
       "cats": {
         "touch": "Keine zwei Katzen dürfen nebeneinander schlafen – auch nicht an den Ecken. Jede Katze hat ihr eigenes Sonnenplätzchen.",
         "walls": "Die Säulen halten den Tempel: Darauf kann keine Katze schlafen, und sie zählen nicht als Feld.",
-        "enter": "Tippe auf eine Steinplatte, um sie auszuschließen, nochmal, um eine Katze hinzulegen, und noch einmal, um sie zu leeren."
+        "enter": "Wähle eine Steinplatte, um sie auszuschließen, nochmal, um eine Katze hinzulegen, und noch einmal, um sie zu leeren."
       }
     },
     "hint": {
@@ -800,20 +839,20 @@
         "mistake": "Diese Markierung kann nicht stimmen.",
         "touch": "Hier steht {{token}}, und keine Öllampe darf neben einer anderen stehen – auch nicht an den Ecken.",
         "groupFull.row_one": "Diese Reihe hat ihre Öllampe schon.",
-        "groupFull.col_one": "Diese Spalte hat ihre Öllampe schon.",
         "groupFull.row_other": "Diese Reihe hat ihre {{count}} Öllampen schon.",
+        "groupFull.col_one": "Diese Spalte hat ihre Öllampe schon.",
         "groupFull.col_other": "Diese Spalte hat ihre {{count}} Öllampen schon.",
         "groupTight.row_one": "In dieser Reihe ist nur noch eine Steinplatte frei.",
         "groupTight.row_other": "In dieser Reihe sind nur noch {{count}} Steinplatten frei.",
         "groupTight.col_one": "In dieser Spalte ist nur noch eine Steinplatte frei.",
         "groupTight.col_other": "In dieser Spalte sind nur noch {{count}} Steinplatten frei.",
         "onlyWay.row_one": "Zwischen den Steinblöcken ist in dieser Reihe nur noch ein Feld für eine Öllampe übrig.",
-        "onlyWay.col_one": "Zwischen den Steinblöcken ist in dieser Spalte nur noch ein Feld für eine Öllampe übrig.",
         "onlyWay.row_other": "Es gibt nur eine Möglichkeit, {{count}} Öllampen in diese Reihe zu stellen.",
+        "onlyWay.col_one": "Zwischen den Steinblöcken ist in dieser Spalte nur noch ein Feld für eine Öllampe übrig.",
         "onlyWay.col_other": "Es gibt nur eine Möglichkeit, {{count}} Öllampen in diese Spalte zu stellen.",
         "everyWay.row_one": "Egal wo die Öllampe dieser Reihe hinkommt, sie steht immer hier.",
-        "everyWay.col_one": "Egal wo die Öllampe dieser Spalte hinkommt, sie steht immer hier.",
         "everyWay.row_other": "Egal wo die {{count}} Öllampen dieser Reihe hinkommen, eine steht immer hier.",
+        "everyWay.col_one": "Egal wo die Öllampe dieser Spalte hinkommt, sie steht immer hier.",
         "everyWay.col_other": "Egal wo die {{count}} Öllampen dieser Spalte hinkommen, eine steht immer hier.",
         "lineBlock.rowsToCols": "Die markierten Reihen haben ihre Öllampen in den Feldern dieser Spalten, also haben diese Spalten keine mehr übrig.",
         "lineBlock.colsToRows": "Die markierten Spalten haben ihre Öllampen in den Feldern dieser Reihen, also haben diese Reihen keine mehr übrig.",
@@ -830,20 +869,20 @@
         "mistake": "Diese Markierung kann nicht stimmen.",
         "touch": "Hier steht {{token}}, und kein Stand darf neben einem anderen stehen – auch nicht an den Ecken.",
         "groupFull.row_one": "Diese Reihe hat ihren Stand schon.",
-        "groupFull.col_one": "Diese Spalte hat ihren Stand schon.",
         "groupFull.row_other": "Diese Reihe hat ihre {{count}} Stände schon.",
+        "groupFull.col_one": "Diese Spalte hat ihren Stand schon.",
         "groupFull.col_other": "Diese Spalte hat ihre {{count}} Stände schon.",
         "groupTight.row_one": "In dieser Reihe ist nur noch ein Platz frei.",
         "groupTight.row_other": "In dieser Reihe sind nur noch {{count}} Plätze frei.",
         "groupTight.col_one": "In dieser Spalte ist nur noch ein Platz frei.",
         "groupTight.col_other": "In dieser Spalte sind nur noch {{count}} Plätze frei.",
         "onlyWay.row_one": "Zwischen den Häusern ist in dieser Reihe nur noch ein Feld für einen Stand übrig.",
-        "onlyWay.col_one": "Zwischen den Häusern ist in dieser Spalte nur noch ein Feld für einen Stand übrig.",
         "onlyWay.row_other": "Es gibt nur eine Möglichkeit, {{count}} Stände in diese Reihe zu setzen.",
+        "onlyWay.col_one": "Zwischen den Häusern ist in dieser Spalte nur noch ein Feld für einen Stand übrig.",
         "onlyWay.col_other": "Es gibt nur eine Möglichkeit, {{count}} Stände in diese Spalte zu setzen.",
         "everyWay.row_one": "Egal wo der Stand dieser Reihe hinkommt, er steht immer hier.",
-        "everyWay.col_one": "Egal wo der Stand dieser Spalte hinkommt, er steht immer hier.",
         "everyWay.row_other": "Egal wo die {{count}} Stände dieser Reihe hinkommen, einer steht immer hier.",
+        "everyWay.col_one": "Egal wo der Stand dieser Spalte hinkommt, er steht immer hier.",
         "everyWay.col_other": "Egal wo die {{count}} Stände dieser Spalte hinkommen, einer steht immer hier.",
         "lineBlock.rowsToCols": "Die markierten Reihen haben ihre Stände in den Feldern dieser Spalten, also haben diese Spalten keine mehr übrig.",
         "lineBlock.colsToRows": "Die markierten Spalten haben ihre Stände in den Feldern dieser Reihen, also haben diese Reihen keine mehr übrig.",
@@ -860,20 +899,20 @@
         "mistake": "Diese Markierung kann nicht stimmen.",
         "touch": "Hier schwimmt {{token}}, und keine Lotusblume darf neben einer anderen schwimmen – auch nicht an den Ecken.",
         "groupFull.row_one": "Diese Reihe hat ihre Lotusblume schon.",
-        "groupFull.col_one": "Diese Spalte hat ihre Lotusblume schon.",
         "groupFull.row_other": "Diese Reihe hat ihre {{count}} Lotusblumen schon.",
+        "groupFull.col_one": "Diese Spalte hat ihre Lotusblume schon.",
         "groupFull.col_other": "Diese Spalte hat ihre {{count}} Lotusblumen schon.",
         "groupTight.row_one": "In dieser Reihe ist nur noch ein Stück Wasser frei.",
         "groupTight.row_other": "In dieser Reihe sind nur noch {{count}} Stücke Wasser frei.",
         "groupTight.col_one": "In dieser Spalte ist nur noch ein Stück Wasser frei.",
         "groupTight.col_other": "In dieser Spalte sind nur noch {{count}} Stücke Wasser frei.",
         "onlyWay.row_one": "Zwischen den Felsen ist in dieser Reihe nur noch ein Feld für eine Lotusblume übrig.",
-        "onlyWay.col_one": "Zwischen den Felsen ist in dieser Spalte nur noch ein Feld für eine Lotusblume übrig.",
         "onlyWay.row_other": "Es gibt nur eine Möglichkeit, {{count}} Lotusblumen in diese Reihe zu setzen.",
+        "onlyWay.col_one": "Zwischen den Felsen ist in dieser Spalte nur noch ein Feld für eine Lotusblume übrig.",
         "onlyWay.col_other": "Es gibt nur eine Möglichkeit, {{count}} Lotusblumen in diese Spalte zu setzen.",
         "everyWay.row_one": "Egal wo die Lotusblume dieser Reihe hinkommt, sie ist immer hier.",
-        "everyWay.col_one": "Egal wo die Lotusblume dieser Spalte hinkommt, sie ist immer hier.",
         "everyWay.row_other": "Egal wo die {{count}} Lotusblumen dieser Reihe hinkommen, eine ist immer hier.",
+        "everyWay.col_one": "Egal wo die Lotusblume dieser Spalte hinkommt, sie ist immer hier.",
         "everyWay.col_other": "Egal wo die {{count}} Lotusblumen dieser Spalte hinkommen, eine ist immer hier.",
         "lineBlock.rowsToCols": "Die markierten Reihen haben ihre Lotusblumen in den Feldern dieser Spalten, also haben diese Spalten keine mehr übrig.",
         "lineBlock.colsToRows": "Die markierten Spalten haben ihre Lotusblumen in den Feldern dieser Reihen, also haben diese Reihen keine mehr übrig.",
@@ -890,20 +929,20 @@
         "mistake": "Diese Markierung kann nicht stimmen.",
         "touch": "Hier schläft {{token}}, und keine Katze darf neben einer anderen schlafen – auch nicht an den Ecken.",
         "groupFull.row_one": "Diese Reihe hat ihre Katze schon.",
-        "groupFull.col_one": "Diese Spalte hat ihre Katze schon.",
         "groupFull.row_other": "Diese Reihe hat ihre {{count}} Katzen schon.",
+        "groupFull.col_one": "Diese Spalte hat ihre Katze schon.",
         "groupFull.col_other": "Diese Spalte hat ihre {{count}} Katzen schon.",
         "groupTight.row_one": "In dieser Reihe ist nur noch eine Steinplatte frei.",
         "groupTight.row_other": "In dieser Reihe sind nur noch {{count}} Steinplatten frei.",
         "groupTight.col_one": "In dieser Spalte ist nur noch eine Steinplatte frei.",
         "groupTight.col_other": "In dieser Spalte sind nur noch {{count}} Steinplatten frei.",
         "onlyWay.row_one": "Zwischen den Säulen ist in dieser Reihe nur noch ein Feld für eine Katze übrig.",
-        "onlyWay.col_one": "Zwischen den Säulen ist in dieser Spalte nur noch ein Feld für eine Katze übrig.",
         "onlyWay.row_other": "Es gibt nur eine Möglichkeit, {{count}} Katzen in diese Reihe zu legen.",
+        "onlyWay.col_one": "Zwischen den Säulen ist in dieser Spalte nur noch ein Feld für eine Katze übrig.",
         "onlyWay.col_other": "Es gibt nur eine Möglichkeit, {{count}} Katzen in diese Spalte zu legen.",
         "everyWay.row_one": "Egal wo die Katze dieser Reihe hinkommt, sie ist immer hier.",
-        "everyWay.col_one": "Egal wo die Katze dieser Spalte hinkommt, sie ist immer hier.",
         "everyWay.row_other": "Egal wo die {{count}} Katzen dieser Reihe hinkommen, eine ist immer hier.",
+        "everyWay.col_one": "Egal wo die Katze dieser Spalte hinkommt, sie ist immer hier.",
         "everyWay.col_other": "Egal wo die {{count}} Katzen dieser Spalte hinkommen, eine ist immer hier.",
         "lineBlock.rowsToCols": "Die markierten Reihen haben ihre Katzen in den Feldern dieser Spalten, also haben diese Spalten keine mehr übrig.",
         "lineBlock.colsToRows": "Die markierten Spalten haben ihre Katzen in den Feldern dieser Reihen, also haben diese Reihen keine mehr übrig.",
@@ -944,6 +983,11 @@
       "market": "Marktstände",
       "lotus": "Lotusteich",
       "cats": "Tempelkatzen"
+    },
+    "controls": {
+      "move": "ein Feld wählen",
+      "mark": "Zeichen wechseln",
+      "sweep": "halten und bewegen: eine Reihe ausschließen"
     }
   },
   "pairPuzzle": {
@@ -960,13 +1004,13 @@
         "pair": "Jeder Sarkophag hat eine Mumie direkt darüber, darunter, links oder rechts davon, und jede Mumie ruht neben ihrem eigenen Sarkophag.",
         "count": "Die Zahl neben einer Reihe oder Spalte sagt, wie viele Mumien darin liegen. Sie wird grün, wenn es genau so viele sind, und rot, wenn es nicht mehr klappen kann.",
         "touch": "Keine zwei Mumien dürfen nebeneinanderliegen – auch nicht an den Ecken.",
-        "enter": "Tippe auf ein Feld, um es auszuschließen, nochmal, um eine Mumie hinzulegen, und noch einmal, um es zu leeren. Zieh über mehrere Felder, um sie alle auszuschließen. Sarkophage kann man nicht antippen."
+        "enter": "Wähle ein Feld, um es auszuschließen, nochmal, um eine Mumie hinzulegen, und noch einmal, um es zu leeren. Schließ mehrere Felder in einem Zug aus. Sarkophage kann man nicht markieren."
       },
       "beetles": {
         "pair": "Jede Mistkugel hat einen Käfer direkt darüber, darunter, links oder rechts davon, und jeder Käfer steht neben seiner eigenen Kugel zum Rollen.",
         "count": "Die Zahl neben einer Reihe oder Spalte sagt, wie viele Käfer darin sind. Sie wird grün, wenn es genau so viele sind, und rot, wenn es nicht mehr klappen kann.",
         "touch": "Keine zwei Käfer dürfen nebeneinanderstehen – auch nicht an den Ecken.",
-        "enter": "Tippe auf ein Feld, um es auszuschließen, nochmal, um einen Käfer hinzusetzen, und noch einmal, um es zu leeren. Zieh über mehrere Felder, um sie alle auszuschließen. Mistkugeln kann man nicht antippen."
+        "enter": "Wähle ein Feld, um es auszuschließen, nochmal, um einen Käfer hinzusetzen, und noch einmal, um es zu leeren. Schließ mehrere Felder in einem Zug aus. Mistkugeln kann man nicht markieren."
       }
     },
     "hint": {
@@ -1030,6 +1074,11 @@
           "place_other": "Setz auf jedes schraffierte Feld einen Käfer."
         }
       }
+    },
+    "controls": {
+      "move": "ein Feld wählen",
+      "mark": "Zeichen wechseln",
+      "sweep": "halten und bewegen: eine Reihe ausschließen"
     }
   },
   "rushHour": {
@@ -1044,11 +1093,11 @@
     "rules": {
       "default": {
         "lanes": "Ein Block rutscht nur auf seiner eigenen Bahn – nie zur Seite, nie vom Spielfeld.",
-        "shove": "Zieh an einem Block, um ihn zu schieben. Er bleibt stehen, wo etwas im Weg ist."
+        "shove": "Schieb einen Block in seiner Bahn entlang. Er bleibt stehen, wo etwas im Weg ist."
       },
       "market": {
         "lanes": "Ein Schlitten rutscht nur auf der Bahn, auf der er steht – nie zur Seite, nie aus der Straße hinaus.",
-        "shove": "Zieh an einem Schlitten, um ihn zu schieben. Er bleibt stehen, wo etwas im Weg ist."
+        "shove": "Schieb einen Schlitten in seiner Bahn entlang. Er bleibt stehen, wo etwas im Weg ist."
       }
     },
     "hint": {
@@ -1076,29 +1125,35 @@
           "down": "Schieb sie die Straße hinunter, bis zum Ring."
         }
       }
+    },
+    "controls": {
+      "pick": "einen Block wählen",
+      "grab": "nehmen",
+      "slide": "schieben",
+      "release": "loslassen"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "Die Zahlen, die schon in der Wabe stehen, gehören zum Rätsel – die bleiben, wo sie sind.",
-        "enter": "Tippe auf eine Zahl, um die Reihe dort weiterzuführen, und dann auf eine leere Zelle daneben, um weiterzumachen – oder zieh einfach durch die Zellen, durch die sie läuft.",
-        "back": "Tippe auf eine Zahl, die du gesetzt hast, und dann nochmal, um sie wieder wegzunehmen, zusammen mit allem, was daran hängt. Wenn du die Reihe von einer Zahl aus anders weiterführst, passiert dasselbe. Rückgängig nimmt deinen letzten Zug zurück."
+        "enter": "Zieh eine Linie von einer Zahl durch die leeren Zellen daneben, um die Reihe weiterzuführen.",
+        "back": "Wähle eine Zahl, die du gesetzt hast, und wähle sie nochmal, um sie wieder wegzunehmen, zusammen mit allem, was daran hängt. Wenn du die Reihe von einer Zahl aus anders weiterführst, passiert dasselbe. Rückgängig nimmt deinen letzten Zug zurück."
       },
       "channel": {
         "given": "Die Felder, die schon eine Zahl haben, gehören zum Rätsel – die bleiben, wo sie sind.",
-        "enter": "Tippe auf ein Feld mit Zahl, um das Wasser dort aufzunehmen, und dann auf ein trockenes Feld daneben, um weiterzugraben – oder zieh einfach an den Feldern entlang, durch die der Kanal läuft.",
-        "back": "Tippe auf ein Feld, das du gegraben hast, und dann nochmal, um es wieder zuzuschütten, zusammen mit jedem Kanalstück, das davon abgeschnitten wird. Wenn du von einem Feld aus anders weitergräbst, passiert dasselbe. Rückgängig nimmt deinen letzten Zug zurück."
+        "enter": "Grab einen Kanal von einem Feld mit Zahl durch die trockenen Felder daneben, um das Wasser weiterzuleiten.",
+        "back": "Wähle ein Feld, das du gegraben hast, und wähle es nochmal, um es wieder zuzuschütten, zusammen mit jedem Kanalstück, das davon abgeschnitten wird. Wenn du von einem Feld aus anders weitergräbst, passiert dasselbe. Rückgängig nimmt deinen letzten Zug zurück."
       },
       "scribe": {
         "given": "Die rot geschriebenen Zahlen gehören zum Rätsel – die bleiben, wo sie sind.",
-        "enter": "Tippe auf eine Zahl, um dort den Schreibstift aufzunehmen, und dann auf einen leeren Platz daneben, um weiterzuschreiben – oder zieh einfach an der Linie entlang.",
-        "back": "Tippe auf eine Zahl, die du geschrieben hast, und dann nochmal, um sie wegzukratzen, zusammen mit jedem Linienstück, das davon abgeschnitten wird. Wenn du von einer Zahl aus anders weiterschreibst, passiert dasselbe. Rückgängig nimmt deinen letzten Zug zurück."
+        "enter": "Schreib eine Linie von einer Zahl durch die leeren Plätze daneben, um weiterzuzählen.",
+        "back": "Wähle eine Zahl, die du geschrieben hast, und wähle sie nochmal, um sie wegzukratzen, zusammen mit jedem Linienstück, das davon abgeschnitten wird. Wenn du von einer Zahl aus anders weiterschreibst, passiert dasselbe. Rückgängig nimmt deinen letzten Zug zurück."
       },
       "chambers": {
         "given": "Die Kammern, die schon eine Zahl haben, haben die Baumeister gehauen – die bleiben, wo sie sind.",
-        "enter": "Tippe auf eine Kammer mit Zahl, um den Gang dort aufzunehmen, und dann auf eine versiegelte Kammer daneben, um durchzubrechen – oder zieh einfach an den Kammern entlang, durch die der Gang läuft.",
-        "back": "Tippe auf eine Kammer, die du geöffnet hast, und dann nochmal, um sie wieder zu versiegeln, zusammen mit jedem Gangstück, das davon abgeschnitten wird. Wenn du von einer Kammer aus anders durchbrichst, passiert dasselbe. Rückgängig nimmt deinen letzten Zug zurück."
+        "enter": "Brich einen Gang von einer Kammer mit Zahl durch die versiegelten Kammern daneben, um weiterzukommen.",
+        "back": "Wähle eine Kammer, die du geöffnet hast, und wähle sie nochmal, um sie wieder zu versiegeln, zusammen mit jedem Gangstück, das davon abgeschnitten wird. Wenn du von einer Kammer aus anders durchbrichst, passiert dasselbe. Rückgängig nimmt deinen letzten Zug zurück."
       }
     },
     "goal": {
@@ -1162,6 +1217,13 @@
       "channel": "Der Kanal",
       "scribe": "Das Blatt des Schreibers",
       "chambers": "Versiegelte Kammern"
+    },
+    "controls": {
+      "move": "zu einer Zelle daneben gehen; hoch und runter gehen schräg nach links",
+      "right": "schräg nach rechts oben oder unten",
+      "grab": "die Reihe aufnehmen oder deine Zahl wegnehmen",
+      "carry": "mit aufgenommener Reihe: weiterführen; hoch und runter wählen die Seite, auf der es weitergehen kann",
+      "drop": "die Reihe ablegen"
     }
   },
   "sudoku": {
@@ -1169,13 +1231,13 @@
       "default": {
         "chambers": "Die dicken Linien teilen das Gitter in sechs Kammern, jede zwei Felder breit und drei hoch.",
         "given": "Die Zahlen, die schon eingemeißelt sind, gehören zum Rätsel – die bleiben, wo sie sind.",
-        "enter": "Tippe auf ein Feld, dann auf eine Zahl. Dieselbe Zahl nochmal nimmt sie wieder heraus.",
+        "enter": "Wähle ein Feld, dann eine Zahl. Dieselbe Zahl nochmal nimmt sie wieder heraus.",
         "notes": "Nimm den Bleistift, um dir die Zahlen zu notieren, die in ein Feld noch passen könnten. Rückgängig nimmt deinen letzten Zug zurück."
       },
       "papyrus": {
         "chambers": "Die dicken Linien teilen das Blatt in sechs Abschnitte, jeder zwei Plätze breit und drei hoch.",
         "given": "Die rot geschriebenen Zeichen gehören zum Rätsel – die bleiben, wo sie sind.",
-        "enter": "Tippe auf einen Platz, dann auf ein Zeichen. Dasselbe Zeichen nochmal kratzt es wieder weg.",
+        "enter": "Wähle einen Platz, dann ein Zeichen. Dasselbe Zeichen nochmal kratzt es wieder weg.",
         "notes": "Nimm den Schreibstift, um dir die Zeichen zu notieren, die auf einen Platz noch passen könnten. Rückgängig nimmt deinen letzten Zug zurück."
       }
     },
@@ -1242,6 +1304,14 @@
     "name": {
       "default": "Sechs Kammern",
       "papyrus": "Das Register des Schreibers"
+    },
+    "controls": {
+      "move": "ein Feld wählen",
+      "type": "eine Zahl schreiben",
+      "choose": "eine Zahl oder den Radiergummi wählen",
+      "place": "hineinschreiben",
+      "pencil": "Bleistift",
+      "erase": "radieren"
     }
   },
   "crocodile": {
@@ -1255,6 +1325,10 @@
     "hint": {
       "biggest": "Dieses Krokodil will die größte Antwort. Das ist {{value}}.",
       "smallest": "Dieses Krokodil will die kleinste Antwort. Das ist {{value}}."
+    },
+    "controls": {
+      "move": "einen Stein wählen",
+      "step": "darauf treten"
     }
   },
   "canisters": {
@@ -1285,35 +1359,35 @@
         "sums": "Jede Menge, die du machen kannst, sind zwei Zahlen auf der Bank, zusammengezählt oder voneinander abgezogen: wie groß ein Kanister ist, was drin ist oder wie viel Platz noch frei ist.",
         "backwards": "Also rechne von der gewünschten Menge rückwärts – welche zwei Zahlen ergeben sie, und wie bekommst du diese zwei gleichzeitig hin?"
       },
-      "claim": "Wenn du die Menge hast, tippe auf „dieser“. Wenn du das falsche Gefäß nennst, kostet das einen Zug.",
+      "claim": "Wenn du die Menge hast, wähle „dieser“. Wenn du das falsche Gefäß nennst, kostet das einen Zug.",
       "legs": "Dann kommt die nächste Menge, abgemessen von dem, was dann noch in den Gefäßen ist.",
       "default": {
-        "moves": "Tippe auf einen Kanister, um ihn hochzuheben, und dann auf einen anderen, um hineinzugießen. Das Gießen hört auf, wenn der erste leer oder der zweite voll ist.",
+        "moves": "Heb einen Kanister hoch und wähle dann einen anderen, um hineinzugießen. Das Gießen hört auf, wenn der erste leer oder der zweite voll ist.",
         "contents": "Mehr Wasser gibt es nicht – ein Kanister ist am Anfang voll, und man kann nichts wegschütten oder neu holen.",
         "levels": "Auf jedem Kanister steht, wie viel drin ist und wie viel reinpasst, wenn er voll ist."
       },
       "grain": {
-        "moves": "Tippe auf ein Maß, um es hochzuheben, und dann auf ein anderes, um das Korn hineinzukippen. Das Kippen hört auf, wenn das erste leer ist oder das zweite bis zum Rand voll.",
+        "moves": "Heb ein Maß hoch und wähle dann ein anderes, um das Korn hineinzukippen. Das Kippen hört auf, wenn das erste leer ist oder das zweite bis zum Rand voll.",
         "contents": "Mehr Korn gibt es nicht – ein Maß ist am Anfang voll, und man kann nichts wegfegen oder aus dem Kornspeicher holen.",
         "levels": "Auf jedem Maß steht, wie viel drin ist und wie viel reinpasst, wenn es bis zum Rand voll ist."
       },
       "oil": {
-        "moves": "Tippe auf einen Krug, um ihn hochzuheben, und dann auf einen anderen, um hineinzugießen. Das Gießen hört auf, wenn der erste leer oder der zweite voll ist.",
+        "moves": "Heb einen Krug hoch und wähle dann einen anderen, um hineinzugießen. Das Gießen hört auf, wenn der erste leer oder der zweite voll ist.",
         "contents": "Mehr Öl gibt es nicht – ein Krug ist am Anfang voll, und man kann nichts wegschütten oder neu abfüllen.",
         "levels": "Auf jedem Krug steht, wie viel drin ist und wie viel reinpasst, wenn er voll ist."
       },
       "wine": {
-        "moves": "Tippe auf eine Amphore, um sie hochzuheben, und dann auf eine andere, um umzufüllen. Das Umfüllen hört auf, wenn die erste leer oder die zweite voll ist.",
+        "moves": "Heb eine Amphore hoch und wähle dann eine andere, um umzufüllen. Das Umfüllen hört auf, wenn die erste leer oder die zweite voll ist.",
         "contents": "Mehr Wein gibt es nicht – eine Amphore ist am Anfang voll, und man kann nichts verschütten oder aus dem Keller holen.",
         "levels": "Auf jeder Amphore steht, wie viel drin ist und wie viel reinpasst, wenn sie voll ist."
       },
       "natron": {
-        "moves": "Tippe auf einen Krug, um ihn hochzuheben, und dann auf einen anderen, um das Natron hineinzukippen. Das Kippen hört auf, wenn der erste leer ist oder der zweite bis zum Deckel voll.",
+        "moves": "Heb einen Krug hoch und wähle dann einen anderen, um das Natron hineinzukippen. Das Kippen hört auf, wenn der erste leer ist oder der zweite bis zum Deckel voll.",
         "contents": "Mehr Natron gibt es nicht – ein Krug ist am Anfang voll, und man kann nichts wegfegen oder neu holen.",
         "levels": "Auf jedem Krug steht, wie viel drin ist und wie viel reinpasst, wenn er bis zum Deckel voll ist."
       },
       "ink": {
-        "moves": "Tippe auf einen Topf, um ihn hochzuheben, und dann auf einen anderen, um hineinzugießen. Das Gießen hört auf, wenn der erste leer oder der zweite voll ist.",
+        "moves": "Heb einen Topf hoch und wähle dann einen anderen, um hineinzugießen. Das Gießen hört auf, wenn der erste leer oder der zweite voll ist.",
         "contents": "Mehr Tinte gibt es nicht – ein Topf ist am Anfang voll, und man kann nichts auskippen oder frisch anrühren.",
         "levels": "Auf jedem Topf steht, wie viel drin ist und wie viel reinpasst, wenn er voll ist."
       }
@@ -1338,7 +1412,12 @@
     "legs": "{{done}} von {{total}} abgemessen",
     "wanted": "Abmessen",
     "claim": "dieser",
-    "claimAria": "Sagen, dass der Behälter für {{capacity}} die Menge hat"
+    "claimAria": "Sagen, dass der Behälter für {{capacity}} die Menge hat",
+    "controls": {
+      "move": "ein Gefäß wählen oder das „dieser“ darunter",
+      "press": "hochheben, hier hineingießen oder nennen",
+      "putDown": "das gehaltene Gefäß wieder abstellen"
+    }
   },
   "procession": {
     "name": {
@@ -1358,8 +1437,8 @@
     "rules": {
       "default": {
         "lengths": "Jede Reihe ist eine Sache, die passiert, und sie dauert so lange, wie ihr Balken breit ist. Wann sie passiert, findest du heraus.",
-        "marks": "Eine Regel unter dem Tag wird rot, solange sie nicht stimmt. Tippe darauf, um die Reihen einzukreisen, um die es geht.",
-        "drag": "Zieh einen Balken in seiner eigenen Reihe hin und her. Er verlässt nie den Tag."
+        "marks": "Eine Regel unter dem Tag wird rot, solange sie nicht stimmt. Wähle sie, um die Reihen einzukreisen, um die es geht.",
+        "drag": "Schieb einen Balken in seiner eigenen Reihe hin und her. Er verlässt nie den Tag."
       }
     },
     "hint": {
@@ -1368,7 +1447,7 @@
         "squeeze": "Vom Tag ist nur noch so viel übrig, und das ist alles, was davon passt.",
         "apart": "Andersherum passt es nicht in den Tag.",
         "split": "Probier es andersherum, und dann geht etwas anderes kaputt.",
-        "move": "Zieh den eingekreisten Balken auf die schraffierten Striche."
+        "move": "Schieb den eingekreisten Balken auf die schraffierten Striche."
       }
     },
     "events": {
@@ -1431,6 +1510,11 @@
       "hint": "Jede Platte, auf die du trittst, löst ihre Aufgabe aus. Bring den Tag in Ordnung und lauf dann die Platten in dieser Reihenfolge ab.",
       "read": "Der Tag ist gelesen. Lauf seine Platten in dieser Reihenfolge ab, von der ersten an.",
       "hintButton": "Tipp"
+    },
+    "controls": {
+      "row": "eine Reihe wählen",
+      "slide": "ihren Balken schieben",
+      "mark": "eine Regel unter dem Tag wählen"
     }
   },
   "story": {
@@ -1453,6 +1537,13 @@
       "pick": "Setz das richtige Zeichen an seinen Platz.",
       "cannot": "Du kennst das Zeichen noch nicht, das hierher gehört. Noch nicht."
     },
+    "formula": {
+      "wrong": "In dieser Zeile fehlt ein Zeichen. Nicht falsch gemeißelt – nie gemeißelt.",
+      "fixed": "Die Zeile ist ganz.",
+      "pick": "Setz das Zeichen, das du bekommen hast, an die leere Stelle.",
+      "cannot": "Niemand hat dir das Zeichen für diese Stelle gegeben. Noch nicht.",
+      "gap": "Das fehlende Zeichen"
+    },
     "sphinx": {
       "wrong": "Dieselbe Schrift wie draußen, aber hierher ist der Sand nie gekommen. Zwei Zeichen sind noch klar zu sehen, und eine Lücke, wo das dritte war.",
       "fixed": "Das ist alles.",
@@ -1469,7 +1560,7 @@
       "shrines": "Eine Lichtscheibe, und über jedem Ausgang dieser Kreuzung ein Schrein. Die Spiegel auf dem Boden können das Licht zu jedem davon bringen.",
       "doors": "Der Ausgang, den das Licht erreicht, ist offen, die anderen sind zu. Ein Lichtweg, ein Weg weiter.",
       "returning": "Mit der Wahl verlierst du nichts. Komm zurück, wann du willst, und schick das Licht woandershin – dann geht dieser Weg auf, und der andere zu.",
-      "tap": "Tippe auf einen Spiegel, um ihn zu drehen. Nochmal tippen dreht ihn zurück."
+      "tap": "Wähle einen Spiegel, um ihn zu drehen. Wähle ihn nochmal, um ihn zurückzudrehen."
     },
     "doorOpen": "Ausgang {{way}}: offen",
     "doorShut": "Ausgang {{way}}: zu",
@@ -1478,6 +1569,10 @@
       "e": "Osten",
       "s": "Süden",
       "w": "Westen"
+    },
+    "controls": {
+      "move": "einen Spiegel wählen",
+      "turn": "drehen"
     }
   },
   "handle": {
@@ -1727,5 +1822,33 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Zeichnen schreibt den Text neu: Alle Kommentare wandern nach oben"
+  },
+  "saveCard": {
+    "title": "Reisekarte",
+    "explain": "Nimm deine Expedition auf ein anderes Gerät mit: Erstelle hier eine Karte und lies sie dort innerhalb von 15 Minuten ein.",
+    "make": "Reisekarte erstellen",
+    "share": "Karte teilen",
+    "download": "Karte herunterladen",
+    "read": "Reisekarte einlesen",
+    "busy": "Einen Moment …",
+    "makeFailed": "Die Karte konnte nicht erstellt werden.",
+    "shareFailed": "Teilen hat nicht geklappt; lade die Karte stattdessen herunter.",
+    "confirm_one": "Die Expedition auf diesem Gerät durch die auf der Karte ersetzen ({{count}} Reise)?",
+    "confirm_other": "Die Expedition auf diesem Gerät durch die auf der Karte ersetzen ({{count}} Reisen)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Reisekarte · nimm deine Expedition mit",
+    "validUntil": "gültig bis {{time}}",
+    "codes_one": "{{count}} Code",
+    "codes_other": "{{count}} Codes",
+    "refused": {
+      "notACard": "Das ist keine Reisekarte.",
+      "tampered": "Diese Karte wurde verändert und kann nicht mehr gelesen werden.",
+      "expired": "Diese Karte ist abgelaufen; erstelle eine neue.",
+      "future": "Diese Karte kommt aus der Zukunft: Prüf die Uhr auf beiden Geräten.",
+      "otherEpoch": "Diese Karte stammt aus einer anderen Version des Spiels.",
+      "newerGame": "Diese Karte stammt aus einer neueren Version: Aktualisiere zuerst das Spiel."
+    },
+    "writeFailed": "Der Spielstand konnte nicht geschrieben werden; dieses Gerät hat seinen eigenen behalten.",
+    "writeLost": "Der Spielstand konnte nicht ersetzt werden, und der Spielstand auf diesem Gerät ist vielleicht unvollständig."
   }
 }

@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Ma nistgħux intellgħu l-progress tiegħek",
     "body": "Il-browser mhux qed jagħtina l-logħba li ssejvjajt bħalissa. Is-save tiegħek mhux mitluf: erġa' tella' l-paġna biex terġa' tipprova.",
-    "banner": "Il-progress mhux qed jiġi ssejvjat. Agħfas biex terġa' ttella'.",
+    "banner": "Il-progress mhux qed jiġi ssejvjat. Erġa' tella'.",
     "reload": "Erġa' tella'",
     "continue": "Ilgħab mingħajr ma tissejvja",
     "reset": "Ibda mill-ġdid (ħassar is-save)",
@@ -29,7 +29,6 @@
     "evening": "Filgħaxija",
     "night": "Bil-lejl"
   },
-  "tomb": {},
   "ui": {
     "level": "Livell",
     "symbols": "simboli",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Waqqaf l-ispedizzjoni",
     "confirmInterruptExpedition": "Żgur li trid twaqqaf din l-ispedizzjoni? Il-progress tal-ispedizzjoni jibqa', imma l-progress tal-livell jintilef!",
     "cancel": "Ikkanċella",
+    "leaveSite": "Titlaq minn dan il-post?",
+    "confirmLeaveSite": "Agħfas Itlaq biex timxi lura 'l barra, jew Ibqa' biex tkompli tesplora.",
+    "leave": "Itlaq",
+    "stay": "Ibqa'",
     "settings": "Issettjar",
     "language": "Lingwa",
     "close": "Agħlaq",
@@ -109,8 +112,12 @@
     "solvedWithHints_few": "Solvut b'{{count}} ħjiliet",
     "solvedWithHints_many": "Solvut b'{{count}} ħjiel",
     "solvedWithHints_other": "Solvut b'{{count}} ħjiel",
-    "tapToContinue": "Agħfas biex tkompli",
-    "goal": "Għan"
+    "tapToContinue": "Kompli",
+    "goal": "Għan",
+    "controls": "Kontrolli",
+    "controlsUndo": "lura",
+    "controlsHint": "ħjiel",
+    "controlsLeave": "lura lejn il-mappa"
   },
   "trap": {
     "warning": "⚠ Kuritur bin-Nases",
@@ -129,6 +136,7 @@
     "turnAround": "Dur lura",
     "wardDescription": {
       "starter": "Siġill ta' merkant jagħlaq din il-mogħdija — il-muftieħ tal-għassa tiegħu biss jiftaħha.",
+      "junior": "L-arma ta' nobbli tagħlaq din il-mogħdija — il-muftieħ tal-għassa tagħha biss jiftaħha.",
       "expert": "Il-għassa tat-tempju ta' qassis il-kbir tħares dan il-bieb — il-muftieħ qaddis tiegħu biss jiftħu.",
       "master": "Is-siġill irjali ta' fargħun jorbot din il-mogħdija — il-muftieħ tas-sultan biss jiksru.",
       "wizard": "Għassa tal-allat iżżomm din il-bieb — xejn ħlief il-muftieħ tal-allat ma jgħaddi."
@@ -137,7 +145,7 @@
     "lockedColor": "Għadek ma sibtx dak il-muftieħ f'dan is-sular."
   },
   "chest": {
-    "tapToOpen": "Agħfas biex tiftaħ",
+    "tapToOpen": "Iftaħ",
     "money_one": "{{count}} munita",
     "money_two": "{{count}} muniti",
     "money_few": "{{count}} muniti",
@@ -147,6 +155,7 @@
     "mapPieceDescription": "Biċċa fraġli ta' mappa lejn xi post minsi. Ħasra li għadha 'l bogħod milli tkun sħiħa...",
     "mapPieceProgress": "Ġbart {{found}} minn {{required}} biċċiet tal-mappa",
     "mapPieceComplete": "Il-mappa sħiħa — twassal għal {{name}}.",
+    "hieroglyph": "Ġeroglifu",
     "hieroglyphFragment": "Biċċa Ġeroglifu",
     "fragmentProgress": "Sibt {{found}} minn {{required}} biċċiet",
     "tombKey": "Muftieħ tal-Qabar",
@@ -163,8 +172,9 @@
   },
   "loot": {
     "youFound": "Sibt",
+    "youReceived": "Irċevejt",
     "expeditionReward": "Premju żejjed talli lestejt l-ispedizzjoni",
-    "clickToContinue": "Agħfas kullimkien biex tkompli"
+    "clickToContinue": "Kompli"
   },
   "money": {
     "label": "Muniti"
@@ -270,7 +280,7 @@
     "tabNew_other": "{{label}} · {{count}} ġodda",
     "empty": "Is-senduq tiegħek għadu vojt",
     "newLabel": "ĠDID",
-    "clickForDetails": "Agħfas madum biex tara aktar",
+    "clickForDetails": "Agħżel madum biex tara aktar",
     "categories": {
       "deities": "🏺 Allat",
       "professions": "⚱️ Xogħlijiet",
@@ -278,6 +288,7 @@
       "artifacts": "💎 Oġġetti Antiki",
       "treasures": "💰 Teżori",
       "junk": "🔷 Ħwejjeġ żgħar",
+      "offerings": "🍞 Offerti",
       "signs": "✍️ Sinjali"
     },
     "treasureCategories": {
@@ -361,22 +372,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Agħfas sinjal hawn taħt, imbagħad numru. Agħfas dak in-numru għal darb'oħra biex tneħħih.",
+      "tap": "Agħżel sinjal hawn taħt, imbagħad numru. Agħżel dak in-numru għal darb'oħra biex tneħħih.",
       "same": "Sinjal jiżen l-istess fuq kull miżien.",
-      "cancel": "Neħħi l-istess ħaġa miż-żewġ kefef u l-miżien jibqa' ndaqs. Agħfas biċċa mmarkata biex tagħmel dan — dak li jibqa' jinżamm bħala ringiela ġdida.",
-      "swap": "Agħfas sinjal li m'hemmx bħalu fin-naħa l-oħra, imbagħad ringiela fejn dak is-sinjal waħdu, biex tbiddlu ma' kemm tiswa dik ir-ringiela."
+      "cancel": "Neħħi l-istess ħaġa miż-żewġ kefef u l-miżien jibqa' ndaqs. Agħżel biċċa mmarkata biex tagħmel dan — dak li jibqa' jinżamm bħala ringiela ġdida.",
+      "swap": "Agħżel sinjal li m'hemmx bħalu fin-naħa l-oħra, imbagħad ringiela fejn dak is-sinjal waħdu, biex tbiddlu ma' kemm tiswa dik ir-ringiela."
     },
     "hint": {
       "mistake": "Wieħed mill-piżijiet li tajt iwaqqa' miżien. Neħħih u erġa' ħares.",
       "alone": "Fir-ringiela mixgħula, {{glyph}} hu l-unika biċċa li fadal bla numru. Aħdem kemm jiżen.",
       "equalShares": "Ir-ringiela mixgħula għandha biss {{glyph}} kontra numru. Aqsam dak in-numru bejniethom.",
       "difference": "Iż-żewġ ringieli mixgħula huma l-istess ħlief għal {{glyph}}. Qabbilhom.",
-      "cancelGlyph": "Iż-żewġ kefef tar-ringiela mixgħula għandhom {{glyph}}. Agħfas waħda biex tneħħiha miż-żewġ naħat — ir-ringiela tibqa' ndaqs.",
-      "cancelStones": "Iż-żewġ kefef tar-ringiela mixgħula għandhom numri biss. Agħfas wieħed biex tneħħi l-istess ammont miż-żewġ naħat.",
-      "swap": "Ringiela mixgħula waħda tgħid kemm jiswa {{glyph}} waħdu. Agħfas {{glyph}} fir-ringiela mixgħula l-oħra, imbagħad agħfas dik ir-ringiela."
+      "cancelGlyph": "Iż-żewġ kefef tar-ringiela mixgħula għandhom {{glyph}}. Agħżel wieħed biex tneħħih miż-żewġ naħat — ir-ringiela tibqa' ndaqs.",
+      "cancelStones": "Iż-żewġ kefef tar-ringiela mixgħula għandhom numri biss. Agħżel wieħed biex tneħħi l-istess ammont miż-żewġ naħat.",
+      "swap": "Ringiela mixgħula waħda tgħid kemm jiswa {{glyph}} waħdu. Agħżel {{glyph}} fir-ringiela mixgħula l-oħra, imbagħad agħżel dik ir-ringiela."
     },
     "swap": {
-      "pick": "Agħfas ringiela mixgħula biex tbiddel dan {{glyph}} ma' kemm tgħid dik ir-ringiela li jiswa.",
+      "pick": "Agħżel ringiela mixgħula biex tbiddel dan {{glyph}} ma' kemm tgħid dik ir-ringiela li jiswa.",
       "none": "Xejn hawn ma jgħid kemm jiswa {{glyph}} waħdu, u xejn fin-naħa l-oħra ma jaqbel miegħu."
     },
     "goal": {
@@ -386,11 +397,16 @@
     "name": {
       "default": "Il-Miżien",
       "weighing": "Il-Wiżna tal-Qalb"
+    },
+    "controls": {
+      "move": "agħżel biċċa, ringiela jew buttuna",
+      "press": "agħfasha",
+      "weigh": "agħti dak il-piż lis-sinjal magħżul"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Agħfas darba biex taqta' numru, għal darb'oħra biex timmarkah bħala wieħed li jibqa', u għal darb'oħra biex tnaddfu.",
+      "tap": "Agħżel numru darba biex taqtgħu, għal darb'oħra biex timmarkah bħala wieħed li jibqa', u għal darb'oħra biex tnaddfu.",
       "totals": "In-numru ż-żgħir taħt kull għan hu kemm qed tagħmel dik il-linja bħalissa."
     },
     "hint": {
@@ -457,12 +473,16 @@
       }
     },
     "goal": "Kull ringiela u kull kolonna jagħmlu n-numru li hemm ħdejhom.",
-    "name": "Il-Għadd"
+    "name": "Il-Għadd",
+    "controls": {
+      "move": "agħżel numru",
+      "mark": "aqta', żomm jew naddaf"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Sinjal bejn żewġ kaxxi jipponta lejn l-iżgħar numru minnhom it-tnejn.",
-      "enter": "Agħfas kaxxa, imbagħad agħfas numru. L-istess numru għal darb'oħra jneħħih.",
+      "enter": "Agħżel kaxxa, imbagħad numru. L-istess numru għal darb'oħra jneħħih.",
       "notes": "Aqleb għall-lapes biex tikteb in-numri li kaxxa għad tista' jkollha. 'Lura' jneħħi l-aħħar mossa tiegħek."
     },
     "hint": {
@@ -513,14 +533,22 @@
       }
     },
     "goal": "Kull ringiela u kull kolonna juru kull numru darba biss.",
-    "name": "Akbar u Iżgħar"
+    "name": "Akbar u Iżgħar",
+    "controls": {
+      "move": "agħżel kaxxa",
+      "type": "ikteb numru",
+      "choose": "agħżel numru jew il-gomma",
+      "place": "iktbu",
+      "pencil": "lapes",
+      "erase": "ħassar"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Mera tbaxxi d-dawl minn kwalunkwe naħa tagħha. Il-marki ż-żgħar madwarha juru kif tista' tpoġġi wkoll: il-biċċa l-kbira jduru d-dawl kwart, u xi wħud ma jaslux hemm u jibagħtuh imżerżaq.",
       "walls": "Blokka ġebel tibla' d-dawl. Hekk ukoll it-tarf tal-board.",
-      "tap": "Agħfas biċċa biex tbiddilha: mera ddur, biċċa li tiżżerżaq tmur fil-post li jmiss. Tarf abjad ifisser li tista' ċċaqlaqha int; kull ħaġa oħra hi parti mill-puzzle.",
-      "nodes": "Xi ġebel huwa marbut ma' sokit fl-art u l-ebda għafsa ma ċċaqlqu. Ibgħat id-dawl minn fuq is-sokit u l-ġebla titwarrab."
+      "tap": "Agħżel biċċa biex tbiddilha: mera ddur, biċċa li tiżżerżaq tmur fil-post li jmiss. Tarf abjad ifisser li tista' ċċaqlaqha int; kull ħaġa oħra hi parti mill-puzzle.",
+      "nodes": "Xi ġebel huwa marbut ma' sokit fl-art u ma tistax iċċaqilqu int. Ibgħat id-dawl minn fuq is-sokit u l-ġebla titwarrab."
     },
     "hint": {
       "entryRun": "Ibda minn fejn diġà jmur id-dawl: jiġri dritt mid-diska sa ma jiltaqa' mal-ewwel biċċa li tista' tbiddel. Dawk il-kaxxi jġorru d-dawl tagħmel x'tagħmel.",
@@ -553,7 +581,7 @@
       "triple": "Tlieta tal-istess wara xulxin qatt mhu permess, la mal-wiċċ u lanqas 'l isfel.",
       "copies": "L-ebda żewġ ringieli ma jistgħu jkunu l-istess, u lanqas żewġ kolonni.",
       "signs": "Sinjal bejn żewġ kaxxi jgħid kif inhuma: = għall-istess, × għal differenti.",
-      "enter": "Agħfas kaxxa biex tpoġġi xemx, għal darb'oħra għal qamar, u darba oħra biex tbattalha."
+      "enter": "Agħżel kaxxa biex tpoġġi xemx, għal darb'oħra għal qamar, u darba oħra biex tbattalha."
     },
     "hint": {
       "mistake": "Waħda minn dawn il-marki ma tistax tkun tajba.",
@@ -580,7 +608,11 @@
       }
     },
     "goal": "Kull kaxxa għandha xemx jew qamar, u kull linja għandha daqs minn waħda daqs kemm għandha mill-oħra.",
-    "name": "Xemx u Qamar"
+    "name": "Xemx u Qamar",
+    "controls": {
+      "move": "agħżel kaxxa",
+      "mark": "biddel il-marka"
+    }
   },
   "constellation": {
     "rules": {
@@ -588,25 +620,25 @@
         "straight": "Il-linji tad-dawl jimxu dritti mal-wiċċ jew 'l isfel, minn stilla għal oħra.",
         "pair": "Żewġ stilel jista' jkollhom mhux aktar minn żewġ linji bejniethom.",
         "cross": "Il-linji qatt ma jaqsmu lil xulxin, u qatt ma jgħaddu minn ġo stilla.",
-        "enter": "Kaxkar minn stilla lejn ta' ħdejha biex tpinġi linja, għal darb'oħra għal waħda doppja, u darba oħra biex tħassarha."
+        "enter": "Pinġi linja minn stilla lejn ta' ħdejha, għal darb'oħra għal waħda doppja, u darba oħra biex tħassarha."
       },
       "causeway": {
         "straight": "It-toroq tal-ġarr jimxu dritti mal-wiċċ jew 'l isfel, minn post għal ieħor.",
         "pair": "Żewġ postijiet jista' jkollhom mhux aktar minn żewġ toroq bejniethom.",
         "cross": "It-toroq qatt ma jaqsmu lil xulxin, u qatt ma jgħaddu minn ġo post.",
-        "enter": "Kaxkar minn post lejn ta' ħdejh biex tagħmel triq, għal darb'oħra biex tirdoppjaha, u darba oħra biex tqalagħha."
+        "enter": "Agħmel triq minn post lejn ta' ħdejh, għal darb'oħra biex tirdoppjaha, u darba oħra biex tqalagħha."
       },
       "irrigation": {
         "straight": "Il-kanali jimxu dritti mal-wiċċ jew 'l isfel, minn ħawt għal ieħor.",
         "pair": "Żewġ ħwat jista' jkollhom mhux aktar minn żewġ kanali bejniethom.",
         "cross": "Il-kanali qatt ma jaqsmu lil xulxin, u qatt ma jgħaddu minn ġo ħawt.",
-        "enter": "Kaxkar minn ħawt lejn ta' ħdejh biex tħaffer kanal, għal darb'oħra biex twessgħu, u darba oħra biex timlieh."
+        "enter": "Ħaffer kanal minn ħawt lejn ta' ħdejh, għal darb'oħra biex twessgħu, u darba oħra biex timlieh."
       },
       "ceiling": {
         "straight": "Il-kurduni jimxu dritti mal-wiċċ jew 'l isfel, minn stilla għal oħra.",
         "pair": "Żewġ stilel jista' jkollhom mhux aktar minn żewġ kurduni bejniethom.",
         "cross": "Il-kurduni qatt ma jaqsmu lil xulxin, u qatt ma jgħaddu minn ġo stilla.",
-        "enter": "Kaxkar minn stilla lejn ta' ħdejha biex tqiegħed kurdun, għal darb'oħra biex tirdoppjah, u darba oħra biex tneħħih."
+        "enter": "Iġbed kurdun minn stilla lejn ta' ħdejha, għal darb'oħra biex tirdoppjah, u darba oħra biex tneħħih."
       }
     },
     "hint": {
@@ -718,37 +750,44 @@
       "causeway": "It-Toroq tal-Ġebel",
       "irrigation": "L-Ilma tar-Raba'",
       "ceiling": "Is-Saqaf Miżbugħ"
+    },
+    "controls": {
+      "pick": "agħżel stilla",
+      "grab": "aqbadha",
+      "draw": "pinġi linja lejn dik in-naħa",
+      "release": "itlaqha",
+      "alt": "żomm u ipponta: linja, doppja, xejn"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "L-ebda żewġ stilel ma jistgħu jmissu — il-kantunieri jgħoddu wkoll.",
-        "enter": "Agħfas kaxxa biex teskludiha, għal darb'oħra biex tpoġġi stilla hemm, u darba oħra biex tnaddafha."
+        "enter": "Agħżel kaxxa biex teskludiha, għal darb'oħra biex tpoġġi stilla hemm, u darba oħra biex tnaddafha."
       },
       "fields": {
         "touch": "L-ebda żewġ rziezet ma jistgħu jmissu — il-kantunieri jgħoddu wkoll. Daqshekk qrib, ikollhom jaqsmu bir wieħed.",
-        "enter": "Agħfas biċċa art biex teskludiha, għal darb'oħra biex tibni razzett, u darba oħra biex tnaddafha."
+        "enter": "Agħżel biċċa art biex teskludiha, għal darb'oħra biex tibni razzett, u darba oħra biex tnaddafha."
       },
       "lamps": {
         "touch": "L-ebda żewġ msiebaħ ma jistgħu jkunu ħdejn xulxin — il-kantunieri jgħoddu wkoll. Id-dawl tagħhom jaqa' fuq xulxin, u ż-żejt jinħela.",
         "walls": "Il-blokki tal-ġebel griż huma parti mill-art: xejn ma jista' joqgħod fuqhom, u mhumiex kaxxa.",
-        "enter": "Agħfas ċangun biex teskludih, għal darb'oħra biex tqiegħed musbieħ hemm, u darba oħra biex tnaddfu."
+        "enter": "Agħżel ċangun biex teskludih, għal darb'oħra biex tqiegħed musbieħ hemm, u darba oħra biex tnaddfu."
       },
       "market": {
         "touch": "L-ebda żewġ bankijiet ma jistgħu jkunu ħdejn xulxin — il-kantunieri jgħoddu wkoll. Il-bejjiegħa rivali qatt ma joqogħdu ħdejn xulxin.",
         "walls": "Id-djar huma parti mill-pjazza: ħadd ma jista' jpoġġi bank fihom, u mhumiex post.",
-        "enter": "Agħfas post biex teskludih, għal darb'oħra biex twaqqaf bank hemm, u darba oħra biex tnaddfu."
+        "enter": "Agħżel post biex teskludih, għal darb'oħra biex twaqqaf bank hemm, u darba oħra biex tnaddfu."
       },
       "lotus": {
         "touch": "L-ebda żewġ fjuri tal-lotu ma jistgħu jżommu f'wiċċ l-ilma ħdejn xulxin — il-kantunieri jgħoddu wkoll. Kull fjura trid ilma miftuħ madwarha.",
         "walls": "Il-blat joħroġ mill-għadira: xejn ma jista' jżomm f'wiċċ l-ilma fuqu, u mhux kaxxa.",
-        "enter": "Agħfas biċċa ilma biex teskludiha, għal darb'oħra biex tpoġġi lotu hemm, u darba oħra biex tnaddafha."
+        "enter": "Agħżel biċċa ilma biex teskludiha, għal darb'oħra biex tpoġġi lotu hemm, u darba oħra biex tnaddafha."
       },
       "cats": {
         "touch": "L-ebda żewġ qtates ma jistgħu jorqdu ħdejn xulxin — il-kantunieri jgħoddu wkoll. Kull qattus għandu l-biċċa xemx tiegħu.",
         "walls": "Il-pilastri jżommu t-tempju: l-ebda qattus ma jista' jorqod fuqhom, u mhumiex kaxxa.",
-        "enter": "Agħfas ċangun biex teskludih, għal darb'oħra biex timtedd qattus hemm, u darba oħra biex tnaddfu."
+        "enter": "Agħżel ċangun biex teskludih, għal darb'oħra biex timtedd qattus hemm, u darba oħra biex tnaddfu."
       }
     },
     "hint": {
@@ -1232,6 +1271,11 @@
       "market": "Bankijiet tas-Suq",
       "lotus": "L-Għadira tal-Lotu",
       "cats": "Il-Qtates tat-Tempju"
+    },
+    "controls": {
+      "move": "agħżel kaxxa",
+      "mark": "biddel il-marka",
+      "sweep": "żomm u ċċaqlaq: eskludi ringiela"
     }
   },
   "pairPuzzle": {
@@ -1248,13 +1292,13 @@
         "pair": "Kull sarkofagu għandu mummja waħda tistrieħ eżatt fuqu, taħtu, fuq ix-xellug jew fuq il-lemin, u kull mummja tistrieħ ħdejn sarkofagu tagħha.",
         "count": "In-numru ħdejn ringiela jew kolonna jgħid kemm għandha mummji. Isir aħdar meta l-linja jkollha eżatt daqshekk, u aħmar meta ma jistax jirnexxi.",
         "touch": "L-ebda żewġ mummji ma jistgħu jkunu ħdejn xulxin — il-kantunieri jgħoddu wkoll.",
-        "enter": "Agħfas kaxxa biex teskludiha, għal darb'oħra biex tqiegħed mummja hemm, u darba oħra biex tnaddafha. Kaxkar fuq ħafna kaxxi biex teskludihom f'daqqa. Is-sarkofagi ma tistax tagħfashom."
+        "enter": "Agħżel kaxxa biex teskludiha, għal darb'oħra biex tqiegħed mummja hemm, u darba oħra biex tnaddafha. Tista' teskludi fila kaxxi f'daqqa. Is-sarkofagi ma jistgħux jiġu mmarkati."
       },
       "beetles": {
         "pair": "Kull ballun tad-demel għandu ħanfusa waħda eżatt fuqu, taħtu, fuq ix-xellug jew fuq il-lemin, u kull ħanfusa tinsab ħdejn ballun tagħha biex iddawru.",
         "count": "In-numru ħdejn ringiela jew kolonna jgħid kemm għandha ħanfusiet. Isir aħdar meta l-linja jkollha eżatt daqshekk, u aħmar meta ma jistax jirnexxi.",
         "touch": "L-ebda żewġ ħanfusiet ma jistgħu jkunu ħdejn xulxin — il-kantunieri jgħoddu wkoll.",
-        "enter": "Agħfas kaxxa biex teskludiha, għal darb'oħra biex tpoġġi ħanfusa hemm, u darba oħra biex tnaddafha. Kaxkar fuq ħafna kaxxi biex teskludihom f'daqqa. Il-blalen tad-demel ma tistax tagħfashom."
+        "enter": "Agħżel kaxxa biex teskludiha, għal darb'oħra biex tpoġġi ħanfusa hemm, u darba oħra biex tnaddafha. Tista' teskludi fila kaxxi f'daqqa. Il-blalen tad-demel ma jistgħux jiġu mmarkati."
       }
     },
     "hint": {
@@ -1366,6 +1410,11 @@
           "place_other": "Poġġi ħanfusa fuq kull kaxxa bl-istrixxi."
         }
       }
+    },
+    "controls": {
+      "move": "agħżel kaxxa",
+      "mark": "biddel il-marka",
+      "sweep": "żomm u ċċaqlaq: eskludi ringiela"
     }
   },
   "rushHour": {
@@ -1380,11 +1429,11 @@
     "rules": {
       "default": {
         "lanes": "Blokka tiżżerżaq biss tul il-linja tagħha — qatt minn ġenb, qatt barra mill-board.",
-        "shove": "Kaxkar blokka biex timbuttaha. Tieqaf fejn hemm xi ħaġa fit-triq."
+        "shove": "Imbotta blokka tul il-linja tagħha. Tieqaf fejn hemm xi ħaġa fit-triq."
       },
       "market": {
         "lanes": "Slitta tiżżerżaq biss tul il-linja li qiegħda fiha — qatt minn ġenb, qatt barra mit-triq.",
-        "shove": "Kaxkar slitta biex timbuttaha. Tieqaf fejn hemm xi ħaġa fit-triq."
+        "shove": "Imbotta slitta tul il-linja tagħha. Tieqaf fejn hemm xi ħaġa fit-triq."
       }
     },
     "hint": {
@@ -1412,29 +1461,35 @@
           "down": "Imbuttaha 'l isfel fit-triq, sal-ċirku."
         }
       }
+    },
+    "controls": {
+      "pick": "agħżel blokka",
+      "grab": "aqbadha",
+      "slide": "żerżaqha",
+      "release": "itlaqha"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "In-numri li diġà qegħdin fix-xehda huma parti mill-puzzle — jibqgħu fejn huma.",
-        "enter": "Agħfas numru biex tkompli l-katina minn hemm, imbagħad agħfas ċella vojta li tmissu biex tkompli — jew kaxkar dritt minn ġoċ-ċelel fejn tgħaddi.",
-        "back": "Agħfas numru li poġġejt u agħfsu għal darb'oħra biex tneħħih, flimkien ma' kull ma jkun baqa' mdendel miegħu. Jekk tieħu l-katina minn triq oħra minn numru, jiġri l-istess. 'Lura' jneħħi l-aħħar mossa tiegħek."
+        "enter": "Pinġi linja minn numru minn ġoċ-ċelel vojta ħdejh biex tkompli l-katina.",
+        "back": "Agħżel numru li poġġejt u agħżlu għal darb'oħra biex tneħħih, flimkien ma' kull ma jkun baqa' mdendel miegħu. Jekk tieħu l-katina minn triq oħra minn numru, jiġri l-istess. 'Lura' jneħħi l-aħħar mossa tiegħek."
       },
       "channel": {
         "given": "L-għelieqi li diġà għandhom numru huma parti mill-puzzle — jibqgħu fejn huma.",
-        "enter": "Agħfas għalqa b'numru biex tieħu l-ilma minn hemm, imbagħad agħfas għalqa niexfa ħdejha biex tkompli tħaffer — jew kaxkar dritt tul l-għelieqi fejn jgħaddi l-kanal.",
-        "back": "Agħfas għalqa li ħaffirt u agħfasha għal darb'oħra biex terġa' timliha, flimkien ma' kull kanal li jibqa' maqtugħ minnha. Jekk tħaffer minn triq oħra minn għalqa, jiġri l-istess. 'Lura' jneħħi l-aħħar mossa tiegħek."
+        "enter": "Ħaffer kanal minn għalqa b'numru minn ġol-għelieqi niexfa ħdejha biex twassal l-ilma 'l quddiem.",
+        "back": "Agħżel għalqa li ħaffirt u agħżilha għal darb'oħra biex terġa' timliha, flimkien ma' kull kanal li jibqa' maqtugħ minnha. Jekk tħaffer minn triq oħra minn għalqa, jiġri l-istess. 'Lura' jneħħi l-aħħar mossa tiegħek."
       },
       "scribe": {
         "given": "In-numri miktuba bl-aħmar huma tal-puzzle nnifsu — jibqgħu fejn huma.",
-        "enter": "Agħfas numru biex tieħu l-pinna tal-qasab minn hemm, imbagħad agħfas spazju vojt ħdejh biex tkompli tikteb — jew kaxkar dritt tul il-linja.",
-        "back": "Agħfas numru li ktibt u agħfsu għal darb'oħra biex tobrxu, flimkien ma' kull linja li tibqa' maqtugħa minnu. Jekk tikteb minn triq oħra minn numru, jiġri l-istess. 'Lura' jneħħi l-aħħar mossa tiegħek."
+        "enter": "Ikteb linja minn numru minn ġol-ispazji vojta ħdejh biex tkompli l-għadd.",
+        "back": "Agħżel numru li ktibt u agħżlu għal darb'oħra biex tobrxu, flimkien ma' kull linja li tibqa' maqtugħa minnu. Jekk tikteb minn triq oħra minn numru, jiġri l-istess. 'Lura' jneħħi l-aħħar mossa tiegħek."
       },
       "chambers": {
         "given": "Il-kmamar li diġà għandhom numru qatgħuhom il-bennejja — jibqgħu fejn huma.",
-        "enter": "Agħfas kamra b'numru biex tkompli l-passaġġ minn hemm, imbagħad agħfas kamra magħluqa ħdejha biex tiftaħ triqtek — jew kaxkar dritt tul il-kmamar fejn jgħaddi l-passaġġ.",
-        "back": "Agħfas kamra li ftaħt u agħfasha għal darb'oħra biex terġa' tagħlaqha, flimkien ma' kull passaġġ li jibqa' maqtugħ minnha. Jekk tiftaħ minn triq oħra minn kamra, jiġri l-istess. 'Lura' jneħħi l-aħħar mossa tiegħek."
+        "enter": "Iftaħ passaġġ minn kamra b'numru minn ġol-kmamar magħluqa ħdejha biex tkompli triqtek.",
+        "back": "Agħżel kamra li ftaħt u agħżilha għal darb'oħra biex terġa' tagħlaqha, flimkien ma' kull passaġġ li jibqa' maqtugħ minnha. Jekk tiftaħ minn triq oħra minn kamra, jiġri l-istess. 'Lura' jneħħi l-aħħar mossa tiegħek."
       }
     },
     "goal": {
@@ -1498,6 +1553,13 @@
       "channel": "Il-Kanal",
       "scribe": "Il-Folja tal-Iskriba",
       "chambers": "Kmamar Magħluqa"
+    },
+    "controls": {
+      "move": "mur f'ċella ħdejha; 'il fuq u 'l isfel imejlu lejn ix-xellug",
+      "right": "fuq-lemin jew isfel-lemin",
+      "grab": "aqbad il-katina, jew neħħi n-numru tiegħek",
+      "carry": "bil-katina f'idejk: kompliha; 'il fuq u 'l isfel imorru lejn in-naħa fejn tista' tkompli",
+      "drop": "poġġi l-katina"
     }
   },
   "sudoku": {
@@ -1505,13 +1567,13 @@
       "default": {
         "chambers": "Il-linji ħoxnin jaqsmu l-grilja f'sitt kmamar, kull waħda żewġ kaxxi wiesgħa u tlieta għolja.",
         "given": "In-numri li diġà minquxa huma parti mill-puzzle — jibqgħu fejn huma.",
-        "enter": "Agħfas kaxxa, imbagħad agħfas numru. L-istess numru għal darb'oħra jneħħih.",
+        "enter": "Agħżel kaxxa, imbagħad numru. L-istess numru għal darb'oħra jneħħih.",
         "notes": "Aqleb għall-lapes biex tikteb in-numri li kaxxa għad tista' jkollha. 'Lura' jneħħi l-aħħar mossa tiegħek."
       },
       "papyrus": {
         "chambers": "Il-linji ħoxnin jaqsmu l-folja f'sitt pannelli, kull wieħed żewġ spazji wiesgħa u tlieta għoljin.",
         "given": "Is-sinjali miktuba bl-aħmar huma tal-puzzle nnifsu — jibqgħu fejn huma.",
-        "enter": "Agħfas spazju, imbagħad agħfas sinjal. L-istess sinjal għal darb'oħra jobrxu.",
+        "enter": "Agħżel spazju, imbagħad sinjal. L-istess sinjal għal darb'oħra jobrxu.",
         "notes": "Ħu l-pinna tal-qasab biex tikteb bil-ħafif is-sinjali li spazju għad jista' jkollu. 'Lura' jneħħi l-aħħar mossa tiegħek."
       }
     },
@@ -1584,6 +1646,14 @@
     "name": {
       "default": "Sitt Kmamar",
       "papyrus": "Ir-Reġistru tal-Iskriba"
+    },
+    "controls": {
+      "move": "agħżel kaxxa",
+      "type": "ikteb numru",
+      "choose": "agħżel numru jew il-gomma",
+      "place": "iktbu",
+      "pencil": "lapes",
+      "erase": "ħassar"
     }
   },
   "crocodile": {
@@ -1597,6 +1667,10 @@
     "hint": {
       "biggest": "Dan il-kukkudrill irid l-akbar tweġiba. Dik hi {{value}}.",
       "smallest": "Dan il-kukkudrill irid l-iżgħar tweġiba. Dik hi {{value}}."
+    },
+    "controls": {
+      "move": "agħżel ġebla",
+      "step": "irfes fuqha"
     }
   },
   "canisters": {
@@ -1645,35 +1719,35 @@
         "sums": "Kull ammont li tista' tagħmel huwa żewġ numri fuq il-bank miżjuda flimkien jew imnaqqsa: id-daqs ta' kontenitur, kemm fih, jew kemm fadallu post.",
         "backwards": "Allura aħdem lura mill-ammont mitlub — liema żewġ numri jagħmluh, u kif tasal biex ikollok dawk it-tnejn fl-istess ħin?"
       },
-      "claim": "Meta jkollok l-ammont, agħfas “dan”. Jekk tgħid ir-reċipjent il-ħażin, titlef mossa.",
+      "claim": "Meta jkollok l-ammont, agħżel “dan”. Jekk tgħid ir-reċipjent il-ħażin, titlef mossa.",
       "legs": "Imbagħad l-ammont li jmiss, imkejjel minn dak li jibqa' fir-reċipjenti.",
       "default": {
-        "moves": "Agħfas kontenitur biex terfgħu, imbagħad agħfas ieħor biex tferra' fih. It-tferrigħ jieqaf meta l-ewwel wieħed jitbattal jew it-tieni jimtela.",
+        "moves": "Erfa' kontenitur, imbagħad agħżel ieħor biex tferra' fih. It-tferrigħ jieqaf meta l-ewwel wieħed jitbattal jew it-tieni jimtela.",
         "contents": "Dan hu l-ilma kollu li hemm — kontenitur wieħed jibda mimli, u ma tistax tarmi jew iġġib aktar.",
         "levels": "Kull kontenitur jgħid kemm fih, u kemm jesa' meta jkun mimli."
       },
       "grain": {
-        "moves": "Agħfas miżura biex terfagħha, imbagħad agħfas oħra biex tqalleb il-qamħ fiha. It-tqallib jieqaf meta l-ewwel waħda titbattal jew it-tieni tasal sax-xifer.",
+        "moves": "Erfa' miżura, imbagħad agħżel oħra biex tqalleb il-qamħ fiha. It-tqallib jieqaf meta l-ewwel waħda titbattal jew it-tieni tasal sax-xifer.",
         "contents": "Dan hu l-qamħ kollu li hemm — miżura waħda tibda mimlija, u ma tistax tkanslu jew iġġib aktar mill-maħżen.",
         "levels": "Kull miżura tgħid kemm fiha, u kemm tesa' meta tkun mimlija sax-xifer."
       },
       "oil": {
-        "moves": "Agħfas ġarra biex terfagħha, imbagħad agħfas oħra biex tferra' fiha. It-tferrigħ jieqaf meta l-ewwel waħda titbattal jew it-tieni timtela.",
+        "moves": "Erfa' ġarra, imbagħad agħżel oħra biex tferra' fiha. It-tferrigħ jieqaf meta l-ewwel waħda titbattal jew it-tieni timtela.",
         "contents": "Dan hu ż-żejt kollu li hemm — ġarra waħda tibda mimlija, u ma tistax tarmih jew iġġib aktar.",
         "levels": "Kull ġarra tgħid kemm fiha, u kemm tesa' meta tkun mimlija."
       },
       "wine": {
-        "moves": "Agħfas amfora biex terfagħha, imbagħad agħfas oħra biex tferra' fiha. It-tferrigħ jieqaf meta l-ewwel waħda titbattal jew it-tieni timtela.",
+        "moves": "Erfa' amfora, imbagħad agħżel oħra biex tferra' fiha. It-tferrigħ jieqaf meta l-ewwel waħda titbattal jew it-tieni timtela.",
         "contents": "Dan hu l-inbid kollu li hemm — amfora waħda tibda mimlija, u ma tistax xxerrdu jew iġġib aktar mill-kantina.",
         "levels": "Kull amfora tgħid kemm fiha, u kemm tesa' meta tkun mimlija."
       },
       "natron": {
-        "moves": "Agħfas ġarra biex terfagħha, imbagħad agħfas oħra biex tqalleb in-natron fiha. It-tqallib jieqaf meta l-ewwel waħda titbattal jew it-tieni timtela sal-għatu.",
+        "moves": "Erfa' ġarra, imbagħad agħżel oħra biex tqalleb in-natron fiha. It-tqallib jieqaf meta l-ewwel waħda titbattal jew it-tieni timtela sal-għatu.",
         "contents": "Dan hu n-natron kollu li hemm — ġarra waħda tibda mimlija, u ma tistax tkanslu jew iġġib aktar.",
         "levels": "Kull ġarra tgħid kemm fiha, u kemm tesa' meta tkun mimlija sal-għatu."
       },
       "ink": {
-        "moves": "Agħfas borma biex terfagħha, imbagħad agħfas oħra biex tferra' fiha. It-tferrigħ jieqaf meta l-ewwel waħda titbattal jew it-tieni timtela.",
+        "moves": "Erfa' borma, imbagħad agħżel oħra biex tferra' fiha. It-tferrigħ jieqaf meta l-ewwel waħda titbattal jew it-tieni timtela.",
         "contents": "Dan hu l-linka kollha li hemm — borma waħda tibda mimlija, u ma tistax tarmiha jew tagħmel aktar.",
         "levels": "Kull borma tgħid kemm fiha, u kemm tesa' meta tkun mimlija."
       }
@@ -1701,7 +1775,12 @@
     "legs": "imkejla {{done}} minn {{total}}",
     "wanted": "Kejjel",
     "claim": "dan",
-    "claimAria": "Għid li l-{{capacity}} għandu l-ammont"
+    "claimAria": "Għid li l-{{capacity}} għandu l-ammont",
+    "controls": {
+      "move": "agħżel reċipjent jew il-“dan” taħtu",
+      "press": "erfa', ferra' hawn, jew għid li dan hu",
+      "putDown": "poġġi lura r-reċipjent li għandek f'idejk"
+    }
   },
   "procession": {
     "name": {
@@ -1721,8 +1800,8 @@
     "rules": {
       "default": {
         "lengths": "Kull ringiela hi ħaġa waħda li tiġri, u ddum daqs kemm hi wiesgħa l-istrixxa tagħha. Meta tiġri, dak trid issib int.",
-        "marks": "Linja taħt il-ġurnata tibqa' ħamra sakemm mhix tajba. Agħfas waħda biex tagħmel ċirku madwar ir-ringieli li titkellem dwarhom.",
-        "drag": "Kaxkar strixxa tul ir-ringiela tagħha. Qatt ma toħroġ mill-ġurnata."
+        "marks": "Linja taħt il-ġurnata tibqa' ħamra sakemm mhix tajba. Agħżel waħda biex tagħmel ċirku madwar ir-ringieli li titkellem dwarhom.",
+        "drag": "Żerżaq strixxa tul ir-ringiela tagħha. Qatt ma toħroġ mill-ġurnata."
       }
     },
     "hint": {
@@ -1731,7 +1810,7 @@
         "squeeze": "Fadal biss daqshekk ġurnata, u dan hu kull ma joqgħod.",
         "apart": "Bil-kontra ma toqgħodx fil-ġurnata.",
         "split": "Ipprova bil-kontra u xi ħaġa oħra tinkiser.",
-        "move": "Kaxkar l-istrixxa fiċ-ċirku fuq il-marki bl-istrixxi."
+        "move": "Żerżaq l-istrixxa fiċ-ċirku fuq il-marki bl-istrixxi."
       }
     },
     "events": {
@@ -1793,6 +1872,11 @@
       "hint": "Kull madum li titla' fuqu jeħles il-ħaġa tiegħu. Poġġi l-ġurnata f'ordni, imbagħad imxi fuq il-madum b'dik l-ordni.",
       "read": "Il-ġurnata nqrat. Imxi fuq il-madum tagħha b'din l-ordni, mill-ewwel.",
       "hintButton": "Ħjiel"
+    },
+    "controls": {
+      "row": "agħżel ringiela",
+      "slide": "żerżaq l-istrixxa tagħha",
+      "mark": "agħżel linja taħt il-ġurnata"
     }
   },
   "story": {
@@ -1815,6 +1899,13 @@
       "pick": "Poġġi s-sinjal it-tajjeb f'postu.",
       "cannot": "Ma tafx is-sinjal li jmur hawn. Mhux s'issa."
     },
+    "formula": {
+      "wrong": "Hemm sinjal nieqes minn din il-linja. Mhux minqux ħażin — qatt ma ġie minqux.",
+      "fixed": "Il-linja hi sħiħa.",
+      "pick": "Poġġi s-sinjal li ngħatajt fil-post vojt.",
+      "cannot": "Ħadd ma tak is-sinjal għal dan il-post. Mhux s'issa.",
+      "gap": "Is-sinjal nieqes"
+    },
     "sphinx": {
       "wrong": "L-istess kitba bħal barra, imma r-ramel qatt ma wasal hawn. Żewġ sinjali għadhom minquxa nodfa, u spazju fejn kien it-tielet.",
       "fixed": "Hekk hu kollu.",
@@ -1831,7 +1922,7 @@
       "shrines": "Diska waħda tad-dawl, u santwarju fuq kull triq 'il barra minn din il-kantuniera. Il-mirja fuq l-art jistgħu jwasslu d-dawl għal kwalunkwe wieħed minnhom.",
       "doors": "It-triq 'il barra li jasal għaliha d-dawl tkun miftuħa, u l-oħrajn magħluqa. Triq waħda għad-dawl, triq waħda 'l quddiem.",
       "returning": "Ma titlef xejn talli tagħżel. Erġa' idħol meta trid u ibgħat id-dawl minn triq oħra minflok — dik tinfetaħ, u din tingħalaq.",
-      "tap": "Agħfas mera biex iddawwarha. Jekk terġa' tagħfasha, terġa' lura kif kienet."
+      "tap": "Agħżel mera biex iddawwarha. Agħżilha għal darb'oħra biex terġa' lura kif kienet."
     },
     "doorOpen": "Triq 'il barra tal-{{way}}: miftuħa",
     "doorShut": "Triq 'il barra tal-{{way}}: magħluqa",
@@ -1840,6 +1931,10 @@
       "e": "Lvant",
       "s": "Nofsinhar",
       "w": "Punent"
+    },
+    "controls": {
+      "move": "agħżel mera",
+      "turn": "dawwarha"
     }
   },
   "handle": {
@@ -2098,5 +2193,39 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "It-tpinġija terġa' tikteb it-test: kull kumment imur fuq nett"
+  },
+  "saveCard": {
+    "title": "Karta tal-vjaġġ",
+    "explain": "Ħu l-ispedizzjoni tiegħek fuq apparat ieħor: agħmel karta hawn u aqraha hemmhekk fi żmien 15-il minuta.",
+    "make": "Agħmel karta tal-vjaġġ",
+    "share": "Aqsam il-karta",
+    "download": "Niżżel il-karta",
+    "read": "Aqra karta tal-vjaġġ",
+    "busy": "Mument…",
+    "makeFailed": "Il-karta ma setgħetx issir.",
+    "shareFailed": "Il-qsim ma ħadimx; niżżel il-karta minflok.",
+    "confirm_one": "Tibdel l-ispedizzjoni fuq dan l-apparat ma' dik fuq il-karta ({{count}} vjaġġ)?",
+    "confirm_two": "Tibdel l-ispedizzjoni fuq dan l-apparat ma' dik fuq il-karta ({{count}} vjaġġi)?",
+    "confirm_few": "Tibdel l-ispedizzjoni fuq dan l-apparat ma' dik fuq il-karta ({{count}} vjaġġi)?",
+    "confirm_many": "Tibdel l-ispedizzjoni fuq dan l-apparat ma' dik fuq il-karta ({{count}} vjaġġ)?",
+    "confirm_other": "Tibdel l-ispedizzjoni fuq dan l-apparat ma' dik fuq il-karta ({{count}} vjaġġ)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Karta tal-vjaġġ · ħu l-ispedizzjoni tiegħek miegħek",
+    "validUntil": "valida sa {{time}}",
+    "codes_one": "{{count}} kodiċi",
+    "codes_two": "{{count}} kodiċijiet",
+    "codes_few": "{{count}} kodiċijiet",
+    "codes_many": "{{count}} kodiċi",
+    "codes_other": "{{count}} kodiċi",
+    "refused": {
+      "notACard": "Din mhix karta tal-vjaġġ.",
+      "tampered": "Din il-karta nbidlet u ma tistax tinqara aktar.",
+      "expired": "Din il-karta skadiet; agħmel waħda ġdida.",
+      "future": "Din il-karta ġejja mill-futur: iċċekkja l-arloġġ fuq iż-żewġ apparati.",
+      "otherEpoch": "Din il-karta hi minn verżjoni oħra tal-logħba.",
+      "newerGame": "Din il-karta ġejja minn verżjoni aktar ġdida: aġġorna l-logħba l-ewwel."
+    },
+    "writeFailed": "Is-save ma setax jinkiteb; dan l-apparat żamm tiegħu.",
+    "writeLost": "Is-save ma setax jinbidel, u s-save ta' dan l-apparat jista' jkun mhux komplut."
   }
 }

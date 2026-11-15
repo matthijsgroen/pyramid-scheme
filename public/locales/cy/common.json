@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Dydy dy gêm ddim yn gallu llwytho",
     "body": "Dydy'r porwr ddim yn fodlon rhoi dy gêm wedi'i chadw i ni ar hyn o bryd. Dydy hi ddim wedi mynd: ail-lwytha'r dudalen i drio eto.",
-    "banner": "Dydy dy gêm ddim yn cael ei chadw. Tapia i ail-lwytho.",
+    "banner": "Dydy dy gêm ddim yn cael ei chadw. Ail-lwytha.",
     "reload": "Ail-lwytho",
     "continue": "Chwarae ymlaen heb gadw",
     "reset": "Dechrau eto (dileu'r gêm)",
@@ -29,7 +29,6 @@
     "evening": "Noswaith",
     "night": "Nos"
   },
-  "tomb": {},
   "ui": {
     "level": "Lefel",
     "symbols": "symbolau",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Stopio'r daith",
     "confirmInterruptExpedition": "Wyt ti'n siŵr dy fod ti eisiau stopio'r daith yma? Byddi di'n cadw dy daith, ond byddi di'n colli beth wnest ti ar y lefel yma!",
     "cancel": "Canslo",
+    "leaveSite": "Gadael y lle yma?",
+    "confirmLeaveSite": "Pwysa Gadael i gerdded 'nôl mas, neu Aros i ddal ati i grwydro.",
+    "leave": "Gadael",
+    "stay": "Aros",
     "settings": "Gosodiadau",
     "language": "Iaith",
     "close": "Cau",
@@ -110,8 +113,12 @@
     "solvedWithHints_few": "Wedi'i ddatrys gyda {{count}} o gliwiau",
     "solvedWithHints_many": "Wedi'i ddatrys gyda {{count}} o gliwiau",
     "solvedWithHints_other": "Wedi'i ddatrys gyda {{count}} o gliwiau",
-    "tapToContinue": "Tapia i fynd ymlaen",
-    "goal": "Nod"
+    "tapToContinue": "Ymlaen",
+    "goal": "Nod",
+    "controls": "Rheolyddion",
+    "controlsUndo": "dadwneud",
+    "controlsHint": "cliw",
+    "controlsLeave": "'nôl i'r map"
   },
   "trap": {
     "warning": "⚠ Coridor gyda thrap",
@@ -130,6 +137,7 @@
     "turnAround": "Troi 'nôl",
     "wardDescription": {
       "starter": "Mae sêl masnachwr yn cau'r ffordd — dim ond ei allwedd e sy'n gallu ei hagor.",
+      "junior": "Mae arfbais uchelwraig yn cloi'r ffordd yma — dim ond ei hallwedd warchod hi sy'n ei chodi.",
       "expert": "Mae swyn teml archoffeiriad yn gwarchod y drws yma — rhaid cael yr allwedd sanctaidd i'w agor.",
       "master": "Mae sêl frenhinol pharo yn cloi'r ffordd — dim ond allwedd y brenin sy'n ei thorri.",
       "wizard": "Mae swyn y duwiau'n dal y giât yma — dim ond yr allwedd ddwyfol sy'n mynd heibio."
@@ -138,7 +146,7 @@
     "lockedColor": "Dwyt ti ddim wedi ffeindio'r allwedd honno ar y llawr yma eto."
   },
   "chest": {
-    "tapToOpen": "Tapia i agor",
+    "tapToOpen": "Agor",
     "money_zero": "{{count}} o ddarnau arian",
     "money_one": "{{count}} darn arian",
     "money_two": "{{count}} o ddarnau arian",
@@ -149,6 +157,7 @@
     "mapPieceDescription": "Darn bregus o fap i ryw le mae pawb wedi'i anghofio. Biti nad yw e'n agos at fod yn gyfan...",
     "mapPieceProgress": "{{found}} o {{required}} darn o fap wedi'u casglu",
     "mapPieceComplete": "Mae'r map yn gyfan — mae'n arwain at {{name}}.",
+    "hieroglyph": "Hieroglyff",
     "hieroglyphFragment": "Darn o hieroglyff",
     "fragmentProgress": "{{found}} o {{required}} darn wedi'u ffeindio",
     "tombKey": "Allwedd y bedd",
@@ -165,8 +174,9 @@
   },
   "loot": {
     "youFound": "Fe ffeindiaist ti",
+    "youReceived": "Fe gest ti",
     "expeditionReward": "Gwobr ychwanegol am orffen y daith",
-    "clickToContinue": "Tapia unrhyw le i fynd ymlaen"
+    "clickToContinue": "Ymlaen"
   },
   "money": {
     "label": "Darnau arian"
@@ -276,7 +286,7 @@
     "tabNew_other": "{{label}} · {{count}} newydd",
     "empty": "Mae dy gist yn wag o hyd",
     "newLabel": "NEWYDD",
-    "clickForDetails": "Tapia deilsen i weld mwy",
+    "clickForDetails": "Dewisa deilsen i weld mwy",
     "categories": {
       "deities": "🏺 Duwiau",
       "professions": "⚱️ Swyddi",
@@ -284,6 +294,7 @@
       "artifacts": "💎 Arteffactau",
       "treasures": "💰 Trysorau",
       "junk": "🔷 Trugareddau",
+      "offerings": "🍞 Offrymau",
       "signs": "✍️ Arwyddion"
     },
     "treasureCategories": {
@@ -368,22 +379,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Tapia lun isod, yna rhif. Tapia'r rhif eto i'w dynnu i ffwrdd.",
+      "tap": "Dewisa lun isod, yna rhif. Dewisa'r rhif eto i'w dynnu i ffwrdd.",
       "same": "Mae llun yn pwyso'r un faint ar bob clorian.",
-      "cancel": "Tynna'r un peth oddi ar y ddwy ochr ac mae'r glorian yn dal yn wastad. Tapia ddarn wedi'i farcio i wneud hyn — mae beth sydd ar ôl yn aros fel rhes newydd.",
-      "swap": "Tapia lun sydd heb ddim byd tebyg gyferbyn ag e, yna rhes lle mae'r llun yna ar ei ben ei hun, i'w gyfnewid am werth y rhes honno."
+      "cancel": "Tynna'r un peth oddi ar y ddwy ochr ac mae'r glorian yn dal yn wastad. Dewisa ddarn wedi'i farcio i wneud hyn — mae beth sydd ar ôl yn aros fel rhes newydd.",
+      "swap": "Dewisa lun sydd heb ddim byd tebyg gyferbyn ag e, yna rhes lle mae'r llun yna ar ei ben ei hun, i'w gyfnewid am werth y rhes honno."
     },
     "hint": {
       "mistake": "Mae un o'r pwysau roist ti yn gwneud i glorian syrthio. Tynna fe i ffwrdd ac edrych eto.",
       "alone": "Ar y rhes olau, {{glyph}} yw'r unig ddarn sydd heb rif arno. Gweithia mas faint mae'n bwyso.",
       "equalShares": "Dim ond {{glyph}} sydd ar y rhes olau, yn erbyn rhif. Rhanna'r rhif yna rhyngddyn nhw.",
       "difference": "Mae'r ddwy res olau yr un fath, heblaw am {{glyph}}. Cymhara nhw.",
-      "cancelGlyph": "Mae {{glyph}} ar ddwy ochr y rhes olau. Tapia un i'w dynnu oddi ar y ddwy ochr — mae'r rhes yn aros yn wastad.",
-      "cancelStones": "Mae rhifau plaen ar ddwy ochr y rhes olau. Tapia un i dynnu'r un faint oddi ar y ddwy ochr.",
-      "swap": "Mae un rhes olau yn dweud faint yw gwerth un {{glyph}} ar ei ben ei hun. Tapia'r {{glyph}} yn y rhes olau arall, yna tapia'r rhes honno."
+      "cancelGlyph": "Mae {{glyph}} ar ddwy ochr y rhes olau. Dewisa un i'w dynnu oddi ar y ddwy ochr — mae'r rhes yn aros yn wastad.",
+      "cancelStones": "Mae rhifau plaen ar ddwy ochr y rhes olau. Dewisa un i dynnu'r un faint oddi ar y ddwy ochr.",
+      "swap": "Mae un rhes olau yn dweud faint yw gwerth un {{glyph}} ar ei ben ei hun. Dewisa'r {{glyph}} yn y rhes olau arall, yna dewisa'r rhes honno."
     },
     "swap": {
-      "pick": "Tapia res olau i gyfnewid y {{glyph}} yma am y gwerth mae'r rhes honno'n ei ddweud.",
+      "pick": "Dewisa res olau i gyfnewid y {{glyph}} yma am y gwerth mae'r rhes honno'n ei ddweud.",
       "none": "Does dim byd fan hyn yn dweud beth yw gwerth un {{glyph}} ar ei ben ei hun, a does dim byd gyferbyn ag e yn cyfateb."
     },
     "goal": {
@@ -393,11 +404,16 @@
     "name": {
       "default": "Y Glorian",
       "weighing": "Pwyso'r Galon"
+    },
+    "controls": {
+      "move": "dewisa ddarn, rhes neu fotwm",
+      "press": "pwysa fe",
+      "weigh": "rho'r pwysau yna i'r llun rwyt ti wedi'i ddewis"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Tapia unwaith i groesi rhif allan, eto i'w farcio fel un sy'n aros, ac eto i'w glirio.",
+      "tap": "Dewisa rif unwaith i'w groesi allan, eto i'w farcio fel un sy'n aros, ac eto i'w glirio.",
       "totals": "Y rhif bach o dan bob targed yw cyfanswm y llinell honno ar hyn o bryd."
     },
     "hint": {
@@ -466,12 +482,16 @@
       }
     },
     "goal": "Mae pob rhes a phob colofn yn adio i'r rhif wrth ei hymyl.",
-    "name": "Y Cyfrif"
+    "name": "Y Cyfrif",
+    "controls": {
+      "move": "dewisa rif",
+      "mark": "croesi allan, cadw neu glirio"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Mae arwydd rhwng dau sgwâr yn pwyntio at y rhif lleiaf o'r ddau.",
-      "enter": "Tapia sgwâr, yna tapia rif. Mae'r un rhif eto yn ei dynnu allan.",
+      "enter": "Dewisa sgwâr, yna rhif. Mae'r un rhif eto yn ei dynnu allan.",
       "notes": "Newidia i'r pensil i nodi'r rhifau allai fynd mewn sgwâr o hyd. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
     },
     "hint": {
@@ -522,14 +542,22 @@
       }
     },
     "goal": "Mae pob rhes a phob colofn yn dangos pob rhif unwaith yn unig.",
-    "name": "Mwy a Llai"
+    "name": "Mwy a Llai",
+    "controls": {
+      "move": "dewisa sgwâr",
+      "type": "ysgrifenna rif",
+      "choose": "dewisa rif neu'r rhwbiwr",
+      "place": "ysgrifenna fe",
+      "pencil": "pensil",
+      "erase": "rhwbio allan"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Mae drych yn plygu'r golau oddi ar y naill ochr neu'r llall. Mae'r marciau bach o'i gwmpas yn dangos y ffyrdd eraill mae'n gallu gorwedd: mae'r rhan fwyaf yn troi'r golau chwarter tro, ac mae rhai'n troi llai na hynny ac yn ei anfon ar ongl.",
       "walls": "Mae bloc o garreg yn llyncu'r golau. Felly hefyd ymyl y bwrdd.",
-      "tap": "Tapia ddarn i'w newid: mae drych yn troi, mae darn sy'n llithro yn symud i'w le nesaf. Mae ymyl wen yn golygu mai ti sy'n cael ei symud; mae popeth arall yn rhan o'r pos.",
-      "nodes": "Mae rhai cerrig wedi'u cysylltu â soced yn y llawr, a does dim tap yn eu symud nhw. Anfona'r golau ar draws y soced ac mae'r garreg yn llithro o'r ffordd."
+      "tap": "Dewisa ddarn i'w newid: mae drych yn troi, mae darn sy'n llithro yn symud i'w le nesaf. Mae ymyl wen yn golygu mai ti sy'n cael ei symud; mae popeth arall yn rhan o'r pos.",
+      "nodes": "Mae rhai cerrig wedi'u cysylltu â soced yn y llawr, a fyddan nhw ddim yn symud i ti. Anfona'r golau ar draws y soced ac mae'r garreg yn llithro o'r ffordd."
     },
     "hint": {
       "entryRun": "Dechrau lle mae'r golau'n mynd yn barod: mae'n rhedeg yn syth o'r ddisg nes ei fod yn cyrraedd y darn cyntaf rwyt ti'n gallu ei newid. Mae'r sgwariau yna'n cario'r golau beth bynnag rwyt ti'n ei wneud.",
@@ -562,7 +590,7 @@
       "triple": "Chei di byth dri o'r un peth yn olynol, ar draws nac i lawr.",
       "copies": "Chaiff dim dwy res fod yr un fath, na dim dwy golofn chwaith.",
       "signs": "Mae arwydd rhwng dau sgwâr yn dweud sut maen nhw'n cymharu: = am yr un peth, × am wahanol.",
-      "enter": "Tapia sgwâr i roi haul yno, tapia eto am leuad, tapia unwaith eto i'w wagio."
+      "enter": "Dewisa sgwâr i roi haul yno, eto am leuad, unwaith eto i'w wagio."
     },
     "hint": {
       "mistake": "Dydy un o'r marciau yma ddim yn gallu bod yn iawn.",
@@ -590,7 +618,11 @@
       }
     },
     "goal": "Mae haul neu leuad ym mhob sgwâr, ac mae gan bob llinell yr un nifer o'r ddau.",
-    "name": "Haul a Lleuad"
+    "name": "Haul a Lleuad",
+    "controls": {
+      "move": "dewisa sgwâr",
+      "mark": "newid y marc"
+    }
   },
   "constellation": {
     "rules": {
@@ -598,25 +630,25 @@
         "straight": "Mae llinellau golau'n rhedeg yn syth ar draws neu i lawr, o un seren i'r nesaf.",
         "pair": "Gall dwy seren rannu dwy linell ar y mwyaf.",
         "cross": "Dydy llinellau byth yn croesi, a byth yn mynd drwy seren.",
-        "enter": "Llusga o seren tuag at ei chymydog i dynnu llinell, eto am linell ddwbl, unwaith eto i'w chlirio."
+        "enter": "Tynna linell o seren tuag at ei chymydog, eto am linell ddwbl, unwaith eto i'w chlirio."
       },
       "causeway": {
         "straight": "Mae ffyrdd llusgo'n rhedeg yn syth ar draws neu i lawr, o un safle i'r nesaf.",
         "pair": "Gall dau safle rannu dwy ffordd ar y mwyaf.",
         "cross": "Dydy ffyrdd byth yn croesi, a byth yn mynd drwy safle.",
-        "enter": "Llusga o safle tuag at ei gymydog i osod ffordd, eto i'w gwneud yn ddwbl, unwaith eto i'w chodi."
+        "enter": "Gosoda ffordd o safle tuag at ei gymydog, eto i'w gwneud yn ddwbl, unwaith eto i'w chodi."
       },
       "irrigation": {
         "straight": "Mae sianeli'n rhedeg yn syth ar draws neu i lawr, o un basn i'r nesaf.",
         "pair": "Gall dau fasn rannu dwy sianel ar y mwyaf.",
         "cross": "Dydy sianeli byth yn croesi, a byth yn mynd drwy fasn.",
-        "enter": "Llusga o fasn tuag at ei gymydog i gloddio sianel, eto i'w lledu, unwaith eto i'w llenwi."
+        "enter": "Cloddia sianel o fasn tuag at ei gymydog, eto i'w lledu, unwaith eto i'w llenwi."
       },
       "ceiling": {
         "straight": "Mae cortynnau'n rhedeg yn syth ar draws neu i lawr, o un seren i'r nesaf.",
         "pair": "Gall dwy seren rannu dau gortyn ar y mwyaf.",
         "cross": "Dydy cortynnau byth yn croesi, a byth yn mynd drwy seren.",
-        "enter": "Llusga o seren tuag at ei chymydog i osod cortyn, eto i'w wneud yn ddwbl, unwaith eto i'w godi."
+        "enter": "Estynna gortyn o seren tuag at ei chymydog, eto i'w wneud yn ddwbl, unwaith eto i'w godi."
       }
     },
     "hint": {
@@ -736,37 +768,44 @@
       "causeway": "Sarn",
       "irrigation": "System Ddŵr",
       "ceiling": "Nenfwd wedi'i Baentio"
+    },
+    "controls": {
+      "pick": "dewisa seren",
+      "grab": "coda hi",
+      "draw": "tynna linell y ffordd yna",
+      "release": "gollwng",
+      "alt": "dal a phwyntio: llinell, dwbl, dim"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Chaiff dim dwy seren gyffwrdd — mae corneli'n cyfrif.",
-        "enter": "Tapia sgwâr i roi croes arno, tapia eto i roi seren yno, unwaith eto i'w glirio."
+        "enter": "Dewisa sgwâr i roi croes arno, eto i roi seren yno, unwaith eto i'w glirio."
       },
       "fields": {
         "touch": "Chaiff dim dwy fferm gyffwrdd — mae corneli'n cyfrif. Mor agos â hynny, bydden nhw'n rhannu un ffynnon.",
-        "enter": "Tapia lain i roi croes arni, tapia eto i godi fferm, unwaith eto i'w chlirio."
+        "enter": "Dewisa lain i roi croes arni, eto i godi fferm, unwaith eto i'w chlirio."
       },
       "lamps": {
         "touch": "Chaiff dim dwy lamp olew sefyll wrth ymyl ei gilydd — mae corneli'n cyfrif. Byddai eu golau nhw'n cymysgu, a'r olew'n cael ei wastraffu.",
         "walls": "Mae'r blociau cerrig llwyd yn rhan o'r llawr: does dim byd yn gallu sefyll arnyn nhw, a dydyn nhw ddim yn sgwariau.",
-        "enter": "Tapia lechen i roi croes arni, tapia eto i osod lamp olew yno, unwaith eto i'w chlirio."
+        "enter": "Dewisa lechen i roi croes arni, eto i osod lamp olew yno, unwaith eto i'w chlirio."
       },
       "market": {
         "touch": "Chaiff dim dwy stondin sefyll wrth ymyl ei gilydd — mae corneli'n cyfrif. Dydy gelynion byth yn gosod stondin ochr yn ochr.",
         "walls": "Mae'r tai yn rhan o'r sgwâr: does neb yn gallu gosod stondin mewn tŷ, a dydy e ddim yn lle.",
-        "enter": "Tapia le i roi croes arno, tapia eto i osod stondin yno, unwaith eto i'w glirio."
+        "enter": "Dewisa le i roi croes arno, eto i osod stondin yno, unwaith eto i'w glirio."
       },
       "lotus": {
         "touch": "Chaiff dim dau lotws arnofio wrth ymyl ei gilydd — mae corneli'n cyfrif. Mae angen dŵr agored o gwmpas pob blodyn.",
         "walls": "Mae'r creigiau'n codi allan o'r pwll: does dim byd yn gallu arnofio arnyn nhw, a dydyn nhw ddim yn sgwariau.",
-        "enter": "Tapia ddarn o ddŵr i roi croes arno, tapia eto i roi lotws yno, unwaith eto i'w glirio."
+        "enter": "Dewisa ddarn o ddŵr i roi croes arno, eto i roi lotws i arnofio yno, unwaith eto i'w glirio."
       },
       "cats": {
         "touch": "Chaiff dim dwy gath gysgu wrth ymyl ei gilydd — mae corneli'n cyfrif. Mae gan bob cath ei darn ei hun o haul.",
         "walls": "Mae'r pileri'n dal y deml i fyny: does dim cath yn gallu cysgu arnyn nhw, a dydyn nhw ddim yn sgwariau.",
-        "enter": "Tapia lechen i roi croes arni, tapia eto i roi cath yno, unwaith eto i'w chlirio."
+        "enter": "Dewisa lechen i roi croes arni, eto i osod cath yno, unwaith eto i'w chlirio."
       }
     },
     "hint": {
@@ -1328,6 +1367,11 @@
       "market": "Stondinau'r Farchnad",
       "lotus": "Pwll Lotws",
       "cats": "Cathod y Deml"
+    },
+    "controls": {
+      "move": "dewisa sgwâr",
+      "mark": "newid y marc",
+      "sweep": "dal a symud: rhoi croes ar res"
     }
   },
   "pairPuzzle": {
@@ -1344,13 +1388,13 @@
         "pair": "Mae un mymi'n gorwedd yn union uwchben, o dan, i'r chwith neu i'r dde o bob arch garreg, ac mae pob mymi'n gorwedd wrth ymyl ei arch ei hun.",
         "count": "Mae'r rhif wrth ymyl rhes neu golofn yn dweud faint o fymis sydd ynddi. Mae'n troi'n wyrdd pan mae'r union nifer yna yn y llinell, ac yn goch pan does dim ffordd i'w gael.",
         "touch": "Chaiff dim dau fymi fod wrth ymyl ei gilydd — mae corneli'n cyfrif.",
-        "enter": "Tapia sgwâr i roi croes arno, tapia eto i roi mymi yno, unwaith eto i'w glirio. Llusga ar draws sgwariau i roi croes ar res ohonyn nhw. Alli di ddim tapio'r eirch."
+        "enter": "Dewisa sgwâr i roi croes arno, eto i roi mymi yno, unwaith eto i'w glirio. Rho groes ar res o sgwariau mewn un symudiad. Alli di ddim marcio'r eirch."
       },
       "beetles": {
         "pair": "Mae un chwilen yn union uwchben, o dan, i'r chwith neu i'r dde o bob pelen dail, ac mae pob chwilen yn sefyll wrth ymyl ei phelen ei hun i'w rholio.",
         "count": "Mae'r rhif wrth ymyl rhes neu golofn yn dweud faint o chwilod sydd ynddi. Mae'n troi'n wyrdd pan mae'r union nifer yna yn y llinell, ac yn goch pan does dim ffordd i'w gael.",
         "touch": "Chaiff dim dwy chwilen fod wrth ymyl ei gilydd — mae corneli'n cyfrif.",
-        "enter": "Tapia sgwâr i roi croes arno, tapia eto i roi chwilen yno, unwaith eto i'w glirio. Llusga ar draws sgwariau i roi croes ar res ohonyn nhw. Alli di ddim tapio'r peli tail."
+        "enter": "Dewisa sgwâr i roi croes arno, eto i roi chwilen yno, unwaith eto i'w glirio. Rho groes ar res o sgwariau mewn un symudiad. Alli di ddim marcio'r peli tail."
       }
     },
     "hint": {
@@ -1478,6 +1522,11 @@
           "place_other": "Rho chwilen ar bob sgwâr streipiog."
         }
       }
+    },
+    "controls": {
+      "move": "dewisa sgwâr",
+      "mark": "newid y marc",
+      "sweep": "dal a symud: rhoi croes ar res"
     }
   },
   "rushHour": {
@@ -1492,11 +1541,11 @@
     "rules": {
       "default": {
         "lanes": "Dim ond ar hyd ei lôn ei hun mae bloc yn llithro — byth i'r ochr, byth oddi ar y bwrdd.",
-        "shove": "Llusga floc i'w wthio. Mae'n stopio lle mae rhywbeth yn y ffordd."
+        "shove": "Gwthia floc ar hyd ei lôn. Mae'n stopio lle mae rhywbeth yn y ffordd."
       },
       "market": {
         "lanes": "Dim ond ar hyd y lôn mae'n sefyll ynddi mae sled yn llithro — byth i'r ochr, byth allan o'r stryd.",
-        "shove": "Llusga sled i'w gwthio. Mae'n stopio lle mae rhywbeth yn y ffordd."
+        "shove": "Gwthia sled ar hyd ei lôn. Mae'n stopio lle mae rhywbeth yn y ffordd."
       }
     },
     "hint": {
@@ -1524,29 +1573,35 @@
           "down": "Gwthia fe i lawr y stryd, hyd at y cylch."
         }
       }
+    },
+    "controls": {
+      "pick": "dewisa floc",
+      "grab": "gafael ynddo",
+      "slide": "llithro",
+      "release": "gollwng"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "Mae'r rhifau sydd yn y diliau'n barod yn rhan o'r pos — maen nhw'n aros lle maen nhw.",
-        "enter": "Tapia rif i ddechrau'r llinell yno, yna tapia gell wag sy'n cyffwrdd i fynd ymlaen — neu llusga'n syth drwy'r celloedd mae'n mynd drwyddyn nhw.",
-        "back": "Tapia rif rwyt ti wedi'i osod a'i dapio eto i'w dynnu i ffwrdd, gyda phopeth sy'n hongian arno. Mae mynd â'r llinell ffordd wahanol allan o rif yn gwneud yr un peth. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
+        "enter": "Tynna linell o rif drwy'r celloedd gwag wrth ei ymyl i fynd â'r llinell ymlaen.",
+        "back": "Dewisa rif rwyt ti wedi'i osod a'i ddewis eto i'w dynnu i ffwrdd, gyda phopeth sy'n hongian arno. Mae mynd â'r llinell ffordd wahanol allan o rif yn gwneud yr un peth. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
       },
       "channel": {
         "given": "Mae'r caeau sydd â rhif yn barod yn rhan o'r pos — maen nhw'n aros lle maen nhw.",
-        "enter": "Tapia gae gyda rhif i ddechrau'r dŵr yno, yna tapia gae sych wrth ei ymyl i gloddio ymlaen — neu llusga'n syth ar hyd y caeau mae'r sianel yn mynd drwyddyn nhw.",
-        "back": "Tapia gae rwyt ti wedi'i gloddio a'i dapio eto i'w lenwi, gydag unrhyw sianel sydd wedi'i thorri i ffwrdd ohono. Mae cloddio ffordd wahanol allan o gae yn gwneud yr un peth. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
+        "enter": "Cloddia sianel o gae gyda rhif drwy'r caeau sych wrth ei ymyl i fynd â'r dŵr ymlaen.",
+        "back": "Dewisa gae rwyt ti wedi'i gloddio a'i ddewis eto i'w lenwi, gydag unrhyw sianel sydd wedi'i thorri i ffwrdd ohono. Mae cloddio ffordd wahanol allan o gae yn gwneud yr un peth. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
       },
       "scribe": {
         "given": "Y ffigurau mewn inc coch yw rhai'r pos ei hun — maen nhw'n aros lle maen nhw.",
-        "enter": "Tapia ffigur i godi'r ysgrifbin yno, yna tapia le gwag wrth ei ymyl i ysgrifennu ymlaen — neu llusga'n syth ar hyd y llinell.",
-        "back": "Tapia ffigur rwyt ti wedi'i ysgrifennu a'i dapio eto i'w grafu i ffwrdd, gydag unrhyw linell sydd wedi'i thorri i ffwrdd ohono. Mae ysgrifennu ffordd wahanol allan o ffigur yn gwneud yr un peth. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
+        "enter": "Ysgrifenna linell o ffigur drwy'r lleoedd gwag wrth ei ymyl i fynd â'r cyfrif ymlaen.",
+        "back": "Dewisa ffigur rwyt ti wedi'i ysgrifennu a'i ddewis eto i'w grafu i ffwrdd, gydag unrhyw linell sydd wedi'i thorri i ffwrdd ohono. Mae ysgrifennu ffordd wahanol allan o ffigur yn gwneud yr un peth. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
       },
       "chambers": {
         "given": "Cafodd y siambrau sydd â rhif yn barod eu torri gan yr adeiladwyr — maen nhw'n aros lle maen nhw.",
-        "enter": "Tapia siambr gyda rhif i ddechrau'r coridor yno, yna tapia siambr wedi'i selio wrth ei hymyl i dorri drwodd — neu llusga'n syth ar hyd y siambrau mae'r coridor yn mynd drwyddyn nhw.",
-        "back": "Tapia siambr rwyt ti wedi'i hagor a'i thapio eto i'w selio, gydag unrhyw goridor sydd wedi'i dorri i ffwrdd ohoni. Mae torri drwodd ffordd wahanol allan o siambr yn gwneud yr un peth. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
+        "enter": "Tor goridor o siambr gyda rhif drwy'r siambrau wedi'u selio wrth ei hymyl i fynd ag e ymlaen.",
+        "back": "Dewisa siambr rwyt ti wedi'i hagor a'i dewis eto i'w selio, gydag unrhyw goridor sydd wedi'i dorri i ffwrdd ohoni. Mae torri drwodd ffordd wahanol allan o siambr yn gwneud yr un peth. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
       }
     },
     "goal": {
@@ -1610,6 +1665,13 @@
       "channel": "Y Sianel",
       "scribe": "Dalen yr Ysgrifennydd",
       "chambers": "Siambrau wedi'u Selio"
+    },
+    "controls": {
+      "move": "mynd i gell wrth ei ymyl; mae fyny a lawr yn gwyro i'r chwith",
+      "right": "fyny i'r dde neu lawr i'r dde",
+      "grab": "codi'r llinell, neu dynnu dy rif i ffwrdd",
+      "carry": "gyda'r llinell wedi'i chodi: mynd â hi ymlaen; mae fyny a lawr yn mynd i'r ochr lle gall hi fynd ymlaen",
+      "drop": "rhoi'r llinell i lawr"
     }
   },
   "sudoku": {
@@ -1617,13 +1679,13 @@
       "default": {
         "chambers": "Mae'r llinellau trwchus yn torri'r grid yn chwe siambr, dau sgwâr o led a thri o uchder.",
         "given": "Mae'r rhifau sydd wedi'u cerfio'n barod yn rhan o'r pos — maen nhw'n aros lle maen nhw.",
-        "enter": "Tapia sgwâr, yna tapia rif. Mae'r un rhif eto yn ei dynnu allan.",
+        "enter": "Dewisa sgwâr, yna rhif. Mae'r un rhif eto yn ei dynnu allan.",
         "notes": "Newidia i'r pensil i nodi'r rhifau allai fynd mewn sgwâr o hyd. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
       },
       "papyrus": {
         "chambers": "Mae'r llinellau trwchus yn rhannu'r ddalen yn chwe phanel, dau le o led a thri o uchder.",
         "given": "Yr arwyddion mewn inc coch yw rhai'r pos ei hun — maen nhw'n aros lle maen nhw.",
-        "enter": "Tapia le, yna tapia arwydd. Mae'r un arwydd eto yn ei grafu i ffwrdd.",
+        "enter": "Dewisa le, yna arwydd. Mae'r un arwydd eto yn ei grafu i ffwrdd.",
         "notes": "Cymer yr ysgrifbin brwyn i nodi'r arwyddion allai fynd mewn lle o hyd. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
       }
     },
@@ -1698,6 +1760,14 @@
     "name": {
       "default": "Chwe Siambr",
       "papyrus": "Cofrestr yr Ysgrifennydd"
+    },
+    "controls": {
+      "move": "dewisa sgwâr",
+      "type": "ysgrifenna rif",
+      "choose": "dewisa rif neu'r rhwbiwr",
+      "place": "ysgrifenna fe",
+      "pencil": "pensil",
+      "erase": "rhwbio allan"
     }
   },
   "crocodile": {
@@ -1711,6 +1781,10 @@
     "hint": {
       "biggest": "Mae'r crocodeil yma eisiau'r ateb mwyaf. Hwnnw yw {{value}}.",
       "smallest": "Mae'r crocodeil yma eisiau'r ateb lleiaf. Hwnnw yw {{value}}."
+    },
+    "controls": {
+      "move": "dewisa garreg",
+      "step": "camu arni"
     }
   },
   "canisters": {
@@ -1765,35 +1839,35 @@
         "sums": "Mae pob swm galli di ei wneud yn ddau rif ar y fainc wedi'u hadio neu eu tynnu: maint can, beth sydd ynddo, neu faint o le sydd ar ôl ynddo.",
         "backwards": "Felly gweithia 'nôl o'r swm sy'n cael ei ofyn — pa ddau rif sy'n ei wneud, a sut wyt ti'n cael y ddau yna ar yr un pryd?"
       },
-      "claim": "Pan mae'r swm gyda ti, tapia “hwn”. Mae dewis y llestr anghywir yn costio symudiad.",
+      "claim": "Pan mae'r swm gyda ti, dewisa “hwn”. Mae dewis y llestr anghywir yn costio symudiad.",
       "legs": "Yna'r swm nesaf, wedi'i fesur o beth bynnag sydd ar ôl yn y llestri.",
       "default": {
-        "moves": "Tapia gan i'w godi, yna tapia un arall i dywallt iddo. Mae'r tywallt yn stopio pan mae'r cyntaf yn wag neu'r ail yn llawn.",
+        "moves": "Coda gan, yna dewisa un arall i dywallt iddo. Mae'r tywallt yn stopio pan mae'r cyntaf yn wag neu'r ail yn llawn.",
         "contents": "Dyma'r holl ddŵr sydd — mae un can yn dechrau'n llawn, a does dim modd taflu dim i ffwrdd na nôl mwy.",
         "levels": "Mae pob can yn dweud faint sydd ynddo, a faint mae'n ei ddal pan mae'n llawn."
       },
       "grain": {
-        "moves": "Tapia fesur i'w godi, yna tapia un arall i dywallt y grawn iddo. Mae'n stopio pan mae'r cyntaf yn wag neu'r ail yn llawn at yr ymyl.",
+        "moves": "Coda fesur, yna dewisa un arall i dywallt y grawn iddo. Mae'n stopio pan mae'r cyntaf yn wag neu'r ail yn llawn at yr ymyl.",
         "contents": "Dyma'r holl rawn sydd — mae un mesur yn dechrau'n llawn, a does dim modd ysgubo dim i ffwrdd na nôl mwy o'r ysgubor.",
         "levels": "Mae pob mesur yn dweud faint sydd ynddo, a faint mae'n ei ddal pan mae'n llawn at yr ymyl."
       },
       "oil": {
-        "moves": "Tapia jar i'w chodi, yna tapia un arall i dywallt iddi. Mae'r tywallt yn stopio pan mae'r gyntaf yn wag neu'r ail yn llawn.",
+        "moves": "Coda jar, yna dewisa un arall i dywallt iddi. Mae'r tywallt yn stopio pan mae'r gyntaf yn wag neu'r ail yn llawn.",
         "contents": "Dyma'r holl olew sydd — mae un jar yn dechrau'n llawn, a does dim modd tywallt dim i ffwrdd na nôl mwy.",
         "levels": "Mae pob jar yn dweud faint sydd ynddi, a faint mae'n ei ddal pan mae'n llawn."
       },
       "wine": {
-        "moves": "Tapia amffora i'w chodi, yna tapia un arall i dywallt iddi. Mae'r tywallt yn stopio pan mae'r gyntaf yn wag neu'r ail yn llawn.",
+        "moves": "Coda amffora, yna dewisa un arall i dywallt iddi. Mae'r tywallt yn stopio pan mae'r gyntaf yn wag neu'r ail yn llawn.",
         "contents": "Dyma'r holl win sydd — mae un amffora'n dechrau'n llawn, a does dim modd colli dim na nôl mwy o'r seler.",
         "levels": "Mae pob amffora'n dweud faint sydd ynddi, a faint mae'n ei ddal pan mae'n llawn."
       },
       "natron": {
-        "moves": "Tapia jar i'w chodi, yna tapia un arall i dywallt y natron iddi. Mae'n stopio pan mae'r gyntaf yn wag neu'r ail yn llawn at y caead.",
+        "moves": "Coda jar, yna dewisa un arall i dywallt y natron iddi. Mae'n stopio pan mae'r gyntaf yn wag neu'r ail yn llawn at y caead.",
         "contents": "Dyma'r holl natron sydd — mae un jar yn dechrau'n llawn, a does dim modd ysgubo dim i ffwrdd na nôl mwy.",
         "levels": "Mae pob jar yn dweud faint sydd ynddi, a faint mae'n ei ddal pan mae'n llawn at y caead."
       },
       "ink": {
-        "moves": "Tapia bot i'w godi, yna tapia un arall i dywallt iddo. Mae'r tywallt yn stopio pan mae'r cyntaf yn wag neu'r ail yn llawn.",
+        "moves": "Coda bot, yna dewisa un arall i dywallt iddo. Mae'r tywallt yn stopio pan mae'r cyntaf yn wag neu'r ail yn llawn.",
         "contents": "Dyma'r holl inc sydd — mae un pot yn dechrau'n llawn, a does dim modd tywallt dim allan na gwneud inc newydd.",
         "levels": "Mae pob pot yn dweud faint sydd ynddo, a faint mae'n ei ddal pan mae'n llawn."
       }
@@ -1822,7 +1896,12 @@
     "legs": "wedi mesur {{done}} o {{total}}",
     "wanted": "Mesura",
     "claim": "hwn",
-    "claimAria": "Dweud mai'r {{capacity}} sy'n dal y swm"
+    "claimAria": "Dweud mai'r {{capacity}} sy'n dal y swm",
+    "controls": {
+      "move": "dewisa lestr neu'r “hwn” oddi tano",
+      "press": "codi, tywallt i hwn, neu hawlio",
+      "putDown": "rhoi'r llestr rwyt ti'n ei ddal i lawr eto"
+    }
   },
   "procession": {
     "name": {
@@ -1842,8 +1921,8 @@
     "rules": {
       "default": {
         "lengths": "Mae pob rhes yn un peth sy'n digwydd, ac mae'n para mor hir ag mae ei far yn llydan. Pryd mae'n digwydd — dyna beth rwyt ti'n ei weithio mas.",
-        "marks": "Mae llinell o dan y diwrnod yn troi'n goch tra'i bod hi ddim yn iawn. Tapia un i roi cylch o gwmpas y rhesi mae hi'n sôn amdanyn nhw.",
-        "drag": "Llusga far ar hyd ei res ei hun. Dydy e byth yn gadael y diwrnod."
+        "marks": "Mae llinell o dan y diwrnod yn troi'n goch tra'i bod hi ddim yn iawn. Dewisa un i roi cylch o gwmpas y rhesi mae hi'n sôn amdanyn nhw.",
+        "drag": "Llithra far ar hyd ei res ei hun. Dydy e byth yn gadael y diwrnod."
       }
     },
     "hint": {
@@ -1852,7 +1931,7 @@
         "squeeze": "Dim ond hyn a hyn o'r diwrnod sydd ar ôl, a dyma'r cwbl sy'n ffitio.",
         "apart": "Dydy'r ffordd arall rownd ddim yn ffitio yn y diwrnod.",
         "split": "Tria fe'r ffordd arall rownd ac mae rhywbeth arall yn torri.",
-        "move": "Llusga'r bar sydd â chylch o'i gwmpas i'r marciau streipiog."
+        "move": "Llithra'r bar sydd â chylch o'i gwmpas i'r marciau streipiog."
       }
     },
     "events": {
@@ -1888,6 +1967,11 @@
       "hint": "Mae pob teilsen rwyt ti'n camu arni yn rhyddhau ei gwaith. Rho'r diwrnod mewn trefn, yna cerdda ar y teils yn y drefn honno.",
       "read": "Mae'r diwrnod wedi'i ddarllen. Cerdda ar ei deils yn y drefn yma, o'r cyntaf.",
       "hintButton": "Cliw"
+    },
+    "controls": {
+      "row": "dewisa res",
+      "slide": "llithro ei far",
+      "mark": "dewisa linell o dan y diwrnod"
     }
   },
   "story": {
@@ -1910,6 +1994,13 @@
       "pick": "Rho'r arwydd iawn yn ei le.",
       "cannot": "Dwyt ti ddim yn gwybod pa arwydd sy'n perthyn fan hyn. Ddim eto."
     },
+    "formula": {
+      "wrong": "Mae arwydd ar goll o'r llinell yma. Ddim wedi'i dorri'n anghywir — erioed wedi'i dorri o gwbl.",
+      "fixed": "Mae'r llinell yn gyfan.",
+      "pick": "Rho'r arwydd gest ti yn y lle gwag.",
+      "cannot": "Does neb wedi rhoi'r arwydd ar gyfer y lle yma i ti. Ddim eto.",
+      "gap": "Yr arwydd sydd ar goll"
+    },
     "sphinx": {
       "wrong": "Yr un ysgrifen â'r tu allan, ond chyrhaeddodd y tywod ddim fan hyn. Dau arwydd yn dal yn glir, a bwlch lle roedd y trydydd.",
       "fixed": "Dyna'r cwbl ohono.",
@@ -1926,7 +2017,7 @@
       "shrines": "Un ddisg o olau, a chysegrfa uwchben pob ffordd allan o'r groesffordd yma. Mae'r drychau ar y llawr yn gallu cario'r golau i unrhyw un ohonyn nhw.",
       "doors": "Mae'r ffordd allan mae'r golau'n ei chyrraedd ar agor, a'r lleill ar gau. Un llwybr golau, un ffordd ymlaen.",
       "returning": "Dwyt ti ddim yn colli dim drwy ddewis. Cerdda 'nôl i mewn pryd bynnag rwyt ti eisiau ac anfona'r golau ffordd arall — mae'r ffordd honno'n agor, ac mae hon yn cau.",
-      "tap": "Tapia ddrych i'w droi. Mae ei dapio eto yn ei roi 'nôl."
+      "tap": "Dewisa ddrych i'w droi. Dewisa fe eto i'w roi 'nôl."
     },
     "doorOpen": "Ffordd allan {{way}}: ar agor",
     "doorShut": "Ffordd allan {{way}}: ar gau",
@@ -1935,6 +2026,10 @@
       "e": "y dwyrain",
       "s": "y de",
       "w": "y gorllewin"
+    },
+    "controls": {
+      "move": "dewisa ddrych",
+      "turn": "troi fe"
     }
   },
   "handle": {
@@ -2196,5 +2291,41 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Mae tynnu llun yn ailysgrifennu'r testun: mae pob sylw'n symud i'r top"
+  },
+  "saveCard": {
+    "title": "Cerdyn teithio",
+    "explain": "Cer â dy daith i ddyfais arall: gwna gerdyn fan hyn a'i ddarllen fan draw o fewn 15 munud.",
+    "make": "Gwneud cerdyn teithio",
+    "share": "Rhannu'r cerdyn",
+    "download": "Lawrlwytho'r cerdyn",
+    "read": "Darllen cerdyn teithio",
+    "busy": "Un eiliad…",
+    "makeFailed": "Doedd dim modd gwneud y cerdyn.",
+    "shareFailed": "Wnaeth rhannu ddim gweithio; lawrlwytha'r cerdyn yn lle hynny.",
+    "confirm_zero": "Rhoi'r gêm sydd ar y cerdyn yn lle'r un ar y ddyfais yma ({{count}} o deithiau)?",
+    "confirm_one": "Rhoi'r gêm sydd ar y cerdyn yn lle'r un ar y ddyfais yma ({{count}} taith)?",
+    "confirm_two": "Rhoi'r gêm sydd ar y cerdyn yn lle'r un ar y ddyfais yma ({{count}} o deithiau)?",
+    "confirm_few": "Rhoi'r gêm sydd ar y cerdyn yn lle'r un ar y ddyfais yma ({{count}} o deithiau)?",
+    "confirm_many": "Rhoi'r gêm sydd ar y cerdyn yn lle'r un ar y ddyfais yma ({{count}} o deithiau)?",
+    "confirm_other": "Rhoi'r gêm sydd ar y cerdyn yn lle'r un ar y ddyfais yma ({{count}} o deithiau)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Cerdyn teithio · cer â dy daith gyda ti",
+    "validUntil": "yn ddilys tan {{time}}",
+    "codes_zero": "{{count}} o godau",
+    "codes_one": "{{count}} cod",
+    "codes_two": "{{count}} o godau",
+    "codes_few": "{{count}} o godau",
+    "codes_many": "{{count}} o godau",
+    "codes_other": "{{count}} o godau",
+    "refused": {
+      "notACard": "Dydy hwn ddim yn gerdyn teithio.",
+      "tampered": "Mae rhywun wedi newid y cerdyn yma, a does dim modd ei ddarllen mwyach.",
+      "expired": "Mae'r cerdyn yma wedi dod i ben; gwna un newydd.",
+      "future": "Mae'r cerdyn yma'n dod o'r dyfodol: edrych ar y cloc ar y ddwy ddyfais.",
+      "otherEpoch": "Mae'r cerdyn yma'n dod o fersiwn arall o'r gêm.",
+      "newerGame": "Mae'r cerdyn yma'n dod o fersiwn mwy newydd: diweddara'r gêm yn gyntaf."
+    },
+    "writeFailed": "Doedd dim modd ysgrifennu'r gêm; mae'r ddyfais yma wedi cadw ei gêm ei hun.",
+    "writeLost": "Doedd dim modd newid y gêm, ac efallai bod y gêm ar y ddyfais yma'n anghyflawn."
   }
 }

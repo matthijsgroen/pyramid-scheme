@@ -239,6 +239,21 @@
       "description": "A coroa real com a cobra protetora. Os faraós usavam-na para ter a proteção dos deuses."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Pão",
+      "description": "O pão alto, o sinal do pão. Dado pelo Ipi, que contou cereal durante quarenta anos e só uma vez deu alguma coisa."
+    },
+    "o2": {
+      "name": "Linho"
+    },
+    "o3": {
+      "name": "Água"
+    },
+    "o4": {
+      "name": "Barco"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Folha de junco",

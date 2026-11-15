@@ -28,7 +28,7 @@
   "tombTutorial3": "Les petits calculs te montrent quand un signe est bien placé. C’est comme ça qu’on trouve quel signe va où.",
   "tombTutorial4": "Tout est rempli ? Alors un cadenas à chiffres apparaît. Le grand calcul, c’est le code. Et là, le tombeau s’ouvre !",
   "hieroglyphUnlock": "On a un objet spécial : avec lui, on peut écrire sur un de ces blocs fermés !",
-  "hieroglyphUnlock2": "Touche une pierre qui brille, puis fais glisser l’objet dessus pour l’ouvrir. Un bloc par pyramide.",
+  "hieroglyphUnlock2": "Choisis une pierre qui brille, puis apporte l’objet dessus pour l’ouvrir. Un bloc par pyramide.",
   "errorHighlightTutorial": "Le trésor qu’on a trouvé a un truc bien pratique : si tu mets une mauvaise réponse, une erreur s’allume en rouge !",
   "errorHighlightTutorial2": "Un seul bloc s’allume à la fois, alors ça reste un défi. Mais ça aide à chercher au bon endroit !",
   "earlyFeedbackTutorial": "Tu vois ces blocs de contrôle ? Ils deviennent verts ou rouges pendant que tu les remplis. Tu sais tout de suite !",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Regarde ce qu’il y a à mon étal ! Maintenant, je vends aussi du transport."
+      },
+      "2": {
+        "explorer": "Je ne vois qu’un dessin."
+      },
+      "3": {
+        "fez": "L’original mange plus."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "Deuxième ligne. De l’eau à ceux qui avaient soif."
+        "explorer": "Deuxième ligne. _Des habits à ceux qui n’en avaient pas._"
       },
       "2": {
-        "fez": "Du pain, et maintenant de l’eau. Quelqu’un voulait vraiment qu’on se souvienne de lui comme de quelqu’un de généreux."
+        "fez": "Du pain, et maintenant des habits. Quelqu’un voulait vraiment qu’on se souvienne de lui comme de quelqu’un de généreux."
       },
       "3": {
         "explorer": "Tout le monde l’a. Chaque mur, chaque tombeau, les deux mêmes lignes."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Des habits à ceux qui n’en avaient pas. Troisième ligne."
+        "explorer": "_De l’eau à ceux qui avaient soif._ Troisième ligne."
       },
       "2": {
-        "fez": "Du pain, de l’eau, des habits. C’est une liste de choses données."
+        "fez": "Du pain, des habits, de l’eau. C’est une liste de choses données."
       },
       "3": {
         "explorer": "Dans le tombeau d’un homme qui a tout emporté avec lui."
@@ -1599,8 +1605,42 @@
       "explorer": "Ça peut aller."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Là, il manque quelque chose pour ceux qui ont faim. Du pain, je dirais. Et je connais un homme qui a compté chaque sac de grain pendant quarante ans."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, il nous faut du pain. Pour un mur."
+        },
+        "2": {
+          "ipi": "Du pain ? Le mien ? Tu sais combien coûte le grain ?"
+        },
+        "3": {
+          "fez": "C’est pour une ligne sur les choses qu’on donne."
+        },
+        "4": {
+          "ipi": "…Donner. Pour rien."
+        },
+        "5": {
+          "ipi": "Bon. Un pain. Mais on l’écrit : _Ipi a donné du pain._"
+        },
+        "6": {
+          "fez": "Il a donné quelque chose ! Tu as vu ça ?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Ce pain… quelqu’un l’a déjà mangé ? Parce que sinon, je voudrais bien le récupérer."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Encore là ? Au nord ! Henut ! Onze deben !"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "Le mur. Le troisième signe. Ce n’est toujours pas mon nom."
+          "henut": "Le mur. Le deuxième signe. Ce n’est toujours pas mon nom."
         }
       },
       "wall2": {

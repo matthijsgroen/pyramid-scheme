@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Sinu mängu ei saa laadida",
     "body": "Brauser ei anna praegu sinu salvestatud mängu kätte. Sinu mäng pole kadunud: laadi leht uuesti, et uuesti proovida.",
-    "banner": "Mängu ei salvestata. Puuduta, et uuesti laadida.",
+    "banner": "Mängu ei salvestata. Laadi uuesti.",
     "reload": "Laadi uuesti",
     "continue": "Mängi edasi ilma salvestamata",
     "reset": "Alusta otsast (kustuta salvestus)",
@@ -29,7 +29,6 @@
     "evening": "Õhtu",
     "night": "Öö"
   },
-  "tomb": {},
   "ui": {
     "level": "Tase",
     "symbols": "märki",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Katkesta retk",
     "confirmInterruptExpedition": "Kas oled kindel, et tahad selle retke katkestada? Retke edenemine jääb alles, aga taseme edenemine läheb kaotsi!",
     "cancel": "Tühista",
+    "leaveSite": "Kas lahkud sellest paigast?",
+    "confirmLeaveSite": "Vali Lahku, et tagasi välja minna, või Jää, et edasi uurida.",
+    "leave": "Lahku",
+    "stay": "Jää",
     "settings": "Seaded",
     "language": "Keel",
     "close": "Sulge",
@@ -106,8 +109,12 @@
     "solvedUnaided": "Lahendatud ilma ühegi vihjeta",
     "solvedWithHints_one": "Lahendatud {{count}} vihjega",
     "solvedWithHints_other": "Lahendatud {{count}} vihjega",
-    "tapToContinue": "Puuduta, et jätkata",
-    "goal": "Eesmärk"
+    "tapToContinue": "Jätka",
+    "goal": "Eesmärk",
+    "controls": "Juhtimine",
+    "controlsUndo": "võta tagasi",
+    "controlsHint": "vihje",
+    "controlsLeave": "tagasi kaardile"
   },
   "trap": {
     "warning": "⚠ Lõksuga käik",
@@ -126,6 +133,7 @@
     "turnAround": "Pööra ümber",
     "wardDescription": {
       "starter": "Kaupmehe pitser sulgeb selle käigu — ainult tema kaitsevõti teeb selle lahti.",
+      "junior": "Aadlinaise vapp sulgeb selle tee — ainult tema kaitsevõti teeb selle lahti.",
       "expert": "Ülempreestri templikaitse valvab seda ust — avada saab ainult püha võtmega.",
       "master": "Vaarao kuninglik pitser seob selle käigu — ainult valitseja võti murrab selle.",
       "wizard": "Jumalate kaitse hoiab seda väravat — läbi saab ainult jumaliku võtmega."
@@ -134,13 +142,14 @@
     "lockedColor": "Sa pole seda võtit sellelt korruselt veel leidnud."
   },
   "chest": {
-    "tapToOpen": "Puuduta, et avada",
+    "tapToOpen": "Ava",
     "money_one": "{{count}} münt",
     "money_other": "{{count}} münti",
     "mapPiece": "Kaarditükk",
     "mapPieceDescription": "Habras tükk kaardist, mis viib mingisse ammu unustatud paika. Kahju, et see pole kaugeltki terve...",
     "mapPieceProgress": "{{found}} / {{required}} kaarditükki kogutud",
     "mapPieceComplete": "Kaart on terve — see viib kohta {{name}}.",
+    "hieroglyph": "Hieroglüüf",
     "hieroglyphFragment": "Hieroglüüfi kild",
     "fragmentProgress": "{{found}} / {{required}} killu leitud",
     "tombKey": "Hauakambri võti",
@@ -157,8 +166,9 @@
   },
   "loot": {
     "youFound": "Sa leidsid",
+    "youReceived": "Sa said",
     "expeditionReward": "Lisaauhind retke läbimise eest",
-    "clickToContinue": "Puuduta ükskõik kus, et jätkata"
+    "clickToContinue": "Jätka"
   },
   "money": {
     "label": "Mündid"
@@ -252,7 +262,7 @@
     "tabNew_other": "{{label}} · {{count}} uut",
     "empty": "Sinu kirst on veel tühi",
     "newLabel": "UUS",
-    "clickForDetails": "Puuduta ruutu, et rohkem näha",
+    "clickForDetails": "Vali ruut, et rohkem näha",
     "categories": {
       "deities": "🏺 Jumalad",
       "professions": "⚱️ Ametid",
@@ -260,6 +270,7 @@
       "artifacts": "💎 Esemed",
       "treasures": "💰 Aarded",
       "junk": "🔷 Pisiasjad",
+      "offerings": "🍞 Ohvriannid",
       "signs": "✍️ Märgid"
     },
     "treasureCategories": {
@@ -340,22 +351,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Puuduta all märki ja siis numbrit. Puuduta seda numbrit uuesti, et see ära võtta.",
+      "tap": "Vali all märk ja siis number. Vali sama number uuesti, et see ära võtta.",
       "same": "Üks märk kaalub igal kaalul sama palju.",
-      "cancel": "Võta mõlemalt kaalukausilt sama asi ära ja kaal jääb tasakaalu. Selleks puuduta märgitud tükki — mis üle jääb, saab uueks reaks.",
-      "swap": "Puuduta märki, mille vastas pole midagi sarnast, ja siis rida, kus see märk on üksi, et vahetada see selle rea väärtuse vastu."
+      "cancel": "Võta mõlemalt kaalukausilt sama asi ära ja kaal jääb tasakaalu. Selleks vali märgitud tükk — mis üle jääb, saab uueks reaks.",
+      "swap": "Vali märk, mille vastas pole midagi sarnast, ja siis rida, kus see märk on üksi, et vahetada see selle rea väärtuse vastu."
     },
     "hint": {
       "mistake": "Üks kaal, mille sa andsid, ajab kaalu viltu. Võta see ära ja vaata uuesti.",
       "alone": "Helendaval real on {{glyph}} ainus tükk, millel pole numbrit. Arvuta välja, kui palju see kaalub.",
       "equalShares": "Helendaval real on ainult {{glyph}} ühe numbri vastas. Jaga see number nende vahel võrdselt ära.",
       "difference": "Kaks helendavat rida on samad, ainult {{glyph}} on erinev. Võrdle neid.",
-      "cancelGlyph": "Helendava rea mõlemal kaalukausil on {{glyph}}. Puuduta ühte, et see mõlemalt poolt ära võtta — rida jääb tasakaalu.",
-      "cancelStones": "Helendava rea mõlemal kaalukausil on lihtsalt numbrid. Puuduta ühte, et võtta mõlemalt poolt sama palju ära.",
-      "swap": "Üks helendav rida ütleb, kui palju üks {{glyph}} üksi väärt on. Puuduta teises helendavas reas märki {{glyph}} ja siis seda rida."
+      "cancelGlyph": "Helendava rea mõlemal kaalukausil on {{glyph}}. Vali üks, et see mõlemalt poolt ära võtta — rida jääb tasakaalu.",
+      "cancelStones": "Helendava rea mõlemal kaalukausil on lihtsalt numbrid. Vali üks, et võtta mõlemalt poolt sama palju ära.",
+      "swap": "Üks helendav rida ütleb, kui palju üks {{glyph}} üksi väärt on. Vali teises helendavas reas märk {{glyph}} ja siis see rida."
     },
     "swap": {
-      "pick": "Puuduta helendavat rida, et vahetada see {{glyph}} selle väärtuse vastu, mida rida ütleb.",
+      "pick": "Vali helendav rida, et vahetada see {{glyph}} selle väärtuse vastu, mida rida ütleb.",
       "none": "Siin ei ütle miski, kui palju üks {{glyph}} üksi väärt on, ja ükski asi vastas ei sobi."
     },
     "goal": {
@@ -365,11 +376,16 @@
     "name": {
       "default": "Kaalud",
       "weighing": "Südame kaalumine"
+    },
+    "controls": {
+      "move": "vali tükk, rida või nupp",
+      "press": "vajuta seda",
+      "weigh": "anna valitud märgile see kaal"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Puuduta üks kord, et number läbi kriipsutada, teist korda, et märkida see alles jäävaks, ja kolmandat korda, et märge kustutada.",
+      "tap": "Vali number üks kord, et see läbi kriipsutada, teist korda, et märkida see alles jäävaks, ja kolmandat korda, et märge kustutada.",
       "totals": "Väike number iga sihtarvu all näitab, kui palju see rida praegu kokku annab."
     },
     "hint": {
@@ -430,12 +446,16 @@
       }
     },
     "goal": "Iga rida ja iga veerg annab kokku selle kõrval oleva numbri.",
-    "name": "Arvepidamine"
+    "name": "Arvepidamine",
+    "controls": {
+      "move": "vali number",
+      "mark": "kriipsuta läbi, jäta alles või kustuta"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Märk kahe ruudu vahel osutab kahest numbrist väiksema poole.",
-      "enter": "Puuduta ruutu ja siis numbrit. Sama number uuesti võtab selle jälle välja.",
+      "enter": "Vali ruut ja siis number. Sama number uuesti võtab selle jälle välja.",
       "notes": "Vali pliiats, et märkida üles numbrid, mis ruudus veel olla võivad. „Võta tagasi“ võtab tagasi sinu viimase käigu."
     },
     "hint": {
@@ -486,14 +506,22 @@
       }
     },
     "goal": "Igas reas ja igas veerus on iga number täpselt üks kord.",
-    "name": "Suurem ja väiksem"
+    "name": "Suurem ja väiksem",
+    "controls": {
+      "move": "vali ruut",
+      "type": "kirjuta number",
+      "choose": "vali number või kustutuskumm",
+      "place": "kirjuta see",
+      "pencil": "pliiats",
+      "erase": "kustuta"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Peegel murrab valgust kummaltki küljelt. Väikesed märgid selle ümber näitavad, kuidas see veel olla saab: enamik pöörab valgust veerandi võrra, mõned vähem ja saadavad selle viltu.",
       "walls": "Kiviplokk neelab valguse. Mänguvälja serv ka.",
-      "tap": "Puuduta tükki, et seda muuta: peegel pöörab, liugtükk liigub järgmisse kohta. Valge serv tähendab, et seda saad sina liigutada; kõik muu on mõistatuse osa.",
-      "nodes": "Mõni kivi on ühendatud põrandas oleva pesaga ja seda ei saa puudutades liigutada. Saada valgus üle pesa ja kivi libiseb kõrvale."
+      "tap": "Vali tükk, et seda muuta: peegel pöörab, liugtükk liigub järgmisse kohta. Valge serv tähendab, et seda saad sina liigutada; kõik muu on mõistatuse osa.",
+      "nodes": "Mõni kivi on ühendatud põrandas oleva pesaga ja sina seda liigutada ei saa. Saada valgus üle pesa ja kivi libiseb kõrvale."
     },
     "hint": {
       "entryRun": "Alusta sealt, kuhu valgus juba läheb: see jookseb kettast otse, kuni jõuab esimese tükini, mida saad muuta. Nendest ruutudest käib valgus läbi, tegid mida tahes.",
@@ -526,7 +554,7 @@
       "triple": "Kolm ühesugust järjest ei tohi kunagi olla, ei rõhtsalt ega püstiselt.",
       "copies": "Kaks rida ei tohi olla ühesugused, kaks veergu ka mitte.",
       "signs": "Märk kahe ruudu vahel ütleb, kuidas need omavahel on: = tähendab sama, × tähendab erinevat.",
-      "enter": "Puuduta ruutu, et panna sinna päike, puuduta uuesti, et panna kuu, ja veel kord, et see tühjaks teha."
+      "enter": "Vali ruut, et panna sinna päike, uuesti, et panna kuu, ja veel kord, et see tühjaks teha."
     },
     "hint": {
       "mistake": "Üks neist märkidest ei saa õige olla.",
@@ -550,7 +578,11 @@
       }
     },
     "goal": "Igas ruudus on päike või kuu ja igas reas on neid mõlemaid ühepalju.",
-    "name": "Päike ja kuu"
+    "name": "Päike ja kuu",
+    "controls": {
+      "move": "vali ruut",
+      "mark": "muuda märki"
+    }
   },
   "constellation": {
     "rules": {
@@ -558,25 +590,25 @@
         "straight": "Valgusjooned jooksevad otse rõhtsalt või püstiselt, ühelt tähelt järgmisele.",
         "pair": "Kahe tähe vahel võib olla kõige rohkem kaks joont.",
         "cross": "Jooned ei ristu kunagi ega lähe läbi tähe.",
-        "enter": "Lohista tähelt naabri poole, et joon tõmmata, uuesti, et teha topeltjoon, ja veel kord, et see kustutada."
+        "enter": "Tõmba tähelt naabri poole joon, uuesti, et teha topeltjoon, ja veel kord, et see kustutada."
       },
       "causeway": {
         "straight": "Veoteed jooksevad otse rõhtsalt või püstiselt, ühelt ehitusplatsilt järgmisele.",
         "pair": "Kahe ehitusplatsi vahel võib olla kõige rohkem kaks teed.",
         "cross": "Teed ei ristu kunagi ega lähe läbi ehitusplatsi.",
-        "enter": "Lohista platsilt naabri poole, et tee ehitada, uuesti, et teha see topelt, ja veel kord, et see lammutada."
+        "enter": "Ehita platsilt naabri poole tee, uuesti, et teha see topelt, ja veel kord, et see lammutada."
       },
       "irrigation": {
         "straight": "Kanalid jooksevad otse rõhtsalt või püstiselt, ühest basseinist järgmiseni.",
         "pair": "Kahe basseini vahel võib olla kõige rohkem kaks kanalit.",
         "cross": "Kanalid ei ristu kunagi ega lähe läbi basseini.",
-        "enter": "Lohista basseinist naabri poole, et kanal kaevata, uuesti, et seda laiendada, ja veel kord, et see kinni ajada."
+        "enter": "Kaeva basseinist naabri poole kanal, uuesti, et seda laiendada, ja veel kord, et see kinni ajada."
       },
       "ceiling": {
         "straight": "Nöörid jooksevad otse rõhtsalt või püstiselt, ühelt tähelt järgmisele.",
         "pair": "Kahe tähe vahel võib olla kõige rohkem kaks nööri.",
         "cross": "Nöörid ei ristu kunagi ega lähe läbi tähe.",
-        "enter": "Lohista tähelt naabri poole, et nöör panna, uuesti, et teha see topelt, ja veel kord, et see ära võtta."
+        "enter": "Tõmba tähelt naabri poole nöör, uuesti, et teha see topelt, ja veel kord, et see ära võtta."
       }
     },
     "hint": {
@@ -664,37 +696,44 @@
       "causeway": "Veoteed",
       "irrigation": "Veesüsteem",
       "ceiling": "Maalitud lagi"
+    },
+    "controls": {
+      "pick": "vali täht",
+      "grab": "võta see üles",
+      "draw": "tõmba joon sinnapoole",
+      "release": "lase lahti",
+      "alt": "hoia all ja näita suunda: joon, topelt, mitte midagi"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Kaks tähte ei tohi teineteist puudutada — ka nurgad loevad.",
-        "enter": "Puuduta ruutu, et see välja jätta, uuesti, et panna sinna täht, ja veel kord, et see tühjaks teha."
+        "enter": "Vali ruut, et see välja jätta, uuesti, et panna sinna täht, ja veel kord, et see tühjaks teha."
       },
       "fields": {
         "touch": "Kaks talu ei tohi teineteist puudutada — ka nurgad loevad. Nii lähedal peaksid nad ühte kaevu jagama.",
-        "enter": "Puuduta maatükki, et see välja jätta, uuesti, et sinna talu ehitada, ja veel kord, et see tühjaks teha."
+        "enter": "Vali maatükk, et see välja jätta, uuesti, et sinna talu ehitada, ja veel kord, et see tühjaks teha."
       },
       "lamps": {
         "touch": "Kaks õlilampi ei tohi olla kõrvuti — ka nurgad loevad. Nende valgus läheks kattuma ja õli läheks raisku.",
         "walls": "Hallid kiviplokid on põranda osa: nende peale ei saa midagi panna ja need ei ole ruudud.",
-        "enter": "Puuduta põrandakivi, et see välja jätta, uuesti, et panna sinna õlilamp, ja veel kord, et see tühjaks teha."
+        "enter": "Vali põrandakivi, et see välja jätta, uuesti, et panna sinna õlilamp, ja veel kord, et see tühjaks teha."
       },
       "market": {
         "touch": "Kaks letti ei tohi olla kõrvuti — ka nurgad loevad. Konkurendid ei pane kunagi kõrvuti üles.",
         "walls": "Majad on platsi osa: nendesse ei saa letti panna ja need ei ole kohad.",
-        "enter": "Puuduta kohta, et see välja jätta, uuesti, et panna sinna lett, ja veel kord, et see tühjaks teha."
+        "enter": "Vali koht, et see välja jätta, uuesti, et panna sinna lett, ja veel kord, et see tühjaks teha."
       },
       "lotus": {
         "touch": "Kaks lootost ei tohi ujuda kõrvuti — ka nurgad loevad. Iga õis vajab enda ümber vaba vett.",
         "walls": "Kivid ulatuvad tiigist välja: nende peal ei saa midagi ujuda ja need ei ole ruudud.",
-        "enter": "Puuduta veelaiku, et see välja jätta, uuesti, et panna sinna lootos, ja veel kord, et see tühjaks teha."
+        "enter": "Vali veelaik, et see välja jätta, uuesti, et panna sinna lootos, ja veel kord, et see tühjaks teha."
       },
       "cats": {
         "touch": "Kaks kassi ei tohi magada kõrvuti — ka nurgad loevad. Igal kassil on oma päikeselaik.",
         "walls": "Sambad hoiavad templit püsti: nende peal ei saa ükski kass magada ja need ei ole ruudud.",
-        "enter": "Puuduta põrandakivi, et see välja jätta, uuesti, et panna sinna kass, ja veel kord, et see tühjaks teha."
+        "enter": "Vali põrandakivi, et see välja jätta, uuesti, et panna sinna kass, ja veel kord, et see tühjaks teha."
       }
     },
     "hint": {
@@ -800,20 +839,20 @@
         "mistake": "See märge ei saa õige olla.",
         "touch": "Siin on {{token}}, ja kaks õlilampi ei tohi olla kõrvuti — ka nurgad loevad.",
         "groupFull.row_one": "Selles reas on õlilamp juba olemas.",
-        "groupFull.col_one": "Selles veerus on õlilamp juba olemas.",
         "groupFull.row_other": "Selles reas on juba kõik {{count}} õlilampi olemas.",
+        "groupFull.col_one": "Selles veerus on õlilamp juba olemas.",
         "groupFull.col_other": "Selles veerus on juba kõik {{count}} õlilampi olemas.",
         "groupTight.row_one": "Selles reas on järel ainult üks põrandakivi.",
         "groupTight.row_other": "Selles reas on järel ainult {{count}} põrandakivi.",
         "groupTight.col_one": "Selles veerus on järel ainult üks põrandakivi.",
         "groupTight.col_other": "Selles veerus on järel ainult {{count}} põrandakivi.",
         "onlyWay.row_one": "Kiviplokkide vahel on selles reas õlilambi jaoks järel ainult üks ruut.",
-        "onlyWay.col_one": "Kiviplokkide vahel on selles veerus õlilambi jaoks järel ainult üks ruut.",
         "onlyWay.row_other": "{{count}} õlilampi mahub sellesse ritta ainult ühel viisil.",
+        "onlyWay.col_one": "Kiviplokkide vahel on selles veerus õlilambi jaoks järel ainult üks ruut.",
         "onlyWay.col_other": "{{count}} õlilampi mahub sellesse veergu ainult ühel viisil.",
         "everyWay.row_one": "Kuhu iganes selle rea õlilamp läheb, see on alati siin.",
-        "everyWay.col_one": "Kuhu iganes selle veeru õlilamp läheb, see on alati siin.",
         "everyWay.row_other": "Kuhu iganes selle rea {{count}} õlilampi lähevad, üks on alati siin.",
+        "everyWay.col_one": "Kuhu iganes selle veeru õlilamp läheb, see on alati siin.",
         "everyWay.col_other": "Kuhu iganes selle veeru {{count}} õlilampi lähevad, üks on alati siin.",
         "lineBlock.rowsToCols": "Märgitud read hoiavad oma õlilampe nende veergude ruutudes, nii et neis veergudes pole ühtegi üle.",
         "lineBlock.colsToRows": "Märgitud veerud hoiavad oma õlilampe nende ridade ruutudes, nii et neis ridades pole ühtegi üle.",
@@ -830,20 +869,20 @@
         "mistake": "See märge ei saa õige olla.",
         "touch": "Siin on {{token}}, ja kaks letti ei tohi olla kõrvuti — ka nurgad loevad.",
         "groupFull.row_one": "Selles reas on lett juba olemas.",
-        "groupFull.col_one": "Selles veerus on lett juba olemas.",
         "groupFull.row_other": "Selles reas on juba kõik {{count}} letti olemas.",
+        "groupFull.col_one": "Selles veerus on lett juba olemas.",
         "groupFull.col_other": "Selles veerus on juba kõik {{count}} letti olemas.",
         "groupTight.row_one": "Selles reas on järel ainult üks koht.",
         "groupTight.row_other": "Selles reas on järel ainult {{count}} kohta.",
         "groupTight.col_one": "Selles veerus on järel ainult üks koht.",
         "groupTight.col_other": "Selles veerus on järel ainult {{count}} kohta.",
         "onlyWay.row_one": "Majade vahel on selles reas leti jaoks järel ainult üks ruut.",
-        "onlyWay.col_one": "Majade vahel on selles veerus leti jaoks järel ainult üks ruut.",
         "onlyWay.row_other": "{{count}} letti mahub sellesse ritta ainult ühel viisil.",
+        "onlyWay.col_one": "Majade vahel on selles veerus leti jaoks järel ainult üks ruut.",
         "onlyWay.col_other": "{{count}} letti mahub sellesse veergu ainult ühel viisil.",
         "everyWay.row_one": "Kuhu iganes selle rea lett läheb, see on alati siin.",
-        "everyWay.col_one": "Kuhu iganes selle veeru lett läheb, see on alati siin.",
         "everyWay.row_other": "Kuhu iganes selle rea {{count}} letti lähevad, üks on alati siin.",
+        "everyWay.col_one": "Kuhu iganes selle veeru lett läheb, see on alati siin.",
         "everyWay.col_other": "Kuhu iganes selle veeru {{count}} letti lähevad, üks on alati siin.",
         "lineBlock.rowsToCols": "Märgitud read hoiavad oma lette nende veergude ruutudes, nii et neis veergudes pole ühtegi üle.",
         "lineBlock.colsToRows": "Märgitud veerud hoiavad oma lette nende ridade ruutudes, nii et neis ridades pole ühtegi üle.",
@@ -860,20 +899,20 @@
         "mistake": "See märge ei saa õige olla.",
         "touch": "Siin on {{token}}, ja kaks lootost ei tohi ujuda kõrvuti — ka nurgad loevad.",
         "groupFull.row_one": "Selles reas on lootos juba olemas.",
-        "groupFull.col_one": "Selles veerus on lootos juba olemas.",
         "groupFull.row_other": "Selles reas on juba kõik {{count}} lootost olemas.",
+        "groupFull.col_one": "Selles veerus on lootos juba olemas.",
         "groupFull.col_other": "Selles veerus on juba kõik {{count}} lootost olemas.",
         "groupTight.row_one": "Selles reas on järel ainult üks veelaik.",
         "groupTight.row_other": "Selles reas on järel ainult {{count}} veelaiku.",
         "groupTight.col_one": "Selles veerus on järel ainult üks veelaik.",
         "groupTight.col_other": "Selles veerus on järel ainult {{count}} veelaiku.",
         "onlyWay.row_one": "Kivide vahel on selles reas lootose jaoks järel ainult üks ruut.",
-        "onlyWay.col_one": "Kivide vahel on selles veerus lootose jaoks järel ainult üks ruut.",
         "onlyWay.row_other": "{{count}} lootost mahub sellesse ritta ainult ühel viisil.",
+        "onlyWay.col_one": "Kivide vahel on selles veerus lootose jaoks järel ainult üks ruut.",
         "onlyWay.col_other": "{{count}} lootost mahub sellesse veergu ainult ühel viisil.",
         "everyWay.row_one": "Kuhu iganes selle rea lootos läheb, see on alati siin.",
-        "everyWay.col_one": "Kuhu iganes selle veeru lootos läheb, see on alati siin.",
         "everyWay.row_other": "Kuhu iganes selle rea {{count}} lootost lähevad, üks on alati siin.",
+        "everyWay.col_one": "Kuhu iganes selle veeru lootos läheb, see on alati siin.",
         "everyWay.col_other": "Kuhu iganes selle veeru {{count}} lootost lähevad, üks on alati siin.",
         "lineBlock.rowsToCols": "Märgitud read hoiavad oma lootoseid nende veergude ruutudes, nii et neis veergudes pole ühtegi üle.",
         "lineBlock.colsToRows": "Märgitud veerud hoiavad oma lootoseid nende ridade ruutudes, nii et neis ridades pole ühtegi üle.",
@@ -890,20 +929,20 @@
         "mistake": "See märge ei saa õige olla.",
         "touch": "Siin on {{token}}, ja kaks kassi ei tohi magada kõrvuti — ka nurgad loevad.",
         "groupFull.row_one": "Selles reas on kass juba olemas.",
-        "groupFull.col_one": "Selles veerus on kass juba olemas.",
         "groupFull.row_other": "Selles reas on juba kõik {{count}} kassi olemas.",
+        "groupFull.col_one": "Selles veerus on kass juba olemas.",
         "groupFull.col_other": "Selles veerus on juba kõik {{count}} kassi olemas.",
         "groupTight.row_one": "Selles reas on järel ainult üks põrandakivi.",
         "groupTight.row_other": "Selles reas on järel ainult {{count}} põrandakivi.",
         "groupTight.col_one": "Selles veerus on järel ainult üks põrandakivi.",
         "groupTight.col_other": "Selles veerus on järel ainult {{count}} põrandakivi.",
         "onlyWay.row_one": "Sammaste vahel on selles reas kassi jaoks järel ainult üks ruut.",
-        "onlyWay.col_one": "Sammaste vahel on selles veerus kassi jaoks järel ainult üks ruut.",
         "onlyWay.row_other": "{{count}} kassi mahub sellesse ritta ainult ühel viisil.",
+        "onlyWay.col_one": "Sammaste vahel on selles veerus kassi jaoks järel ainult üks ruut.",
         "onlyWay.col_other": "{{count}} kassi mahub sellesse veergu ainult ühel viisil.",
         "everyWay.row_one": "Kuhu iganes selle rea kass läheb, see on alati siin.",
-        "everyWay.col_one": "Kuhu iganes selle veeru kass läheb, see on alati siin.",
         "everyWay.row_other": "Kuhu iganes selle rea {{count}} kassi lähevad, üks on alati siin.",
+        "everyWay.col_one": "Kuhu iganes selle veeru kass läheb, see on alati siin.",
         "everyWay.col_other": "Kuhu iganes selle veeru {{count}} kassi lähevad, üks on alati siin.",
         "lineBlock.rowsToCols": "Märgitud read hoiavad oma kasse nende veergude ruutudes, nii et neis veergudes pole ühtegi üle.",
         "lineBlock.colsToRows": "Märgitud veerud hoiavad oma kasse nende ridade ruutudes, nii et neis ridades pole ühtegi üle.",
@@ -944,6 +983,11 @@
       "market": "Turuletid",
       "lotus": "Lootosetiik",
       "cats": "Templikassid"
+    },
+    "controls": {
+      "move": "vali ruut",
+      "mark": "muuda märki",
+      "sweep": "hoia all ja liigu: jäta rida välja"
     }
   },
   "pairPuzzle": {
@@ -960,13 +1004,13 @@
         "pair": "Iga sarkofaagi kohal, all, vasakul või paremal puhkab üks muumia ja iga muumia puhkab oma sarkofaagi kõrval.",
         "count": "Number rea või veeru kõrval ütleb, mitu muumiat seal on. See muutub roheliseks, kui reas on täpselt nii palju, ja punaseks, kui see ei saa enam täituda.",
         "touch": "Kaks muumiat ei tohi olla kõrvuti — ka nurgad loevad.",
-        "enter": "Puuduta ruutu, et see välja jätta, uuesti, et panna sinna muumia, ja veel kord, et see tühjaks teha. Lohista üle ruutude, et jätta välja terve rida. Sarkofaage ei saa puudutada."
+        "enter": "Vali ruut, et see välja jätta, uuesti, et panna sinna muumia, ja veel kord, et see tühjaks teha. Jäta ühe liigutusega välja terve rida ruute. Sarkofaage ei saa märkida."
       },
       "beetles": {
         "pair": "Iga sõnnikupalli kohal, all, vasakul või paremal on üks mardikas ja iga mardikas seisab oma palli kõrval, mida veeretada.",
         "count": "Number rea või veeru kõrval ütleb, mitu mardikat seal on. See muutub roheliseks, kui reas on täpselt nii palju, ja punaseks, kui see ei saa enam täituda.",
         "touch": "Kaks mardikat ei tohi olla kõrvuti — ka nurgad loevad.",
-        "enter": "Puuduta ruutu, et see välja jätta, uuesti, et panna sinna mardikas, ja veel kord, et see tühjaks teha. Lohista üle ruutude, et jätta välja terve rida. Sõnnikupalle ei saa puudutada."
+        "enter": "Vali ruut, et see välja jätta, uuesti, et panna sinna mardikas, ja veel kord, et see tühjaks teha. Jäta ühe liigutusega välja terve rida ruute. Sõnnikupalle ei saa märkida."
       }
     },
     "hint": {
@@ -1030,6 +1074,11 @@
           "place_other": "Pane igasse viirutatud ruutu mardikas."
         }
       }
+    },
+    "controls": {
+      "move": "vali ruut",
+      "mark": "muuda märki",
+      "sweep": "hoia all ja liigu: jäta rida välja"
     }
   },
   "rushHour": {
@@ -1044,11 +1093,11 @@
     "rules": {
       "default": {
         "lanes": "Kivi libiseb ainult mööda oma rada — mitte kunagi külgsuunas ega väljalt välja.",
-        "shove": "Lohista kivi, et seda lükata. See peatub seal, kus midagi ees on."
+        "shove": "Lükka kivi mööda selle rada. See peatub seal, kus midagi ees on."
       },
       "market": {
         "lanes": "Regi libiseb ainult mööda rada, millel ta seisab — mitte kunagi külgsuunas ega tänavalt välja.",
-        "shove": "Lohista regi, et seda lükata. See peatub seal, kus midagi ees on."
+        "shove": "Lükka regi mööda selle rada. See peatub seal, kus midagi ees on."
       }
     },
     "hint": {
@@ -1076,29 +1125,35 @@
           "down": "Lükka see mööda tänavat alla, kuni rõngani."
         }
       }
+    },
+    "controls": {
+      "pick": "vali kivi",
+      "grab": "võta see",
+      "slide": "libista",
+      "release": "lase lahti"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "Numbrid, mis on juba kärjes, on mõistatuse osa — need jäävad paigale.",
-        "enter": "Puuduta numbrit, et rida sealt edasi võtta, ja siis puuduta kõrvalolevat tühja kärge, et sellega jätkata — või lohista otse läbi kärgede, kust rida läheb.",
-        "back": "Puuduta numbrit, mille sa panid, ja puuduta seda uuesti, et see ära võtta koos kõigega, mis selle küljes ripub. Kui viid rea numbrist teist teed mööda edasi, juhtub sama. „Võta tagasi“ võtab tagasi sinu viimase käigu."
+        "enter": "Tõmba numbrist joon läbi kõrvalolevate tühjade kärgede, et rida edasi viia.",
+        "back": "Vali number, mille sa panid, ja vali see uuesti, et see ära võtta koos kõigega, mis selle küljes ripub. Kui viid rea numbrist teist teed mööda edasi, juhtub sama. „Võta tagasi“ võtab tagasi sinu viimase käigu."
       },
       "channel": {
         "given": "Väljad, millel on juba number, on mõistatuse osa — need jäävad paigale.",
-        "enter": "Puuduta numbriga välja, et vesi sealt edasi võtta, ja siis puuduta kõrvalolevat kuiva välja, et edasi kaevata — või lohista otse mööda välju, kust kanal läheb.",
-        "back": "Puuduta välja, mille sa kaevasid, ja puuduta seda uuesti, et see kinni ajada koos iga kanaliga, mis sellest ära lõigatakse. Kui kaevad väljalt teist teed edasi, juhtub sama. „Võta tagasi“ võtab tagasi sinu viimase käigu."
+        "enter": "Kaeva numbriga väljalt kanal läbi kõrvalolevate kuivade väljade, et vett edasi viia.",
+        "back": "Vali väli, mille sa kaevasid, ja vali see uuesti, et see kinni ajada koos iga kanaliga, mis sellest ära lõigatakse. Kui kaevad väljalt teist teed edasi, juhtub sama. „Võta tagasi“ võtab tagasi sinu viimase käigu."
       },
       "scribe": {
         "given": "Punase tindiga kirjutatud numbrid kuuluvad mõistatusele — need jäävad paigale.",
-        "enter": "Puuduta numbrit, et võtta sealt pilliroost sulg, ja siis puuduta kõrvalolevat tühja kohta, et edasi kirjutada — või lohista otse mööda rida.",
-        "back": "Puuduta numbrit, mille sa kirjutasid, ja puuduta seda uuesti, et see maha kraapida koos iga reaga, mis sellest ära lõigatakse. Kui kirjutad numbrist teist teed edasi, juhtub sama. „Võta tagasi“ võtab tagasi sinu viimase käigu."
+        "enter": "Kirjuta numbrist rida läbi kõrvalolevate tühjade kohtade, et loendamist jätkata.",
+        "back": "Vali number, mille sa kirjutasid, ja vali see uuesti, et see maha kraapida koos iga reaga, mis sellest ära lõigatakse. Kui kirjutad numbrist teist teed edasi, juhtub sama. „Võta tagasi“ võtab tagasi sinu viimase käigu."
       },
       "chambers": {
         "given": "Kambrid, millel on juba number, raiusid ehitajad — need jäävad paigale.",
-        "enter": "Puuduta numbriga kambrit, et käik sealt edasi võtta, ja siis puuduta kõrvalolevat suletud kambrit, et läbi murda — või lohista otse mööda kambreid, kust käik läheb.",
-        "back": "Puuduta kambrit, mille sa avasid, ja puuduta seda uuesti, et see kinni müürida koos iga käiguga, mis sellest ära lõigatakse. Kui murrad kambrist teist teed edasi, juhtub sama. „Võta tagasi“ võtab tagasi sinu viimase käigu."
+        "enter": "Murra numbriga kambrist käik läbi kõrvalolevate suletud kambrite, et seda edasi viia.",
+        "back": "Vali kamber, mille sa avasid, ja vali see uuesti, et see kinni müürida koos iga käiguga, mis sellest ära lõigatakse. Kui murrad kambrist teist teed edasi, juhtub sama. „Võta tagasi“ võtab tagasi sinu viimase käigu."
       }
     },
     "goal": {
@@ -1162,6 +1217,13 @@
       "channel": "Kanal",
       "scribe": "Kirjutaja leht",
       "chambers": "Suletud kambrid"
+    },
+    "controls": {
+      "move": "mine kõrvalolevasse kärge; üles ja alla viivad viltu vasakule",
+      "right": "viltu paremale üles või alla",
+      "grab": "võta rida üles või võta oma number ära",
+      "carry": "kui rida on käes: vii seda edasi; üles ja alla valivad poole, kuhu rida edasi saab",
+      "drop": "pane rida maha"
     }
   },
   "sudoku": {
@@ -1169,13 +1231,13 @@
       "default": {
         "chambers": "Paksud jooned jagavad ruudustiku kuueks kambriks, igaüks kaks ruutu lai ja kolm kõrge.",
         "given": "Numbrid, mis on juba sisse raiutud, on mõistatuse osa — need jäävad paigale.",
-        "enter": "Puuduta ruutu ja siis numbrit. Sama number uuesti võtab selle jälle välja.",
+        "enter": "Vali ruut ja siis number. Sama number uuesti võtab selle jälle välja.",
         "notes": "Vali pliiats, et märkida üles numbrid, mis ruudus veel olla võivad. „Võta tagasi“ võtab tagasi sinu viimase käigu."
       },
       "papyrus": {
         "chambers": "Paksud jooned jagavad lehe kuueks väljaks, igaüks kaks kohta lai ja kolm kõrge.",
         "given": "Punase tindiga kirjutatud märgid kuuluvad mõistatusele — need jäävad paigale.",
-        "enter": "Puuduta kohta ja siis märki. Sama märk uuesti kraabib selle maha.",
+        "enter": "Vali koht ja siis märk. Sama märk uuesti kraabib selle maha.",
         "notes": "Võta pilliroost sulg, et kirjutada kergelt üles märgid, mis kohas veel olla võivad. „Võta tagasi“ võtab tagasi sinu viimase käigu."
       }
     },
@@ -1242,6 +1304,14 @@
     "name": {
       "default": "Kuus kambrit",
       "papyrus": "Kirjutaja register"
+    },
+    "controls": {
+      "move": "vali ruut",
+      "type": "kirjuta number",
+      "choose": "vali number või kustutuskumm",
+      "place": "kirjuta see",
+      "pencil": "pliiats",
+      "erase": "kustuta"
     }
   },
   "crocodile": {
@@ -1255,6 +1325,10 @@
     "hint": {
       "biggest": "See krokodill tahab kõige suuremat vastust. See on {{value}}.",
       "smallest": "See krokodill tahab kõige väiksemat vastust. See on {{value}}."
+    },
+    "controls": {
+      "move": "vali kivi",
+      "step": "astu sellele"
     }
   },
   "canisters": {
@@ -1285,35 +1359,35 @@
         "sums": "Iga kogus, mida saad teha, on kaks pingil olevat numbrit kokku liidetuna või üksteisest lahutatuna: anuma suurus, see, mis selles on, või see, kui palju ruumi on veel järel.",
         "backwards": "Nii et mõtle küsitud kogusest tagasi — millised kaks numbrit selle annavad ja kuidas saada need kaks korraga olemas?"
       },
-      "claim": "Kui kogus on olemas, puuduta „see siin“. Vale anuma nimetamine maksab ühe käigu.",
+      "claim": "Kui kogus on olemas, vali „see siin“. Vale anuma nimetamine maksab ühe käigu.",
       "legs": "Siis tuleb järgmine kogus, mõõdetud sellest, mis anumatesse järele jäi.",
       "default": {
-        "moves": "Puuduta anumat, et see üles võtta, ja siis puuduta teist, et sinna valada. Valamine lõpeb, kui esimene saab tühjaks või teine täis.",
+        "moves": "Võta anum üles ja vali siis teine, et sinna valada. Valamine lõpeb, kui esimene saab tühjaks või teine täis.",
         "contents": "See on kogu vesi, mis on — üks anum on alguses täis ja midagi ei saa ära visata ega juurde tuua.",
         "levels": "Iga anum näitab, kui palju selles on ja kui palju sinna täis olles mahub."
       },
       "grain": {
-        "moves": "Puuduta mõõtu, et see üles tõsta, ja siis puuduta teist, et vili sinna kallata. Kallamine lõpeb, kui esimene on tühi või teine on ääreni täis.",
+        "moves": "Tõsta mõõt üles ja vali siis teine, et vili sinna kallata. Kallamine lõpeb, kui esimene on tühi või teine on ääreni täis.",
         "contents": "See on kogu vili, mis on — üks mõõt on alguses täis ja midagi ei saa ära pühkida ega aidast juurde tuua.",
         "levels": "Iga mõõt näitab, kui palju selles on ja kui palju sinna ääreni täis olles mahub."
       },
       "oil": {
-        "moves": "Puuduta kannu, et see üles tõsta, ja siis puuduta teist, et sinna valada. Valamine lõpeb, kui esimene saab tühjaks või teine täis.",
+        "moves": "Tõsta kann üles ja vali siis teine, et sinna valada. Valamine lõpeb, kui esimene saab tühjaks või teine täis.",
         "contents": "See on kogu õli, mis on — üks kann on alguses täis ja midagi ei saa ära valada ega juurde võtta.",
         "levels": "Iga kann näitab, kui palju selles on ja kui palju sinna täis olles mahub."
       },
       "wine": {
-        "moves": "Puuduta amforat, et see üles tõsta, ja siis puuduta teist, et sinna valada. Valamine lõpeb, kui esimene saab tühjaks või teine täis.",
+        "moves": "Tõsta amfora üles ja vali siis teine, et sinna valada. Valamine lõpeb, kui esimene saab tühjaks või teine täis.",
         "contents": "See on kogu vein, mis on — üks amfora on alguses täis ja midagi ei saa maha loksutada ega keldrist juurde tuua.",
         "levels": "Iga amfora näitab, kui palju selles on ja kui palju sinna täis olles mahub."
       },
       "natron": {
-        "moves": "Puuduta kannu, et see üles tõsta, ja siis puuduta teist, et natron sinna kallata. Kallamine lõpeb, kui esimene on tühi või teine on kaaneni täis.",
+        "moves": "Tõsta kann üles ja vali siis teine, et natron sinna kallata. Kallamine lõpeb, kui esimene on tühi või teine on kaaneni täis.",
         "contents": "See on kogu natron, mis on — üks kann on alguses täis ja midagi ei saa ära pühkida ega juurde tuua.",
         "levels": "Iga kann näitab, kui palju selles on ja kui palju sinna kaaneni täis olles mahub."
       },
       "ink": {
-        "moves": "Puuduta potti, et see üles tõsta, ja siis puuduta teist, et sinna valada. Valamine lõpeb, kui esimene saab tühjaks või teine täis.",
+        "moves": "Tõsta pott üles ja vali siis teine, et sinna valada. Valamine lõpeb, kui esimene saab tühjaks või teine täis.",
         "contents": "See on kogu tint, mis on — üks pott on alguses täis ja midagi ei saa välja kallata ega uut juurde hõõruda.",
         "levels": "Iga pott näitab, kui palju selles on ja kui palju sinna täis olles mahub."
       }
@@ -1338,7 +1412,12 @@
     "legs": "mõõdetud {{done}} / {{total}}",
     "wanted": "Mõõda välja",
     "claim": "see siin",
-    "claimAria": "Ütle, et kogus on anumas {{capacity}}"
+    "claimAria": "Ütle, et kogus on anumas {{capacity}}",
+    "controls": {
+      "move": "vali anum või selle all olev „see siin“",
+      "press": "võta üles, vala siia või ütle „see siin“",
+      "putDown": "pane käes olev anum tagasi maha"
+    }
   },
   "procession": {
     "name": {
@@ -1358,8 +1437,8 @@
     "rules": {
       "default": {
         "lengths": "Iga rida on üks sündmus ja see kestab nii kaua, kui lai on selle riba. Millal see juhtub, selle pead sina välja nuputama.",
-        "marks": "Rida päeva all on punane, kuni see ei pea paika. Puuduta seda, et näha, millistest ridadest see räägib.",
-        "drag": "Lohista riba mööda oma rida. See ei lähe kunagi päevast välja."
+        "marks": "Rida päeva all on punane, kuni see ei pea paika. Vali see, et näha, millistest ridadest see räägib.",
+        "drag": "Libista riba mööda oma rida. See ei lähe kunagi päevast välja."
       }
     },
     "hint": {
@@ -1368,7 +1447,7 @@
         "squeeze": "Päeva on järel ainult nii palju ja see on kõik, mis ära mahub.",
         "apart": "Teistpidi ei mahu see päeva sisse.",
         "split": "Proovi teistpidi ja siis läheb midagi muud katki.",
-        "move": "Lohista ringiga riba viirutatud kriipsudele."
+        "move": "Libista ringiga riba viirutatud kriipsudele."
       }
     },
     "events": {
@@ -1396,6 +1475,11 @@
       "hint": "Iga plaat, millele astud, vabastab oma töö. Pane päev järjekorda ja kõnni siis plaatidel selles järjekorras.",
       "read": "Päev on loetud. Kõnni selle plaatidel selles järjekorras, esimesest alates.",
       "hintButton": "Vihje"
+    },
+    "controls": {
+      "row": "vali rida",
+      "slide": "libista selle riba",
+      "mark": "vali rida päeva all"
     }
   },
   "story": {
@@ -1418,6 +1502,13 @@
       "pick": "Pane õige märk selle asemele.",
       "cannot": "Sa ei tunne märki, mis siia kuulub. Veel mitte."
     },
+    "formula": {
+      "wrong": "Sellest reast on üks märk puudu. Mitte valesti raiutud — üldse raiumata.",
+      "fixed": "Rida on terve.",
+      "pick": "Pane märk, mille sa said, tühja kohta.",
+      "cannot": "Keegi pole sulle selle koha märki andnud. Veel mitte.",
+      "gap": "Puuduv märk"
+    },
     "sphinx": {
       "wrong": "Sama kiri mis väljas, aga liiv pole siia kunagi jõudnud. Kaks märki on veel selgelt raiutud ja kolmanda kohal on tühi koht.",
       "fixed": "See ongi kõik.",
@@ -1434,7 +1525,7 @@
       "shrines": "Üks valgusketas ja iga väljapääsu kohal sellelt ristmikult on pühamu. Põrandal olevad peeglid saavad valguse viia ükskõik millise juurde.",
       "doors": "Väljapääs, kuhu valgus jõuab, on lahti, ja teised on kinni. Üks tee valgusele, üks tee edasi.",
       "returning": "Valides ei kaota sa midagi. Tule tagasi, millal tahad, ja saada valgus hoopis teist teed — see tee avaneb ja see siin sulgub.",
-      "tap": "Puuduta peeglit, et seda pöörata. Kui puudutad uuesti, läheb see tagasi."
+      "tap": "Vali peegel, et seda pöörata. Vali see uuesti, et see tagasi panna."
     },
     "doorOpen": "{{way}} väljapääs: lahti",
     "doorShut": "{{way}} väljapääs: kinni",
@@ -1443,6 +1534,10 @@
       "e": "Idapoolne",
       "s": "Lõunapoolne",
       "w": "Läänepoolne"
+    },
+    "controls": {
+      "move": "vali peegel",
+      "turn": "pööra seda"
     }
   },
   "handle": {
@@ -1692,5 +1787,33 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Joonistamine kirjutab teksti ümber: iga kommentaar liigub üles"
+  },
+  "saveCard": {
+    "title": "Reisikaart",
+    "explain": "Vii oma retk teise seadmesse: tee kaart siin ja loe see seal 15 minuti jooksul sisse.",
+    "make": "Tee reisikaart",
+    "share": "Jaga kaarti",
+    "download": "Laadi kaart alla",
+    "read": "Loe reisikaart sisse",
+    "busy": "Üks hetk…",
+    "makeFailed": "Kaarti ei õnnestunud teha.",
+    "shareFailed": "Jagamine ei õnnestunud; laadi kaart hoopis alla.",
+    "confirm_one": "Kas asendada selle seadme retk kaardil olevaga ({{count}} retk)?",
+    "confirm_other": "Kas asendada selle seadme retk kaardil olevaga ({{count}} retke)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Reisikaart · võta oma retk kaasa",
+    "validUntil": "kehtib kuni {{time}}",
+    "codes_one": "{{count}} kood",
+    "codes_other": "{{count}} koodi",
+    "refused": {
+      "notACard": "See ei ole reisikaart.",
+      "tampered": "Seda kaarti on muudetud ja seda ei saa enam lugeda.",
+      "expired": "See kaart on aegunud; tee uus.",
+      "future": "See kaart tuleb tulevikust: kontrolli mõlema seadme kella.",
+      "otherEpoch": "See kaart on mängu teisest versioonist.",
+      "newerGame": "See kaart on uuemast versioonist: uuenda kõigepealt mängu."
+    },
+    "writeFailed": "Salvestust ei õnnestunud kirjutada; see seade jättis alles oma salvestuse.",
+    "writeLost": "Salvestust ei õnnestunud asendada ja selle seadme salvestus võib olla puudulik."
   }
 }

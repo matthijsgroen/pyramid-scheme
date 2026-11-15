@@ -239,6 +239,21 @@
       "description": "Keninklike kroan mei de beskermjende kobra, droegen troch farao's as godlike beskerming."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Bôle",
+      "description": "It hege brea, it teken foar bôle. Jûn troch Ipi, dy't fjirtich jier nôt telde en it ien kear weijoech."
+    },
+    "o2": {
+      "name": "Linnen"
+    },
+    "o3": {
+      "name": "Wetter"
+    },
+    "o4": {
+      "name": "Boat"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Reidblêd",

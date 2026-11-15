@@ -28,7 +28,7 @@
   "tombTutorial3": "De små regnestykker viser dig, når et tegn sidder rigtigt. Sådan finder vi ud af, hvilket tegn der hører hvor.",
   "tombTutorial4": "Er alt fyldt ud? Så kommer der en kodelås. Det store regnestykke er koden — og så går graven op!",
   "hieroglyphUnlock": "Vi har en særlig genstand — med den kan vi skrive på en af de lukkede blokke!",
-  "hieroglyphUnlock2": "Tryk på en sten, der glimter, og træk genstanden hen på den for at låse den op. Én blok pr. pyramide.",
+  "hieroglyphUnlock2": "Vælg en sten, der glimter, og bring genstanden hen til den for at låse den op. Én blok pr. pyramide.",
   "errorHighlightTutorial": "Den skat, vi fandt, har et smart trick — skriver du et forkert svar, lyser én fejl op i rødt!",
   "errorHighlightTutorial2": "Der lyser kun én blok ad gangen, så det er stadig svært. Men det hjælper dig med at finde fejlen!",
   "earlyFeedbackTutorial": "Kan du se de kontrolblokke? De bliver grønne eller røde, mens du fylder dem ud — med det samme!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Se, hvad der står i boden! Nu sælger jeg også transport."
+      },
+      "2": {
+        "explorer": "Jeg kan kun se en tegning."
+      },
+      "3": {
+        "fez": "Originalen spiser mere."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "Anden linje. Vand til de tørstige."
+        "explorer": "Anden linje. _Tøj til de nøgne._"
       },
       "2": {
-        "fez": "Brød, og nu vand. Nogen ville meget gerne huskes som gavmild."
+        "fez": "Brød, og nu tøj. Nogen ville meget gerne huskes som gavmild."
       },
       "3": {
         "explorer": "Alle har det. Hver mur, hver grav, de samme to linjer."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Tøj til de nøgne. Tredje linje."
+        "explorer": "_Vand til de tørstige._ Tredje linje."
       },
       "2": {
-        "fez": "Brød, vand, tøj. Det er en liste over ting, der er givet væk."
+        "fez": "Brød, tøj, vand. Det er en liste over ting, der er givet væk."
       },
       "3": {
         "explorer": "I graven til en mand, der tog alt med sig."
@@ -1599,8 +1605,42 @@
       "explorer": "Det kan gå an."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Der mangler noget til de sultne. Brød, vil jeg tro. Og jeg kender en mand, der har talt hver eneste kornsæk i fyrre år."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, vi skal bruge brød. Til en mur."
+        },
+        "2": {
+          "ipi": "Brød? Mit? Ved du, hvad korn koster?"
+        },
+        "3": {
+          "fez": "Det er til en linje om at give ting væk."
+        },
+        "4": {
+          "ipi": "…Give. Væk."
+        },
+        "5": {
+          "ipi": "Fint. Ét brød. Men det bliver skrevet ned: _Ipi gav brød._"
+        },
+        "6": {
+          "fez": "Han gav noget væk! Så du det?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Det brød — har nogen spist det endnu? For ellers vil jeg gerne have det tilbage."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Stadig her? Nordpå! Henut! Elleve deben!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "Muren. Det tredje tegn. Det er stadig ikke mit navn."
+          "henut": "Muren. Det andet tegn. Det er stadig ikke mit navn."
         }
       },
       "wall2": {

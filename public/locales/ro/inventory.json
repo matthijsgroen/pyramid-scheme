@@ -239,6 +239,21 @@
       "description": "Coroana regală cu cobra ocrotitoare, purtată de faraoni ca apărare divină."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Pâine",
+      "description": "Pâinea înaltă, semnul pentru pâine. Dată de Ipi, care a numărat grâne patruzeci de ani și a dat ceva o singură dată."
+    },
+    "o2": {
+      "name": "In"
+    },
+    "o3": {
+      "name": "Apă"
+    },
+    "o4": {
+      "name": "Barcă"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Frunză de trestie",

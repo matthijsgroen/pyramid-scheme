@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Ní féidir do dhul chun cinn a lódáil",
     "body": "Ní thabharfaidh an brabhsálaí do chluiche sábháilte dúinn faoi láthair. Níl do shábháil caillte: athlódáil an leathanach le triail eile a bhaint as.",
-    "banner": "Níl do dhul chun cinn á shábháil. Tapáil le hathlódáil.",
+    "banner": "Níl do dhul chun cinn á shábháil. Athlódáil.",
     "reload": "Athlódáil",
     "continue": "Lean ort gan sábháil",
     "reset": "Tosaigh as an nua (scrios an tsábháil)",
@@ -29,7 +29,6 @@
     "evening": "Tráthnóna",
     "night": "Oíche"
   },
-  "tomb": {},
   "ui": {
     "level": "Leibhéal",
     "symbols": "siombailí",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Stop an turas",
     "confirmInterruptExpedition": "An bhfuil tú cinnte gur mian leat an turas seo a stopadh? Coinneofar do dhul chun cinn ar an turas, ach caillfear do dhul chun cinn sa leibhéal!",
     "cancel": "Cealaigh",
+    "leaveSite": "An áit seo a fhágáil?",
+    "confirmLeaveSite": "Brúigh Fág le siúl amach arís, nó Fan le leanúint ort ag fiosrú.",
+    "leave": "Fág",
+    "stay": "Fan",
     "settings": "Socruithe",
     "language": "Teanga",
     "close": "Dún",
@@ -109,8 +112,12 @@
     "solvedWithHints_few": "Réitithe le {{count}} leid",
     "solvedWithHints_many": "Réitithe le {{count}} leid",
     "solvedWithHints_other": "Réitithe le {{count}} leid",
-    "tapToContinue": "Tapáil le leanúint ort",
-    "goal": "Sprioc"
+    "tapToContinue": "Lean ort",
+    "goal": "Sprioc",
+    "controls": "Rialuithe",
+    "controlsUndo": "cealaigh",
+    "controlsHint": "leid",
+    "controlsLeave": "ar ais go dtí an léarscáil"
   },
   "trap": {
     "warning": "⚠ Pasáiste le Gaiste",
@@ -129,6 +136,7 @@
     "turnAround": "Cas timpeall",
     "wardDescription": {
       "starter": "Tá séala ceannaí ag dúnadh an phasáiste seo — ní osclóidh ach a eochair chosanta é.",
+      "junior": "Tá suaitheantas mná uaisle ag cur glais ar an mbealach seo — ní ardóidh aon ní é ach a heochair chosanta.",
       "expert": "Tá cosaint teampaill ard-sagairt ar an doras seo — caithfidh a eochair naofa é a oscailt.",
       "master": "Tá séala ríoga faró ag ceangal an phasáiste seo — ní bhrisfidh ach eochair an rí é.",
       "wizard": "Tá cosaint na ndéithe ar an ngeata seo — ní rachaidh aon rud thairis ach a eochair dhiaga."
@@ -137,7 +145,7 @@
     "lockedColor": "Níor aimsigh tú an eochair sin ar an urlár seo fós."
   },
   "chest": {
-    "tapToOpen": "Tapáil lena oscailt",
+    "tapToOpen": "Oscail",
     "money_one": "{{count}} bhonn",
     "money_two": "{{count}} bhonn",
     "money_few": "{{count}} bhonn",
@@ -147,6 +155,7 @@
     "mapPieceDescription": "Blúire briosc de léarscáil go háit éigin a bhfuil dearmad déanta uirthi le fada. Is mór an trua nach bhfuil sí in aice le bheith iomlán...",
     "mapPieceProgress": "{{found}} as {{required}} píosa léarscáile bailithe",
     "mapPieceComplete": "Tá an léarscáil iomlán — téann sí go {{name}}.",
+    "hieroglyph": "Iairiglif",
     "hieroglyphFragment": "Blúire Iairiglife",
     "fragmentProgress": "{{found}} as {{required}} blúire aimsithe",
     "tombKey": "Eochair an Tuama",
@@ -163,8 +172,9 @@
   },
   "loot": {
     "youFound": "D’aimsigh tú",
+    "youReceived": "Fuair tú",
     "expeditionReward": "Duais bhreise as an turas a chríochnú",
-    "clickToContinue": "Tapáil áit ar bith le leanúint ort"
+    "clickToContinue": "Lean ort"
   },
   "money": {
     "label": "Boinn"
@@ -270,7 +280,7 @@
     "tabNew_other": "{{label}} · {{count}} nua",
     "empty": "Tá do chófra folamh fós",
     "newLabel": "NUA",
-    "clickForDetails": "Tapáil tíl le tuilleadh eolais",
+    "clickForDetails": "Roghnaigh tíl le tuilleadh eolais",
     "categories": {
       "deities": "🏺 Déithe",
       "professions": "⚱️ Gairmeacha",
@@ -278,6 +288,7 @@
       "artifacts": "💎 Déantáin",
       "treasures": "💰 Seoda",
       "junk": "🔷 Mionrudaí",
+      "offerings": "🍞 Ofrálacha",
       "signs": "✍️ Comharthaí"
     },
     "treasureCategories": {
@@ -361,22 +372,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Tapáil glif thíos, ansin uimhir. Tapáil an uimhir sin arís lena baint.",
+      "tap": "Roghnaigh glif thíos, ansin uimhir. Roghnaigh an uimhir sin arís lena baint.",
       "same": "Tá an meáchan céanna ag glif ar gach meá.",
-      "cancel": "Bain an rud céanna den dá phláta agus fanann an mheá cothrom. Tapáil píosa marcáilte lena dhéanamh — coinnítear a bhfuil fágtha mar shraith nua.",
-      "swap": "Tapáil glif nach bhfuil a leithéid os a chomhair, ansin sraith ina bhfuil an glif sin leis féin, lena mhalartú ar luach na sraithe sin."
+      "cancel": "Bain an rud céanna den dá phláta agus fanann an mheá cothrom. Roghnaigh píosa marcáilte lena dhéanamh — coinnítear a bhfuil fágtha mar shraith nua.",
+      "swap": "Roghnaigh glif nach bhfuil a leithéid os a chomhair, ansin sraith ina bhfuil an glif sin leis féin, lena mhalartú ar luach na sraithe sin."
     },
     "hint": {
       "mistake": "Cuireann ceann de na meáchain a thug tú meá as cothrom. Bain é agus féach arís.",
       "alone": "Sa tsraith lasta, is é {{glyph}} an t-aon phíosa fágtha gan uimhir air. Oibrigh amach cé chomh trom is atá sé.",
       "equalShares": "Níl sa tsraith lasta ach {{glyph}} in aghaidh uimhreach. Roinn an uimhir sin eatarthu.",
       "difference": "Tá an dá shraith lasta mar an gcéanna ach amháin {{glyph}}. Cuir i gcomparáid iad.",
-      "cancelGlyph": "Tá {{glyph}} ar an dá phláta sa tsraith lasta. Tapáil ceann lena bhaint den dá thaobh — fanann an tsraith cothrom.",
-      "cancelStones": "Tá uimhreacha simplí ar an dá phláta sa tsraith lasta. Tapáil ceann leis an méid céanna a bhaint den dá thaobh.",
-      "swap": "Insíonn sraith lasta amháin cad is fiú {{glyph}} amháin leis féin. Tapáil an {{glyph}} sa tsraith lasta eile, ansin tapáil an tsraith sin."
+      "cancelGlyph": "Tá {{glyph}} ar an dá phláta sa tsraith lasta. Roghnaigh ceann lena bhaint den dá thaobh — fanann an tsraith cothrom.",
+      "cancelStones": "Tá uimhreacha simplí ar an dá phláta sa tsraith lasta. Roghnaigh ceann leis an méid céanna a bhaint den dá thaobh.",
+      "swap": "Insíonn sraith lasta amháin cad is fiú {{glyph}} amháin leis féin. Roghnaigh an {{glyph}} sa tsraith lasta eile, ansin roghnaigh an tsraith sin."
     },
     "swap": {
-      "pick": "Tapáil sraith lasta leis an {{glyph}} seo a mhalartú ar an luach a deir an tsraith sin.",
+      "pick": "Roghnaigh sraith lasta leis an {{glyph}} seo a mhalartú ar an luach a deir an tsraith sin.",
       "none": "Níl aon rud anseo a insíonn cad is fiú {{glyph}} amháin leis féin, agus níl aon rud os a chomhair a mheaitseálann."
     },
     "goal": {
@@ -386,11 +397,16 @@
     "name": {
       "default": "Meá Chothromaíochta",
       "weighing": "Meá an Chroí"
+    },
+    "controls": {
+      "move": "roghnaigh píosa, sraith nó cnaipe",
+      "press": "brúigh é",
+      "weigh": "tabhair an meáchan sin don ghlif roghnaithe"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Tapáil uair amháin le huimhir a scriosadh amach, arís lena marcáil mar cheann a choinníonn tú, agus arís lena glanadh.",
+      "tap": "Roghnaigh uimhir uair amháin lena scriosadh amach, arís lena marcáil mar cheann a choinníonn tú, agus arís lena glanadh.",
       "totals": "Is í an uimhir bheag faoi gach sprioc an tsuim atá sa líne sin faoi láthair."
     },
     "hint": {
@@ -457,12 +473,16 @@
       }
     },
     "goal": "Tá gach sraith agus gach colún cothrom leis an uimhir in aice leis.",
-    "name": "An Cuntas"
+    "name": "An Cuntas",
+    "controls": {
+      "move": "roghnaigh uimhir",
+      "mark": "scrios amach, coinnigh nó glan"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Díríonn comhartha idir dhá chearnóg ar an uimhir is lú den dá cheann.",
-      "enter": "Tapáil cearnóg, ansin tapáil uimhir. Baineann an uimhir chéanna arís amach í.",
+      "enter": "Roghnaigh cearnóg, ansin uimhir. Baineann an uimhir chéanna arís amach í.",
       "notes": "Athraigh go dtí an peann luaidhe le breacadh síos na n-uimhreacha a d’fhéadfadh a bheith i gcearnóg fós. Cuireann Cealaigh do bheart deireanach ar ceal."
     },
     "hint": {
@@ -513,14 +533,22 @@
       }
     },
     "goal": "Taispeánann gach sraith agus gach colún gach uimhir uair amháin díreach.",
-    "name": "Níos Mó agus Níos Lú"
+    "name": "Níos Mó agus Níos Lú",
+    "controls": {
+      "move": "roghnaigh cearnóg",
+      "type": "scríobh uimhir",
+      "choose": "roghnaigh uimhir nó an scriosán",
+      "place": "scríobh í",
+      "pencil": "peann luaidhe",
+      "erase": "glan"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Lúbann scáthán an solas de cheachtar dá aghaidheanna. Taispeánann na marcanna beaga timpeall air na bealaí eile ar féidir leis luí: casann an chuid is mó acu an solas ceathrú cuid, agus stopann cuid acu gearr air sin agus cuireann siad an solas ar fiar.",
       "walls": "Slogann bloc cloiche an solas. Déanann imeall an chláir an rud céanna.",
-      "tap": "Tapáil píosa lena athrú: casann scáthán, bogann píosa sleamhnáin go dtí an chéad áit eile. Ciallaíonn imeall bán gur leatsa é le bogadh; is cuid den phuzal aon rud eile.",
-      "nodes": "Tá cloch áirithe ceangailte le soicéad san urlár agus ní bhogfaidh tapáil ar bith í. Cuir an solas trasna an tsoicéid agus sleamhnaíonn an chloch i leataobh."
+      "tap": "Roghnaigh píosa lena athrú: casann scáthán, bogann píosa sleamhnáin go dtí an chéad áit eile. Ciallaíonn imeall bán gur leatsa é le bogadh; is cuid den phuzal aon rud eile.",
+      "nodes": "Tá cloch áirithe ceangailte le soicéad san urlár agus ní bhogfaidh sí duitse. Cuir an solas trasna an tsoicéid agus sleamhnaíonn an chloch i leataobh."
     },
     "hint": {
       "entryRun": "Tosaigh san áit a dtéann an solas cheana: ritheann sé díreach ón diosca go dtí go mbuaileann sé leis an gcéad phíosa is féidir leat a athrú. Iompraíonn na cearnóga sin an solas cibé rud a dhéanann tú.",
@@ -553,7 +581,7 @@
       "triple": "Ní cheadaítear riamh trí cinn den rud céanna as a chéile, trasna ná síos.",
       "copies": "Ní féidir le dhá shraith a bheith mar an gcéanna, ná le dhá cholún ach oiread.",
       "signs": "Insíonn comhartha idir dhá chearnóg conas atá siad i gcomparáid: = don rud céanna, × do rudaí difriúla.",
-      "enter": "Tapáil cearnóg le grian a chur ann, tapáil arís do ghealach, agus tapáil uair amháin eile lena folmhú."
+      "enter": "Roghnaigh cearnóg le grian a chur ann, arís do ghealach, agus uair amháin eile lena folmhú."
     },
     "hint": {
       "mistake": "Ní féidir le ceann de na marcanna seo a bheith ceart.",
@@ -580,7 +608,11 @@
       }
     },
     "goal": "Tá grian nó gealach i ngach cearnóg, agus tá an oiread de cheann amháin agus den cheann eile i ngach líne.",
-    "name": "Grian agus Gealach"
+    "name": "Grian agus Gealach",
+    "controls": {
+      "move": "roghnaigh cearnóg",
+      "mark": "athraigh an marc"
+    }
   },
   "constellation": {
     "rules": {
@@ -588,25 +620,25 @@
         "straight": "Ritheann línte solais díreach trasna nó síos, ó réalta amháin go dtí an chéad cheann eile.",
         "pair": "Ní féidir le dhá réalta níos mó ná dhá líne a roinnt.",
         "cross": "Ní thrasnaíonn línte a chéile riamh, agus ní théann siad trí réalta riamh.",
-        "enter": "Tarraing ó réalta i dtreo a comharsan le líne a tharraingt, arís do líne dhúbailte, agus uair amháin eile lena glanadh."
+        "enter": "Tarraing líne ó réalta i dtreo a comharsan, arís do líne dhúbailte, agus uair amháin eile lena glanadh."
       },
       "causeway": {
         "straight": "Ritheann bóithre iompair díreach trasna nó síos, ó láithreán amháin go dtí an chéad cheann eile.",
         "pair": "Ní féidir le dhá láithreán níos mó ná dhá bhóthar a roinnt.",
         "cross": "Ní thrasnaíonn bóithre a chéile riamh, agus ní ritheann siad trí láithreán riamh.",
-        "enter": "Tarraing ó láithreán i dtreo a chomharsan le bóthar a leagan, arís lena dhúbailt, agus uair amháin eile lena stróiceadh suas."
+        "enter": "Leag bóthar ó láithreán i dtreo a chomharsan, arís lena dhúbailt, agus uair amháin eile lena stróiceadh suas."
       },
       "irrigation": {
         "straight": "Ritheann canálacha díreach trasna nó síos, ó umar amháin go dtí an chéad cheann eile.",
         "pair": "Ní féidir le dhá umar níos mó ná dhá chanáil a roinnt.",
         "cross": "Ní thrasnaíonn canálacha a chéile riamh, agus ní ritheann siad trí umar riamh.",
-        "enter": "Tarraing ó umar i dtreo a chomharsan le canáil a thochailt, arís lena leathnú, agus uair amháin eile lena líonadh isteach."
+        "enter": "Tochail canáil ó umar i dtreo a chomharsan, arís lena leathnú, agus uair amháin eile lena líonadh isteach."
       },
       "ceiling": {
         "straight": "Ritheann cordaí díreach trasna nó síos, ó réalta amháin go dtí an chéad cheann eile.",
         "pair": "Ní féidir le dhá réalta níos mó ná dhá chorda a roinnt.",
         "cross": "Ní thrasnaíonn cordaí a chéile riamh, agus ní ritheann siad trí réalta riamh.",
-        "enter": "Tarraing ó réalta i dtreo a comharsan le corda a leagan, arís lena dhúbailt, agus uair amháin eile lena bhaint."
+        "enter": "Sín corda ó réalta i dtreo a comharsan, arís lena dhúbailt, agus uair amháin eile lena bhaint."
       }
     },
     "hint": {
@@ -718,37 +750,44 @@
       "causeway": "An Cabhsa",
       "irrigation": "An Córas Uisce",
       "ceiling": "An tSíleáil Phéinteáilte"
+    },
+    "controls": {
+      "pick": "roghnaigh réalta",
+      "grab": "tóg suas í",
+      "draw": "tarraing líne an treo sin",
+      "release": "scaoil",
+      "alt": "coinnigh agus pointeáil: líne, líne dhúbailte, dada"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Ní féidir le dhá réalta teagmháil a chéile — áirítear na cúinní.",
-        "enter": "Tapáil cearnóg lena cur as an áireamh, tapáil arís le réalta a chur ann, agus uair amháin eile lena glanadh."
+        "enter": "Roghnaigh cearnóg lena cur as an áireamh, arís le réalta a chur ann, agus uair amháin eile lena glanadh."
       },
       "fields": {
         "touch": "Ní féidir le dhá theach feirme teagmháil a chéile — áirítear na cúinní. Chomh gar sin, bheadh tobar amháin eatarthu.",
-        "enter": "Tapáil ceapach lena cur as an áireamh, tapáil arís le teach feirme a thógáil, agus uair amháin eile lena glanadh."
+        "enter": "Roghnaigh ceapach lena cur as an áireamh, arís le teach feirme a thógáil, agus uair amháin eile lena glanadh."
       },
       "lamps": {
         "touch": "Ní féidir le dhá lampa ola seasamh in aice a chéile — áirítear na cúinní. Bheadh a gcuid solais ag dul thar a chéile, agus bheadh an ola amú.",
         "walls": "Is cuid den urlár na bloic chloiche liatha: ní féidir aon rud a chur ar cheann acu, agus ní cearnóg é.",
-        "enter": "Tapáil leac lena cur as an áireamh, tapáil arís le lampa ola a chur ann, agus uair amháin eile lena glanadh."
+        "enter": "Roghnaigh leac lena cur as an áireamh, arís le lampa ola a chur ann, agus uair amháin eile lena glanadh."
       },
       "market": {
         "touch": "Ní féidir le dhá stainnín seasamh in aice a chéile — áirítear na cúinní. Ní chuireann iomaitheoirí suas taobh le taobh riamh.",
         "walls": "Is cuid den chearnóg na tithe: ní féidir le duine ar bith stainnín a chur suas i gceann acu, agus ní spota é.",
-        "enter": "Tapáil spota lena chur as an áireamh, tapáil arís le stainnín a chur suas ann, agus uair amháin eile lena ghlanadh."
+        "enter": "Roghnaigh spota lena chur as an áireamh, arís le stainnín a chur suas ann, agus uair amháin eile lena ghlanadh."
       },
       "lotus": {
         "touch": "Ní féidir le dhá bhláth lóis snámh in aice a chéile — áirítear na cúinní. Teastaíonn uisce oscailte timpeall ar gach bláth.",
         "walls": "Gobann na carraigeacha aníos as an lochán: ní féidir le haon rud snámh ar cheann acu, agus ní cearnóg í.",
-        "enter": "Tapáil paiste uisce lena chur as an áireamh, tapáil arís le bláth lóis a chur ar snámh ann, agus uair amháin eile lena ghlanadh."
+        "enter": "Roghnaigh paiste uisce lena chur as an áireamh, arís le bláth lóis a chur ar snámh ann, agus uair amháin eile lena ghlanadh."
       },
       "cats": {
         "touch": "Ní féidir le dhá chat codladh in aice a chéile — áirítear na cúinní. Coinníonn gach cat a phaiste gréine féin.",
         "walls": "Coinníonn na colúin an teampall suas: ní féidir le cat codladh ar cheann acu, agus ní cearnóg é.",
-        "enter": "Tapáil leac lena cur as an áireamh, tapáil arís le cat a leagan ann, agus uair amháin eile lena glanadh."
+        "enter": "Roghnaigh leac lena cur as an áireamh, arís le cat a leagan ann, agus uair amháin eile lena glanadh."
       }
     },
     "hint": {
@@ -1232,6 +1271,11 @@
       "market": "Stainníní Margaidh",
       "lotus": "Lochán Lóis",
       "cats": "Cait an Teampaill"
+    },
+    "controls": {
+      "move": "roghnaigh cearnóg",
+      "mark": "athraigh an marc",
+      "sweep": "coinnigh agus bog: cuir sraith as an áireamh"
     }
   },
   "pairPuzzle": {
@@ -1248,13 +1292,13 @@
         "pair": "Tá mumaí amháin ina luí díreach os cionn, faoi, ar chlé nó ar dheis gach sarcafagais, agus luíonn gach mumaí in aice le sarcafagas dá cuid féin.",
         "count": "Insíonn an uimhir in aice le sraith nó colún cé mhéad mumaí atá ann. Éiríonn sí glas nuair atá an líon sin díreach sa líne, agus dearg nuair nach féidir é a bhaint amach.",
         "touch": "Ní féidir le dhá mhumaí seasamh in aice a chéile — áirítear na cúinní.",
-        "enter": "Tapáil cearnóg lena cur as an áireamh, tapáil arís le mumaí a leagan ann, agus uair amháin eile lena glanadh. Tarraing trasna cearnóg le sraith díobh a chur as an áireamh. Ní féidir sarcafagais a thapáil."
+        "enter": "Roghnaigh cearnóg lena cur as an áireamh, arís le mumaí a leagan ann, agus uair amháin eile lena glanadh. Cuir sraith cearnóg as an áireamh in aon ghluaiseacht amháin. Ní féidir sarcafagais a mharcáil."
       },
       "beetles": {
         "pair": "Tá ciaróg amháin díreach os cionn, faoi, ar chlé nó ar dheis gach liathróid aoiligh, agus seasann gach ciaróg in aice le liathróid dá cuid féin le rolladh.",
         "count": "Insíonn an uimhir in aice le sraith nó colún cé mhéad ciaróg atá ann. Éiríonn sí glas nuair atá an líon sin díreach sa líne, agus dearg nuair nach féidir é a bhaint amach.",
         "touch": "Ní féidir le dhá chiaróg seasamh in aice a chéile — áirítear na cúinní.",
-        "enter": "Tapáil cearnóg lena cur as an áireamh, tapáil arís le ciaróg a chur ann, agus uair amháin eile lena glanadh. Tarraing trasna cearnóg le sraith díobh a chur as an áireamh. Ní féidir liathróidí aoiligh a thapáil."
+        "enter": "Roghnaigh cearnóg lena cur as an áireamh, arís le ciaróg a chur ann, agus uair amháin eile lena glanadh. Cuir sraith cearnóg as an áireamh in aon ghluaiseacht amháin. Ní féidir liathróidí aoiligh a mharcáil."
       }
     },
     "hint": {
@@ -1366,6 +1410,11 @@
           "place_other": "Cuir ciaróg ar gach cearnóg stríocach."
         }
       }
+    },
+    "controls": {
+      "move": "roghnaigh cearnóg",
+      "mark": "athraigh an marc",
+      "sweep": "coinnigh agus bog: cuir sraith as an áireamh"
     }
   },
   "rushHour": {
@@ -1380,11 +1429,11 @@
     "rules": {
       "default": {
         "lanes": "Ní shleamhnaíonn bloc ach ar feadh a lána féin — ní i leataobh riamh, ní den chlár riamh.",
-        "shove": "Tarraing bloc lena bhrú. Stopann sé áit a bhfuil rud éigin sa bhealach."
+        "shove": "Brúigh bloc ar feadh a lána. Stopann sé áit a bhfuil rud éigin sa bhealach."
       },
       "market": {
         "lanes": "Ní shleamhnaíonn carr sleamhnáin ach ar feadh an lána ina seasann sé — ní i leataobh riamh, ní amach as an tsráid riamh.",
-        "shove": "Tarraing carr sleamhnáin lena bhrú. Stopann sé áit a bhfuil rud éigin sa bhealach."
+        "shove": "Brúigh carr sleamhnáin ar feadh a lána. Stopann sé áit a bhfuil rud éigin sa bhealach."
       }
     },
     "hint": {
@@ -1412,29 +1461,35 @@
           "down": "Brúigh síos an tsráid é, chomh fada leis an bhfáinne."
         }
       }
+    },
+    "controls": {
+      "pick": "roghnaigh bloc",
+      "grab": "beir air",
+      "slide": "sleamhnaigh",
+      "release": "scaoil"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "Is cuid den phuzal na huimhreacha atá sa chíor cheana — fanann siad san áit a bhfuil siad.",
-        "enter": "Tapáil uimhir leis an tsraith a phiocadh suas ansin, ansin tapáil cill fholamh in aice léi lena leanúint — nó tarraing díreach trí na cealla a dtéann sí.",
-        "back": "Tapáil uimhir a chuir tú síos agus tapáil arís í lena baint, mar aon le haon rud atá ag brath uirthi. Má leanann tú an tsraith bealach eile amach as uimhir, tarlaíonn an rud céanna. Cuireann Cealaigh do bheart deireanach ar ceal."
+        "enter": "Tarraing líne ó uimhir trí na cealla folmha in aice léi leis an tsraith a leanúint ar aghaidh.",
+        "back": "Roghnaigh uimhir a chuir tú síos agus roghnaigh arís í lena baint, mar aon le haon rud atá ag brath uirthi. Má leanann tú an tsraith bealach eile amach as uimhir, tarlaíonn an rud céanna. Cuireann Cealaigh do bheart deireanach ar ceal."
       },
       "channel": {
         "given": "Is cuid den phuzal na páirceanna a bhfuil uimhir orthu cheana — fanann siad san áit a bhfuil siad.",
-        "enter": "Tapáil páirc le huimhir leis an uisce a phiocadh suas ansin, ansin tapáil páirc thirim in aice léi le tochailt ar aghaidh — nó tarraing díreach ar feadh na bpáirceanna a ritheann an chanáil.",
-        "back": "Tapáil páirc a thochail tú agus tapáil arís í lena líonadh isteach, mar aon le haon chanáil atá gearrtha amach uaithi. Má thochlaíonn tú bealach eile amach as páirc, tarlaíonn an rud céanna. Cuireann Cealaigh do bheart deireanach ar ceal."
+        "enter": "Tochail canáil ó pháirc le huimhir trí na páirceanna tirime in aice léi leis an uisce a thabhairt ar aghaidh.",
+        "back": "Roghnaigh páirc a thochail tú agus roghnaigh arís í lena líonadh isteach, mar aon le haon chanáil atá gearrtha amach uaithi. Má thochlaíonn tú bealach eile amach as páirc, tarlaíonn an rud céanna. Cuireann Cealaigh do bheart deireanach ar ceal."
       },
       "scribe": {
         "given": "Is leis an bpuzal féin na figiúirí i ndúch dearg — fanann siad san áit a bhfuil siad.",
-        "enter": "Tapáil figiúr leis an ngiolcach a thógáil ansin, ansin tapáil spás folamh in aice leis le scríobh ar aghaidh — nó tarraing díreach ar feadh na líne.",
-        "back": "Tapáil figiúr a scríobh tú agus tapáil arís é lena scríobadh de, mar aon le haon líne atá gearrtha amach uaidh. Má scríobhann tú bealach eile amach as figiúr, tarlaíonn an rud céanna. Cuireann Cealaigh do bheart deireanach ar ceal."
+        "enter": "Scríobh líne ó fhigiúr trí na spásanna folmha in aice leis leis an gcomhaireamh a leanúint ar aghaidh.",
+        "back": "Roghnaigh figiúr a scríobh tú agus roghnaigh arís é lena scríobadh de, mar aon le haon líne atá gearrtha amach uaidh. Má scríobhann tú bealach eile amach as figiúr, tarlaíonn an rud céanna. Cuireann Cealaigh do bheart deireanach ar ceal."
       },
       "chambers": {
         "given": "Ghearr na tógálaithe na seomraí a bhfuil uimhir orthu cheana — fanann siad san áit a bhfuil siad.",
-        "enter": "Tapáil seomra le huimhir leis an bpasáiste a thógáil ansin, ansin tapáil seomra séalaithe in aice leis le briseadh tríd — nó tarraing díreach ar feadh na seomraí a ritheann an pasáiste.",
-        "back": "Tapáil seomra a d’oscail tú agus tapáil arís é lena shéalú, mar aon le haon phasáiste atá gearrtha amach uaidh. Má bhriseann tú tríd bealach eile amach as seomra, tarlaíonn an rud céanna. Cuireann Cealaigh do bheart deireanach ar ceal."
+        "enter": "Bris pasáiste ó sheomra le huimhir trí na seomraí séalaithe in aice leis lena leanúint ar aghaidh.",
+        "back": "Roghnaigh seomra a d’oscail tú agus roghnaigh arís é lena shéalú, mar aon le haon phasáiste atá gearrtha amach uaidh. Má bhriseann tú tríd bealach eile amach as seomra, tarlaíonn an rud céanna. Cuireann Cealaigh do bheart deireanach ar ceal."
       }
     },
     "goal": {
@@ -1498,6 +1553,13 @@
       "channel": "An Chanáil",
       "scribe": "Leathanach an Scríobhaí",
       "chambers": "Seomraí Séalaithe"
+    },
+    "controls": {
+      "move": "téigh go cill in aice léi; claonann suas agus síos ar chlé",
+      "right": "suas ar dheis nó síos ar dheis",
+      "grab": "pioc suas an tsraith, nó bain d’uimhir",
+      "carry": "leis an tsraith pioctha suas: lean ar aghaidh í; téann suas agus síos go dtí an taobh inar féidir léi leanúint",
+      "drop": "cuir síos an tsraith"
     }
   },
   "sudoku": {
@@ -1505,13 +1567,13 @@
       "default": {
         "chambers": "Gearrann na línte troma an greille ina sé sheomra, dhá chearnóg ar leithead agus trí cinn ar airde.",
         "given": "Is cuid den phuzal na huimhreacha atá greanta cheana — fanann siad san áit a bhfuil siad.",
-        "enter": "Tapáil cearnóg, ansin tapáil uimhir. Baineann an uimhir chéanna arís amach í.",
+        "enter": "Roghnaigh cearnóg, ansin uimhir. Baineann an uimhir chéanna arís amach í.",
         "notes": "Athraigh go dtí an peann luaidhe le breacadh síos na n-uimhreacha a d’fhéadfadh a bheith i gcearnóg fós. Cuireann Cealaigh do bheart deireanach ar ceal."
       },
       "papyrus": {
         "chambers": "Roinneann na línte troma an leathanach ina sé phainéal, dhá spás ar leithead agus trí cinn ar airde.",
         "given": "Is leis an bpuzal féin na comharthaí i ndúch dearg — fanann siad san áit a bhfuil siad.",
-        "enter": "Tapáil spás, ansin tapáil comhartha. Scríobann an comhartha céanna arís de é.",
+        "enter": "Roghnaigh spás, ansin comhartha. Scríobann an comhartha céanna arís de é.",
         "notes": "Tóg an peann giolcaí le breacadh isteach na gcomharthaí a d’fhéadfadh a bheith i spás fós. Cuireann Cealaigh do bheart deireanach ar ceal."
       }
     },
@@ -1584,6 +1646,14 @@
     "name": {
       "default": "Sé Sheomra",
       "papyrus": "Clár an Scríobhaí"
+    },
+    "controls": {
+      "move": "roghnaigh cearnóg",
+      "type": "scríobh uimhir",
+      "choose": "roghnaigh uimhir nó an scriosán",
+      "place": "scríobh í",
+      "pencil": "peann luaidhe",
+      "erase": "glan"
     }
   },
   "crocodile": {
@@ -1597,6 +1667,10 @@
     "hint": {
       "biggest": "Teastaíonn an freagra is mó ón gcrogall seo. Sin {{value}}.",
       "smallest": "Teastaíonn an freagra is lú ón gcrogall seo. Sin {{value}}."
+    },
+    "controls": {
+      "move": "roghnaigh cloch",
+      "step": "seas uirthi"
     }
   },
   "canisters": {
@@ -1645,35 +1719,35 @@
         "sums": "Is é gach méid is féidir leat a dhéanamh ná dhá uimhir ar an mbinse curtha le chéile nó bainte óna chéile: méid canstáin, a bhfuil ann, nó an spás atá fágtha ann.",
         "backwards": "Mar sin oibrigh siar ón méid a iarrtar — cé na dhá uimhir a dhéanann é, agus conas a bhfaigheann tú an dá cheann sin ag an am céanna?"
       },
-      "claim": "Nuair atá an méid agat, tapáil “an ceann seo”. Má ainmníonn tú an soitheach mícheart, cosnaíonn sé beart ort.",
+      "claim": "Nuair atá an méid agat, roghnaigh “an ceann seo”. Má ainmníonn tú an soitheach mícheart, cosnaíonn sé beart ort.",
       "legs": "Ansin an chéad mhéid eile, tomhaiste ó cibé rud atá fágtha sna soithí.",
       "default": {
-        "moves": "Tapáil canstán lena phiocadh suas, ansin tapáil ceann eile le doirteadh isteach ann. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán.",
+        "moves": "Pioc suas canstán, ansin roghnaigh ceann eile le doirteadh isteach ann. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán.",
         "contents": "Seo an t-uisce ar fad atá ann — tosaíonn canstán amháin lán, agus ní féidir aon cheann a chaitheamh amach ná a fháil.",
         "levels": "Insíonn gach canstán cé mhéad atá ann, i gcomparáid le cé mhéad a choinníonn sé nuair atá sé lán."
       },
       "grain": {
-        "moves": "Tapáil miosúr lena ardú, ansin tapáil ceann eile leis an ngrán a dhoirteadh isteach. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán go béal.",
+        "moves": "Ardaigh miosúr, ansin roghnaigh ceann eile leis an ngrán a dhoirteadh isteach. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán go béal.",
         "contents": "Seo an grán ar fad atá ann — tosaíonn miosúr amháin lán, agus ní féidir aon cheann a scuabadh ar shiúl ná a fháil ón ngráinseach.",
         "levels": "Insíonn gach miosúr cé mhéad atá ann, i gcomparáid le cé mhéad a choinníonn sé nuair atá sé lán go béal."
       },
       "oil": {
-        "moves": "Tapáil próca lena ardú, ansin tapáil ceann eile le doirteadh isteach ann. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán.",
+        "moves": "Ardaigh próca, ansin roghnaigh ceann eile le doirteadh isteach ann. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán.",
         "contents": "Seo an ola ar fad atá ann — tosaíonn próca amháin lán, agus ní féidir aon cheann a dhoirteadh ar shiúl ná a fháil.",
         "levels": "Insíonn gach próca cé mhéad atá ann, i gcomparáid le cé mhéad a choinníonn sé nuair atá sé lán."
       },
       "wine": {
-        "moves": "Tapáil amfóra lena hardú, ansin tapáil ceann eile le doirteadh isteach ann. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán.",
+        "moves": "Ardaigh amfóra, ansin roghnaigh ceann eile le doirteadh isteach ann. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán.",
         "contents": "Seo an fíon ar fad atá ann — tosaíonn amfóra amháin lán, agus ní féidir aon cheann a dhoirteadh amach ná a fháil ón siléar.",
         "levels": "Insíonn gach amfóra cé mhéad atá inti, i gcomparáid le cé mhéad a choinníonn sí nuair atá sí lán."
       },
       "natron": {
-        "moves": "Tapáil próca lena ardú, ansin tapáil ceann eile leis an natrón a dhoirteadh isteach. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán go dtí an clúdach.",
+        "moves": "Ardaigh próca, ansin roghnaigh ceann eile leis an natrón a dhoirteadh isteach. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán go dtí an clúdach.",
         "contents": "Seo an natrón ar fad atá ann — tosaíonn próca amháin lán, agus ní féidir aon cheann a scuabadh ar shiúl ná a fháil.",
         "levels": "Insíonn gach próca cé mhéad atá ann, i gcomparáid le cé mhéad a choinníonn sé nuair atá sé lán go dtí an clúdach."
       },
       "ink": {
-        "moves": "Tapáil pota lena ardú, ansin tapáil ceann eile le doirteadh isteach ann. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán.",
+        "moves": "Ardaigh pota, ansin roghnaigh ceann eile le doirteadh isteach ann. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán.",
         "contents": "Seo an dúch ar fad atá ann — tosaíonn pota amháin lán, agus ní féidir aon cheann a dhoirteadh amach ná dúch úr a mheilt.",
         "levels": "Insíonn gach pota cé mhéad atá ann, i gcomparáid le cé mhéad a choinníonn sé nuair atá sé lán."
       }
@@ -1701,7 +1775,12 @@
     "legs": "tomhaiste {{done}} as {{total}}",
     "wanted": "Tomhais amach",
     "claim": "an ceann seo",
-    "claimAria": "Abair go bhfuil an méid sa {{capacity}}"
+    "claimAria": "Abair go bhfuil an méid sa {{capacity}}",
+    "controls": {
+      "move": "roghnaigh soitheach nó an “ceann seo” faoi",
+      "press": "pioc suas, doirt isteach anseo, nó éiligh",
+      "putDown": "cuir síos arís an soitheach atá i do lámh"
+    }
   },
   "procession": {
     "name": {
@@ -1721,8 +1800,8 @@
     "rules": {
       "default": {
         "lengths": "Is rud amháin a tharlaíonn gach sraith, agus maireann sé chomh fada agus atá a bharra leathan. Is é an rud a oibríonn tú amach ná cathain a tharlaíonn sé.",
-        "marks": "Éiríonn líne faoin lá dearg fad nach bhfuil sí ceart. Tapáil ceann le ciorcal a chur timpeall ar na sraitheanna a bhaineann léi.",
-        "drag": "Tarraing barra ar feadh a shraithe féin. Ní fhágann sé an lá riamh."
+        "marks": "Éiríonn líne faoin lá dearg fad nach bhfuil sí ceart. Roghnaigh ceann le ciorcal a chur timpeall ar na sraitheanna a bhaineann léi.",
+        "drag": "Sleamhnaigh barra ar feadh a shraithe féin. Ní fhágann sé an lá riamh."
       }
     },
     "hint": {
@@ -1731,7 +1810,7 @@
         "squeeze": "Níl ach an méid sin den lá fágtha, agus seo a bhfuil de a luíonn.",
         "apart": "Ní luíonn an bealach eile timpeall sa lá.",
         "split": "Triail an bealach eile timpeall agus briseann rud éigin eile.",
-        "move": "Tarraing an barra le ciorcal air go dtí na marcanna stríocacha."
+        "move": "Sleamhnaigh an barra le ciorcal air go dtí na marcanna stríocacha."
       }
     },
     "events": {
@@ -1793,6 +1872,11 @@
       "hint": "Scaoileann gach tíl a seasann tú air a jab féin. Cuir an lá in ord, ansin siúil ar na tíleanna san ord sin.",
       "read": "Tá an lá léite. Siúil ar a thíleanna san ord seo, ón gcéad cheann.",
       "hintButton": "Leid"
+    },
+    "controls": {
+      "row": "roghnaigh sraith",
+      "slide": "sleamhnaigh a bharra",
+      "mark": "roghnaigh líne faoin lá"
     }
   },
   "story": {
@@ -1815,6 +1899,13 @@
       "pick": "Cuir an comhartha ceart ina áit.",
       "cannot": "Níl an comhartha a bhaineann anseo ar eolas agat. Ní fós."
     },
+    "formula": {
+      "wrong": "Tá comhartha ar iarraidh ón líne seo. Níor gearradh mícheart é — níor gearradh riamh é.",
+      "fixed": "Tá an líne slán.",
+      "pick": "Cuir an comhartha a tugadh duit san áit fholamh.",
+      "cannot": "Níor thug aon duine an comhartha don áit seo duit. Ní fós.",
+      "gap": "An comhartha atá ar iarraidh"
+    },
     "sphinx": {
       "wrong": "An scríbhneoireacht chéanna is atá taobh amuigh, ach níor shroich an gaineamh í anseo. Dhá chomhartha fós gearrtha go glan, agus spás san áit a raibh an tríú ceann.",
       "fixed": "Sin é an t-iomlán.",
@@ -1831,7 +1922,7 @@
       "shrines": "Diosca solais amháin, agus scrín os cionn gach bealaigh amach as an gcrosbhealach seo. Is féidir leis na scátháin ar an urlár an solas a thabhairt chuig ceann ar bith acu.",
       "doors": "Tá an bealach amach a shroicheann an solas oscailte, agus tá na cinn eile dúnta. Bealach solais amháin, bealach amháin ar aghaidh.",
       "returning": "Ní chailltear faic trí rogha a dhéanamh. Siúil ar ais isteach aon uair is mian leat agus cuir an solas bealach eile — osclaíonn an bealach sin, agus dúnann an ceann seo.",
-      "tap": "Tapáil scáthán lena chasadh. Má thapálann tú arís é, cuirtear ar ais é."
+      "tap": "Roghnaigh scáthán lena chasadh. Roghnaigh arís é lena chur ar ais."
     },
     "doorOpen": "Bealach amach {{way}}: oscailte",
     "doorShut": "Bealach amach {{way}}: dúnta",
@@ -1840,6 +1931,10 @@
       "e": "soir",
       "s": "ó dheas",
       "w": "siar"
+    },
+    "controls": {
+      "move": "roghnaigh scáthán",
+      "turn": "cas é"
     }
   },
   "handle": {
@@ -2098,5 +2193,39 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Athscríobhann an líníocht an téacs: bogann gach nóta tráchta go dtí an barr"
+  },
+  "saveCard": {
+    "title": "Cárta taistil",
+    "explain": "Tabhair do thuras go gléas eile: déan cárta anseo agus léigh ansin é laistigh de 15 nóiméad.",
+    "make": "Déan cárta taistil",
+    "share": "Comhroinn an cárta",
+    "download": "Íoslódáil an cárta",
+    "read": "Léigh cárta taistil",
+    "busy": "Nóiméad amháin…",
+    "makeFailed": "Níorbh fhéidir an cárta a dhéanamh.",
+    "shareFailed": "Níor oibrigh an chomhroinnt; íoslódáil an cárta ina ionad.",
+    "confirm_one": "Cuir an dul chun cinn ar an gcárta in áit an chinn ar an ngléas seo ({{count}} turas)?",
+    "confirm_two": "Cuir an dul chun cinn ar an gcárta in áit an chinn ar an ngléas seo ({{count}} thuras)?",
+    "confirm_few": "Cuir an dul chun cinn ar an gcárta in áit an chinn ar an ngléas seo ({{count}} thuras)?",
+    "confirm_many": "Cuir an dul chun cinn ar an gcárta in áit an chinn ar an ngléas seo ({{count}} dturas)?",
+    "confirm_other": "Cuir an dul chun cinn ar an gcárta in áit an chinn ar an ngléas seo ({{count}} turas)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Cárta taistil · tabhair do thuras leat",
+    "validUntil": "bailí go dtí {{time}}",
+    "codes_one": "{{count}} chód",
+    "codes_two": "{{count}} chód",
+    "codes_few": "{{count}} chód",
+    "codes_many": "{{count}} gcód",
+    "codes_other": "{{count}} cód",
+    "refused": {
+      "notACard": "Ní cárta taistil é seo.",
+      "tampered": "Athraíodh an cárta seo agus ní féidir é a léamh a thuilleadh.",
+      "expired": "Tá an cárta seo as feidhm; déan ceann nua.",
+      "future": "Tagann an cárta seo ón todhchaí: seiceáil an clog ar an dá ghléas.",
+      "otherEpoch": "Is ó leagan eile den chluiche an cárta seo.",
+      "newerGame": "Tagann an cárta seo ó leagan níos nuaí: nuashonraigh an cluiche ar dtús."
+    },
+    "writeFailed": "Níorbh fhéidir an tsábháil a scríobh; choinnigh an gléas seo a shábháil féin.",
+    "writeLost": "Níorbh fhéidir an tsábháil a athsholáthar, agus d’fhéadfadh an tsábháil ar an ngléas seo a bheith neamhiomlán."
   }
 }

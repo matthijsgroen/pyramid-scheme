@@ -21,19 +21,24 @@
     "mapHint": "Útržok ukazuje trhovú cestu a dvere do pivnice – skrýšu obchodníka, nič veľkolepé."
   },
   "junior_1": {
-    "name": "Let posvätných ibisov"
+    "name": "Let posvätných ibisov",
+    "description": "Trstinové močiare pri Níle a ibisy, ktoré sa nimi brodia. Posvätné vtáky – a nie z dôvodu, ktorý ťa napadne."
   },
   "junior_2": {
-    "name": "Údolie remeselníkov"
+    "name": "Údolie remeselníkov",
+    "description": "Dér el-Medína, dedina staviteľov hrobiek. Ich dielne stále stoja a s nimi aj kus ich práce."
   },
   "junior_3": {
-    "name": "Chrám boha Thovta"
+    "name": "Chrám boha Thovta",
+    "description": "Chrám boha Thovta. Jeho meno pozná každý; spýtaj sa troch ľudí, akým bol bohom, a dostaneš tri odpovede."
   },
   "junior_4": {
-    "name": "Maják v Alexandrii"
+    "name": "Maják v Alexandrii",
+    "description": "Maják na Fare v Alexandrii, jeden zo siedmich divov sveta. Čo z neho zostalo, leží v prístave pod vodou."
   },
   "junior_treasure_tomb": {
     "name": "Skrytá klenotnica šľachtičnej",
+    "description": "Klenotnica šľachtičnej, pomaľovaná od podlahy po strop, a všetko v nej leží stále tam, kam to položila.",
     "mapHint": "Jemný atrament a v rohu pečať s erbom – niekto vážený chcel, aby sa na túto miestnosť zabudlo."
   },
   "expert_1": {

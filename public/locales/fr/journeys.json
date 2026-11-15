@@ -21,19 +21,24 @@
     "mapHint": "Le bout de papier dessine une route de marché et une porte de cave. La cachette d’un marchand, rien de plus."
   },
   "junior_1": {
-    "name": "Le voyage des ibis sacrés"
+    "name": "Le voyage des ibis sacrés",
+    "description": "Des marais de roseaux le long du Nil, et les ibis qui y pataugent. Des oiseaux sacrés, et pas pour la raison que tu crois."
   },
   "junior_2": {
-    "name": "La vallée des artisans"
+    "name": "La vallée des artisans",
+    "description": "Deir el-Médineh, le village des bâtisseurs de tombeaux. Leurs ateliers sont toujours debout, et une partie de leur travail aussi."
   },
   "junior_3": {
-    "name": "Le temple de Thot"
+    "name": "Le temple de Thot",
+    "description": "Le temple de Thot. Tout le monde connaît son nom ; demande à trois personnes de quoi il était le dieu, et tu auras trois réponses."
   },
   "junior_4": {
-    "name": "Le phare d’Alexandrie"
+    "name": "Le phare d’Alexandrie",
+    "description": "Le phare d’Alexandrie, une des sept merveilles du monde. Ce qu’il en reste est au fond du port, sous l’eau."
   },
   "junior_treasure_tomb": {
     "name": "Le caveau caché de la noble",
+    "description": "Le caveau d’une noble, peint du sol au plafond, et tout ce qu’il contient est encore là où elle l’a mis.",
     "mapHint": "Une encre fine, un sceau avec un blason dans le coin. Quelqu’un d’important voulait qu’on oublie cette salle."
   },
   "expert_1": {

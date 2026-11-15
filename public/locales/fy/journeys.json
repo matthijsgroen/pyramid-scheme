@@ -21,19 +21,24 @@
     "mapHint": "It stikje tekenet in merkwei en in kelderdoar — in skûlplak fan in hanneler, neat grutters."
   },
   "junior_1": {
-    "name": "Tocht fan de Hillige Ibis"
+    "name": "Tocht fan de Hillige Ibis",
+    "description": "Reidmoerassen lâns de Nyl, en de ibis dy't der trochhinne waadt. Hillige fûgels — en net om de reden datst tinkst."
   },
   "junior_2": {
-    "name": "Delling fan de Ambachtslju"
+    "name": "Delling fan de Ambachtslju",
+    "description": "Deir el-Medina, it doarp fan de grêfbouwers. Harren wurkpleatsen steane der noch, en in part fan it wurk ek."
   },
   "junior_3": {
-    "name": "Timpel fan Thoth"
+    "name": "Timpel fan Thoth",
+    "description": "De timpel fan Thoth. Elkenien kin syn namme; freegje trije minsken wêr't er de god fan wie en do krijst trije antwurden."
   },
   "junior_4": {
-    "name": "Fjoertoer fan Aleksandrje"
+    "name": "Fjoertoer fan Aleksandrje",
+    "description": "De Pharos fan Aleksandrje, ien fan de sân wrâldwûnders. Wat der noch fan oer is, leit yn 'e haven, ûnder wetter."
   },
   "junior_treasure_tomb": {
     "name": "Ferburgen Klûs fan de Eallju",
+    "description": "It ferwulf fan in eallefrou, fan flier oant plafond beskildere, en alles noch dêr't sy it delset hat.",
     "mapHint": "Fyn inket, in fersegele wapen yn 'e hoeke — ien fan stân woe dat dizze keamer ferjitten waard."
   },
   "expert_1": {

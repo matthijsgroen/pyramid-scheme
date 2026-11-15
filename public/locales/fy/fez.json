@@ -28,7 +28,7 @@
   "tombTutorial3": "De lytse sommen litte sjen wannear't in teken goed sit. Sa fine wy hokker teken wêr heart.",
   "tombTutorial4": "Alles fol? Dan komt der in sifersslot. De grutte som is de koade — en dan giet it grêf iepen!",
   "hieroglyphUnlock": "Wy hawwe in spesjaal artefakt — dêrmei kinne wy op ien fan dy fersegele blokken skriuwe!",
-  "hieroglyphUnlock2": "Tik op in glinsterjende stien en sleep it artefakt derop om him iepen te meitsjen. Ien blok per piramide.",
+  "hieroglyphUnlock2": "Kies in glinsterjende stien en bring it artefakt der hinne om him iepen te meitsjen. Ien blok per piramide.",
   "errorHighlightTutorial": "Dat artefakt dat wy fûnen hat in handige trúk — fol in ferkeard antwurd yn en ien ferkeard blok gloeit read op!",
   "errorHighlightTutorial2": "Mar mar ien blok tagelyk, dus it bliuwt spannend. It helpt wol om te sjen wêr't it sit!",
   "earlyFeedbackTutorial": "Sjochst dy kontrôleblokken? Se wurde grien of read wylst do ynfolst — dan witst it daliks!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Sjoch ris wat ik yn 'e kream haw! Fan no ôf ferkeapje ik ek ferfier."
+      },
+      "2": {
+        "explorer": "Ik sjoch allinnich in tekening."
+      },
+      "3": {
+        "fez": "It orizjineel yt mear."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "Twadde rigel. Wetter oan wa't toarst hie."
+        "explorer": "Twadde rigel. _Klean oan wa't neaken wie._"
       },
       "2": {
-        "fez": "Bôle, en no wetter. Immen woe hiel graach ûnthâlden wurde as rojaal."
+        "fez": "Bôle, en no klean. Immen woe hiel graach ûnthâlden wurde as rojaal."
       },
       "3": {
         "explorer": "Elkenien hat it. Elke muorre, elk grêf, deselde twa rigels."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Klean oan wa't neaken wie. Tredde rigel."
+        "explorer": "_Wetter oan wa't toarst hie._ Tredde rigel."
       },
       "2": {
-        "fez": "Bôle, wetter, klean. It is in list fan dingen dy't weijûn binne."
+        "fez": "Bôle, klean, wetter. It is in list fan dingen dy't weijûn binne."
       },
       "3": {
         "explorer": "Yn it grêf fan in man dy't alles meinaam."
@@ -1599,8 +1605,42 @@
       "explorer": "It kin der mei troch."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Dêr mist wat foar wa't honger hat. Bôle, soe ik sizze. En ik ken ien dy't fjirtich jier lang elke sek nôt teld hat."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, wy hawwe bôle nedich. Foar in muorre."
+        },
+        "2": {
+          "ipi": "Bôle? Fan my? Witsto wol wat nôt kostet?"
+        },
+        "3": {
+          "fez": "It is foar in rigel oer dingen weijaan."
+        },
+        "4": {
+          "ipi": "…Wei. Jaan."
+        },
+        "5": {
+          "ipi": "Goed dan. Ien brea. Mar it wurdt opskreaun: _Ipi joech bôle._"
+        },
+        "6": {
+          "fez": "Hy joech wat wei! Seachsto dat?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Dat brea — hat immen it al opiten? Want oars wol ik it werom."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Noch hieltyd hjir? Nei it noarden! Henut! Alve deben!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "De muorre. It tredde teken. It is noch hieltyd myn namme net."
+          "henut": "De muorre. It twadde teken. It is noch hieltyd myn namme net."
         }
       },
       "wall2": {

@@ -21,19 +21,24 @@
     "mapHint": "Copa e letrës vizaton një rrugë tregu dhe derën e një bodrumi. Vendi ku fshihte gjërat një tregtar, asgjë më shumë."
   },
   "junior_1": {
-    "name": "Shtegtimi i ibisit të shenjtë"
+    "name": "Shtegtimi i ibisit të shenjtë",
+    "description": "Këneta me kallama përgjatë Nilit, dhe ibisi që ecën nëpër to. Zogj të shenjtë — dhe jo për arsyen që mendon ti."
   },
   "junior_2": {
-    "name": "Lugina e zejtarëve"
+    "name": "Lugina e zejtarëve",
+    "description": "Deir el-Medina, fshati i ndërtuesve të varreve. Punishtet e tyre janë ende në këmbë, dhe po ashtu një pjesë e punës."
   },
   "junior_3": {
-    "name": "Tempulli i Thothit"
+    "name": "Tempulli i Thothit",
+    "description": "Tempulli i Thothit. Të gjithë ia dinë emrin; pyet tre veta për çfarë ishte perëndi dhe merr tre përgjigje."
   },
   "junior_4": {
-    "name": "Fari i Aleksandrisë"
+    "name": "Fari i Aleksandrisë",
+    "description": "Faros i Aleksandrisë, një nga shtatë mrekullitë e botës. Ajo që ka mbetur prej tij shtrihet në port, nën ujë."
   },
   "junior_treasure_tomb": {
     "name": "Thesari i fshehur i fisnikes",
+    "description": "Qemeri i një fisnikeje, i pikturuar nga dyshemeja deri në tavan, dhe çdo gjë ende aty ku e la ajo.",
     "mapHint": "Bojë e hollë, një vulë me stemë në cep. Dikush i rëndësishëm donte që kjo dhomë të harrohej."
   },
   "expert_1": {

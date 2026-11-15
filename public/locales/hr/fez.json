@@ -3,15 +3,12 @@
   "welcome": "Egipat! Stvarno sam tu.",
   "welcome2": "A ova karta… preskupo sam je platio. Bolje joj je da je točna.",
   "welcome3": "Hajde. Da vidimo gdje je taj križić.",
-
   "pyramidIntro": "Na ovom kamenju ima brojeva. A neki nedostaju…",
   "pyramidIntro2": "Čekaj. Svaki kamen je zbroj dvaju ispod njega! Da — i ovdje!",
-
   "pyramidBlockedBlocks": "Hej, što je ovo? Ti blokovi su zapečaćeni. Ne žele pokazati svoj broj!",
   "pyramidBlockedBlocks2": "Ništa zato. Pogledaj blokove oko njega — iz njih ga možeš izračunati.",
   "pyramidBlockedBlocks3": "Samo ga ne možeš upisati. Taj broj moraš zapamtiti u glavi.",
   "pyramidBlockedBlocks4": "Hajde, već si tako daleko. Ti to možeš!",
-
   "levelCompleted": "Ha! Otvara se! Hajde, unutra.",
   "exitPillar": {
     "1": { "fez": "Ha! Danje svjetlo! Vidiš onaj snop svjetla? To je naš izlaz. Uđi u njega i gotovi smo ovdje." },
@@ -20,24 +17,18 @@
   },
   "expeditionCompleted": "Čestitamo, ekspedicija je gotova!",
   "expeditionCompleted2": "Nova ekspedicija te čeka.",
-
   "tombTutorial": "Ooo, natpis! Možemo li ga pročitati? S hijeroglifima koje imamo… možda!",
   "tombTutorial2": "Vidi ovo, računi sa znakovima! Vidiš ona prazna mjesta? Tamo idu hijeroglifi. Tvoji, tamo dolje.",
   "tombTutorial3": "Mali računi pokazuju kad je znak na pravom mjestu. Tako otkrivamo koji znak ide kamo.",
   "tombTutorial4": "Sve popunjeno? Onda se pojavi brava s brojevima. Veliki račun je šifra — i grobnica se otvara!",
-
   "hieroglyphUnlock": "Imamo poseban predmet — s njim možemo pisati na jedan od zapečaćenih blokova!",
-  "hieroglyphUnlock2": "Dodirni kamen koji svijetli, pa povuci predmet na njega da ga otključaš. Jedan blok po piramidi.",
-
+  "hieroglyphUnlock2": "Odaberi kamen koji svijetli, pa donesi predmet do njega da ga otključaš. Jedan blok po piramidi.",
   "errorHighlightTutorial": "Ono blago koje smo našli ima zgodan trik — upišeš li krivi odgovor, jedna greška zasvijetli crveno!",
   "errorHighlightTutorial2": "Svijetli samo jedan blok odjednom, pa je i dalje izazov. Ali pomaže ti suziti potragu!",
-
   "earlyFeedbackTutorial": "Vidiš one kontrolne blokove? Postaju zeleni ili crveni dok ih popunjavaš — odmah znaš!",
   "earlyFeedbackTutorial2": "Drži se njih dok rješavaš. Ako jedan postane crven, nešto u blizini treba popraviti.",
-
   "notEnoughHieroglyphs": "Ovu ekspediciju uvijek možeš prekinuti tako da se vratiš na ekran s putovanjima.",
   "notEnoughHieroglyphs2": "Možemo prekinuti ekspediciju i potražiti negdje drugdje hijeroglife koji nam još trebaju.",
-
   "tombLoot": "Ijuu, naše prvo blago! Bravo!",
   "mapPiece": "Gledaj! E TO je karta. Prava stara! Vrijedi više od obje naše zajedno!",
   "mapPiece2": "Doduše, samo komadić. Svaka ekspedicija ovdje skriva jedan, a zajedno pokazuju put do grobnice.",
@@ -45,39 +36,30 @@
   "mapComplete2": "Ondje, gdje se sve crte sastaju. Ondje leži grobnica.",
   "mapComplete3": "Sad je među našim putovanjima. Idemo pogledati?",
   "mapPiece3": "Prati koliko ih imamo na popisu ekspedicija. Ja ću sigurno brojati!",
-
   "mosaicIntro": "Ooo, obojeno staklo! Vidi kako hvata svjetlo — TO nitko ne baca!",
   "mosaicIntro2": "To je komadić slike. Cijeli prozor od stakla, a svaki komadić koji nađemo vraća dio slike.",
   "mosaicIntro3": "Zar nemaš negdje tabor? Ponesi ih, pa ćemo ih tamo složiti. Baš me zanima što će ispasti!",
   "mosaicReminder": "Pst! Oni stakleni komadići još zveckaju u našoj torbi. Hoćemo li ih staviti u prozor u taboru?",
-
   "mosaicStarter": "Mačka na vratima, a zmija bježi glavom bez obzira. To je vrijedilo zdjelice mlijeka.",
   "mosaicStarter2": "Egipćani su obožavali mačke baš zbog toga — ubijale su zmije i štakore koji su se uvlačili u žito.",
   "mosaicStarter3": "Toliko su ih voljeli da su jednu pretvorili u božicu. Bastet. Čuva kuću, vrata i sve koji iza njih spavaju.",
-
   "mosaicJunior": "Pogledaj mu ruku — netko mu pokazuje kako se drži pero.",
   "mosaicJunior2": "Onaj s ptičjom glavom je Thoth. Pisanje, brojanje, zapisivanje — sve je to njegovo.",
   "mosaicJunior3": "Ibis kojeg smo pratili uz rijeku? To je njegova ptica. I svaki broj koji smo upisali u zid pripada njemu.",
-
   "mosaicExpert": "To svjetlo nije slučajno. Cijelu dvoranu sagradili su tako da padne baš tamo, baš onog pravog jutra.",
   "mosaicExpert2": "Sunce je Amon-Ra — onaj skriveni, i svjetlo koje svi vide. Oboje odjednom.",
   "mosaicExpert3": "Tko zna tako točno izmjeriti nebo, zna izmjeriti sve. Cijelo vrijeme rješavamo njihove račune.",
-
   "mosaicMaster": "Zelena koža, a iz njega raste žito. To je namjerno.",
   "mosaicMaster2": "Oziris. Ubili su ga, pa su ga ponovno sastavili, i sad je on ono što se vraća svake godine kad rijeka poplavi polja.",
   "mosaicMaster3": "Ovdje dolje to je cijela poanta: mrtav ne znači gotov. Vesela misao za grobnicu, zar ne?",
-
   "mosaicWizard": "S jedne strane srce. S druge jedno pero. I vaga je u ravnoteži.",
   "mosaicWizard2": "Pero je Ma'at — istina, ravnoteža, sve kako treba biti. Ako je srce teže od tog pera, ne prolaziš kroz vrata.",
   "mosaicWizard3": "Šakal koji drži vagu mirnom je Anubis. On je taj koji te dovede ovamo.",
-
   "mosaicFinale": "Odmakni se malo. Pogledaj što smo sve iznijeli iz tih piramida.",
   "mosaicFinale2": "Svaki komadić dio je njega — onoga koji drži vagu mirnom. Cijelim putem nas je gledao.",
   "mosaicFinale3": "To je njegov zapis o nama. I rekao bih da je u ravnoteži.",
-
   "shopFirstVisit": "A, evo nas. Moj štand — rekao sam ti da sam tu zbog trgovine.",
   "shopFirstVisit2": "Sve na ovom pultu odnekud sam iznio. Ono tamo je od prije dvije grobnice.",
-
   "shopArrival": "A, moj štand! Da poslažem što sam usput pokupio.",
   "shopArrival2": "Rijetki nalazi su najskuplji, ali platit ću ti za svaku sitnicu koju nosiš.",
   "arrival": {
@@ -108,13 +90,10 @@
         "fez": "O, ovo mi se sviđa. Ovdje su učili pisati! Znak po znak, na razbijenim loncima — papirus je bio preskup za djecu."
       },
       "2": { "explorer": "Vježbali su na smeću?" },
-      "3": {
-        "fez": "Na čemu god je bilo! A kad naučiš dovoljno znakova, zid odjednom više nije samo ukras."
-      },
+      "3": { "fez": "Na čemu god je bilo! A kad naučiš dovoljno znakova, zid odjednom više nije samo ukras." },
       "4": { "explorer": "Ta Sfinga… hoću je još jednom pogledati." },
       "5": { "fez": "Ne još. Uskoro." }
     },
-
     "junior_1": {
       "1": { "fez": "Vraćali su se svake godine s poplavom, gotovo točno na dan." },
       "2": { "fez": "Pa su ljudi počeli brojati dane između. Odatle dolazi kalendar — od ptica." },
@@ -142,7 +121,6 @@
       "3": { "explorer": "Kako ovdje išta nađeš bez toga?" },
       "4": { "fez": "Pitaš nekoga tko je već bio tamo. To ti je cijeli moj posao." }
     },
-
     "expert_1": {
       "1": { "fez": "Šezdesetak grobnica uklesanih u jednu dolinu, i svaka je otvorena prije nego što smo mi stigli." },
       "2": { "explorer": "Tko ih je otvorio?" },
@@ -156,9 +134,7 @@
       "3": { "fez": "Isti bog, mislim. Onim popularnima dali su dva imena." }
     },
     "expert_3": {
-      "1": {
-        "fez": "Cijela zemlja je zelena traka s obje strane jedne rijeke, a ovdje se raširi u sve ovo."
-      },
+      "1": { "fez": "Cijela zemlja je zelena traka s obje strane jedne rijeke, a ovdje se raširi u sve ovo." },
       "2": { "fez": "Sve raste. I sve grize." },
       "3": { "explorer": "A zbog čega smo mi ovdje?" },
       "4": { "fez": "Iskreno sam se nadao — ni zbog jednog." }
@@ -169,7 +145,6 @@
       "3": { "explorer": "I je li uspjelo?" },
       "4": { "fez": "Piramida još stoji, a on ne. Ovisi što misliš pod tim." }
     },
-
     "master_1": {
       "1": { "fez": "Dva milijuna blokova. Netko ih je prebrojio." },
       "2": { "explorer": "Netko ih je prebrojio?" },
@@ -197,7 +172,6 @@
       "2": { "explorer": "Henut bi pobjesnila." },
       "3": { "fez": "Henut bi pisala bilješke." }
     },
-
     "wizard_1": {
       "1": { "fez": "Sunce noću ode ispod svijeta i izađe s druge strane. U to su vjerovali." },
       "2": { "fez": "Dvanaest sati u mraku, s preprekama na putu, i netko ga mora prenijeti do kraja." },
@@ -234,7 +208,6 @@
       "3": { "fez": "Za svakoga tko gleda. U tome je stvar — nikad nije bilo za onoga unutra." }
     }
   },
-
   "tomb": {
     "starter": {
       "1": { "ipi": "Hej! Ruke k sebi! To je moj vrč!" },
@@ -262,12 +235,8 @@
       "2": { "explorer": "Gnjavi." },
       "3": { "henut": "Bilo je to staklo. Prekrasno staklo. On je to znao." },
       "4": { "fez": "…Je li i narukvica bila od stakla?" },
-      "5": {
-        "henut": "Sve ovdje je najbolja kopija koju se moglo kupiti, mladiću, i svaki sam komad sama odabrala."
-      },
-      "6": {
-        "henut": "Dakle. Zid. Treći znak — to nije moje ime. Neki šegrt s dlijetom, a nitko ga nije pazio."
-      },
+      "5": { "henut": "Sve ovdje je najbolja kopija koju se moglo kupiti, mladiću, i svaki sam komad sama odabrala." },
+      "6": { "henut": "Dakle. Zid. Treći znak — to nije moje ime. Neki šegrt s dlijetom, a nitko ga nije pazio." },
       "7": { "henut": "Učiš znakove. To se vidi. Popravi to." }
     },
     "juniorFixed": {
@@ -330,9 +299,7 @@
       "11": { "pharaoh": "Ovo mi je najbolji tjedan u devetsto godina." },
       "12": { "fez": "Ono na zidu je Oziris. Gospodar mrtvih — tmurna stvar." },
       "13": { "pharaoh": "On je ZELEN, ti smiješna životinjo." },
-      "14": {
-        "pharaoh": "Zelen kao polje u poplavi. Ubili su ga i ponovno sastavili, i on se vraća svake godine."
-      },
+      "14": { "pharaoh": "Zelen kao polje u poplavi. Ubili su ga i ponovno sastavili, i on se vraća svake godine." },
       "15": { "pharaoh": "Ovdje dolje to nije tmurno, to je cijela poanta. Mrtav ne znači gotov." }
     },
     "wizard": {
@@ -359,7 +326,6 @@
       "3": { "fez": "Cijelo vrijeme je to bila slika." }
     }
   },
-
   "cave": {
     "starter_treasure_tomb": {
       "1": { "fez": "Špilja! Na karti su bila podrumska vrata, a ovo je cijelo brdo!" },
@@ -409,7 +375,6 @@
       "3": { "fez": "Nemam pojma. To je najgore od svega." }
     }
   },
-
   "pillar": {
     "starter_treasure_tomb": {
       "1": { "fez": "Sve te poluge i vrata, za jedan podrum!" },
@@ -451,7 +416,6 @@
       "3": { "fez": "I skoro sam bio u pravu." }
     }
   },
-
   "cavern": {
     "starter_treasure_tomb": {
       "1": { "fez": "Vidi to! Piramida, pod zemljom! Za trgovca!" },
@@ -498,7 +462,6 @@
       "3": { "fez": "Karte, da. Čudno. Mislio sam da će to biti ljepši osjećaj." }
     }
   },
-
   "camp": {
     "firstHome": {
       "1": { "fez": "Ovo je tvoj tabor? Vatra i škrinja?" },
@@ -556,10 +519,11 @@
       "3": { "fez": "Pa. Ja sam uglavnom pokazivao prstom." }
     }
   },
-
   "animal": {
     "forSale": {
-      "1": { "fez": "Vidi što je na štandu! Sad prodajem i prijevoz." }
+      "1": { "fez": "Vidi što je na štandu! Sad prodajem i prijevoz." },
+      "2": { "explorer": "Vidim samo crtež." },
+      "3": { "fez": "Original više jede." }
     },
     "boughtDonkey": {
       "1": { "fez": "Prodano! Jedan magarac. Tvrdoglav, ali nosi sve." },
@@ -570,10 +534,7 @@
       "1": { "fez": "Ne hodamo mi toliko daleko sa svim ovim stvarima. Za to treba magarac." },
       "2": { "fez": "I pogodi tko ga ima? Ja. Na svom štandu u Henutinom trezoru." }
     },
-    "throughDonkey": {
-      "1": { "explorer": "Hoće ići." },
-      "2": { "fez": "Danas. Pitaj ga opet sutra." }
-    },
+    "throughDonkey": { "1": { "explorer": "Hoće ići." }, "2": { "fez": "Danas. Pitaj ga opet sutra." } },
     "arrivesDonkey": {
       "1": { "fez": "Evo ga! Stigao je prije nas." },
       "2": { "explorer": "I vatru je već našao." },
@@ -688,7 +649,6 @@
       "3": { "fez": "Ne. I ne mora." }
     }
   },
-
   "bond": {
     "starter": {
       "1": { "fez": "To je bilo brzo." },
@@ -728,7 +688,6 @@
       "3": { "fez": "Sve te godine ljudi su prolazili pokraj njega. Sve te godine!" }
     }
   },
-
   "reading": {
     "junior": {
       "1": { "explorer": "Ovdje je jedan redak koji sad mogu pročitati." },
@@ -737,15 +696,15 @@
       "4": { "explorer": "Ima ga i u prošloj. Nije mi bilo jasno da su to riječi." }
     },
     "expert": {
-      "1": { "explorer": "Drugi redak. Žednome dadoh vode." },
-      "2": { "fez": "Kruh, a sad i voda. Netko je jako želio da ga pamte kao darežljivog." },
+      "1": { "explorer": "Drugi redak. _Golome dadoh odjeću._" },
+      "2": { "fez": "Kruh, a sad i odjeća. Netko je jako želio da ga pamte kao darežljivog." },
       "3": { "explorer": "Svi to imaju. Svaki zid, svaka grobnica, ista dva retka." },
       "4": { "fez": "Onda su ili svi bili darežljivi, ili je to nešto što se jednostavno mora reći." },
       "5": { "explorer": "Ili je to ono po čemu su ih mjerili." }
     },
     "master": {
-      "1": { "explorer": "Golome dadoh odjeću. Treći redak." },
-      "2": { "fez": "Kruh, voda, odjeća. To je popis stvari koje je netko poklonio." },
+      "1": { "explorer": "_Žednome dadoh vode._ Treći redak." },
+      "2": { "fez": "Kruh, odjeća, voda. To je popis stvari koje je netko poklonio." },
       "3": { "explorer": "U grobnici čovjeka koji je sve ponio sa sobom." },
       "4": { "fez": "…Da. I meni je to palo u oči." }
     },
@@ -765,7 +724,6 @@
       "13": { "fez": "Pa. To objašnjava fes." }
     }
   },
-
   "altar": {
     "refused": {
       "1": { "priest": "Ne." },
@@ -776,7 +734,6 @@
       "4": { "priest": "Čekam tri tisuće godina. Neću dopustiti da me netko prevari u zadnjem tjednu." }
     }
   },
-
   "meeting": {
     "starter_1": {
       "1": { "voice": "Hej! Ne TAMO! Pazi kud ideš!" },
@@ -797,14 +754,27 @@
       "16": { "fez": "Četiri oka vide više od dva. Hajde, piramida čeka!" }
     }
   },
-
-  "end": {
-    "1": { "fez": "Je li bilo zgodno?" },
-    "2": { "explorer": "Može proći." }
+  "end": { "1": { "fez": "Je li bilo zgodno?" }, "2": { "explorer": "Može proći." } },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Tu nedostaje nešto za gladne. Kruh, rekao bih. A znam čovjeka koji je četrdeset godina brojao svaku vreću žita."
+        }
+      },
+      "gift": {
+        "1": { "explorer": "Ipi, treba nam kruh. Za jedan zid." },
+        "2": { "ipi": "Kruh? Moj? Znate li vi koliko košta žito?" },
+        "3": { "fez": "To je za redak o poklanjanju stvari." },
+        "4": { "ipi": "…Poklanjanju. Stvari." },
+        "5": { "ipi": "Dobro. Jedan kruh. Ali to se zapisuje: _Ipi dade kruha._" },
+        "6": { "fez": "Nešto je poklonio! Vidiš li ti to?" }
+      }
+    }
   },
-
   "revisit": {
     "starter": {
+      "gave1": { "1": { "ipi": "Onaj kruh — je li ga netko već pojeo? Jer ako nije, htio bih ga natrag." } },
       "north1": { "1": { "ipi": "Još ste tu? Na sjever! Henut! Jedanaest debena!" } },
       "north2": { "1": { "ipi": "Jedanaest debena lapisa. Henut. Sjever. Što još čekate?" } },
       "paid1": { "1": { "ipi": "Pa? Je li platila? …Nije. Naravno da nije." } },
@@ -813,7 +783,7 @@
       "later2": { "1": { "ipi": "Četrdeset godina knjiga, i nijedna se ne slaže. Nijedna!" } }
     },
     "junior": {
-      "wall1": { "1": { "henut": "Zid. Treći znak. To još uvijek nije moje ime." } },
+      "wall1": { "1": { "henut": "Zid. Drugi znak. To još uvijek nije moje ime." } },
       "wall2": { "1": { "henut": "Ti si još tu, a ona guska još je na mom zidu. Popravi to." } },
       "priest1": { "1": { "henut": "Još je moje ime. Provjerila sam. A sad — Karnak, svećenik. Hajde." } },
       "priest2": { "1": { "henut": "Karnak! Dovoljno je dugo čekao. Idite i neka vas najave." } },

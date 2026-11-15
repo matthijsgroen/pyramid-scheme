@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Nie da się wczytać twoich postępów",
     "body": "Przeglądarka nie chce teraz oddać zapisanej gry. Twój zapis nie zniknął: odśwież stronę, żeby spróbować jeszcze raz.",
-    "banner": "Postępy się nie zapisują. Stuknij, żeby odświeżyć.",
+    "banner": "Postępy się nie zapisują. Odśwież.",
     "reload": "Odśwież",
     "continue": "Graj dalej bez zapisywania",
     "reset": "Zacznij od nowa (usuń zapis)",
@@ -29,7 +29,6 @@
     "evening": "Wieczór",
     "night": "Noc"
   },
-  "tomb": {},
   "ui": {
     "level": "Poziom",
     "symbols": "symbole",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Przerwij wyprawę",
     "confirmInterruptExpedition": "Na pewno chcesz przerwać tę wyprawę? Postępy wyprawy zostaną, ale postępy poziomu przepadną!",
     "cancel": "Anuluj",
+    "leaveSite": "Opuścić to miejsce?",
+    "confirmLeaveSite": "Wybierz Wyjdź, żeby wrócić na zewnątrz, albo Zostań, żeby dalej odkrywać.",
+    "leave": "Wyjdź",
+    "stay": "Zostań",
     "settings": "Ustawienia",
     "language": "Język",
     "close": "Zamknij",
@@ -108,8 +111,12 @@
     "solvedWithHints_few": "Rozwiązane z {{count}} podpowiedziami",
     "solvedWithHints_many": "Rozwiązane z {{count}} podpowiedziami",
     "solvedWithHints_other": "Rozwiązane z {{count}} podpowiedzi",
-    "tapToContinue": "Stuknij, żeby iść dalej",
-    "goal": "Cel"
+    "tapToContinue": "Dalej",
+    "goal": "Cel",
+    "controls": "Sterowanie",
+    "controlsUndo": "cofnij",
+    "controlsHint": "podpowiedź",
+    "controlsLeave": "wróć do mapy"
   },
   "trap": {
     "warning": "⚠ Korytarz z pułapką",
@@ -128,6 +135,7 @@
     "turnAround": "Zawróć",
     "wardDescription": {
       "starter": "Pieczęć kupca zamyka to przejście. Otworzy je tylko jego klucz.",
+      "junior": "Herb szlachcianki zamyka tę drogę. Otworzy ją tylko jej klucz.",
       "expert": "Świątynna pieczęć arcykapłana strzeże tych drzwi. Musi je otworzyć jego święty klucz.",
       "master": "Królewska pieczęć faraona zamyka to przejście. Złamie ją tylko klucz władcy.",
       "wizard": "Tej bramy strzegą bogowie. Przejdzie tylko ich boski klucz."
@@ -136,7 +144,7 @@
     "lockedColor": "Nie masz jeszcze tego klucza z tego piętra."
   },
   "chest": {
-    "tapToOpen": "Stuknij, żeby otworzyć",
+    "tapToOpen": "Otwórz",
     "money_one": "{{count}} moneta",
     "money_few": "{{count}} monety",
     "money_many": "{{count}} monet",
@@ -145,6 +153,7 @@
     "mapPieceDescription": "Kruchy skrawek mapy do jakiegoś dawno zapomnianego miejsca. Szkoda, że tak dużo jeszcze brakuje…",
     "mapPieceProgress": "Zebrane kawałki mapy: {{found}} z {{required}}",
     "mapPieceComplete": "Mapa jest cała. Prowadzi do miejsca: {{name}}.",
+    "hieroglyph": "Hieroglif",
     "hieroglyphFragment": "Kawałek hieroglifu",
     "fragmentProgress": "Znalezione kawałki: {{found}} z {{required}}",
     "tombKey": "Klucz do grobowca",
@@ -161,8 +170,9 @@
   },
   "loot": {
     "youFound": "Twoje znalezisko",
+    "youReceived": "Otrzymujesz",
     "expeditionReward": "Dodatkowa nagroda za ukończenie wyprawy",
-    "clickToContinue": "Stuknij gdziekolwiek, żeby iść dalej"
+    "clickToContinue": "Dalej"
   },
   "money": {
     "label": "Monety"
@@ -264,7 +274,7 @@
     "tabNew_other": "{{label}} · {{count}} nowego",
     "empty": "Twoja skrzynia jest jeszcze pusta",
     "newLabel": "NOWE",
-    "clickForDetails": "Stuknij kafelek, żeby zobaczyć więcej",
+    "clickForDetails": "Wybierz kafelek, żeby zobaczyć więcej",
     "categories": {
       "deities": "🏺 Bogowie",
       "professions": "⚱️ Zawody",
@@ -272,6 +282,7 @@
       "artifacts": "💎 Przedmioty",
       "treasures": "💰 Skarby",
       "junk": "🔷 Drobiazgi",
+      "offerings": "🍞 Dary",
       "signs": "✍️ Znaki"
     },
     "treasureCategories": {
@@ -354,22 +365,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Stuknij znak na dole, a potem liczbę. Stuknij tę liczbę jeszcze raz, żeby ją zdjąć.",
+      "tap": "Wybierz znak na dole, a potem liczbę. Wybierz tę liczbę jeszcze raz, żeby ją zdjąć.",
       "same": "Znak waży tyle samo na każdej wadze.",
-      "cancel": "Zdejmij to samo z obu szalek, a waga dalej będzie w równowadze. Stuknij zaznaczony kawałek, żeby to zrobić. To, co zostanie, pojawi się jako nowy rząd.",
-      "swap": "Stuknij znak, naprzeciw którego nie ma takiego samego, a potem rząd, w którym ten znak stoi sam. Zamienisz go na to, ile ten rząd jest wart."
+      "cancel": "Zdejmij to samo z obu szalek, a waga dalej będzie w równowadze. Wybierz zaznaczony kawałek, żeby to zrobić. To, co zostanie, pojawi się jako nowy rząd.",
+      "swap": "Wybierz znak, naprzeciw którego nie ma takiego samego, a potem rząd, w którym ten znak stoi sam. Zamienisz go na to, ile ten rząd jest wart."
     },
     "hint": {
       "mistake": "Jedna z wpisanych wag przechyla wagę. Zdejmij ją i popatrz jeszcze raz.",
       "alone": "W podświetlonym rzędzie {{glyph}} to jedyny kawałek bez liczby. Policz, ile waży.",
       "equalShares": "W podświetlonym rzędzie są same {{glyph}} naprzeciw liczby. Podziel tę liczbę równo między nie.",
       "difference": "Dwa podświetlone rzędy są takie same, oprócz {{glyph}}. Porównaj je.",
-      "cancelGlyph": "Na obu szalkach podświetlonego rzędu leży {{glyph}}. Stuknij jeden, żeby zdjąć go z obu stron. Rząd zostanie w równowadze.",
-      "cancelStones": "Na obu szalkach podświetlonego rzędu leżą zwykłe liczby. Stuknij jedną, żeby zdjąć tyle samo z obu stron.",
-      "swap": "Jeden podświetlony rząd mówi, ile wart jest jeden {{glyph}} sam w sobie. Stuknij {{glyph}} w drugim podświetlonym rzędzie, a potem ten rząd."
+      "cancelGlyph": "Na obu szalkach podświetlonego rzędu leży {{glyph}}. Wybierz jeden, żeby zdjąć go z obu stron. Rząd zostanie w równowadze.",
+      "cancelStones": "Na obu szalkach podświetlonego rzędu leżą zwykłe liczby. Wybierz jedną, żeby zdjąć tyle samo z obu stron.",
+      "swap": "Jeden podświetlony rząd mówi, ile wart jest jeden {{glyph}} sam w sobie. Wybierz {{glyph}} w drugim podświetlonym rzędzie, a potem ten rząd."
     },
     "swap": {
-      "pick": "Stuknij podświetlony rząd, żeby zamienić ten {{glyph}} na to, ile według tego rzędu jest wart.",
+      "pick": "Wybierz podświetlony rząd, żeby zamienić ten {{glyph}} na to, ile według tego rzędu jest wart.",
       "none": "Nic tu nie mówi, ile wart jest jeden {{glyph}} sam w sobie, i nic naprzeciw do niego nie pasuje."
     },
     "goal": {
@@ -379,11 +390,16 @@
     "name": {
       "default": "Waga",
       "weighing": "Ważenie serca"
+    },
+    "controls": {
+      "move": "wybierz kawałek, rząd albo przycisk",
+      "press": "naciśnij",
+      "weigh": "nadaj wybranemu znakowi tę wagę"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Stuknij raz, żeby skreślić liczbę, drugi raz, żeby ją zostawić, i trzeci raz, żeby wyczyścić.",
+      "tap": "Wybierz liczbę raz, żeby ją skreślić, drugi raz, żeby ją zostawić, i trzeci raz, żeby wyczyścić.",
       "totals": "Mała liczba pod każdym celem to tyle, ile ta linia daje teraz razem."
     },
     "hint": {
@@ -448,12 +464,16 @@
       }
     },
     "goal": "Każdy rząd i każda kolumna dają razem liczbę, która stoi obok.",
-    "name": "Rachunek"
+    "name": "Rachunek",
+    "controls": {
+      "move": "wybierz liczbę",
+      "mark": "skreśl, zostaw albo wyczyść"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Znak między dwiema kratkami wskazuje mniejszą z dwóch liczb.",
-      "enter": "Stuknij kratkę, a potem liczbę. Ta sama liczba jeszcze raz ją wyjmuje.",
+      "enter": "Wybierz kratkę, a potem liczbę. Ta sama liczba jeszcze raz ją wyjmuje.",
       "notes": "Włącz ołówek, żeby zapisać, jakie liczby mogą jeszcze być w kratce. Cofnij zabiera twój ostatni ruch."
     },
     "hint": {
@@ -504,14 +524,22 @@
       }
     },
     "goal": "W każdym rzędzie i w każdej kolumnie każda liczba jest dokładnie raz.",
-    "name": "Większe i mniejsze"
+    "name": "Większe i mniejsze",
+    "controls": {
+      "move": "wybierz kratkę",
+      "type": "wpisz liczbę",
+      "choose": "wybierz liczbę albo gumkę",
+      "place": "wpisz ją",
+      "pencil": "ołówek",
+      "erase": "zmaż"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Lustro odbija światło każdą ze swoich stron. Małe kreski dookoła pokazują, jak jeszcze może leżeć: większość skręca światło o ćwierć obrotu, a niektóre trochę mniej i puszczają je na ukos.",
       "walls": "Kamienny blok połyka światło. Brzeg planszy też.",
-      "tap": "Stuknij element, żeby go zmienić: lustro się obraca, a przesuwany element idzie na następne miejsce. Biała ramka znaczy, że możesz go ruszać. Cała reszta należy do zagadki.",
-      "nodes": "Niektóre kamienie są połączone z gniazdem w podłodze i żadne stuknięcie ich nie ruszy. Puść światło przez gniazdo, a kamień odsunie się na bok."
+      "tap": "Wybierz element, żeby go zmienić: lustro się obraca, a przesuwany element idzie na następne miejsce. Biała ramka znaczy, że możesz go ruszać. Cała reszta należy do zagadki.",
+      "nodes": "Niektóre kamienie są połączone z gniazdem w podłodze i nie dasz rady ich ruszyć. Puść światło przez gniazdo, a kamień odsunie się na bok."
     },
     "hint": {
       "entryRun": "Zacznij tam, gdzie światło już dociera: biegnie prosto od tarczy aż do pierwszego elementu, który możesz zmienić. Te kratki niosą światło, cokolwiek zrobisz.",
@@ -544,7 +572,7 @@
       "triple": "Trzy takie same pod rząd są zawsze zakazane, w poziomie i w pionie.",
       "copies": "Żadne dwa rzędy nie mogą być takie same. Żadne dwie kolumny też nie.",
       "signs": "Znak między dwiema kratkami mówi, jak się do siebie mają: = to takie same, × to różne.",
-      "enter": "Stuknij kratkę, żeby postawić słońce, jeszcze raz — księżyc, i jeszcze raz, żeby ją wyczyścić."
+      "enter": "Wybierz kratkę, żeby postawić słońce, jeszcze raz — księżyc, i jeszcze raz, żeby ją wyczyścić."
     },
     "hint": {
       "mistake": "Jeden z tych znaczków nie może być dobry.",
@@ -570,7 +598,11 @@
       }
     },
     "goal": "W każdej kratce jest słońce albo księżyc, a w każdej linii jest tyle samo jednych, co drugich.",
-    "name": "Słońce i księżyc"
+    "name": "Słońce i księżyc",
+    "controls": {
+      "move": "wybierz kratkę",
+      "mark": "zmień znak"
+    }
   },
   "constellation": {
     "rules": {
@@ -578,25 +610,25 @@
         "straight": "Linie światła biegną prosto, w poziomie albo w pionie, od jednej gwiazdy do następnej.",
         "pair": "Dwie gwiazdy mogą łączyć najwyżej dwie linie.",
         "cross": "Linie nigdy się nie krzyżują i nigdy nie przechodzą przez gwiazdę.",
-        "enter": "Przeciągnij od gwiazdy do sąsiadki, żeby narysować linię, jeszcze raz — podwójną, i jeszcze raz, żeby ją usunąć."
+        "enter": "Narysuj linię od gwiazdy do sąsiadki, jeszcze raz — podwójną, i jeszcze raz, żeby ją usunąć."
       },
       "causeway": {
         "straight": "Drogi do ciągnięcia kamieni biegną prosto, w poziomie albo w pionie, od jednego miejsca do następnego.",
         "pair": "Dwa miejsca mogą łączyć najwyżej dwie drogi.",
         "cross": "Drogi nigdy się nie krzyżują i nigdy nie przechodzą przez miejsce.",
-        "enter": "Przeciągnij od miejsca do sąsiada, żeby zbudować drogę, jeszcze raz — podwójną, i jeszcze raz, żeby ją rozebrać."
+        "enter": "Zbuduj drogę od miejsca do sąsiada, jeszcze raz — podwójną, i jeszcze raz, żeby ją rozebrać."
       },
       "irrigation": {
         "straight": "Kanały biegną prosto, w poziomie albo w pionie, od jednego zbiornika do następnego.",
         "pair": "Dwa zbiorniki mogą łączyć najwyżej dwa kanały.",
         "cross": "Kanały nigdy się nie krzyżują i nigdy nie przechodzą przez zbiornik.",
-        "enter": "Przeciągnij od zbiornika do sąsiada, żeby wykopać kanał, jeszcze raz, żeby go poszerzyć, i jeszcze raz, żeby go zasypać."
+        "enter": "Wykop kanał od zbiornika do sąsiada, jeszcze raz, żeby go poszerzyć, i jeszcze raz, żeby go zasypać."
       },
       "ceiling": {
         "straight": "Sznurki biegną prosto, w poziomie albo w pionie, od jednej gwiazdy do następnej.",
         "pair": "Dwie gwiazdy mogą łączyć najwyżej dwa sznurki.",
         "cross": "Sznurki nigdy się nie krzyżują i nigdy nie przechodzą przez gwiazdę.",
-        "enter": "Przeciągnij od gwiazdy do sąsiadki, żeby położyć sznurek, jeszcze raz — podwójny, i jeszcze raz, żeby go zdjąć."
+        "enter": "Rozciągnij sznurek od gwiazdy do sąsiadki, jeszcze raz — podwójny, i jeszcze raz, żeby go zdjąć."
       }
     },
     "hint": {
@@ -700,37 +732,44 @@
       "causeway": "Droga kamieniarzy",
       "irrigation": "Sieć kanałów",
       "ceiling": "Malowany sufit"
+    },
+    "controls": {
+      "pick": "wybierz gwiazdę",
+      "grab": "chwyć ją",
+      "draw": "narysuj linię w tę stronę",
+      "release": "puść",
+      "alt": "przytrzymaj i wskaż: linia, podwójna, żadna"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Dwie gwiazdy nie mogą się stykać — rogi też się liczą.",
-        "enter": "Stuknij kratkę, żeby ją wykluczyć, jeszcze raz, żeby postawić gwiazdę, i jeszcze raz, żeby wyczyścić."
+        "enter": "Wybierz kratkę, żeby ją wykluczyć, jeszcze raz, żeby postawić gwiazdę, i jeszcze raz, żeby wyczyścić."
       },
       "fields": {
         "touch": "Dwa gospodarstwa nie mogą się stykać — rogi też się liczą. Tak blisko musiałyby dzielić jedną studnię.",
-        "enter": "Stuknij pole, żeby je wykluczyć, jeszcze raz, żeby zbudować gospodarstwo, i jeszcze raz, żeby wyczyścić."
+        "enter": "Wybierz pole, żeby je wykluczyć, jeszcze raz, żeby zbudować gospodarstwo, i jeszcze raz, żeby wyczyścić."
       },
       "lamps": {
         "touch": "Dwie lampki oliwne nie mogą stać obok siebie — rogi też się liczą. Ich kręgi światła by na siebie nachodziły i oliwa szłaby na marne.",
         "walls": "Szare kamienne bloki są częścią podłogi: nic na nich nie stanie i nie są kratkami.",
-        "enter": "Stuknij płytkę, żeby ją wykluczyć, jeszcze raz, żeby postawić lampkę oliwną, i jeszcze raz, żeby wyczyścić."
+        "enter": "Wybierz płytkę, żeby ją wykluczyć, jeszcze raz, żeby postawić lampkę oliwną, i jeszcze raz, żeby wyczyścić."
       },
       "market": {
         "touch": "Dwa kramy nie mogą stać obok siebie — rogi też się liczą. Rywale nigdy nie rozstawiają się ramię w ramię.",
         "walls": "Domy są częścią placu: nikt nie postawi w nich kramu i nie są miejscami na kram.",
-        "enter": "Stuknij miejsce, żeby je wykluczyć, jeszcze raz, żeby rozstawić kram, i jeszcze raz, żeby wyczyścić."
+        "enter": "Wybierz miejsce, żeby je wykluczyć, jeszcze raz, żeby rozstawić kram, i jeszcze raz, żeby wyczyścić."
       },
       "lotus": {
         "touch": "Dwa lotosy nie mogą pływać obok siebie — rogi też się liczą. Każdy kwiat potrzebuje wokół siebie wolnej wody.",
         "walls": "Skały wystają ze stawu: nic na nich nie popłynie i nie są kratkami.",
-        "enter": "Stuknij kawałek wody, żeby go wykluczyć, jeszcze raz, żeby puścić lotos, i jeszcze raz, żeby wyczyścić."
+        "enter": "Wybierz kawałek wody, żeby go wykluczyć, jeszcze raz, żeby puścić lotos, i jeszcze raz, żeby wyczyścić."
       },
       "cats": {
         "touch": "Dwa koty nie mogą spać obok siebie — rogi też się liczą. Każdy kot ma swój własny kawałek słońca.",
         "walls": "Filary podtrzymują świątynię: żaden kot nie zaśnie na filarze i filar nie jest kratką.",
-        "enter": "Stuknij płytkę, żeby ją wykluczyć, jeszcze raz, żeby położyć tam kota, i jeszcze raz, żeby wyczyścić."
+        "enter": "Wybierz płytkę, żeby ją wykluczyć, jeszcze raz, żeby położyć tam kota, i jeszcze raz, żeby wyczyścić."
       }
     },
     "hint": {
@@ -1136,6 +1175,11 @@
       "market": "Kramy na targu",
       "lotus": "Staw z lotosami",
       "cats": "Świątynne koty"
+    },
+    "controls": {
+      "move": "wybierz kratkę",
+      "mark": "zmień znak",
+      "sweep": "przytrzymaj i przesuń: wyklucz cały ciąg"
     }
   },
   "pairPuzzle": {
@@ -1152,13 +1196,13 @@
         "pair": "Przy każdym sarkofagu leży jedna mumia: tuż nad nim, pod nim, po lewej albo po prawej. Każda mumia leży przy swoim własnym sarkofagu.",
         "count": "Liczba obok rzędu albo kolumny mówi, ile jest w nim mumii. Robi się zielona, gdy linia ma dokładnie tyle, i czerwona, gdy już się nie da tego spełnić.",
         "touch": "Dwie mumie nie mogą leżeć obok siebie — rogi też się liczą.",
-        "enter": "Stuknij kratkę, żeby ją wykluczyć, jeszcze raz, żeby położyć tam mumię, i jeszcze raz, żeby wyczyścić. Przeciągnij przez kilka kratek, żeby wykluczyć je naraz. Sarkofagów nie da się stuknąć."
+        "enter": "Wybierz kratkę, żeby ją wykluczyć, jeszcze raz, żeby położyć tam mumię, i jeszcze raz, żeby wyczyścić. Kilka kratek pod rząd wykluczysz jednym ruchem. Sarkofagów nie da się zaznaczyć."
       },
       "beetles": {
         "pair": "Przy każdej kulce łajna stoi jeden żuk: tuż nad nią, pod nią, po lewej albo po prawej. Każdy żuk stoi przy swojej własnej kulce do toczenia.",
         "count": "Liczba obok rzędu albo kolumny mówi, ile jest w nim żuków. Robi się zielona, gdy linia ma dokładnie tyle, i czerwona, gdy już się nie da tego spełnić.",
         "touch": "Dwa żuki nie mogą stać obok siebie — rogi też się liczą.",
-        "enter": "Stuknij kratkę, żeby ją wykluczyć, jeszcze raz, żeby postawić tam żuka, i jeszcze raz, żeby wyczyścić. Przeciągnij przez kilka kratek, żeby wykluczyć je naraz. Kulek łajna nie da się stuknąć."
+        "enter": "Wybierz kratkę, żeby ją wykluczyć, jeszcze raz, żeby postawić tam żuka, i jeszcze raz, żeby wyczyścić. Kilka kratek pod rząd wykluczysz jednym ruchem. Kulek łajna nie da się zaznaczyć."
       }
     },
     "hint": {
@@ -1254,6 +1298,11 @@
           "place_other": "Postaw żuka na każdej zakreskowanej kratce."
         }
       }
+    },
+    "controls": {
+      "move": "wybierz kratkę",
+      "mark": "zmień znak",
+      "sweep": "przytrzymaj i przesuń: wyklucz cały ciąg"
     }
   },
   "rushHour": {
@@ -1268,11 +1317,11 @@
     "rules": {
       "default": {
         "lanes": "Klocek jeździ tylko po swoim torze — nigdy w bok i nigdy poza planszę.",
-        "shove": "Przeciągnij klocek, żeby go przesunąć. Zatrzyma się tam, gdzie coś stoi mu na drodze."
+        "shove": "Przesuń klocek wzdłuż jego toru. Zatrzyma się tam, gdzie coś stoi mu na drodze."
       },
       "market": {
         "lanes": "Sanie jadą tylko po torze, na którym stoją — nigdy w bok i nigdy poza ulicę.",
-        "shove": "Przeciągnij sanie, żeby je przesunąć. Zatrzymają się tam, gdzie coś stoi im na drodze."
+        "shove": "Przesuń sanie wzdłuż ich toru. Zatrzymają się tam, gdzie coś stoi im na drodze."
       }
     },
     "hint": {
@@ -1300,29 +1349,35 @@
           "down": "Przesuń go w dół ulicy, aż do kółka."
         }
       }
+    },
+    "controls": {
+      "pick": "wybierz klocek",
+      "grab": "chwyć go",
+      "slide": "przesuń",
+      "release": "puść"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "Liczby, które już są w plastrze, należą do zagadki — zostają na miejscu.",
-        "enter": "Stuknij liczbę, żeby tam podjąć ciąg, a potem stuknij pustą komórkę obok, żeby go przedłużyć. Możesz też po prostu przeciągnąć palcem przez komórki, po których idzie ciąg.",
-        "back": "Stuknij liczbę wpisaną przez ciebie i stuknij ją jeszcze raz, żeby ją zdjąć, razem ze wszystkim, co od niej zależało. Poprowadzenie ciągu z liczby w inną stronę robi to samo. Cofnij zabiera twój ostatni ruch."
+        "enter": "Poprowadź linię od liczby przez puste komórki obok, żeby przedłużyć ciąg.",
+        "back": "Wybierz liczbę wpisaną przez ciebie i wybierz ją jeszcze raz, żeby ją zdjąć, razem ze wszystkim, co od niej zależało. Poprowadzenie ciągu z liczby w inną stronę robi to samo. Cofnij zabiera twój ostatni ruch."
       },
       "channel": {
         "given": "Pola, które mają już liczbę, należą do zagadki — zostają na miejscu.",
-        "enter": "Stuknij pole z liczbą, żeby tam podjąć wodę, a potem stuknij suche pole obok, żeby kopać dalej. Możesz też po prostu przeciągnąć palcem po polach, którymi biegnie kanał.",
-        "back": "Stuknij wykopane pole i stuknij je jeszcze raz, żeby je zasypać, razem z kanałem, który został od niego odcięty. Kopanie z pola w inną stronę robi to samo. Cofnij zabiera twój ostatni ruch."
+        "enter": "Wykop kanał od pola z liczbą przez suche pola obok, żeby poprowadzić wodę dalej.",
+        "back": "Wybierz wykopane pole i wybierz je jeszcze raz, żeby je zasypać, razem z kanałem, który został od niego odcięty. Kopanie z pola w inną stronę robi to samo. Cofnij zabiera twój ostatni ruch."
       },
       "scribe": {
         "given": "Znaki napisane na czerwono należą do zagadki — zostają na miejscu.",
-        "enter": "Stuknij znak, żeby tam wziąć trzcinowe pióro, a potem stuknij puste miejsce obok, żeby pisać dalej. Możesz też po prostu przeciągnąć palcem wzdłuż linii.",
-        "back": "Stuknij napisany znak i stuknij go jeszcze raz, żeby go zeskrobać, razem z linią, która została od niego odcięta. Pisanie ze znaku w inną stronę robi to samo. Cofnij zabiera twój ostatni ruch."
+        "enter": "Pisz linię od znaku przez puste miejsca obok, żeby liczyć dalej.",
+        "back": "Wybierz napisany znak i wybierz go jeszcze raz, żeby go zeskrobać, razem z linią, która została od niego odcięta. Pisanie ze znaku w inną stronę robi to samo. Cofnij zabiera twój ostatni ruch."
       },
       "chambers": {
         "given": "Komnaty, które mają już liczbę, wykuli budowniczowie — zostają na miejscu.",
-        "enter": "Stuknij komnatę z liczbą, żeby tam podjąć korytarz, a potem stuknij zamkniętą komnatę obok, żeby się przebić. Możesz też po prostu przeciągnąć palcem po komnatach, którymi biegnie korytarz.",
-        "back": "Stuknij otwartą komnatę i stuknij ją jeszcze raz, żeby ją zamurować, razem z korytarzem, który został od niej odcięty. Przebicie się z komnaty w inną stronę robi to samo. Cofnij zabiera twój ostatni ruch."
+        "enter": "Przebij korytarz od komnaty z liczbą przez zamknięte komnaty obok, żeby poprowadzić go dalej.",
+        "back": "Wybierz otwartą komnatę i wybierz ją jeszcze raz, żeby ją zamurować, razem z korytarzem, który został od niej odcięty. Przebicie się z komnaty w inną stronę robi to samo. Cofnij zabiera twój ostatni ruch."
       }
     },
     "goal": {
@@ -1386,6 +1441,13 @@
       "channel": "Kanał",
       "scribe": "Karta pisarza",
       "chambers": "Zamknięte komnaty"
+    },
+    "controls": {
+      "move": "idź do sąsiedniej komórki; w górę i w dół skręca w lewo",
+      "right": "w górę w prawo albo w dół w prawo",
+      "grab": "podejmij ciąg albo zdejmij swoją liczbę",
+      "carry": "z podjętym ciągiem: prowadź go dalej; w górę i w dół idzie w tę stronę, gdzie da się iść dalej",
+      "drop": "odłóż ciąg"
     }
   },
   "sudoku": {
@@ -1393,13 +1455,13 @@
       "default": {
         "chambers": "Grube linie dzielą planszę na sześć komnat, każda ma dwie kratki szerokości i trzy wysokości.",
         "given": "Liczby, które już są wykute, należą do zagadki — zostają na miejscu.",
-        "enter": "Stuknij kratkę, a potem liczbę. Ta sama liczba jeszcze raz ją wyjmuje.",
+        "enter": "Wybierz kratkę, a potem liczbę. Ta sama liczba jeszcze raz ją wyjmuje.",
         "notes": "Włącz ołówek, żeby zapisać, jakie liczby mogą jeszcze być w kratce. Cofnij zabiera twój ostatni ruch."
       },
       "papyrus": {
         "chambers": "Grube kreski dzielą kartę na sześć pól, każde ma dwa miejsca szerokości i trzy wysokości.",
         "given": "Znaki napisane czerwonym tuszem należą do zagadki — zostają na miejscu.",
-        "enter": "Stuknij miejsce, a potem znak. Ten sam znak jeszcze raz go zeskrobuje.",
+        "enter": "Wybierz miejsce, a potem znak. Ten sam znak jeszcze raz go zeskrobuje.",
         "notes": "Weź trzcinowe pióro, żeby zapisać, jakie znaki mogą jeszcze być na miejscu. Cofnij zabiera twój ostatni ruch."
       }
     },
@@ -1470,6 +1532,14 @@
     "name": {
       "default": "Sześć komnat",
       "papyrus": "Rejestr pisarza"
+    },
+    "controls": {
+      "move": "wybierz kratkę",
+      "type": "wpisz liczbę",
+      "choose": "wybierz liczbę albo gumkę",
+      "place": "wpisz ją",
+      "pencil": "ołówek",
+      "erase": "zmaż"
     }
   },
   "crocodile": {
@@ -1483,6 +1553,10 @@
     "hint": {
       "biggest": "Ten krokodyl chce największej odpowiedzi. To {{value}}.",
       "smallest": "Ten krokodyl chce najmniejszej odpowiedzi. To {{value}}."
+    },
+    "controls": {
+      "move": "wybierz kamień",
+      "step": "stań na nim"
     }
   },
   "canisters": {
@@ -1525,35 +1599,35 @@
         "sums": "Każdą ilość, jaką da się zrobić, tworzą dwie liczby z ławy, dodane albo odjęte: wielkość dzbana, to, co w nim jest, albo ile jeszcze się zmieści.",
         "backwards": "Więc licz od końca, od potrzebnej ilości: jakie dwie liczby ją dają i jak sprawić, żeby obie były naraz?"
       },
-      "claim": "Kiedy masz już tę ilość, stuknij „to ten”. Wskazanie złego naczynia kosztuje jeden ruch.",
+      "claim": "Kiedy masz już tę ilość, wybierz „to ten”. Wskazanie złego naczynia kosztuje jeden ruch.",
       "legs": "Potem następna ilość, odmierzana z tego, co zostało w naczyniach.",
       "default": {
-        "moves": "Stuknij dzban, żeby go podnieść, a potem inny, żeby do niego przelać. Przelewanie się kończy, kiedy pierwszy jest pusty albo drugi pełny.",
+        "moves": "Podnieś dzban, a potem wybierz inny, żeby do niego przelać. Przelewanie się kończy, kiedy pierwszy jest pusty albo drugi pełny.",
         "contents": "To cała woda, jaka jest. Jeden dzban na początku jest pełny i niczego nie można wylać ani dolać.",
         "levels": "Na każdym dzbanie jest napisane, ile w nim jest i ile się mieści, gdy jest pełny."
       },
       "grain": {
-        "moves": "Stuknij miarkę, żeby ją podnieść, a potem inną, żeby wsypać do niej zboże. Sypanie się kończy, kiedy pierwsza jest pusta albo druga pełna po brzegi.",
+        "moves": "Podnieś miarkę, a potem wybierz inną, żeby wsypać do niej zboże. Sypanie się kończy, kiedy pierwsza jest pusta albo druga pełna po brzegi.",
         "contents": "To całe zboże, jakie jest. Jedna miarka na początku jest pełna i niczego nie można wymieść ani przynieść ze spichlerza.",
         "levels": "Na każdej miarce jest napisane, ile w niej jest i ile się mieści po brzegi."
       },
       "oil": {
-        "moves": "Stuknij dzban, żeby go podnieść, a potem inny, żeby do niego przelać. Przelewanie się kończy, kiedy pierwszy jest pusty albo drugi pełny.",
+        "moves": "Podnieś dzban, a potem wybierz inny, żeby do niego przelać. Przelewanie się kończy, kiedy pierwszy jest pusty albo drugi pełny.",
         "contents": "To cała oliwa, jaka jest. Jeden dzban na początku jest pełny i niczego nie można wylać ani dolać.",
         "levels": "Na każdym dzbanie jest napisane, ile w nim jest i ile się mieści, gdy jest pełny."
       },
       "wine": {
-        "moves": "Stuknij amforę, żeby ją podnieść, a potem inną, żeby do niej przelać. Przelewanie się kończy, kiedy pierwsza jest pusta albo druga pełna.",
+        "moves": "Podnieś amforę, a potem wybierz inną, żeby do niej przelać. Przelewanie się kończy, kiedy pierwsza jest pusta albo druga pełna.",
         "contents": "To całe wino, jakie jest. Jedna amfora na początku jest pełna i niczego nie można rozlać ani przynieść z piwnicy.",
         "levels": "Na każdej amforze jest napisane, ile w niej jest i ile się mieści, gdy jest pełna."
       },
       "natron": {
-        "moves": "Stuknij urnę, żeby ją podnieść, a potem inną, żeby wsypać do niej natron. Sypanie się kończy, kiedy pierwsza jest pusta albo druga pełna aż po pokrywkę.",
+        "moves": "Podnieś urnę, a potem wybierz inną, żeby wsypać do niej natron. Sypanie się kończy, kiedy pierwsza jest pusta albo druga pełna aż po pokrywkę.",
         "contents": "To cały natron, jaki jest. Jedna urna na początku jest pełna i niczego nie można wymieść ani dosypać.",
         "levels": "Na każdej urnie jest napisane, ile w niej jest i ile się mieści aż po pokrywkę."
       },
       "ink": {
-        "moves": "Stuknij kałamarz, żeby go podnieść, a potem inny, żeby do niego przelać. Przelewanie się kończy, kiedy pierwszy jest pusty albo drugi pełny.",
+        "moves": "Podnieś kałamarz, a potem wybierz inny, żeby do niego przelać. Przelewanie się kończy, kiedy pierwszy jest pusty albo drugi pełny.",
         "contents": "To cały atrament, jaki jest. Jeden kałamarz na początku jest pełny i niczego nie można wylać ani utrzeć nowego.",
         "levels": "Na każdym kałamarzu jest napisane, ile w nim jest i ile się mieści, gdy jest pełny."
       }
@@ -1580,7 +1654,12 @@
     "legs": "odmierzone: {{done}} z {{total}}",
     "wanted": "Odmierz",
     "claim": "to ten",
-    "claimAria": "Wskaż, że naczynie {{capacity}} ma tę ilość"
+    "claimAria": "Wskaż, że naczynie {{capacity}} ma tę ilość",
+    "controls": {
+      "move": "wybierz naczynie albo „to ten” pod nim",
+      "press": "podnieś, przelej tutaj albo wskaż",
+      "putDown": "odstaw trzymane naczynie"
+    }
   },
   "procession": {
     "name": {
@@ -1600,8 +1679,8 @@
     "rules": {
       "default": {
         "lengths": "Każdy rząd to jedno wydarzenie, a trwa tak długo, jak szeroki jest jego pasek. Kiedy się dzieje — to musisz odkryć.",
-        "marks": "Linijka pod dniem świeci na czerwono, dopóki się nie zgadza. Stuknij ją, żeby zaznaczyć rzędy, o których mówi.",
-        "drag": "Przeciągaj pasek po jego własnym rzędzie. Nigdy nie wyjdzie poza dzień."
+        "marks": "Linijka pod dniem świeci na czerwono, dopóki się nie zgadza. Wybierz ją, żeby zaznaczyć rzędy, o których mówi.",
+        "drag": "Przesuwaj pasek po jego własnym rzędzie. Nigdy nie wyjdzie poza dzień."
       }
     },
     "hint": {
@@ -1610,50 +1689,22 @@
         "squeeze": "Zostało już tylko tyle dnia, a to wszystko, co się zmieści.",
         "apart": "Na odwrót nie zmieści się w dniu.",
         "split": "Spróbuj na odwrót, a zepsuje się coś innego.",
-        "move": "Przeciągnij zaznaczony pasek na zakreskowane kreski."
+        "move": "Przesuń zaznaczony pasek na zakreskowane kreski."
       }
     },
     "events": {
-      "default": {
-        "0": "ogień",
-        "1": "noszenie wody",
-        "2": "pieczenie",
-        "3": "rejs łodzią",
-        "4": "pędzenie wołów",
-        "5": "nocna warta"
-      },
-      "funerary": {
-        "0": "tynkowanie",
-        "1": "rysowanie siatki",
-        "2": "rzeźbienie",
-        "3": "malowanie",
-        "4": "złocenie",
-        "5": "wstawianie drzwi"
-      },
-      "cosmos": {
-        "0": "wędrówka słońca",
-        "1": "wschód gwiazdy",
-        "2": "warta księżyca",
-        "3": "otwarte niebo",
-        "4": "świt",
-        "5": "nowy rok"
-      },
-      "water": {
-        "0": "wylew",
-        "1": "kopanie kanału",
-        "2": "napełnianie zbiornika",
-        "3": "podlewanie pola",
-        "4": "przeprawa promem",
-        "5": "żniwa"
-      },
-      "trade": {
-        "0": "sortowanie towarów",
-        "1": "sprzedaż chleba",
-        "2": "sprzedaż piwa",
-        "3": "przeprawa promem",
-        "4": "dźwiganie ładunków",
-        "5": "liczenie"
-      }
+      "default": ["ogień", "noszenie wody", "pieczenie", "rejs łodzią", "pędzenie wołów", "nocna warta"],
+      "funerary": ["tynkowanie", "rysowanie siatki", "rzeźbienie", "malowanie", "złocenie", "wstawianie drzwi"],
+      "cosmos": ["wędrówka słońca", "wschód gwiazdy", "warta księżyca", "otwarte niebo", "świt", "nowy rok"],
+      "water": ["wylew", "kopanie kanału", "napełnianie zbiornika", "podlewanie pola", "przeprawa promem", "żniwa"],
+      "trade": [
+        "sortowanie towarów",
+        "sprzedaż chleba",
+        "sprzedaż piwa",
+        "przeprawa promem",
+        "dźwiganie ładunków",
+        "liczenie"
+      ]
     },
     "marks": {
       "default": {
@@ -1677,6 +1728,11 @@
       "hint": "Każda płytka, na którą stajesz, uwalnia swoje zajęcie. Ułóż dzień, a potem przejdź po płytkach w tej kolejności.",
       "read": "Dzień odczytany. Przejdź po jego płytkach w tej kolejności, od pierwszej.",
       "hintButton": "Podpowiedź"
+    },
+    "controls": {
+      "row": "wybierz rząd",
+      "slide": "przesuń jego pasek",
+      "mark": "wybierz linijkę pod dniem"
     }
   },
   "story": {
@@ -1699,6 +1755,13 @@
       "pick": "Wstaw właściwy znak na jego miejsce.",
       "cannot": "Nie znasz znaku, który tu pasuje. Jeszcze nie."
     },
+    "formula": {
+      "wrong": "W tej linijce brakuje jednego znaku. Nie jest źle wykuty — nikt go nigdy nie wykuł.",
+      "fixed": "Linijka jest cała.",
+      "pick": "Wstaw otrzymany znak w puste miejsce.",
+      "cannot": "Nikt ci jeszcze nie dał znaku na to miejsce. Jeszcze nie.",
+      "gap": "Brakujący znak"
+    },
     "sphinx": {
       "wrong": "To samo pismo co na zewnątrz, ale tutaj piasek nigdy nie dotarł. Dwa znaki wciąż ostre, wyraźne, i puste miejsce po trzecim.",
       "fixed": "To już całość.",
@@ -1715,7 +1778,7 @@
       "shrines": "Jedna tarcza światła i kapliczka nad każdym wyjściem z tego skrzyżowania. Lustra na podłodze mogą zanieść światło do każdej z nich.",
       "doors": "Wyjście, do którego dociera światło, stoi otworem, a pozostałe są zamknięte. Jedna droga światła, jedna droga dalej.",
       "returning": "Wybór nic nie kosztuje. Wróć tu, kiedy chcesz, i poślij światło w inną stronę. Tamto wyjście się otworzy, a to się zamknie.",
-      "tap": "Stuknij lustro, żeby je obrócić. Kolejne stuknięcie ustawia je z powrotem."
+      "tap": "Wybierz lustro, żeby je obrócić. Wybierz je jeszcze raz, żeby ustawić je z powrotem."
     },
     "doorOpen": "Wyjście {{way}}: otwarte",
     "doorShut": "Wyjście {{way}}: zamknięte",
@@ -1724,6 +1787,10 @@
       "e": "wschodnie",
       "s": "południowe",
       "w": "zachodnie"
+    },
+    "controls": {
+      "move": "wybierz lustro",
+      "turn": "obróć je"
     }
   },
   "handle": {
@@ -1979,5 +2046,37 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Rysowanie przepisuje tekst: każdy komentarz trafia na górę"
+  },
+  "saveCard": {
+    "title": "Karta podróżna",
+    "explain": "Zabierz swoją wyprawę na inne urządzenie: zrób kartę tutaj i odczytaj ją tam w ciągu 15 minut.",
+    "make": "Zrób kartę podróżną",
+    "share": "Udostępnij kartę",
+    "download": "Pobierz kartę",
+    "read": "Odczytaj kartę podróżną",
+    "busy": "Chwileczkę…",
+    "makeFailed": "Nie udało się zrobić karty.",
+    "shareFailed": "Udostępnianie nie zadziałało. Pobierz kartę zamiast tego.",
+    "confirm_one": "Zastąpić wyprawę na tym urządzeniu tą z karty ({{count}} podróż)?",
+    "confirm_few": "Zastąpić wyprawę na tym urządzeniu tą z karty ({{count}} podróże)?",
+    "confirm_many": "Zastąpić wyprawę na tym urządzeniu tą z karty ({{count}} podróży)?",
+    "confirm_other": "Zastąpić wyprawę na tym urządzeniu tą z karty ({{count}} podróży)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Karta podróżna · zabierz wyprawę ze sobą",
+    "validUntil": "ważna do {{time}}",
+    "codes_one": "{{count}} kod",
+    "codes_few": "{{count}} kody",
+    "codes_many": "{{count}} kodów",
+    "codes_other": "{{count}} kodu",
+    "refused": {
+      "notACard": "To nie jest karta podróżna.",
+      "tampered": "Ktoś zmienił tę kartę i nie da się jej już odczytać.",
+      "expired": "Ta karta straciła ważność. Zrób nową.",
+      "future": "Ta karta jest z przyszłości: sprawdź zegar na obu urządzeniach.",
+      "otherEpoch": "Ta karta pochodzi z innej wersji gry.",
+      "newerGame": "Ta karta pochodzi z nowszej wersji: najpierw zaktualizuj grę."
+    },
+    "writeFailed": "Nie udało się zapisać gry. To urządzenie zachowało swój zapis.",
+    "writeLost": "Nie udało się zastąpić zapisu i zapis na tym urządzeniu może być niepełny."
   }
 }

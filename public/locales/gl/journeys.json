@@ -21,19 +21,24 @@
     "mapHint": "O anaco debuxa un camiño de mercado e a porta dunha adega. O escondite dun comerciante, nada máis."
   },
   "junior_1": {
-    "name": "A viaxe dos ibis sagrados"
+    "name": "A viaxe dos ibis sagrados",
+    "description": "Brañas de canas ao longo do Nilo, e os ibis que camiñan por elas. Aves sagradas, e non polo motivo que pensas."
   },
   "junior_2": {
-    "name": "Val dos artesáns"
+    "name": "Val dos artesáns",
+    "description": "Deir el-Medina, a aldea dos que facían as tumbas. Os seus obradoiros seguen en pé, e tamén parte do seu traballo."
   },
   "junior_3": {
-    "name": "Templo de Thoth"
+    "name": "Templo de Thoth",
+    "description": "O templo de Thoth. Todo o mundo coñece o seu nome; pregúntalles a tres persoas de que era deus e terás tres respostas."
   },
   "junior_4": {
-    "name": "Faro de Alexandría"
+    "name": "Faro de Alexandría",
+    "description": "O faro de Alexandría, unha das sete marabillas. O que queda del está no porto, debaixo da auga."
   },
   "junior_treasure_tomb": {
     "name": "Cámara agochada dunha nobre",
+    "description": "A cámara dunha nobre, pintada do chan ao teito, e todo o que hai dentro segue onde ela o deixou.",
     "mapHint": "Tinta fina, un selo con escudo na esquina. Alguén importante quería que esta sala quedase esquecida."
   },
   "expert_1": {

@@ -28,7 +28,7 @@
   "tombTutorial3": "Mali računi pokazuju kad je znak tačan. Tako otkrivamo koji znak ide gdje.",
   "tombTutorial4": "Sve popunjeno? Onda se pojavi brava s brojevima. Veliki račun je šifra — i onda se grobnica otvori!",
   "hieroglyphUnlock": "Imamo poseban predmet — s njim možemo pisati na jednom od onih zapečaćenih blokova!",
-  "hieroglyphUnlock2": "Dodirni kamen koji svijetli, pa prevuci predmet na njega da ga otključaš. Jedan blok po piramidi.",
+  "hieroglyphUnlock2": "Izaberi kamen koji svijetli, pa donesi predmet do njega da ga otključaš. Jedan blok po piramidi.",
   "errorHighlightTutorial": "Ono blago što smo našli ima zgodan trik — upiši pogrešan odgovor i jedna greška zasvijetli crveno!",
   "errorHighlightTutorial2": "Svijetli samo jedan blok odjednom, pa je i dalje izazov. Ali pomaže da suziš traženje!",
   "earlyFeedbackTutorial": "Vidiš one blokove za provjeru? Postanu zeleni ili crveni dok ih popunjavaš — odmah znaš!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Gle šta ima na tezgi! Sad se bavim i prevozom."
+      },
+      "2": {
+        "explorer": "Ja vidim samo crtež."
+      },
+      "3": {
+        "fez": "Original više jede."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "Drugi red. Vodu žednima."
+        "explorer": "Drugi red. _Odjeću golima._"
       },
       "2": {
-        "fez": "Hljeb, a sad i voda. Nekome je baš bilo stalo da ga pamte kao darežljivog."
+        "fez": "Hljeb, a sad i odjeća. Nekome je baš bilo stalo da ga pamte kao darežljivog."
       },
       "3": {
         "explorer": "Svi to imaju. Svaki zid, svaka grobnica, ista dva reda."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Odjeću golima. Treći red."
+        "explorer": "_Vodu žednima._ Treći red."
       },
       "2": {
-        "fez": "Hljeb, voda, odjeća. To je spisak stvari koje si poklonio."
+        "fez": "Hljeb, odjeća, voda. To je spisak stvari koje je neko poklonio."
       },
       "3": {
         "explorer": "U grobnici čovjeka koji je sve ponio sa sobom."
@@ -1599,8 +1605,42 @@
       "explorer": "Može proći."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Tu fali nešto za gladne. Hljeb, rekao bih. A znam čovjeka koji je četrdeset godina brojao svaku vreću žita."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, treba nam hljeb. Za jedan zid."
+        },
+        "2": {
+          "ipi": "Hljeb? Moj? Znaš li ti koliko košta žito?"
+        },
+        "3": {
+          "fez": "To je za red o poklanjanju stvari."
+        },
+        "4": {
+          "ipi": "…Poklanjanju. Stvari."
+        },
+        "5": {
+          "ipi": "Dobro. Jedan hljeb. Ali to se zapisuje: _Ipi je dao hljeb._"
+        },
+        "6": {
+          "fez": "Nešto je poklonio! Vidiš li ti to?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Onaj hljeb — je li ga iko već pojeo? Jer ako nije, htio bih ga nazad."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Još si tu? Na sjever! Henut! Jedanaest debena!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "Zid. Treći znak. To još nije moje ime."
+          "henut": "Zid. Drugi znak. To još nije moje ime."
         }
       },
       "wall2": {

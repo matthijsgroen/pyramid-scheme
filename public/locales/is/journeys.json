@@ -21,19 +21,24 @@
     "mapHint": "Snifsið sýnir markaðsveg og kjallaradyr. Felustaður kaupmanns, ekkert fínna en það."
   },
   "junior_1": {
-    "name": "Ferðir íbisfuglanna"
+    "name": "Ferðir íbisfuglanna",
+    "description": "Reyrmýrar meðfram Níl, og íbisinn sem veður um þær. Heilagir fuglar — og ekki af þeirri ástæðu sem þú heldur."
   },
   "junior_2": {
-    "name": "Dalur handverksfólksins"
+    "name": "Dalur handverksfólksins",
+    "description": "Deir el-Medina, þorp grafhýsasmiðanna. Verkstæðin þeirra standa enn, og hluti af verkinu líka."
   },
   "junior_3": {
-    "name": "Musteri Þóts"
+    "name": "Musteri Þóts",
+    "description": "Musteri Þóts. Allir þekkja nafnið hans; spyrðu þrjá hvers guð hann var og þú færð þrjú svör."
   },
   "junior_4": {
-    "name": "Vitinn í Alexandríu"
+    "name": "Vitinn í Alexandríu",
+    "description": "Vitinn í Alexandríu, eitt af sjö undrum veraldar. Það sem eftir er af honum liggur í höfninni, undir vatni."
   },
   "junior_treasure_tomb": {
     "name": "Falin hvelfing aðalskonunnar",
+    "description": "Hvelfing aðalskonu, máluð frá gólfi upp í loft, og allt þar enn á sínum stað, þar sem hún setti það.",
     "mapHint": "Fínt blek og skjaldarmerki í horninu. Einhver mikilvægur vildi að þessu herbergi yrði gleymt."
   },
   "expert_1": {

@@ -239,6 +239,21 @@
       "description": "Kuninkaan päähine, jossa on suojeleva kobra. Faaraot käyttivät sitä jumalten suojana."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Leipä",
+      "description": "Korkea leipä, leivän merkki. Sen antoi Ipi, joka laski viljaa neljäkymmentä vuotta ja antoi sitä kerran pois."
+    },
+    "o2": {
+      "name": "Pellava"
+    },
+    "o3": {
+      "name": "Vesi"
+    },
+    "o4": {
+      "name": "Vene"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Ruokolehti",

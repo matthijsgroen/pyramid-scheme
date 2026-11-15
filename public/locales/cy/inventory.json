@@ -239,6 +239,21 @@
       "description": "Coron y brenin gyda chobra arni. Roedd y cobra'n amddiffyn y pharo."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Bara",
+      "description": "Y dorth dal, yr arwydd am fara. Rhodd gan Ipi, fu'n cyfri grawn am ddeugain mlynedd a'i roi i ffwrdd unwaith."
+    },
+    "o2": {
+      "name": "Lliain"
+    },
+    "o3": {
+      "name": "Dŵr"
+    },
+    "o4": {
+      "name": "Cwch"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Deilen Gorsen",

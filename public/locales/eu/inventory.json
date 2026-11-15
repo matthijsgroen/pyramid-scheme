@@ -239,6 +239,21 @@
       "description": "Kobra babeslea duen erregeen buruko apaingarria. Faraoiek janzten zuten jainkoen babes gisa."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Ogia",
+      "description": "Ogi luzea, ogiaren ikurra. Ipik emana: berrogei urtez garia zenbatu zuen, eta behin eman zuen."
+    },
+    "o2": {
+      "name": "Lihoa"
+    },
+    "o3": {
+      "name": "Ura"
+    },
+    "o4": {
+      "name": "Txalupa"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Ihi-hostoa",

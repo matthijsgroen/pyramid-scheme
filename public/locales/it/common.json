@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Non riesco a caricare i tuoi progressi",
     "body": "In questo momento il browser non vuole darci la tua partita salvata. Il salvataggio non è sparito: ricarica la pagina per riprovare.",
-    "banner": "I progressi non vengono salvati. Tocca per ricaricare.",
+    "banner": "I progressi non vengono salvati. Ricarica.",
     "reload": "Ricarica",
     "continue": "Continua a giocare senza salvare",
     "reset": "Ricomincia da capo (cancella il salvataggio)",
@@ -29,7 +29,6 @@
     "evening": "Sera",
     "night": "Notte"
   },
-  "tomb": {},
   "ui": {
     "level": "Livello",
     "symbols": "simboli",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Interrompi la spedizione",
     "confirmInterruptExpedition": "Vuoi davvero interrompere questa spedizione? I progressi della spedizione restano, ma quelli del livello si perdono!",
     "cancel": "Annulla",
+    "leaveSite": "Vuoi lasciare questo luogo?",
+    "confirmLeaveSite": "Premi Esci per tornare fuori, oppure Resta per continuare a esplorare.",
+    "leave": "Esci",
+    "stay": "Resta",
     "settings": "Impostazioni",
     "language": "Lingua",
     "close": "Chiudi",
@@ -107,8 +110,12 @@
     "solvedWithHints_one": "Risolto con {{count}} aiuto",
     "solvedWithHints_many": "Risolto con {{count}} aiuti",
     "solvedWithHints_other": "Risolto con {{count}} aiuti",
-    "tapToContinue": "Tocca per continuare",
-    "goal": "Obiettivo"
+    "tapToContinue": "Continua",
+    "goal": "Obiettivo",
+    "controls": "Comandi",
+    "controlsUndo": "annulla mossa",
+    "controlsHint": "aiuto",
+    "controlsLeave": "torna alla mappa"
   },
   "trap": {
     "warning": "⚠ Corridoio con trappola",
@@ -127,6 +134,7 @@
     "turnAround": "Torna indietro",
     "wardDescription": {
       "starter": "Il sigillo di un mercante blocca questo passaggio: solo la sua chiave lo apre.",
+      "junior": "Lo stemma di una nobile blocca questo passaggio: solo la sua chiave lo apre.",
       "expert": "Il sigillo del tempio di un sommo sacerdote protegge questa porta: solo la sua chiave sacra la apre.",
       "master": "Il sigillo reale di un faraone blocca questo passaggio: solo la chiave del re lo spezza.",
       "wizard": "Un sigillo degli dèi tiene chiuso questo cancello: solo la sua chiave divina lo apre."
@@ -135,7 +143,7 @@
     "lockedColor": "Non hai ancora trovato quella chiave su questo piano."
   },
   "chest": {
-    "tapToOpen": "Tocca per aprire",
+    "tapToOpen": "Apri",
     "money_one": "{{count}} moneta",
     "money_many": "{{count}} monete",
     "money_other": "{{count}} monete",
@@ -143,6 +151,7 @@
     "mapPieceDescription": "Un pezzetto fragile di una mappa che porta a un posto dimenticato da tempo. Peccato che sia così incompleta...",
     "mapPieceProgress": "{{found}} pezzi di mappa su {{required}} raccolti",
     "mapPieceComplete": "La mappa è completa: porta a {{name}}.",
+    "hieroglyph": "Geroglifico",
     "hieroglyphFragment": "Frammento di geroglifico",
     "fragmentProgress": "{{found}} frammenti su {{required}} trovati",
     "tombKey": "Chiave della tomba",
@@ -159,8 +168,9 @@
   },
   "loot": {
     "youFound": "Hai trovato",
+    "youReceived": "Hai ricevuto",
     "expeditionReward": "Premio extra per aver completato la spedizione",
-    "clickToContinue": "Tocca dove vuoi per continuare"
+    "clickToContinue": "Continua"
   },
   "money": {
     "label": "Monete"
@@ -258,7 +268,7 @@
     "tabNew_other": "{{label}} · {{count}} nuovi",
     "empty": "Il tuo baule è ancora vuoto",
     "newLabel": "NUOVO",
-    "clickForDetails": "Tocca una casella per i dettagli",
+    "clickForDetails": "Scegli una casella per i dettagli",
     "categories": {
       "deities": "🏺 Divinità",
       "professions": "⚱️ Mestieri",
@@ -266,6 +276,7 @@
       "artifacts": "💎 Oggetti antichi",
       "treasures": "💰 Tesori",
       "junk": "🔷 Cianfrusaglie",
+      "offerings": "🍞 Offerte",
       "signs": "✍️ Segni"
     },
     "treasureCategories": {
@@ -347,22 +358,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Tocca un simbolo qui sotto, poi un numero. Tocca di nuovo quel numero per toglierlo.",
+      "tap": "Scegli un simbolo qui sotto, poi un numero. Scegli di nuovo quel numero per toglierlo.",
       "same": "Un simbolo pesa uguale su ogni bilancia.",
-      "cancel": "Se togli la stessa cosa da tutti e due i piatti, la bilancia resta in equilibrio. Tocca un pezzo segnato per farlo: quello che resta diventa una nuova riga.",
-      "swap": "Tocca un simbolo che non ha niente di uguale dall'altra parte, poi una riga dove quel simbolo è da solo, per cambiarlo con quello che vale quella riga."
+      "cancel": "Se togli la stessa cosa da tutti e due i piatti, la bilancia resta in equilibrio. Scegli un pezzo segnato per farlo: quello che resta diventa una nuova riga.",
+      "swap": "Scegli un simbolo che non ha niente di uguale dall'altra parte, poi una riga dove quel simbolo è da solo, per cambiarlo con quello che vale quella riga."
     },
     "hint": {
       "mistake": "Uno dei pesi che hai dato fa pendere una bilancia. Toglilo e guarda di nuovo.",
       "alone": "Nella riga illuminata, {{glyph}} è l'unico pezzo rimasto senza numero. Calcola quanto pesa.",
       "equalShares": "Nella riga illuminata c'è solo {{glyph}} contro un numero. Dividi quel numero in parti uguali.",
       "difference": "Le due righe illuminate sono uguali, tranne che per {{glyph}}. Confrontale.",
-      "cancelGlyph": "Tutti e due i piatti della riga illuminata hanno {{glyph}}. Toccane uno per toglierlo da entrambi i lati: la riga resta in equilibrio.",
-      "cancelStones": "Tutti e due i piatti della riga illuminata hanno dei numeri semplici. Toccane uno per togliere la stessa quantità da entrambi i lati.",
-      "swap": "Una riga illuminata dice quanto vale un solo {{glyph}}. Tocca il {{glyph}} nell'altra riga illuminata, poi tocca quella riga."
+      "cancelGlyph": "Tutti e due i piatti della riga illuminata hanno {{glyph}}. Scegline uno per toglierlo da entrambi i lati: la riga resta in equilibrio.",
+      "cancelStones": "Tutti e due i piatti della riga illuminata hanno dei numeri semplici. Scegline uno per togliere la stessa quantità da entrambi i lati.",
+      "swap": "Una riga illuminata dice quanto vale un solo {{glyph}}. Scegli il {{glyph}} nell'altra riga illuminata, poi scegli quella riga."
     },
     "swap": {
-      "pick": "Tocca una riga illuminata per cambiare questo {{glyph}} con quello che vale secondo quella riga.",
+      "pick": "Scegli una riga illuminata per cambiare questo {{glyph}} con quello che vale secondo quella riga.",
       "none": "Qui niente dice quanto vale un {{glyph}} da solo, e dall'altra parte non c'è niente di uguale."
     },
     "goal": {
@@ -372,11 +383,16 @@
     "name": {
       "default": "La bilancia",
       "weighing": "La pesatura del cuore"
+    },
+    "controls": {
+      "move": "scegli un pezzo, una riga o un pulsante",
+      "press": "premilo",
+      "weigh": "dai quel peso al simbolo scelto"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Tocca una volta per cancellare un numero, ancora per segnarlo come uno che resta, ancora per toglierlo.",
+      "tap": "Scegli un numero una volta per cancellarlo, ancora per segnarlo come uno che resta, ancora per toglierlo.",
       "totals": "Il numerino sotto ogni obiettivo è quanto fa quella riga adesso."
     },
     "hint": {
@@ -439,12 +455,16 @@
       }
     },
     "goal": "Ogni riga e ogni colonna fa il numero che ha accanto.",
-    "name": "Il conto"
+    "name": "Il conto",
+    "controls": {
+      "move": "scegli un numero",
+      "mark": "cancella, tieni o togli"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Un segno tra due caselle punta verso il numero più piccolo dei due.",
-      "enter": "Tocca una casella, poi tocca un numero. Se tocchi di nuovo lo stesso numero, lo togli.",
+      "enter": "Scegli una casella, poi un numero. Se scegli di nuovo lo stesso numero, lo togli.",
       "notes": "Passa alla matita per scrivere i numeri che una casella potrebbe ancora avere. \"Annulla mossa\" toglie la tua ultima mossa."
     },
     "hint": {
@@ -495,14 +515,22 @@
       }
     },
     "goal": "In ogni riga e in ogni colonna c'è ogni numero una volta sola.",
-    "name": "Più grande e più piccolo"
+    "name": "Più grande e più piccolo",
+    "controls": {
+      "move": "scegli una casella",
+      "type": "scrivi un numero",
+      "choose": "scegli un numero o la gomma",
+      "place": "scrivilo",
+      "pencil": "matita",
+      "erase": "cancella"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Uno specchio fa girare la luce da tutte e due le facce. I segnetti intorno mostrano gli altri modi in cui può stare: quasi tutti girano la luce di un quarto, e alcuni girano meno e la mandano di sbieco.",
       "walls": "Un blocco di pietra si mangia la luce. Anche il bordo del tabellone.",
-      "tap": "Tocca un pezzo per cambiarlo: uno specchio gira, un pezzo scorrevole va al posto dopo. Un bordo bianco vuol dire che lo puoi muovere tu; tutto il resto fa parte del rompicapo.",
-      "nodes": "Alcune pietre sono collegate a una presa nel pavimento e non si muovono, anche se le tocchi. Fai passare la luce sopra la presa e la pietra si sposta di lato."
+      "tap": "Scegli un pezzo per cambiarlo: uno specchio gira, un pezzo scorrevole va al posto dopo. Un bordo bianco vuol dire che lo puoi muovere tu; tutto il resto fa parte del rompicapo.",
+      "nodes": "Alcune pietre sono collegate a una presa nel pavimento e tu non riesci a muoverle. Fai passare la luce sopra la presa e la pietra si sposta di lato."
     },
     "hint": {
       "entryRun": "Comincia da dove la luce va già: corre dritta dal disco fino al primo pezzo che puoi cambiare. Quelle caselle portano la luce, qualunque cosa fai.",
@@ -535,7 +563,7 @@
       "triple": "Tre uguali di fila non vanno mai bene, né in orizzontale né in verticale.",
       "copies": "Non ci possono essere due righe uguali, e nemmeno due colonne uguali.",
       "signs": "Un segno tra due caselle dice come sono: = vuol dire uguali, × vuol dire diverse.",
-      "enter": "Tocca una casella per metterci un sole, tocca ancora per una luna, tocca un'altra volta per svuotarla."
+      "enter": "Scegli una casella per metterci un sole, ancora per una luna, un'altra volta per svuotarla."
     },
     "hint": {
       "mistake": "Uno di questi segni non può essere giusto.",
@@ -560,7 +588,11 @@
       }
     },
     "goal": "Ogni casella ha un sole o una luna, e ogni linea ha tanti soli quante lune.",
-    "name": "Sole e luna"
+    "name": "Sole e luna",
+    "controls": {
+      "move": "scegli una casella",
+      "mark": "cambia il segno"
+    }
   },
   "constellation": {
     "rules": {
@@ -568,25 +600,25 @@
         "straight": "Le linee di luce vanno dritte, in orizzontale o in verticale, da una stella alla successiva.",
         "pair": "Due stelle possono avere al massimo due linee in comune.",
         "cross": "Le linee non si incrociano mai, e non passano mai sopra una stella.",
-        "enter": "Trascina da una stella verso la sua vicina per tracciare una linea, ancora per farla doppia, un'altra volta per toglierla."
+        "enter": "Traccia una linea da una stella verso la sua vicina, ancora per farla doppia, un'altra volta per toglierla."
       },
       "causeway": {
         "straight": "Le strade vanno dritte, in orizzontale o in verticale, da un cantiere al successivo.",
         "pair": "Due cantieri possono avere al massimo due strade in comune.",
         "cross": "Le strade non si incrociano mai, e non passano mai sopra un cantiere.",
-        "enter": "Trascina da un cantiere verso il suo vicino per fare una strada, ancora per farla doppia, un'altra volta per toglierla."
+        "enter": "Fai una strada da un cantiere verso il suo vicino, ancora per farla doppia, un'altra volta per toglierla."
       },
       "irrigation": {
         "straight": "I canali vanno dritti, in orizzontale o in verticale, da una vasca alla successiva.",
         "pair": "Due vasche possono avere al massimo due canali in comune.",
         "cross": "I canali non si incrociano mai, e non passano mai sopra una vasca.",
-        "enter": "Trascina da una vasca verso la sua vicina per scavare un canale, ancora per allargarlo, un'altra volta per riempirlo."
+        "enter": "Scava un canale da una vasca verso la sua vicina, ancora per allargarlo, un'altra volta per riempirlo."
       },
       "ceiling": {
         "straight": "I fili vanno dritti, in orizzontale o in verticale, da una stella alla successiva.",
         "pair": "Due stelle possono avere al massimo due fili in comune.",
         "cross": "I fili non si incrociano mai, e non passano mai sopra una stella.",
-        "enter": "Trascina da una stella verso la sua vicina per tendere un filo, ancora per farlo doppio, un'altra volta per toglierlo."
+        "enter": "Tendi un filo da una stella verso la sua vicina, ancora per farlo doppio, un'altra volta per toglierlo."
       }
     },
     "hint": {
@@ -682,37 +714,44 @@
       "causeway": "La strada rialzata",
       "irrigation": "I canali dell'acqua",
       "ceiling": "Il soffitto dipinto"
+    },
+    "controls": {
+      "pick": "scegli una stella",
+      "grab": "prendila",
+      "draw": "traccia una linea da quella parte",
+      "release": "lascia",
+      "alt": "tieni premuto e punta: una linea, doppia, nessuna"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Due stelle non possono toccarsi, neanche con gli angoli.",
-        "enter": "Tocca una casella per escluderla, tocca ancora per metterci una stella, un'altra volta per svuotarla."
+        "enter": "Scegli una casella per escluderla, ancora per metterci una stella, un'altra volta per svuotarla."
       },
       "fields": {
         "touch": "Due fattorie non possono toccarsi, neanche con gli angoli. Così vicine, dovrebbero dividersi un pozzo.",
-        "enter": "Tocca un pezzo di terra per escluderlo, tocca ancora per costruirci una fattoria, un'altra volta per svuotarlo."
+        "enter": "Scegli un pezzo di terra per escluderlo, ancora per costruirci una fattoria, un'altra volta per svuotarlo."
       },
       "lamps": {
         "touch": "Due lampade a olio non possono stare vicine, neanche con gli angoli. La loro luce si sovrapporrebbe, e l'olio sarebbe sprecato.",
         "walls": "I blocchi di pietra grigia fanno parte del pavimento: non ci si può mettere niente sopra, e non sono caselle.",
-        "enter": "Tocca una lastra per escluderla, tocca ancora per metterci una lampada a olio, un'altra volta per svuotarla."
+        "enter": "Scegli una lastra per escluderla, ancora per metterci una lampada a olio, un'altra volta per svuotarla."
       },
       "market": {
         "touch": "Due bancarelle non possono stare vicine, neanche con gli angoli. I rivali non si mettono mai uno accanto all'altro.",
         "walls": "Le case fanno parte della piazza: nessuno ci può mettere una bancarella, e non sono posti.",
-        "enter": "Tocca un posto per escluderlo, tocca ancora per metterci una bancarella, un'altra volta per svuotarlo."
+        "enter": "Scegli un posto per escluderlo, ancora per metterci una bancarella, un'altra volta per svuotarlo."
       },
       "lotus": {
         "touch": "Due fiori di loto non possono galleggiare vicini, neanche con gli angoli. Ogni fiore ha bisogno di acqua libera intorno.",
         "walls": "Gli scogli spuntano fuori dallo stagno: non ci può galleggiare niente sopra, e non sono caselle.",
-        "enter": "Tocca un pezzo d'acqua per escluderlo, tocca ancora per farci galleggiare un fiore di loto, un'altra volta per svuotarlo."
+        "enter": "Scegli un pezzo d'acqua per escluderlo, ancora per farci galleggiare un fiore di loto, un'altra volta per svuotarlo."
       },
       "cats": {
         "touch": "Due gatti non possono dormire vicini, neanche con gli angoli. Ogni gatto vuole il suo angolino di sole.",
         "walls": "Le colonne reggono il tempio: nessun gatto ci può dormire sopra, e non sono caselle.",
-        "enter": "Tocca una lastra per escluderla, tocca ancora per metterci un gatto a dormire, un'altra volta per svuotarla."
+        "enter": "Scegli una lastra per escluderla, ancora per metterci un gatto a dormire, un'altra volta per svuotarla."
       }
     },
     "hint": {
@@ -1040,6 +1079,11 @@
       "market": "Bancarelle del mercato",
       "lotus": "Lo stagno dei loti",
       "cats": "I gatti del tempio"
+    },
+    "controls": {
+      "move": "scegli una casella",
+      "mark": "cambia il segno",
+      "sweep": "tieni premuto e muovi: escludi una fila"
     }
   },
   "pairPuzzle": {
@@ -1056,13 +1100,13 @@
         "pair": "Ogni sarcofago ha una mummia che riposa proprio sopra, sotto, a sinistra o a destra, e ogni mummia riposa accanto a un sarcofago tutto suo.",
         "count": "Il numero accanto a una riga o a una colonna dice quante mummie ci sono. Diventa verde quando la linea ne ha esattamente tante così, e rosso quando non si può più fare.",
         "touch": "Due mummie non possono stare vicine, neanche con gli angoli.",
-        "enter": "Tocca una casella per escluderla, tocca ancora per metterci una mummia, un'altra volta per svuotarla. Trascina sopra più caselle per escluderne una fila. I sarcofagi non si possono toccare."
+        "enter": "Scegli una casella per escluderla, ancora per metterci una mummia, un'altra volta per svuotarla. Puoi escludere una fila di caselle in un colpo solo. I sarcofagi non si possono segnare."
       },
       "beetles": {
         "pair": "Ogni pallina di sterco ha uno scarabeo proprio sopra, sotto, a sinistra o a destra, e ogni scarabeo sta accanto a una pallina tutta sua da far rotolare.",
         "count": "Il numero accanto a una riga o a una colonna dice quanti scarabei ci sono. Diventa verde quando la linea ne ha esattamente tanti così, e rosso quando non si può più fare.",
         "touch": "Due scarabei non possono stare vicini, neanche con gli angoli.",
-        "enter": "Tocca una casella per escluderla, tocca ancora per metterci uno scarabeo, un'altra volta per svuotarla. Trascina sopra più caselle per escluderne una fila. Le palline di sterco non si possono toccare."
+        "enter": "Scegli una casella per escluderla, ancora per metterci uno scarabeo, un'altra volta per svuotarla. Puoi escludere una fila di caselle in un colpo solo. Le palline di sterco non si possono segnare."
       }
     },
     "hint": {
@@ -1142,6 +1186,11 @@
           "place_other": "Metti uno scarabeo su ogni casella tratteggiata."
         }
       }
+    },
+    "controls": {
+      "move": "scegli una casella",
+      "mark": "cambia il segno",
+      "sweep": "tieni premuto e muovi: escludi una fila"
     }
   },
   "rushHour": {
@@ -1156,11 +1205,11 @@
     "rules": {
       "default": {
         "lanes": "Un blocco scivola solo lungo la sua corsia: mai di lato, mai fuori dal tabellone.",
-        "shove": "Trascina un blocco per spingerlo. Si ferma dove c'è qualcosa in mezzo."
+        "shove": "Spingi un blocco lungo la sua corsia. Si ferma dove c'è qualcosa in mezzo."
       },
       "market": {
         "lanes": "Una slitta scivola solo lungo la corsia dove si trova: mai di lato, mai fuori dalla strada.",
-        "shove": "Trascina una slitta per spingerla. Si ferma dove c'è qualcosa in mezzo."
+        "shove": "Spingi una slitta lungo la sua corsia. Si ferma dove c'è qualcosa in mezzo."
       }
     },
     "hint": {
@@ -1188,29 +1237,35 @@
           "down": "Spingilo giù per la strada, fino all'anello."
         }
       }
+    },
+    "controls": {
+      "pick": "scegli un blocco",
+      "grab": "prendilo",
+      "slide": "fallo scorrere",
+      "release": "lascia"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "I numeri che sono già nel favo fanno parte del rompicapo: restano dove sono.",
-        "enter": "Tocca un numero per continuare la fila da lì, poi tocca una cella vuota vicina per andare avanti. Oppure trascina il dito sopra le celle dove passa.",
-        "back": "Tocca un numero che hai messo e toccalo ancora per toglierlo, insieme a tutto quello che ci era attaccato. Anche continuare la fila da un numero in un'altra direzione fa lo stesso. \"Annulla mossa\" toglie la tua ultima mossa."
+        "enter": "Traccia una linea da un numero attraverso le celle vuote vicine per far continuare la fila.",
+        "back": "Scegli un numero che hai messo e sceglilo ancora per toglierlo, insieme a tutto quello che ci era attaccato. Anche continuare la fila da un numero in un'altra direzione fa lo stesso. \"Annulla mossa\" toglie la tua ultima mossa."
       },
       "channel": {
         "given": "I campi già numerati fanno parte del rompicapo: restano dove sono.",
-        "enter": "Tocca un campo numerato per prendere l'acqua da lì, poi tocca un campo asciutto vicino per continuare a scavare. Oppure trascina il dito lungo i campi dove passa il canale.",
-        "back": "Tocca un campo che hai scavato e toccalo ancora per riempirlo di nuovo, insieme a tutto il canale rimasto staccato. Anche scavare da un campo in un'altra direzione fa lo stesso. \"Annulla mossa\" toglie la tua ultima mossa."
+        "enter": "Scava un canale da un campo numerato attraverso i campi asciutti vicini per portare avanti l'acqua.",
+        "back": "Scegli un campo che hai scavato e sceglilo ancora per riempirlo di nuovo, insieme a tutto il canale rimasto staccato. Anche scavare da un campo in un'altra direzione fa lo stesso. \"Annulla mossa\" toglie la tua ultima mossa."
       },
       "scribe": {
         "given": "Le cifre scritte in rosso sono del rompicapo: restano dove sono.",
-        "enter": "Tocca una cifra per prendere la penna di canna da lì, poi tocca uno spazio vuoto vicino per continuare a scrivere. Oppure trascina il dito lungo la linea.",
-        "back": "Tocca una cifra che hai scritto e toccala ancora per raschiarla via, insieme a tutta la linea rimasta staccata. Anche scrivere da una cifra in un'altra direzione fa lo stesso. \"Annulla mossa\" toglie la tua ultima mossa."
+        "enter": "Scrivi una linea da una cifra attraverso gli spazi vuoti vicini per portare avanti il conto.",
+        "back": "Scegli una cifra che hai scritto e sceglila ancora per raschiarla via, insieme a tutta la linea rimasta staccata. Anche scrivere da una cifra in un'altra direzione fa lo stesso. \"Annulla mossa\" toglie la tua ultima mossa."
       },
       "chambers": {
         "given": "Le stanze già numerate le hanno scavate i costruttori: restano dove sono.",
-        "enter": "Tocca una stanza numerata per continuare il passaggio da lì, poi tocca una stanza chiusa vicina per sfondarla. Oppure trascina il dito lungo le stanze dove passa il passaggio.",
-        "back": "Tocca una stanza che hai aperto e toccala ancora per richiuderla, insieme a tutto il passaggio rimasto staccato. Anche sfondare da una stanza in un'altra direzione fa lo stesso. \"Annulla mossa\" toglie la tua ultima mossa."
+        "enter": "Apri un passaggio da una stanza numerata attraverso le stanze chiuse vicine per portarlo avanti.",
+        "back": "Scegli una stanza che hai aperto e sceglila ancora per richiuderla, insieme a tutto il passaggio rimasto staccato. Anche sfondare da una stanza in un'altra direzione fa lo stesso. \"Annulla mossa\" toglie la tua ultima mossa."
       }
     },
     "goal": {
@@ -1274,6 +1329,13 @@
       "channel": "Il canale",
       "scribe": "Il foglio dello scriba",
       "chambers": "Le stanze sigillate"
+    },
+    "controls": {
+      "move": "vai a una cella vicina; su e giù piegano a sinistra",
+      "right": "su a destra o giù a destra",
+      "grab": "prendi la fila, o togli il tuo numero",
+      "carry": "con la fila in mano: portala avanti; su e giù vanno dal lato dove può continuare",
+      "drop": "posa la fila"
     }
   },
   "sudoku": {
@@ -1281,13 +1343,13 @@
       "default": {
         "chambers": "Le linee spesse dividono la griglia in sei stanze, larghe due caselle e alte tre.",
         "given": "I numeri già scolpiti fanno parte del rompicapo: restano dove sono.",
-        "enter": "Tocca una casella, poi tocca un numero. Se tocchi di nuovo lo stesso numero, lo togli.",
+        "enter": "Scegli una casella, poi un numero. Se scegli di nuovo lo stesso numero, lo togli.",
         "notes": "Passa alla matita per scrivere i numeri che una casella potrebbe ancora avere. \"Annulla mossa\" toglie la tua ultima mossa."
       },
       "papyrus": {
         "chambers": "Le righe spesse dividono il foglio in sei riquadri, larghi due spazi e alti tre.",
         "given": "I segni scritti in rosso sono del rompicapo: restano dove sono.",
-        "enter": "Tocca uno spazio, poi tocca un segno. Se tocchi di nuovo lo stesso segno, lo raschi via.",
+        "enter": "Scegli uno spazio, poi un segno. Se scegli di nuovo lo stesso segno, lo raschi via.",
         "notes": "Prendi la penna di canna per scrivere piccoli i segni che uno spazio potrebbe ancora avere. \"Annulla mossa\" toglie la tua ultima mossa."
       }
     },
@@ -1356,6 +1418,14 @@
     "name": {
       "default": "Sei stanze",
       "papyrus": "Il registro dello scriba"
+    },
+    "controls": {
+      "move": "scegli una casella",
+      "type": "scrivi un numero",
+      "choose": "scegli un numero o la gomma",
+      "place": "scrivilo",
+      "pencil": "matita",
+      "erase": "cancella"
     }
   },
   "crocodile": {
@@ -1369,6 +1439,10 @@
     "hint": {
       "biggest": "Questo coccodrillo vuole la risposta più grande. Cioè {{value}}.",
       "smallest": "Questo coccodrillo vuole la risposta più piccola. Cioè {{value}}."
+    },
+    "controls": {
+      "move": "scegli una pietra",
+      "step": "salici sopra"
     }
   },
   "canisters": {
@@ -1405,35 +1479,35 @@
         "sums": "Ogni quantità che puoi fare è due numeri sul banco messi insieme o tolti uno dall'altro: quanto tiene un recipiente, quanto c'è dentro, o quanto spazio gli resta.",
         "backwards": "Allora parti dalla quantità richiesta e vai all'indietro: quali due numeri la fanno, e come fai ad averli tutti e due nello stesso momento?"
       },
-      "claim": "Quando hai la quantità, tocca «questo». Se scegli il recipiente sbagliato, perdi una mossa.",
+      "claim": "Quando hai la quantità, scegli «questo». Se scegli il recipiente sbagliato, perdi una mossa.",
       "legs": "Poi la quantità successiva, misurata partendo da quello che è rimasto nei recipienti.",
       "default": {
-        "moves": "Tocca un recipiente per prenderlo, poi toccane un altro per versarci dentro. Smetti di versare quando il primo è vuoto o il secondo è pieno.",
+        "moves": "Prendi un recipiente, poi scegline un altro per versarci dentro. Smetti di versare quando il primo è vuoto o il secondo è pieno.",
         "contents": "Questa è tutta l'acqua che c'è: un recipiente parte pieno, e non se ne può buttare né prendere altra.",
         "levels": "Ogni recipiente dice quanto c'è dentro, e quanto tiene quando è pieno."
       },
       "grain": {
-        "moves": "Tocca una misura per sollevarla, poi toccane un'altra per versarci il grano. Smetti di versare quando la prima è vuota o la seconda è piena fino all'orlo.",
+        "moves": "Solleva una misura, poi scegline un'altra per versarci il grano. Smetti di versare quando la prima è vuota o la seconda è piena fino all'orlo.",
         "contents": "Questo è tutto il grano che c'è: una misura parte piena, e non se ne può buttare né prendere altro dal granaio.",
         "levels": "Ogni misura dice quanto c'è dentro, e quanto tiene quando è piena fino all'orlo."
       },
       "oil": {
-        "moves": "Tocca una brocca per sollevarla, poi toccane un'altra per versarci dentro. Smetti di versare quando la prima è vuota o la seconda è piena.",
+        "moves": "Solleva una brocca, poi scegline un'altra per versarci dentro. Smetti di versare quando la prima è vuota o la seconda è piena.",
         "contents": "Questo è tutto l'olio che c'è: una brocca parte piena, e non se ne può buttare né prendere altro.",
         "levels": "Ogni brocca dice quanto c'è dentro, e quanto tiene quando è piena."
       },
       "wine": {
-        "moves": "Tocca un'anfora per sollevarla, poi toccane un'altra per travasarci il vino. Smetti di travasare quando la prima è vuota o la seconda è piena.",
+        "moves": "Solleva un'anfora, poi scegline un'altra per travasarci il vino. Smetti di travasare quando la prima è vuota o la seconda è piena.",
         "contents": "Questo è tutto il vino che c'è: un'anfora parte piena, e non se ne può rovesciare né prendere altro dalla cantina.",
         "levels": "Ogni anfora dice quanto c'è dentro, e quanto tiene quando è piena."
       },
       "natron": {
-        "moves": "Tocca un vaso per sollevarlo, poi toccane un altro per versarci il natron. Smetti di versare quando il primo è vuoto o il secondo è pieno fino al coperchio.",
+        "moves": "Solleva un vaso, poi scegline un altro per versarci il natron. Smetti di versare quando il primo è vuoto o il secondo è pieno fino al coperchio.",
         "contents": "Questo è tutto il natron che c'è: un vaso parte pieno, e non se ne può buttare né prendere altro.",
         "levels": "Ogni vaso dice quanto c'è dentro, e quanto tiene quando è pieno fino al coperchio."
       },
       "ink": {
-        "moves": "Tocca un vasetto per sollevarlo, poi toccane un altro per versarci dentro. Smetti di versare quando il primo è vuoto o il secondo è pieno.",
+        "moves": "Solleva un vasetto, poi scegline un altro per versarci dentro. Smetti di versare quando il primo è vuoto o il secondo è pieno.",
         "contents": "Questo è tutto l'inchiostro che c'è: un vasetto parte pieno, e non se ne può rovesciare né prepararne di nuovo.",
         "levels": "Ogni vasetto dice quanto c'è dentro, e quanto tiene quando è pieno."
       }
@@ -1459,7 +1533,12 @@
     "legs": "misurate {{done}} su {{total}}",
     "wanted": "Misura",
     "claim": "questo",
-    "claimAria": "Di' che quello da {{capacity}} contiene la quantità"
+    "claimAria": "Di' che quello da {{capacity}} contiene la quantità",
+    "controls": {
+      "move": "scegli un recipiente o il «questo» sotto di lui",
+      "press": "prendi, versa qui o dichiara",
+      "putDown": "rimetti giù il recipiente che hai in mano"
+    }
   },
   "procession": {
     "name": {
@@ -1479,8 +1558,8 @@
     "rules": {
       "default": {
         "lengths": "Ogni riga è una cosa che succede, e dura quanto è larga la sua barra. Quando succede, lo devi scoprire tu.",
-        "marks": "Una regola sotto la giornata diventa rossa finché non è rispettata. Toccala per cerchiare le righe di cui parla.",
-        "drag": "Trascina una barra lungo la sua riga. Non esce mai dalla giornata."
+        "marks": "Una regola sotto la giornata diventa rossa finché non è rispettata. Sceglila per cerchiare le righe di cui parla.",
+        "drag": "Fai scorrere una barra lungo la sua riga. Non esce mai dalla giornata."
       }
     },
     "hint": {
@@ -1489,50 +1568,50 @@
         "squeeze": "Resta poca giornata, e questo è tutto quello che ci sta.",
         "apart": "Al contrario non ci sta nella giornata.",
         "split": "Prova al contrario, e qualcos'altro non va più.",
-        "move": "Trascina la barra cerchiata sulle tacche tratteggiate."
+        "move": "Fai scorrere la barra cerchiata sulle tacche tratteggiate."
       }
     },
     "events": {
-      "default": {
-        "0": "il fuoco",
-        "1": "il trasporto dell'acqua",
-        "2": "la cottura del pane",
-        "3": "il giro in barca",
-        "4": "la guida dei buoi",
-        "5": "la guardia di notte"
-      },
-      "funerary": {
-        "0": "l'intonaco",
-        "1": "il disegno della griglia",
-        "2": "l'incisione",
-        "3": "la pittura",
-        "4": "la doratura",
-        "5": "il montaggio della porta"
-      },
-      "cosmos": {
-        "0": "il viaggio del sole",
-        "1": "il sorgere della stella",
-        "2": "la guardia della luna",
-        "3": "il cielo aperto",
-        "4": "l'alba",
-        "5": "l'anno che gira"
-      },
-      "water": {
-        "0": "la piena",
-        "1": "lo scavo dei canali",
-        "2": "il riempimento della vasca",
-        "3": "l'irrigazione dei campi",
-        "4": "il traghetto",
-        "5": "il raccolto"
-      },
-      "trade": {
-        "0": "lo smistamento delle merci",
-        "1": "la vendita del pane",
-        "2": "la vendita della birra",
-        "3": "il traghetto",
-        "4": "il trasporto dei carichi",
-        "5": "il conto finale"
-      }
+      "default": [
+        "il fuoco",
+        "il trasporto dell'acqua",
+        "la cottura del pane",
+        "il giro in barca",
+        "la guida dei buoi",
+        "la guardia di notte"
+      ],
+      "funerary": [
+        "l'intonaco",
+        "il disegno della griglia",
+        "l'incisione",
+        "la pittura",
+        "la doratura",
+        "il montaggio della porta"
+      ],
+      "cosmos": [
+        "il viaggio del sole",
+        "il sorgere della stella",
+        "la guardia della luna",
+        "il cielo aperto",
+        "l'alba",
+        "l'anno che gira"
+      ],
+      "water": [
+        "la piena",
+        "lo scavo dei canali",
+        "il riempimento della vasca",
+        "l'irrigazione dei campi",
+        "il traghetto",
+        "il raccolto"
+      ],
+      "trade": [
+        "lo smistamento delle merci",
+        "la vendita del pane",
+        "la vendita della birra",
+        "il traghetto",
+        "il trasporto dei carichi",
+        "il conto finale"
+      ]
     },
     "marks": {
       "default": {
@@ -1554,6 +1633,11 @@
       "hint": "Ogni mattonella che calpesti libera la sua attività. Metti in ordine la giornata, poi cammina sulle mattonelle in quell'ordine.",
       "read": "La giornata è chiara. Cammina sulle sue mattonelle in quest'ordine, dalla prima.",
       "hintButton": "Aiuto"
+    },
+    "controls": {
+      "row": "scegli una riga",
+      "slide": "fai scorrere la sua barra",
+      "mark": "scegli una regola sotto la giornata"
     }
   },
   "story": {
@@ -1576,6 +1660,13 @@
       "pick": "Metti il segno giusto al suo posto.",
       "cannot": "Non conosci il segno che va qui. Non ancora."
     },
+    "formula": {
+      "wrong": "In questa riga manca un segno. Non scolpito male: mai scolpito del tutto.",
+      "fixed": "La riga è completa.",
+      "pick": "Metti nel posto vuoto il segno che ti hanno dato.",
+      "cannot": "Nessuno ti ha dato il segno per questo posto. Non ancora.",
+      "gap": "Il segno che manca"
+    },
     "sphinx": {
       "wrong": "La stessa scritta di fuori, ma qui la sabbia non è mai arrivata. Due segni ancora scolpiti bene, e uno spazio dove c'era il terzo.",
       "fixed": "Ecco, adesso è completa.",
@@ -1592,7 +1683,7 @@
       "shrines": "Un disco di luce, e un santuario sopra ogni uscita di questo incrocio. Gli specchi sul pavimento possono portare la luce a uno qualsiasi.",
       "doors": "L'uscita dove arriva la luce si apre, e le altre restano chiuse. Una strada per la luce, una strada per te.",
       "returning": "Scegliere non ti fa perdere niente. Torna qui quando vuoi e manda la luce da un'altra parte: quella uscita si apre, e questa si chiude.",
-      "tap": "Tocca uno specchio per girarlo. Se lo tocchi di nuovo, torna com'era."
+      "tap": "Scegli uno specchio per girarlo. Sceglilo di nuovo per rimetterlo com'era."
     },
     "doorOpen": "Uscita {{way}}: aperta",
     "doorShut": "Uscita {{way}}: chiusa",
@@ -1601,6 +1692,10 @@
       "e": "est",
       "s": "sud",
       "w": "ovest"
+    },
+    "controls": {
+      "move": "scegli uno specchio",
+      "turn": "giralo"
     }
   },
   "handle": {
@@ -1853,5 +1948,35 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Disegnare riscrive il testo: tutti i commenti finiscono in cima"
+  },
+  "saveCard": {
+    "title": "Carta di viaggio",
+    "explain": "Porta la tua spedizione su un altro dispositivo: crea una carta qui e leggila lì entro 15 minuti.",
+    "make": "Crea carta di viaggio",
+    "share": "Condividi carta",
+    "download": "Scarica carta",
+    "read": "Leggi carta di viaggio",
+    "busy": "Un momento…",
+    "makeFailed": "Non è stato possibile creare la carta.",
+    "shareFailed": "La condivisione non ha funzionato; scarica la carta.",
+    "confirm_one": "Vuoi sostituire la spedizione su questo dispositivo con quella della carta ({{count}} viaggio)?",
+    "confirm_many": "Vuoi sostituire la spedizione su questo dispositivo con quella della carta ({{count}} viaggi)?",
+    "confirm_other": "Vuoi sostituire la spedizione su questo dispositivo con quella della carta ({{count}} viaggi)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Carta di viaggio · porta con te la tua spedizione",
+    "validUntil": "valida fino alle {{time}}",
+    "codes_one": "{{count}} codice",
+    "codes_many": "{{count}} codici",
+    "codes_other": "{{count}} codici",
+    "refused": {
+      "notACard": "Questa non è una carta di viaggio.",
+      "tampered": "Questa carta è stata modificata e non si può più leggere.",
+      "expired": "Questa carta è scaduta; creane una nuova.",
+      "future": "Questa carta viene dal futuro: controlla l'orologio su tutti e due i dispositivi.",
+      "otherEpoch": "Questa carta viene da un'altra versione del gioco.",
+      "newerGame": "Questa carta viene da una versione più recente: prima aggiorna il gioco."
+    },
+    "writeFailed": "Non è stato possibile scrivere il salvataggio; questo dispositivo ha tenuto il suo.",
+    "writeLost": "Non è stato possibile sostituire il salvataggio, e quello di questo dispositivo potrebbe essere incompleto."
   }
 }

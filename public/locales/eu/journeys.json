@@ -21,19 +21,24 @@
     "mapHint": "Paper-puskan merkatu-bide bat eta soto-ate bat daude marraztuta. Saltzaile baten ezkutalekua, ez besterik."
   },
   "junior_1": {
-    "name": "Ibis sakratuen bidaia"
+    "name": "Ibis sakratuen bidaia",
+    "description": "Niloaren ertzeko ihitokiak, eta haietan zehar dabilen ibisa. Hegazti sakratuak, eta ez zuk uste duzun arrazoiagatik."
   },
   "junior_2": {
-    "name": "Artisauen harana"
+    "name": "Artisauen harana",
+    "description": "Deir el-Medina, hilobi-egileen herria. Haien lantegiak zutik daude oraindik, eta lanaren zati bat ere bai."
   },
   "junior_3": {
-    "name": "Thothen tenplua"
+    "name": "Thothen tenplua",
+    "description": "Thoten tenplua. Denek ezagutzen dute bere izena; galdetu hiru lagunei zeren jainkoa zen, eta hiru erantzun jasoko dituzu."
   },
   "junior_4": {
-    "name": "Alexandriako itsasargia"
+    "name": "Alexandriako itsasargia",
+    "description": "Alexandriako Faroa, munduko zazpi mirarietako bat. Hartatik geratzen dena portuan dago, ur azpian."
   },
   "junior_treasure_tomb": {
     "name": "Noblearen ganga ezkutua",
+    "description": "Emakume noble baten ganga, lurretik sabairaino margotua, eta barruan dena oraindik berak utzi zuen lekuan.",
     "mapHint": "Tinta fina, armarri-zigilu bat izkinan. Maila handiko norbaitek gela hau ahaztua izatea nahi zuen."
   },
   "expert_1": {

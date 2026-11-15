@@ -21,19 +21,24 @@
     "mapHint": "Komadić mape crta pijačni put i vrata podruma — skrovište nekog trgovca, ništa veće."
   },
   "junior_1": {
-    "name": "Selidba svetih ibisa"
+    "name": "Selidba svetih ibisa",
+    "description": "Močvare trske uz Nil, i ibis koji gazi kroz njih. Svete ptice — i to ne iz razloga koji misliš."
   },
   "junior_2": {
-    "name": "Dolina zanatlija"
+    "name": "Dolina zanatlija",
+    "description": "Deir el-Medina, selo graditelja grobnica. Njihove radionice još stoje, a stoji i dio njihovog rada."
   },
   "junior_3": {
-    "name": "Hram boga Thotha"
+    "name": "Hram boga Thotha",
+    "description": "Thothov hram. Svi znaju njegovo ime; pitaj troje ljudi čega je bio bog i dobićeš tri odgovora."
   },
   "junior_4": {
-    "name": "Svjetionik u Aleksandriji"
+    "name": "Svjetionik u Aleksandriji",
+    "description": "Faros, svjetionik u Aleksandriji, jedno od sedam svjetskih čuda. Ono što je od njega ostalo leži u luci, pod vodom."
   },
   "junior_treasure_tomb": {
     "name": "Skriveni trezor plemkinje",
+    "description": "Trezor jedne plemkinje, oslikan od poda do plafona, i sve u njemu još je tamo gdje ga je ona ostavila.",
     "mapHint": "Fino mastilo, pečat s grbom u ćošku — neko ugledan htio je da se ova soba zaboravi."
   },
   "expert_1": {

@@ -239,6 +239,21 @@
       "description": "Ceannbheart ríoga leis an gcobra cosanta air, a chaith na farónna mar chosaint dhiaga."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Arán",
+      "description": "An builín ard, an comhartha d’arán. Tugtha ag Ipi, a chomhair grán ar feadh daichead bliain agus a thug uaidh é uair amháin."
+    },
+    "o2": {
+      "name": "Línéadach"
+    },
+    "o3": {
+      "name": "Uisce"
+    },
+    "o4": {
+      "name": "Bád"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Duilleog Ghiolcaí",

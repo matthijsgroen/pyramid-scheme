@@ -239,6 +239,21 @@
       "description": "Una corona reial amb una cobra protectora. Els faraons la portaven per tenir la protecció dels déus."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Pa",
+      "description": "El pa alt, el signe del pa. El va donar l'Ipi, que va comptar gra durant quaranta anys i el va regalar una sola vegada."
+    },
+    "o2": {
+      "name": "Lli"
+    },
+    "o3": {
+      "name": "Aigua"
+    },
+    "o4": {
+      "name": "Barca"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Fulla de canya",

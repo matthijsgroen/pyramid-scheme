@@ -21,19 +21,24 @@
     "mapHint": "Na koščku je narisana tržna pot in vrata v klet – skrivališče trgovca, nič bolj imenitnega."
   },
   "junior_1": {
-    "name": "Selitev svetih ibisov"
+    "name": "Selitev svetih ibisov",
+    "description": "Trstičja ob Nilu in ibisi, ki gazijo skoznje. Sveti ptiči – in ne iz razloga, ki ti najprej pade na misel."
   },
   "junior_2": {
-    "name": "Dolina obrtnikov"
+    "name": "Dolina obrtnikov",
+    "description": "Deir el-Medina, vas graditeljev grobnic. Njihove delavnice še stojijo, z njimi pa tudi del njihovega dela."
   },
   "junior_3": {
-    "name": "Thothov tempelj"
+    "name": "Thothov tempelj",
+    "description": "Thothov tempelj. Njegovo ime pozna vsak; vprašaj tri ljudi, kateri bog je bil, in dobiš tri odgovore."
   },
   "junior_4": {
-    "name": "Svetilnik v Aleksandriji"
+    "name": "Svetilnik v Aleksandriji",
+    "description": "Faros v Aleksandriji, eno od sedmih čudes sveta. Kar je ostalo od njega, leži v pristanišču, pod vodo."
   },
   "junior_treasure_tomb": {
     "name": "Skriti trezor plemkinje",
+    "description": "Trezor plemkinje, poslikan od tal do stropa, in vse v njem je še tam, kamor je to položila.",
     "mapHint": "Lepo črnilo in pečat z grbom v kotu – nekdo pomemben je hotel, da na to sobo vsi pozabijo."
   },
   "expert_1": {

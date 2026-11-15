@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Ekki tókst að hlaða leiknum þínum",
     "body": "Vafrinn vill ekki láta vistaða leikinn þinn af hendi núna. Vistunin er ekki horfin: endurhlaðaðu síðunni til að reyna aftur.",
-    "banner": "Leikurinn vistast ekki. Ýttu til að endurhlaða.",
+    "banner": "Leikurinn vistast ekki. Endurhlaða.",
     "reload": "Endurhlaða",
     "continue": "Spila áfram án þess að vista",
     "reset": "Byrja upp á nýtt (eyða vistun)",
@@ -29,7 +29,6 @@
     "evening": "Kvöld",
     "night": "Nótt"
   },
-  "tomb": {},
   "ui": {
     "level": "Borð",
     "symbols": "tákn",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Hætta í leiðangri",
     "confirmInterruptExpedition": "Viltu örugglega hætta í þessum leiðangri? Leiðangurinn geymist, en það sem þú hefur gert á þessu borði tapast!",
     "cancel": "Hætta við",
+    "leaveSite": "Fara frá þessum stað?",
+    "confirmLeaveSite": "Veldu Fara til að ganga aftur út, eða Vera kyrr til að halda áfram að kanna.",
+    "leave": "Fara",
+    "stay": "Vera kyrr",
     "settings": "Stillingar",
     "language": "Tungumál",
     "close": "Loka",
@@ -106,8 +109,12 @@
     "solvedUnaided": "Leyst án einnar einustu vísbendingar",
     "solvedWithHints_one": "Leyst með {{count}} vísbendingu",
     "solvedWithHints_other": "Leyst með {{count}} vísbendingum",
-    "tapToContinue": "Ýttu til að halda áfram",
-    "goal": "Markmið"
+    "tapToContinue": "Halda áfram",
+    "goal": "Markmið",
+    "controls": "Stýringar",
+    "controlsUndo": "afturkalla",
+    "controlsHint": "vísbending",
+    "controlsLeave": "aftur á kortið"
   },
   "trap": {
     "warning": "⚠ Gildra í ganginum",
@@ -126,6 +133,7 @@
     "turnAround": "Snúa við",
     "wardDescription": {
       "starter": "Innsigli kaupmanns lokar þessum gangi. Aðeins varðlykillinn hans opnar hann.",
+      "junior": "Skjaldarmerki aðalskonu lokar þessari leið. Aðeins varðlykillinn hennar opnar hana.",
       "expert": "Musterisvörn æðsta prests gætir þessara dyra. Aðeins helgi lykillinn opnar þær.",
       "master": "Konunglegt innsigli faraós bindur þennan gang. Aðeins lykill konungsins rýfur það.",
       "wizard": "Vörn guðanna heldur þessu hliði. Ekkert kemst í gegn nema guðdómlegi lykillinn."
@@ -134,13 +142,14 @@
     "lockedColor": "Þú hefur ekki fundið þennan lykil á þessari hæð enn."
   },
   "chest": {
-    "tapToOpen": "Ýttu til að opna",
+    "tapToOpen": "Opna",
     "money_one": "{{count}} peningur",
     "money_other": "{{count}} peningar",
     "mapPiece": "Kortabútur",
     "mapPieceDescription": "Brothætt snifsi af korti að löngu gleymdum stað. Synd að það vantar svona mikið í það...",
     "mapPieceProgress": "{{found}} af {{required}} kortabútum fundnir",
     "mapPieceComplete": "Kortið er heilt. Það vísar á {{name}}.",
+    "hieroglyph": "Myndtákn",
     "hieroglyphFragment": "Myndtáknsbrot",
     "fragmentProgress": "{{found}} af {{required}} brotum fundin",
     "tombKey": "Grafhýsislykill",
@@ -157,8 +166,9 @@
   },
   "loot": {
     "youFound": "Þú fannst",
+    "youReceived": "Þú fékkst",
     "expeditionReward": "Aukaverðlaun fyrir að ljúka leiðangrinum",
-    "clickToContinue": "Ýttu hvar sem er til að halda áfram"
+    "clickToContinue": "Halda áfram"
   },
   "money": {
     "label": "Peningar"
@@ -252,7 +262,7 @@
     "tabNew_other": "{{label}} · {{count}} ný",
     "empty": "Kistan þín er enn tóm",
     "newLabel": "NÝTT",
-    "clickForDetails": "Ýttu á reit til að sjá meira",
+    "clickForDetails": "Veldu reit til að sjá meira",
     "categories": {
       "deities": "🏺 Guðir",
       "professions": "⚱️ Störf",
@@ -260,6 +270,7 @@
       "artifacts": "💎 Gripir",
       "treasures": "💰 Fjársjóðir",
       "junk": "🔷 Glingur",
+      "offerings": "🍞 Fórnargjafir",
       "signs": "✍️ Tákn"
     },
     "treasureCategories": {
@@ -340,22 +351,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Ýttu á tákn hér fyrir neðan og svo á tölu. Ýttu aftur á töluna til að taka hana af.",
+      "tap": "Veldu tákn hér fyrir neðan og svo tölu. Veldu sömu tölu aftur til að taka hana af.",
       "same": "Tákn vegur jafn mikið á öllum vogum.",
-      "cancel": "Taktu það sama af báðum skálum og vogin helst í jafnvægi. Ýttu á merktan bita til að gera það. Það sem eftir er geymist sem ný röð.",
-      "swap": "Ýttu á tákn sem hefur ekkert eins á móti sér, og svo á röð þar sem það tákn stendur eitt, til að skipta því út fyrir það sem röðin er virði."
+      "cancel": "Taktu það sama af báðum skálum og vogin helst í jafnvægi. Veldu merktan bita til að gera það. Það sem eftir er geymist sem ný röð.",
+      "swap": "Veldu tákn sem hefur ekkert eins á móti sér, og svo röð þar sem það tákn stendur eitt, til að skipta því út fyrir það sem röðin er virði."
     },
     "hint": {
       "mistake": "Ein þyngdin sem þú gafst lætur vog halla. Taktu hana af og skoðaðu aftur.",
       "alone": "Í upplýstu röðinni er {{glyph}} eini bitinn sem er ekki með tölu. Finndu út hvað hann vegur.",
       "equalShares": "Í upplýstu röðinni er ekkert nema {{glyph}} á móti tölu. Skiptu tölunni jafnt á milli þeirra.",
       "difference": "Upplýstu raðirnar tvær eru eins nema {{glyph}}. Berðu þær saman.",
-      "cancelGlyph": "Báðar skálar upplýstu raðarinnar eru með {{glyph}}. Ýttu á annað til að taka það af báðum megin. Röðin helst í jafnvægi.",
-      "cancelStones": "Báðar skálar upplýstu raðarinnar eru með venjulegar tölur. Ýttu á eina til að taka jafn mikið af báðum megin.",
-      "swap": "Ein upplýst röð segir hvað eitt {{glyph}} er virði eitt og sér. Ýttu á {{glyph}} í hinni upplýstu röðinni og svo á þá röð."
+      "cancelGlyph": "Báðar skálar upplýstu raðarinnar eru með {{glyph}}. Veldu annað til að taka það af báðum megin. Röðin helst í jafnvægi.",
+      "cancelStones": "Báðar skálar upplýstu raðarinnar eru með venjulegar tölur. Veldu eina til að taka jafn mikið af báðum megin.",
+      "swap": "Ein upplýst röð segir hvað eitt {{glyph}} er virði eitt og sér. Veldu {{glyph}} í hinni upplýstu röðinni og svo þá röð."
     },
     "swap": {
-      "pick": "Ýttu á upplýsta röð til að skipta þessu {{glyph}} út fyrir það sem röðin segir að það sé virði.",
+      "pick": "Veldu upplýsta röð til að skipta þessu {{glyph}} út fyrir það sem röðin segir að það sé virði.",
       "none": "Ekkert hér segir hvað eitt {{glyph}} er virði eitt og sér, og ekkert á móti því passar."
     },
     "goal": {
@@ -365,11 +376,16 @@
     "name": {
       "default": "Vogarskálar",
       "weighing": "Vigtun hjartans"
+    },
+    "controls": {
+      "move": "veldu bita, röð eða hnapp",
+      "press": "ýttu á það",
+      "weigh": "gefðu valda tákninu þessa þyngd"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Ýttu einu sinni til að strika yfir tölu, aftur til að merkja að hún eigi að vera eftir, og aftur til að hreinsa.",
+      "tap": "Veldu tölu einu sinni til að strika yfir hana, aftur til að merkja að hún eigi að vera eftir, og aftur til að hreinsa.",
       "totals": "Litla talan undir hverju markmiði sýnir hvað línan er samtals núna."
     },
     "hint": {
@@ -430,12 +446,16 @@
       }
     },
     "goal": "Hver röð og hver dálkur er samtals talan sem stendur við hliðina.",
-    "name": "Talningin"
+    "name": "Talningin",
+    "controls": {
+      "move": "veldu tölu",
+      "mark": "strika yfir, halda eða hreinsa"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Merki á milli tveggja reita bendir á minni töluna af þeim tveimur.",
-      "enter": "Ýttu á reit og svo á tölu. Sama tala aftur tekur hana út.",
+      "enter": "Veldu reit og svo tölu. Sama tala aftur tekur hana út.",
       "notes": "Skiptu yfir í blýantinn til að skrifa hjá þér tölurnar sem gætu enn verið í reit. Afturkalla tekur síðasta leikinn til baka."
     },
     "hint": {
@@ -486,14 +506,22 @@
       }
     },
     "goal": "Hver tala kemur nákvæmlega einu sinni fyrir í hverri röð og hverjum dálki.",
-    "name": "Stærra og minna"
+    "name": "Stærra og minna",
+    "controls": {
+      "move": "veldu reit",
+      "type": "skrifaðu tölu",
+      "choose": "veldu tölu eða strokleðrið",
+      "place": "skrifaðu hana",
+      "pencil": "blýantur",
+      "erase": "stroka út"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Spegill beygir ljósið af hvorri hlið sem er. Litlu merkin í kringum hann sýna hvernig annars hann getur snúið: flestir beygja ljósið um fjórðung, en sumir minna og senda það á ská.",
       "walls": "Steinblokk gleypir ljósið. Það gerir brún borðsins líka.",
-      "tap": "Ýttu á bita til að breyta honum: spegill snýst og rennibiti færist á næsta stað. Hvít brún þýðir að þú mátt færa hann; allt annað er hluti af þrautinni.",
-      "nodes": "Sumir steinar eru tengdir við tengil í gólfinu og haggast ekki þegar þú ýtir á þá. Sendu ljósið yfir tengilinn og steinninn rennur frá."
+      "tap": "Veldu bita til að breyta honum: spegill snýst og rennibiti færist á næsta stað. Hvít brún þýðir að þú mátt færa hann; allt annað er hluti af þrautinni.",
+      "nodes": "Sumir steinar eru tengdir við tengil í gólfinu og haggast ekki fyrir þér. Sendu ljósið yfir tengilinn og steinninn rennur frá."
     },
     "hint": {
       "entryRun": "Byrjaðu þar sem ljósið fer nú þegar: það fer beint frá skífunni þangað til það hittir fyrsta bitann sem þú getur breytt. Þeir reitir bera ljósið hvað sem þú gerir.",
@@ -526,7 +554,7 @@
       "triple": "Þrjú eins í röð eru aldrei leyfð, hvorki lárétt né lóðrétt.",
       "copies": "Engar tvær raðir mega vera eins, og engir tveir dálkar heldur.",
       "signs": "Merki á milli tveggja reita segir hvernig þeir eru: = þýðir eins, × þýðir ólíkir.",
-      "enter": "Ýttu á reit til að setja sól þar, aftur fyrir tungl, og einu sinni enn til að tæma hann."
+      "enter": "Veldu reit til að setja sól þar, aftur fyrir tungl, og einu sinni enn til að tæma hann."
     },
     "hint": {
       "mistake": "Eitt af þessum merkjum getur ekki verið rétt.",
@@ -550,7 +578,11 @@
       }
     },
     "goal": "Í hverjum reit er sól eða tungl, og í hverri línu eru jafn margar sólir og tungl.",
-    "name": "Sól og tungl"
+    "name": "Sól og tungl",
+    "controls": {
+      "move": "veldu reit",
+      "mark": "breyttu merkinu"
+    }
   },
   "constellation": {
     "rules": {
@@ -558,25 +590,25 @@
         "straight": "Ljóslínur liggja beint lárétt eða lóðrétt, frá einni stjörnu til þeirrar næstu.",
         "pair": "Tvær stjörnur geta mest deilt tveimur línum.",
         "cross": "Línur krossast aldrei og fara aldrei í gegnum stjörnu.",
-        "enter": "Dragðu frá stjörnu í átt að nágranna hennar til að draga línu, aftur fyrir tvöfalda, og einu sinni enn til að hreinsa."
+        "enter": "Dragðu línu frá stjörnu í átt að nágranna hennar, aftur fyrir tvöfalda, og einu sinni enn til að hreinsa."
       },
       "causeway": {
         "straight": "Flutningsvegir liggja beint lárétt eða lóðrétt, frá einum stað til þess næsta.",
         "pair": "Tveir staðir geta mest deilt tveimur vegum.",
         "cross": "Vegir krossast aldrei og liggja aldrei í gegnum stað.",
-        "enter": "Dragðu frá stað í átt að nágranna hans til að leggja veg, aftur til að tvöfalda hann, og einu sinni enn til að rífa hann upp."
+        "enter": "Leggðu veg frá stað í átt að nágranna hans, aftur til að tvöfalda hann, og einu sinni enn til að rífa hann upp."
       },
       "irrigation": {
         "straight": "Skurðir liggja beint lárétt eða lóðrétt, frá einni tjörn til þeirrar næstu.",
         "pair": "Tvær tjarnir geta mest deilt tveimur skurðum.",
         "cross": "Skurðir krossast aldrei og liggja aldrei í gegnum tjörn.",
-        "enter": "Dragðu frá tjörn í átt að nágranna hennar til að grafa skurð, aftur til að breikka hann, og einu sinni enn til að moka ofan í hann."
+        "enter": "Grafðu skurð frá tjörn í átt að nágranna hennar, aftur til að breikka hann, og einu sinni enn til að moka ofan í hann."
       },
       "ceiling": {
         "straight": "Snúrur liggja beint lárétt eða lóðrétt, frá einni stjörnu til þeirrar næstu.",
         "pair": "Tvær stjörnur geta mest deilt tveimur snúrum.",
         "cross": "Snúrur krossast aldrei og liggja aldrei í gegnum stjörnu.",
-        "enter": "Dragðu frá stjörnu í átt að nágranna hennar til að leggja snúru, aftur til að tvöfalda hana, og einu sinni enn til að taka hana af."
+        "enter": "Strengdu snúru frá stjörnu í átt að nágranna hennar, aftur til að tvöfalda hana, og einu sinni enn til að taka hana af."
       }
     },
     "hint": {
@@ -664,37 +696,44 @@
       "causeway": "Vegagerð",
       "irrigation": "Vatnsveita",
       "ceiling": "Málaða loftið"
+    },
+    "controls": {
+      "pick": "veldu stjörnu",
+      "grab": "taktu hana upp",
+      "draw": "dragðu línu í þá átt",
+      "release": "slepptu",
+      "alt": "haltu inni og bentu: lína, tvöföld, engin"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Engar tvær stjörnur mega snertast. Horn teljast líka með.",
-        "enter": "Ýttu á reit til að útiloka hann, aftur til að setja stjörnu þar, og einu sinni enn til að hreinsa."
+        "enter": "Veldu reit til að útiloka hann, aftur til að setja stjörnu þar, og einu sinni enn til að hreinsa."
       },
       "fields": {
         "touch": "Engir tveir bóndabæir mega snertast. Horn teljast líka með. Svona nálægt þyrftu þeir að deila einum brunni.",
-        "enter": "Ýttu á skika til að útiloka hann, aftur til að reisa bóndabæ, og einu sinni enn til að hreinsa."
+        "enter": "Veldu skika til að útiloka hann, aftur til að reisa bóndabæ, og einu sinni enn til að hreinsa."
       },
       "lamps": {
         "touch": "Engir tveir olíulampar mega standa hlið við hlið. Horn teljast líka með. Ljósið frá þeim myndi skarast og olían færi til spillis.",
         "walls": "Gráu steinblokkirnar eru hluti af gólfinu: ekkert getur staðið á þeim og þær eru ekki reitir.",
-        "enter": "Ýttu á hellu til að útiloka hana, aftur til að setja olíulampa þar, og einu sinni enn til að hreinsa."
+        "enter": "Veldu hellu til að útiloka hana, aftur til að setja olíulampa þar, og einu sinni enn til að hreinsa."
       },
       "market": {
         "touch": "Engir tveir sölubásar mega standa hlið við hlið. Horn teljast líka með. Keppinautar setja aldrei upp bás við hliðina á hvor öðrum.",
         "walls": "Húsin eru hluti af torginu: enginn getur sett upp bás í þeim og þau eru ekki staðir.",
-        "enter": "Ýttu á stað til að útiloka hann, aftur til að setja upp bás þar, og einu sinni enn til að hreinsa."
+        "enter": "Veldu stað til að útiloka hann, aftur til að setja upp bás þar, og einu sinni enn til að hreinsa."
       },
       "lotus": {
         "touch": "Engir tveir lótusar mega fljóta hlið við hlið. Horn teljast líka með. Hvert blóm þarf opið vatn í kringum sig.",
         "walls": "Klettarnir standa upp úr tjörninni: ekkert getur flotið á þeim og þeir eru ekki reitir.",
-        "enter": "Ýttu á vatnsblett til að útiloka hann, aftur til að láta lótus fljóta þar, og einu sinni enn til að hreinsa."
+        "enter": "Veldu vatnsblett til að útiloka hann, aftur til að láta lótus fljóta þar, og einu sinni enn til að hreinsa."
       },
       "cats": {
         "touch": "Engir tveir kettir mega sofa hlið við hlið. Horn teljast líka með. Hver köttur á sinn eigin sólarblett.",
         "walls": "Súlurnar halda uppi musterinu: enginn köttur getur sofið á þeim og þær eru ekki reitir.",
-        "enter": "Ýttu á hellu til að útiloka hana, aftur til að leggja kött þar, og einu sinni enn til að hreinsa."
+        "enter": "Veldu hellu til að útiloka hana, aftur til að leggja kött þar, og einu sinni enn til að hreinsa."
       }
     },
     "hint": {
@@ -800,20 +839,20 @@
         "mistake": "Þetta merki getur ekki verið rétt.",
         "touch": "{{token}} hér, og engir tveir olíulampar mega standa hlið við hlið. Horn teljast líka með.",
         "groupFull.row_one": "Þessi röð er nú þegar komin með olíulampann sinn.",
-        "groupFull.col_one": "Þessi dálkur er nú þegar kominn með olíulampann sinn.",
         "groupFull.row_other": "Þessi röð er nú þegar komin með sína {{count}} olíulampa.",
+        "groupFull.col_one": "Þessi dálkur er nú þegar kominn með olíulampann sinn.",
         "groupFull.col_other": "Þessi dálkur er nú þegar kominn með sína {{count}} olíulampa.",
         "groupTight.row_one": "Aðeins ein hella er eftir í þessari röð.",
         "groupTight.row_other": "Aðeins {{count}} hellur eru eftir í þessari röð.",
         "groupTight.col_one": "Aðeins ein hella er eftir í þessum dálki.",
         "groupTight.col_other": "Aðeins {{count}} hellur eru eftir í þessum dálki.",
         "onlyWay.row_one": "Á milli steinblokkanna er aðeins einn reitur eftir í þessari röð fyrir olíulampa.",
-        "onlyWay.col_one": "Á milli steinblokkanna er aðeins einn reitur eftir í þessum dálki fyrir olíulampa.",
         "onlyWay.row_other": "Það er bara ein leið til að koma {{count}} olíulömpum fyrir í þessari röð.",
+        "onlyWay.col_one": "Á milli steinblokkanna er aðeins einn reitur eftir í þessum dálki fyrir olíulampa.",
         "onlyWay.col_other": "Það er bara ein leið til að koma {{count}} olíulömpum fyrir í þessum dálki.",
         "everyWay.row_one": "Hvar sem olíulampi þessarar raðar lendir, þá er hann alltaf hér.",
-        "everyWay.col_one": "Hvar sem olíulampi þessa dálks lendir, þá er hann alltaf hér.",
         "everyWay.row_other": "Hvar sem {{count}} olíulampar þessarar raðar lenda, þá er einn alltaf hér.",
+        "everyWay.col_one": "Hvar sem olíulampi þessa dálks lendir, þá er hann alltaf hér.",
         "everyWay.col_other": "Hvar sem {{count}} olíulampar þessa dálks lenda, þá er einn alltaf hér.",
         "lineBlock.rowsToCols": "Merktu raðirnar geyma olíulampana sína í reitum þessara dálka, svo þeir dálkar hafa enga aflögu.",
         "lineBlock.colsToRows": "Merktu dálkarnir geyma olíulampana sína í reitum þessara raða, svo þær raðir hafa enga aflögu.",
@@ -830,20 +869,20 @@
         "mistake": "Þetta merki getur ekki verið rétt.",
         "touch": "{{token}} hér, og engir tveir básar mega standa hlið við hlið. Horn teljast líka með.",
         "groupFull.row_one": "Þessi röð er nú þegar komin með básinn sinn.",
-        "groupFull.col_one": "Þessi dálkur er nú þegar kominn með básinn sinn.",
         "groupFull.row_other": "Þessi röð er nú þegar komin með sína {{count}} bása.",
+        "groupFull.col_one": "Þessi dálkur er nú þegar kominn með básinn sinn.",
         "groupFull.col_other": "Þessi dálkur er nú þegar kominn með sína {{count}} bása.",
         "groupTight.row_one": "Aðeins einn staður er eftir í þessari röð.",
         "groupTight.row_other": "Aðeins {{count}} staðir eru eftir í þessari röð.",
         "groupTight.col_one": "Aðeins einn staður er eftir í þessum dálki.",
         "groupTight.col_other": "Aðeins {{count}} staðir eru eftir í þessum dálki.",
         "onlyWay.row_one": "Á milli húsanna er aðeins einn reitur eftir í þessari röð fyrir bás.",
-        "onlyWay.col_one": "Á milli húsanna er aðeins einn reitur eftir í þessum dálki fyrir bás.",
         "onlyWay.row_other": "Það er bara ein leið til að koma {{count}} básum fyrir í þessari röð.",
+        "onlyWay.col_one": "Á milli húsanna er aðeins einn reitur eftir í þessum dálki fyrir bás.",
         "onlyWay.col_other": "Það er bara ein leið til að koma {{count}} básum fyrir í þessum dálki.",
         "everyWay.row_one": "Hvar sem bás þessarar raðar lendir, þá er hann alltaf hér.",
-        "everyWay.col_one": "Hvar sem bás þessa dálks lendir, þá er hann alltaf hér.",
         "everyWay.row_other": "Hvar sem {{count}} básar þessarar raðar lenda, þá er einn alltaf hér.",
+        "everyWay.col_one": "Hvar sem bás þessa dálks lendir, þá er hann alltaf hér.",
         "everyWay.col_other": "Hvar sem {{count}} básar þessa dálks lenda, þá er einn alltaf hér.",
         "lineBlock.rowsToCols": "Merktu raðirnar geyma básana sína í reitum þessara dálka, svo þeir dálkar hafa enga aflögu.",
         "lineBlock.colsToRows": "Merktu dálkarnir geyma básana sína í reitum þessara raða, svo þær raðir hafa enga aflögu.",
@@ -860,20 +899,20 @@
         "mistake": "Þetta merki getur ekki verið rétt.",
         "touch": "{{token}} hér, og engir tveir lótusar mega fljóta hlið við hlið. Horn teljast líka með.",
         "groupFull.row_one": "Þessi röð er nú þegar komin með lótusinn sinn.",
-        "groupFull.col_one": "Þessi dálkur er nú þegar kominn með lótusinn sinn.",
         "groupFull.row_other": "Þessi röð er nú þegar komin með sína {{count}} lótusa.",
+        "groupFull.col_one": "Þessi dálkur er nú þegar kominn með lótusinn sinn.",
         "groupFull.col_other": "Þessi dálkur er nú þegar kominn með sína {{count}} lótusa.",
         "groupTight.row_one": "Aðeins einn vatnsblettur er eftir í þessari röð.",
         "groupTight.row_other": "Aðeins {{count}} vatnsblettir eru eftir í þessari röð.",
         "groupTight.col_one": "Aðeins einn vatnsblettur er eftir í þessum dálki.",
         "groupTight.col_other": "Aðeins {{count}} vatnsblettir eru eftir í þessum dálki.",
         "onlyWay.row_one": "Á milli klettanna er aðeins einn reitur eftir í þessari röð fyrir lótus.",
-        "onlyWay.col_one": "Á milli klettanna er aðeins einn reitur eftir í þessum dálki fyrir lótus.",
         "onlyWay.row_other": "Það er bara ein leið til að koma {{count}} lótusum fyrir í þessari röð.",
+        "onlyWay.col_one": "Á milli klettanna er aðeins einn reitur eftir í þessum dálki fyrir lótus.",
         "onlyWay.col_other": "Það er bara ein leið til að koma {{count}} lótusum fyrir í þessum dálki.",
         "everyWay.row_one": "Hvar sem lótus þessarar raðar lendir, þá er hann alltaf hér.",
-        "everyWay.col_one": "Hvar sem lótus þessa dálks lendir, þá er hann alltaf hér.",
         "everyWay.row_other": "Hvar sem {{count}} lótusar þessarar raðar lenda, þá er einn alltaf hér.",
+        "everyWay.col_one": "Hvar sem lótus þessa dálks lendir, þá er hann alltaf hér.",
         "everyWay.col_other": "Hvar sem {{count}} lótusar þessa dálks lenda, þá er einn alltaf hér.",
         "lineBlock.rowsToCols": "Merktu raðirnar geyma lótusana sína í reitum þessara dálka, svo þeir dálkar hafa enga aflögu.",
         "lineBlock.colsToRows": "Merktu dálkarnir geyma lótusana sína í reitum þessara raða, svo þær raðir hafa enga aflögu.",
@@ -890,20 +929,20 @@
         "mistake": "Þetta merki getur ekki verið rétt.",
         "touch": "{{token}} hér, og engir tveir kettir mega sofa hlið við hlið. Horn teljast líka með.",
         "groupFull.row_one": "Þessi röð er nú þegar komin með köttinn sinn.",
-        "groupFull.col_one": "Þessi dálkur er nú þegar kominn með köttinn sinn.",
         "groupFull.row_other": "Þessi röð er nú þegar komin með sína {{count}} ketti.",
+        "groupFull.col_one": "Þessi dálkur er nú þegar kominn með köttinn sinn.",
         "groupFull.col_other": "Þessi dálkur er nú þegar kominn með sína {{count}} ketti.",
         "groupTight.row_one": "Aðeins ein hella er eftir í þessari röð.",
         "groupTight.row_other": "Aðeins {{count}} hellur eru eftir í þessari röð.",
         "groupTight.col_one": "Aðeins ein hella er eftir í þessum dálki.",
         "groupTight.col_other": "Aðeins {{count}} hellur eru eftir í þessum dálki.",
         "onlyWay.row_one": "Á milli súlnanna er aðeins einn reitur eftir í þessari röð fyrir kött.",
-        "onlyWay.col_one": "Á milli súlnanna er aðeins einn reitur eftir í þessum dálki fyrir kött.",
         "onlyWay.row_other": "Það er bara ein leið til að koma {{count}} köttum fyrir í þessari röð.",
+        "onlyWay.col_one": "Á milli súlnanna er aðeins einn reitur eftir í þessum dálki fyrir kött.",
         "onlyWay.col_other": "Það er bara ein leið til að koma {{count}} köttum fyrir í þessum dálki.",
         "everyWay.row_one": "Hvar sem köttur þessarar raðar lendir, þá er hann alltaf hér.",
-        "everyWay.col_one": "Hvar sem köttur þessa dálks lendir, þá er hann alltaf hér.",
         "everyWay.row_other": "Hvar sem {{count}} kettir þessarar raðar lenda, þá er einn alltaf hér.",
+        "everyWay.col_one": "Hvar sem köttur þessa dálks lendir, þá er hann alltaf hér.",
         "everyWay.col_other": "Hvar sem {{count}} kettir þessa dálks lenda, þá er einn alltaf hér.",
         "lineBlock.rowsToCols": "Merktu raðirnar geyma kettina sína í reitum þessara dálka, svo þeir dálkar hafa enga aflögu.",
         "lineBlock.colsToRows": "Merktu dálkarnir geyma kettina sína í reitum þessara raða, svo þær raðir hafa enga aflögu.",
@@ -944,6 +983,11 @@
       "market": "Sölubásar",
       "lotus": "Lótustjörnin",
       "cats": "Musteriskettir"
+    },
+    "controls": {
+      "move": "veldu reit",
+      "mark": "breyttu merkinu",
+      "sweep": "haltu inni og færðu: útilokaðu röð"
     }
   },
   "pairPuzzle": {
@@ -960,13 +1004,13 @@
         "pair": "Hver steinkista hefur eina múmíu sem hvílir beint fyrir ofan, neðan, vinstra eða hægra megin við hana, og hver múmía hvílir við sína eigin steinkistu.",
         "count": "Talan við röð eða dálk segir hve margar múmíur eru í honum. Hún verður græn þegar línan er með nákvæmlega svo margar, og rauð þegar það getur ekki gengið.",
         "touch": "Engar tvær múmíur mega standa hlið við hlið. Horn teljast líka með.",
-        "enter": "Ýttu á reit til að útiloka hann, aftur til að leggja múmíu þar, og einu sinni enn til að hreinsa. Dragðu yfir reiti til að útiloka marga í einu. Það er ekki hægt að ýta á steinkistur."
+        "enter": "Veldu reit til að útiloka hann, aftur til að leggja múmíu þar, og einu sinni enn til að hreinsa. Útilokaðu marga reiti í röð í einni stroku. Það er ekki hægt að merkja steinkistur."
       },
       "beetles": {
         "pair": "Hver taðkúla hefur eina bjöllu beint fyrir ofan, neðan, vinstra eða hægra megin við hana, og hver bjalla stendur við sína eigin kúlu til að velta.",
         "count": "Talan við röð eða dálk segir hve margar bjöllur eru í honum. Hún verður græn þegar línan er með nákvæmlega svo margar, og rauð þegar það getur ekki gengið.",
         "touch": "Engar tvær bjöllur mega standa hlið við hlið. Horn teljast líka með.",
-        "enter": "Ýttu á reit til að útiloka hann, aftur til að setja bjöllu þar, og einu sinni enn til að hreinsa. Dragðu yfir reiti til að útiloka marga í einu. Það er ekki hægt að ýta á taðkúlur."
+        "enter": "Veldu reit til að útiloka hann, aftur til að setja bjöllu þar, og einu sinni enn til að hreinsa. Útilokaðu marga reiti í röð í einni stroku. Það er ekki hægt að merkja taðkúlur."
       }
     },
     "hint": {
@@ -1030,6 +1074,11 @@
           "place_other": "Settu bjöllu á hvern skyggðan reit."
         }
       }
+    },
+    "controls": {
+      "move": "veldu reit",
+      "mark": "breyttu merkinu",
+      "sweep": "haltu inni og færðu: útilokaðu röð"
     }
   },
   "rushHour": {
@@ -1044,11 +1093,11 @@
     "rules": {
       "default": {
         "lanes": "Kubbur rennur aðeins eftir sinni eigin braut. Aldrei til hliðar og aldrei út af borðinu.",
-        "shove": "Dragðu kubb til að ýta honum. Hann stoppar þar sem eitthvað er fyrir."
+        "shove": "Ýttu kubbi eftir brautinni hans. Hann stoppar þar sem eitthvað er fyrir."
       },
       "market": {
         "lanes": "Sleði rennur aðeins eftir brautinni sem hann stendur á. Aldrei til hliðar og aldrei út úr götunni.",
-        "shove": "Dragðu sleða til að ýta honum. Hann stoppar þar sem eitthvað er fyrir."
+        "shove": "Ýttu sleða eftir brautinni hans. Hann stoppar þar sem eitthvað er fyrir."
       }
     },
     "hint": {
@@ -1076,29 +1125,35 @@
           "down": "Ýttu honum niður götuna, alveg að hringnum."
         }
       }
+    },
+    "controls": {
+      "pick": "veldu kubb",
+      "grab": "taktu hann",
+      "slide": "renndu",
+      "release": "slepptu"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "Tölurnar sem eru þegar í vaxkökunni eru hluti af þrautinni. Þær haggast ekki.",
-        "enter": "Ýttu á tölu til að halda áfram þaðan, og ýttu svo á tóman reit sem snertir hana til að halda röðinni áfram. Eða dragðu beint í gegnum reitina sem hún fer um.",
-        "back": "Ýttu á tölu sem þú settir og ýttu aftur á hana til að taka hana af, ásamt öllu sem hangir á henni. Ef þú heldur röðinni áfram í aðra átt frá tölu gerist það sama. Afturkalla tekur síðasta leikinn til baka."
+        "enter": "Dragðu línu frá tölu í gegnum tómu reitina við hliðina til að halda röðinni áfram.",
+        "back": "Veldu tölu sem þú settir og veldu hana aftur til að taka hana af, ásamt öllu sem hangir á henni. Ef þú heldur röðinni áfram í aðra átt frá tölu gerist það sama. Afturkalla tekur síðasta leikinn til baka."
       },
       "channel": {
         "given": "Akrarnir sem eru þegar með tölu eru hluti af þrautinni. Þeir haggast ekki.",
-        "enter": "Ýttu á akur með tölu til að taka vatnið þaðan, og ýttu svo á þurran akur við hliðina til að grafa áfram. Eða dragðu beint eftir ökrunum sem skurðurinn liggur um.",
-        "back": "Ýttu á akur sem þú grófst og ýttu aftur á hann til að moka ofan í hann, ásamt hverjum skurði sem verður viðskila við hann. Ef þú grefur í aðra átt frá akri gerist það sama. Afturkalla tekur síðasta leikinn til baka."
+        "enter": "Grafðu skurð frá akri með tölu í gegnum þurru akrana við hliðina til að leiða vatnið áfram.",
+        "back": "Veldu akur sem þú grófst og veldu hann aftur til að moka ofan í hann, ásamt hverjum skurði sem verður viðskila við hann. Ef þú grefur í aðra átt frá akri gerist það sama. Afturkalla tekur síðasta leikinn til baka."
       },
       "scribe": {
         "given": "Tölurnar sem eru skrifaðar með rauðu bleki eru hluti af þrautinni. Þær haggast ekki.",
-        "enter": "Ýttu á tölu til að taka upp reyrpennann þar, og ýttu svo á tóman reit við hliðina til að skrifa áfram. Eða dragðu beint eftir línunni.",
-        "back": "Ýttu á tölu sem þú skrifaðir og ýttu aftur á hana til að skafa hana af, ásamt hverri línu sem verður viðskila við hana. Ef þú skrifar í aðra átt frá tölu gerist það sama. Afturkalla tekur síðasta leikinn til baka."
+        "enter": "Skrifaðu línu frá tölu í gegnum auðu reitina við hliðina til að halda talningunni áfram.",
+        "back": "Veldu tölu sem þú skrifaðir og veldu hana aftur til að skafa hana af, ásamt hverri línu sem verður viðskila við hana. Ef þú skrifar í aðra átt frá tölu gerist það sama. Afturkalla tekur síðasta leikinn til baka."
       },
       "chambers": {
         "given": "Herbergin sem eru þegar með tölu voru höggvin af smiðunum. Þau haggast ekki.",
-        "enter": "Ýttu á herbergi með tölu til að halda ganginum áfram þaðan, og ýttu svo á lokað herbergi við hliðina til að brjótast í gegn. Eða dragðu beint eftir herbergjunum sem gangurinn liggur um.",
-        "back": "Ýttu á herbergi sem þú opnaðir og ýttu aftur á það til að loka því, ásamt hverjum gangi sem verður viðskila við það. Ef þú brýst í aðra átt frá herbergi gerist það sama. Afturkalla tekur síðasta leikinn til baka."
+        "enter": "Brjóttu gang frá herbergi með tölu í gegnum lokuðu herbergin við hliðina til að halda honum áfram.",
+        "back": "Veldu herbergi sem þú opnaðir og veldu það aftur til að loka því, ásamt hverjum gangi sem verður viðskila við það. Ef þú brýst í aðra átt frá herbergi gerist það sama. Afturkalla tekur síðasta leikinn til baka."
       }
     },
     "goal": {
@@ -1162,6 +1217,13 @@
       "channel": "Skurðurinn",
       "scribe": "Blað skrifarans",
       "chambers": "Lokuðu herbergin"
+    },
+    "controls": {
+      "move": "farðu í reit við hliðina; upp og niður halla til vinstri",
+      "right": "upp til hægri eða niður til hægri",
+      "grab": "taktu röðina upp, eða taktu töluna þína af",
+      "carry": "með röðina á lofti: haltu henni áfram; upp og niður velja hliðina þar sem hún kemst áfram",
+      "drop": "leggðu röðina niður"
     }
   },
   "sudoku": {
@@ -1169,13 +1231,13 @@
       "default": {
         "chambers": "Þykku línurnar skipta reitunum í sex herbergi, tvo reiti á breidd og þrjá á hæð.",
         "given": "Tölurnar sem eru þegar höggnar í eru hluti af þrautinni. Þær haggast ekki.",
-        "enter": "Ýttu á reit og svo á tölu. Sama tala aftur tekur hana út.",
+        "enter": "Veldu reit og svo tölu. Sama tala aftur tekur hana út.",
         "notes": "Skiptu yfir í blýantinn til að skrifa hjá þér tölurnar sem gætu enn verið í reit. Afturkalla tekur síðasta leikinn til baka."
       },
       "papyrus": {
         "chambers": "Þykku línurnar skipta blaðinu í sex hólf, tvo reiti á breidd og þrjá á hæð.",
         "given": "Táknin sem eru skrifuð með rauðu bleki eru hluti af þrautinni. Þau haggast ekki.",
-        "enter": "Ýttu á reit og svo á tákn. Sama tákn aftur skefur það af.",
+        "enter": "Veldu reit og svo tákn. Sama tákn aftur skefur það af.",
         "notes": "Taktu reyrpennann til að skrifa létt hjá þér táknin sem gætu enn verið í reit. Afturkalla tekur síðasta leikinn til baka."
       }
     },
@@ -1242,6 +1304,14 @@
     "name": {
       "default": "Sex herbergi",
       "papyrus": "Skrá skrifarans"
+    },
+    "controls": {
+      "move": "veldu reit",
+      "type": "skrifaðu tölu",
+      "choose": "veldu tölu eða strokleðrið",
+      "place": "skrifaðu hana",
+      "pencil": "blýantur",
+      "erase": "stroka út"
     }
   },
   "crocodile": {
@@ -1255,6 +1325,10 @@
     "hint": {
       "biggest": "Þessi krókódíll vill stærsta svarið. Það er {{value}}.",
       "smallest": "Þessi krókódíll vill minnsta svarið. Það er {{value}}."
+    },
+    "controls": {
+      "move": "veldu stein",
+      "step": "stígðu á hann"
     }
   },
   "canisters": {
@@ -1285,35 +1359,35 @@
         "sums": "Hvert magn sem þú getur búið til er tvær tölur á borðinu lagðar saman eða dregnar hvor frá annarri: stærð íláts, það sem er í því, eða plássið sem er eftir í því.",
         "backwards": "Vinndu þig því til baka frá magninu sem beðið er um. Hvaða tvær tölur gera það, og hvernig færðu þær báðar fram á sama tíma?"
       },
-      "claim": "Þegar magnið er komið skaltu ýta á „þessi“. Ef þú nefnir rangt ílát kostar það einn leik.",
+      "claim": "Þegar magnið er komið skaltu velja „þessi“. Ef þú nefnir rangt ílát kostar það einn leik.",
       "legs": "Svo kemur næsta magn, mælt út frá því sem er eftir í ílátunum.",
       "default": {
-        "moves": "Ýttu á brúsa til að taka hann upp og svo á annan til að hella í hann. Það hættir að renna þegar sá fyrri tæmist eða sá seinni fyllist.",
+        "moves": "Taktu upp brúsa og veldu svo annan til að hella í hann. Það hættir að renna þegar sá fyrri tæmist eða sá seinni fyllist.",
         "contents": "Þetta er allt vatnið sem til er. Einn brúsi byrjar fullur, og það má hvorki hella neinu niður né sækja meira.",
         "levels": "Á hverjum brúsa stendur hve mikið er í honum og hve mikið hann tekur fullur."
       },
       "grain": {
-        "moves": "Ýttu á mál til að lyfta því og svo á annað til að hella korninu í það. Það hættir þegar það fyrra tæmist eða það seinna er orðið fullt upp á brún.",
+        "moves": "Lyftu máli og veldu svo annað til að hella korninu í það. Það hættir þegar það fyrra tæmist eða það seinna er orðið fullt upp á brún.",
         "contents": "Þetta er allt kornið sem til er. Eitt mál byrjar fullt, og það má hvorki sópa neinu burt né sækja meira í kornhlöðuna.",
         "levels": "Á hverju máli stendur hve mikið er í því og hve mikið það tekur fullt upp á brún."
       },
       "oil": {
-        "moves": "Ýttu á krukku til að lyfta henni og svo á aðra til að hella í hana. Það hættir að renna þegar sú fyrri tæmist eða sú seinni fyllist.",
+        "moves": "Lyftu krukku og veldu svo aðra til að hella í hana. Það hættir að renna þegar sú fyrri tæmist eða sú seinni fyllist.",
         "contents": "Þetta er öll olían sem til er. Ein krukka byrjar full, og það má hvorki hella neinu niður né sækja meira.",
         "levels": "Á hverri krukku stendur hve mikið er í henni og hve mikið hún tekur full."
       },
       "wine": {
-        "moves": "Ýttu á leirkönnu til að lyfta henni og svo á aðra til að hella í hana. Það hættir að renna þegar sú fyrri tæmist eða sú seinni fyllist.",
+        "moves": "Lyftu leirkönnu og veldu svo aðra til að hella í hana. Það hættir að renna þegar sú fyrri tæmist eða sú seinni fyllist.",
         "contents": "Þetta er allt vínið sem til er. Ein leirkanna byrjar full, og það má hvorki sulla neinu niður né sækja meira í kjallarann.",
         "levels": "Á hverri leirkönnu stendur hve mikið er í henni og hve mikið hún tekur full."
       },
       "natron": {
-        "moves": "Ýttu á krukku til að lyfta henni og svo á aðra til að hella natróninu í hana. Það hættir þegar sú fyrri tæmist eða sú seinni er orðin full upp að loki.",
+        "moves": "Lyftu krukku og veldu svo aðra til að hella natróninu í hana. Það hættir þegar sú fyrri tæmist eða sú seinni er orðin full upp að loki.",
         "contents": "Þetta er allt natrónið sem til er. Ein krukka byrjar full, og það má hvorki sópa neinu burt né sækja meira.",
         "levels": "Á hverri krukku stendur hve mikið er í henni og hve mikið hún tekur full upp að loki."
       },
       "ink": {
-        "moves": "Ýttu á krús til að lyfta henni og svo á aðra til að hella í hana. Það hættir að renna þegar sú fyrri tæmist eða sú seinni fyllist.",
+        "moves": "Lyftu krús og veldu svo aðra til að hella í hana. Það hættir að renna þegar sú fyrri tæmist eða sú seinni fyllist.",
         "contents": "Þetta er allt blekið sem til er. Ein krús byrjar full, og það má hvorki hella neinu niður né mala nýtt.",
         "levels": "Á hverri krús stendur hve mikið er í henni og hve mikið hún tekur full."
       }
@@ -1338,7 +1412,12 @@
     "legs": "mælt {{done}} af {{total}}",
     "wanted": "Mældu",
     "claim": "þessi",
-    "claimAria": "Segja að {{capacity}} sé með magnið"
+    "claimAria": "Segja að {{capacity}} sé með magnið",
+    "controls": {
+      "move": "veldu ílát eða „þessi“ undir því",
+      "press": "taktu upp, helltu hingað eða segðu „þessi“",
+      "putDown": "leggðu ílátið sem þú heldur á aftur niður"
+    }
   },
   "procession": {
     "name": {
@@ -1358,8 +1437,8 @@
     "rules": {
       "default": {
         "lengths": "Hver röð er eitthvað eitt sem gerist, og það tekur jafn langan tíma og stikan er breið. Hvenær það gerist er það sem þú finnur út.",
-        "marks": "Lína undir deginum verður rauð á meðan hún stenst ekki. Ýttu á hana til að setja hring um raðirnar sem hún fjallar um.",
-        "drag": "Dragðu stiku eftir sinni eigin röð. Hún fer aldrei út fyrir daginn."
+        "marks": "Lína undir deginum verður rauð á meðan hún stenst ekki. Veldu hana til að setja hring um raðirnar sem hún fjallar um.",
+        "drag": "Renndu stiku eftir sinni eigin röð. Hún fer aldrei út fyrir daginn."
       }
     },
     "hint": {
@@ -1368,7 +1447,7 @@
         "squeeze": "Það er bara svona mikið eftir af deginum, og þetta er allt sem passar.",
         "apart": "Öfugt passar það ekki inn í daginn.",
         "split": "Prófaðu það öfugt og þá fer eitthvað annað úrskeiðis.",
-        "move": "Dragðu stikuna með hringnum á skyggðu strikin."
+        "move": "Renndu stikunni með hringnum á skyggðu strikin."
       }
     },
     "events": {
@@ -1396,6 +1475,11 @@
       "hint": "Hver hella sem þú stígur á leysir sitt verk. Raðaðu deginum og gakktu svo á hellurnar í þeirri röð.",
       "read": "Dagurinn er lesinn. Gakktu á hellurnar í þessari röð, frá þeirri fyrstu.",
       "hintButton": "Vísbending"
+    },
+    "controls": {
+      "row": "veldu röð",
+      "slide": "renndu stikunni hennar",
+      "mark": "veldu línu undir deginum"
     }
   },
   "story": {
@@ -1418,6 +1502,13 @@
       "pick": "Settu rétta táknið á sinn stað.",
       "cannot": "Þú þekkir ekki táknið sem á heima hér. Ekki enn."
     },
+    "formula": {
+      "wrong": "Það vantar eitt tákn í þessa línu. Ekki vitlaust höggvið — aldrei höggvið.",
+      "fixed": "Línan er heil.",
+      "pick": "Settu táknið sem þú fékkst á auða staðinn.",
+      "cannot": "Enginn hefur gefið þér táknið fyrir þennan stað. Ekki enn.",
+      "gap": "Táknið sem vantar"
+    },
     "sphinx": {
       "wrong": "Sama letur og úti, en sandurinn náði aldrei hingað inn. Tvö tákn eru enn skýrt höggvin, og autt bil þar sem það þriðja var.",
       "fixed": "Þarna er það allt.",
@@ -1434,7 +1525,7 @@
       "shrines": "Ein ljósskífa, og helgiskrín yfir hverjum útgangi frá þessum gatnamótum. Speglarnir á gólfinu geta borið ljósið að hverju þeirra sem er.",
       "doors": "Útgangurinn sem ljósið nær til stendur opinn, og hinir eru lokaðir. Ein leið fyrir ljósið, ein leið áfram.",
       "returning": "Þú tapar engu á því að velja. Gakktu aftur inn hvenær sem þú vilt og sendu ljósið aðra leið. Þá opnast sú leið og þessi lokast.",
-      "tap": "Ýttu á spegil til að snúa honum. Ef þú ýtir aftur fer hann til baka."
+      "tap": "Veldu spegil til að snúa honum. Veldu hann aftur til að setja hann til baka."
     },
     "doorOpen": "{{way}} útgangur: opinn",
     "doorShut": "{{way}} útgangur: lokaður",
@@ -1443,6 +1534,10 @@
       "e": "Eystri",
       "s": "Syðri",
       "w": "Vestari"
+    },
+    "controls": {
+      "move": "veldu spegil",
+      "turn": "snúðu honum"
     }
   },
   "handle": {
@@ -1692,5 +1787,33 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Teikning endurskrifar textann: allar athugasemdir færast efst"
+  },
+  "saveCard": {
+    "title": "Ferðakort",
+    "explain": "Taktu leiðangurinn þinn með í annað tæki: búðu til kort hér og lestu það þar innan 15 mínútna.",
+    "make": "Búa til ferðakort",
+    "share": "Deila korti",
+    "download": "Sækja kort",
+    "read": "Lesa ferðakort",
+    "busy": "Augnablik…",
+    "makeFailed": "Ekki tókst að búa til kortið.",
+    "shareFailed": "Ekki tókst að deila; sæktu kortið í staðinn.",
+    "confirm_one": "Skipta út leiðangrinum á þessu tæki fyrir þann á kortinu ({{count}} ferð)?",
+    "confirm_other": "Skipta út leiðangrinum á þessu tæki fyrir þann á kortinu ({{count}} ferðir)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Ferðakort · taktu leiðangurinn með þér",
+    "validUntil": "gildir til {{time}}",
+    "codes_one": "{{count}} kóði",
+    "codes_other": "{{count}} kóðar",
+    "refused": {
+      "notACard": "Þetta er ekki ferðakort.",
+      "tampered": "Þessu korti hefur verið breytt og það er ekki lengur hægt að lesa það.",
+      "expired": "Þetta kort er útrunnið; búðu til nýtt.",
+      "future": "Þetta kort kemur úr framtíðinni: athugaðu klukkuna á báðum tækjunum.",
+      "otherEpoch": "Þetta kort er úr annarri útgáfu leiksins.",
+      "newerGame": "Þetta kort kemur úr nýrri útgáfu: uppfærðu leikinn fyrst."
+    },
+    "writeFailed": "Ekki tókst að skrifa vistunina; þetta tæki hélt sinni eigin.",
+    "writeLost": "Ekki tókst að skipta út vistuninni og vistunin á þessu tæki gæti verið ófullkomin."
   }
 }

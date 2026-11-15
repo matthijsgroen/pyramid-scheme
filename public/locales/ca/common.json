@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "No es pot carregar la teva partida",
     "body": "Ara mateix el navegador no ens deixa la teva partida guardada. No s'ha perdut: torna a carregar la pàgina per provar-ho un altre cop.",
-    "banner": "La partida no s'està guardant. Toca per tornar a carregar.",
+    "banner": "La partida no s'està guardant. Torna a carregar la pàgina.",
     "reload": "Torna a carregar",
     "continue": "Continua jugant sense guardar",
     "reset": "Torna a començar (esborra la partida)",
@@ -29,7 +29,6 @@
     "evening": "Vespre",
     "night": "Nit"
   },
-  "tomb": {},
   "ui": {
     "level": "Nivell",
     "symbols": "símbols",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Atura l'expedició",
     "confirmInterruptExpedition": "Segur que vols aturar aquesta expedició? El que has fet a l'expedició es guarda, però perdràs el que portes fet en aquest nivell!",
     "cancel": "Cancel·la",
+    "leaveSite": "Vols sortir d'aquest lloc?",
+    "confirmLeaveSite": "Tria Surt per tornar a fora, o Queda't per continuar explorant.",
+    "leave": "Surt",
+    "stay": "Queda't",
     "settings": "Configuració",
     "language": "Idioma",
     "close": "Tanca",
@@ -107,8 +110,12 @@
     "solvedWithHints_one": "Resolt amb {{count}} pista",
     "solvedWithHints_many": "Resolt amb {{count}} pistes",
     "solvedWithHints_other": "Resolt amb {{count}} pistes",
-    "tapToContinue": "Toca per continuar",
-    "goal": "Objectiu"
+    "tapToContinue": "Continua",
+    "goal": "Objectiu",
+    "controls": "Controls",
+    "controlsUndo": "desfés",
+    "controlsHint": "pista",
+    "controlsLeave": "torna al mapa"
   },
   "trap": {
     "warning": "⚠ Passadís amb trampa",
@@ -127,6 +134,7 @@
     "turnAround": "Fes mitja volta",
     "wardDescription": {
       "starter": "El segell d'un mercader tanca aquest pas. Només la seva clau el pot obrir.",
+      "junior": "L'escut d'una noble tanca aquest camí. Només la seva clau el pot obrir.",
       "expert": "Un segell del temple d'un gran sacerdot protegeix aquesta porta. L'ha d'obrir la seva clau sagrada.",
       "master": "El segell reial d'un faraó tanca aquest pas. Només la clau del rei el trenca.",
       "wizard": "Un segell dels déus tanca aquesta porta. Només hi passa la seva clau divina."
@@ -135,7 +143,7 @@
     "lockedColor": "Encara no has trobat aquesta clau en aquest pis."
   },
   "chest": {
-    "tapToOpen": "Toca per obrir",
+    "tapToOpen": "Obre",
     "money_one": "{{count}} moneda",
     "money_many": "{{count}} monedes",
     "money_other": "{{count}} monedes",
@@ -143,6 +151,7 @@
     "mapPieceDescription": "Un tros de mapa trencadís que porta a un lloc oblidat fa molt de temps. Llàstima que n'hi falti tant...",
     "mapPieceProgress": "{{found}} de {{required}} trossos de mapa trobats",
     "mapPieceComplete": "El mapa està sencer: porta a {{name}}.",
+    "hieroglyph": "Jeroglífic",
     "hieroglyphFragment": "Tros de jeroglífic",
     "fragmentProgress": "{{found}} de {{required}} trossos trobats",
     "tombKey": "Clau de la tomba",
@@ -159,8 +168,9 @@
   },
   "loot": {
     "youFound": "Has trobat",
+    "youReceived": "Has rebut",
     "expeditionReward": "Premi extra per acabar l'expedició",
-    "clickToContinue": "Toca on vulguis per continuar"
+    "clickToContinue": "Continua"
   },
   "money": {
     "label": "Monedes"
@@ -258,7 +268,7 @@
     "tabNew_other": "{{label}} · {{count}} novetats",
     "empty": "El teu cofre encara és buit",
     "newLabel": "NOU",
-    "clickForDetails": "Toca una casella per veure'n més",
+    "clickForDetails": "Tria una casella per veure'n més",
     "categories": {
       "deities": "🏺 Déus",
       "professions": "⚱️ Oficis",
@@ -266,6 +276,7 @@
       "artifacts": "💎 Objectes",
       "treasures": "💰 Tresors",
       "junk": "🔷 Andròmines",
+      "offerings": "🍞 Ofrenes",
       "signs": "✍️ Signes"
     },
     "treasureCategories": {
@@ -347,22 +358,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Toca un signe de sota i després un número. Torna a tocar el número per treure'l.",
+      "tap": "Tria un signe de sota i després un número. Torna a triar el número per treure'l.",
       "same": "Un signe pesa el mateix a totes les balances.",
-      "cancel": "Si treus el mateix dels dos plats, la balança continua equilibrada. Toca una peça marcada per fer-ho: el que queda es guarda com una fila nova.",
-      "swap": "Toca un signe que no tingui cap igual a l'altra banda, i després una fila on aquell signe estigui sol, per canviar-lo pel que val aquella fila."
+      "cancel": "Si treus el mateix dels dos plats, la balança continua equilibrada. Tria una peça marcada per fer-ho: el que queda es guarda com una fila nova.",
+      "swap": "Tria un signe que no tingui cap igual a l'altra banda, i després una fila on aquell signe estigui sol, per canviar-lo pel que val aquella fila."
     },
     "hint": {
       "mistake": "Un dels pesos que has posat fa que una balança s'inclini. Treu-lo i torna-ho a mirar.",
       "alone": "A la fila il·luminada, {{glyph}} és l'única peça que queda sense número. Calcula quant pesa.",
       "equalShares": "La fila il·luminada només té {{glyph}} contra un número. Reparteix aquest número entre ells.",
       "difference": "Les dues files il·luminades són iguals menys per {{glyph}}. Compara-les.",
-      "cancelGlyph": "Els dos plats de la fila il·luminada tenen {{glyph}}. Toca'n un per treure'l dels dos costats: la fila continua equilibrada.",
-      "cancelStones": "Els dos plats de la fila il·luminada tenen números sols. Toca'n un per treure la mateixa quantitat dels dos costats.",
-      "swap": "Una fila il·luminada diu quant val un sol {{glyph}}. Toca el {{glyph}} de l'altra fila il·luminada i després toca aquella fila."
+      "cancelGlyph": "Els dos plats de la fila il·luminada tenen {{glyph}}. Tria'n un per treure'l dels dos costats: la fila continua equilibrada.",
+      "cancelStones": "Els dos plats de la fila il·luminada tenen números sols. Tria'n un per treure la mateixa quantitat dels dos costats.",
+      "swap": "Una fila il·luminada diu quant val un sol {{glyph}}. Tria el {{glyph}} de l'altra fila il·luminada i després tria aquella fila."
     },
     "swap": {
-      "pick": "Toca una fila il·luminada per canviar aquest {{glyph}} pel que aquella fila diu que val.",
+      "pick": "Tria una fila il·luminada per canviar aquest {{glyph}} pel que aquella fila diu que val.",
       "none": "Aquí res no diu quant val un {{glyph}} sol, i a l'altra banda no hi ha res igual."
     },
     "goal": {
@@ -372,11 +383,16 @@
     "name": {
       "default": "La balança",
       "weighing": "El pes del cor"
+    },
+    "controls": {
+      "move": "tria una peça, una fila o un botó",
+      "press": "prem-lo",
+      "weigh": "dona aquest pes al signe triat"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Toca un cop per ratllar un número, un altre cop per marcar-lo com a número que es queda, i un altre per esborrar-ho.",
+      "tap": "Tria un número un cop per ratllar-lo, un altre cop per marcar-lo com a número que es queda, i un altre per esborrar-ho.",
       "totals": "El número petit sota cada objectiu és el que suma aquella línia ara mateix."
     },
     "hint": {
@@ -439,12 +455,16 @@
       }
     },
     "goal": "Cada fila i cada columna sumen el número del costat.",
-    "name": "El compte"
+    "name": "El compte",
+    "controls": {
+      "move": "tria un número",
+      "mark": "ratlla, deixa o esborra"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Un signe entre dues caselles apunta al número més petit dels dos.",
-      "enter": "Toca una casella i després un número. Si tornes a tocar el mateix número, el treus.",
+      "enter": "Tria una casella i després un número. Si tornes a triar el mateix número, el treus.",
       "notes": "Canvia al llapis per apuntar els números que encara hi podrien anar. Desfés torna enrere el teu últim moviment."
     },
     "hint": {
@@ -495,14 +515,22 @@
       }
     },
     "goal": "Cada fila i cada columna tenen cada número exactament un cop.",
-    "name": "Més gran i més petit"
+    "name": "Més gran i més petit",
+    "controls": {
+      "move": "tria una casella",
+      "type": "escriu un número",
+      "choose": "tria un número o la goma",
+      "place": "escriu-lo",
+      "pencil": "llapis",
+      "erase": "esborra"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Un mirall desvia la llum per qualsevol de les seves dues cares. Les marquetes del voltant mostren les altres posicions que pot tenir: la majoria giren la llum un quart de volta, i algunes giren menys i l'envien de biaix.",
       "walls": "Un bloc de pedra s'empassa la llum. La vora del tauler també.",
-      "tap": "Toca una peça per canviar-la: un mirall gira, una peça que llisca es mou al lloc següent. Si té la vora blanca, la pots moure tu; la resta és part del trencaclosques.",
-      "nodes": "Algunes pedres estan connectades a un forat del terra i no es mouen per molt que les toquis. Fes passar la llum pel forat i la pedra s'apartarà."
+      "tap": "Tria una peça per canviar-la: un mirall gira, una peça que llisca es mou al lloc següent. Si té la vora blanca, la pots moure tu; la resta és part del trencaclosques.",
+      "nodes": "Algunes pedres estan connectades a un forat del terra i no les pots moure tu. Fes passar la llum pel forat i la pedra s'apartarà."
     },
     "hint": {
       "entryRun": "Comença per on la llum ja va: surt recta del disc fins que troba la primera peça que pots canviar. Per aquestes caselles la llum hi passa facis el que facis.",
@@ -535,7 +563,7 @@
       "triple": "Mai hi pot haver tres iguals seguits, ni en horitzontal ni en vertical.",
       "copies": "No hi pot haver dues files iguals, ni dues columnes iguals.",
       "signs": "Un signe entre dues caselles diu com són: = vol dir iguals, × vol dir diferents.",
-      "enter": "Toca una casella per posar-hi un sol, torna-la a tocar per una lluna, i un altre cop per buidar-la."
+      "enter": "Tria una casella per posar-hi un sol, un altre cop per una lluna, i un altre cop per buidar-la."
     },
     "hint": {
       "mistake": "Una d'aquestes marques no pot ser correcta.",
@@ -560,7 +588,11 @@
       }
     },
     "goal": "Cada casella té un sol o una lluna, i cada línia té tants d'un com de l'altre.",
-    "name": "Sol i lluna"
+    "name": "Sol i lluna",
+    "controls": {
+      "move": "tria una casella",
+      "mark": "canvia la marca"
+    }
   },
   "constellation": {
     "rules": {
@@ -568,25 +600,25 @@
         "straight": "Les línies de llum van rectes, en horitzontal o en vertical, d'una estrella a la següent.",
         "pair": "Dues estrelles poden compartir dues línies com a màxim.",
         "cross": "Les línies mai es creuen, i mai passen per sobre d'una estrella.",
-        "enter": "Arrossega des d'una estrella cap a la del costat per dibuixar una línia, un altre cop per fer-la doble, i un altre cop per esborrar-la."
+        "enter": "Dibuixa una línia des d'una estrella cap a la del costat, un altre cop per fer-la doble, i un altre cop per esborrar-la."
       },
       "causeway": {
         "straight": "Els camins de càrrega van rectes, en horitzontal o en vertical, d'un lloc al següent.",
         "pair": "Dos llocs poden compartir dos camins com a màxim.",
         "cross": "Els camins mai es creuen, i mai passen per sobre d'un lloc.",
-        "enter": "Arrossega des d'un lloc cap al del costat per fer un camí, un altre cop per fer-lo doble, i un altre cop per desfer-lo."
+        "enter": "Fes un camí des d'un lloc cap al del costat, un altre cop per fer-lo doble, i un altre cop per desfer-lo."
       },
       "irrigation": {
         "straight": "Els canals van rectes, en horitzontal o en vertical, d'una bassa a la següent.",
         "pair": "Dues basses poden compartir dos canals com a màxim.",
         "cross": "Els canals mai es creuen, i mai passen per sobre d'una bassa.",
-        "enter": "Arrossega des d'una bassa cap a la del costat per cavar un canal, un altre cop per fer-lo més ample, i un altre cop per tapar-lo."
+        "enter": "Cava un canal des d'una bassa cap a la del costat, un altre cop per fer-lo més ample, i un altre cop per tapar-lo."
       },
       "ceiling": {
         "straight": "Els cordills van rectes, en horitzontal o en vertical, d'una estrella a la següent.",
         "pair": "Dues estrelles poden compartir dos cordills com a màxim.",
         "cross": "Els cordills mai es creuen, i mai passen per sobre d'una estrella.",
-        "enter": "Arrossega des d'una estrella cap a la del costat per posar un cordill, un altre cop per fer-lo doble, i un altre cop per treure'l."
+        "enter": "Estira un cordill des d'una estrella cap a la del costat, un altre cop per fer-lo doble, i un altre cop per treure'l."
       }
     },
     "hint": {
@@ -682,37 +714,44 @@
       "causeway": "Camins de pedra",
       "irrigation": "Canals d'aigua",
       "ceiling": "Sostre pintat"
+    },
+    "controls": {
+      "pick": "tria una estrella",
+      "grab": "agafa-la",
+      "draw": "dibuixa una línia cap allà",
+      "release": "deixa-la anar",
+      "alt": "mantén i apunta: una línia, una doble, cap"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Dues estrelles no es poden tocar, ni tan sols per les cantonades.",
-        "enter": "Toca una casella per descartar-la, un altre cop per posar-hi una estrella, i un altre cop per esborrar-la."
+        "enter": "Tria una casella per descartar-la, un altre cop per posar-hi una estrella, i un altre cop per esborrar-la."
       },
       "fields": {
         "touch": "Dues granges no es poden tocar, ni tan sols per les cantonades. Tan a prop, haurien de compartir el pou.",
-        "enter": "Toca un terreny per descartar-lo, un altre cop per construir-hi una granja, i un altre cop per esborrar-la."
+        "enter": "Tria un terreny per descartar-lo, un altre cop per construir-hi una granja, i un altre cop per esborrar-la."
       },
       "lamps": {
         "touch": "Dues llànties d'oli no poden estar una al costat de l'altra, ni tan sols per les cantonades. La seva llum se sobreposaria i es malgastaria l'oli.",
         "walls": "Els blocs de pedra grisos són part del terra: no s'hi pot posar res, i no compten com a casella.",
-        "enter": "Toca una llosa per descartar-la, un altre cop per posar-hi una llàntia d'oli, i un altre cop per esborrar-la."
+        "enter": "Tria una llosa per descartar-la, un altre cop per posar-hi una llàntia d'oli, i un altre cop per esborrar-la."
       },
       "market": {
         "touch": "Dues parades no poden estar una al costat de l'altra, ni tan sols per les cantonades. Els rivals mai es posen de costat.",
         "walls": "Les cases són part de la plaça: no s'hi pot posar cap parada, i no compten com a lloc.",
-        "enter": "Toca un lloc per descartar-lo, un altre cop per muntar-hi una parada, i un altre cop per esborrar-la."
+        "enter": "Tria un lloc per descartar-lo, un altre cop per muntar-hi una parada, i un altre cop per esborrar-la."
       },
       "lotus": {
         "touch": "Dos lotus no poden flotar un al costat de l'altre, ni tan sols per les cantonades. Cada flor necessita aigua lliure al voltant.",
         "walls": "Les roques surten de la bassa: no hi pot flotar res, i no compten com a casella.",
-        "enter": "Toca un tros d'aigua per descartar-lo, un altre cop per posar-hi un lotus, i un altre cop per esborrar-lo."
+        "enter": "Tria un tros d'aigua per descartar-lo, un altre cop per posar-hi un lotus, i un altre cop per esborrar-lo."
       },
       "cats": {
         "touch": "Dos gats no poden dormir un al costat de l'altre, ni tan sols per les cantonades. Cada gat té el seu racó de sol.",
         "walls": "Les columnes aguanten el temple: cap gat hi pot dormir, i no compten com a casella.",
-        "enter": "Toca una llosa per descartar-la, un altre cop per posar-hi un gat, i un altre cop per esborrar-la."
+        "enter": "Tria una llosa per descartar-la, un altre cop per posar-hi un gat, i un altre cop per esborrar-la."
       }
     },
     "hint": {
@@ -855,9 +894,9 @@
         "touch": "Aquí hi ha una {{token}}, i dues llànties d'oli no poden estar una al costat de l'altra, ni tan sols per les cantonades.",
         "groupFull.row_one": "Aquesta fila ja té la seva llàntia d'oli.",
         "groupFull.row_many": "Aquesta fila ja té les seves {{count}} llànties d'oli.",
+        "groupFull.row_other": "Aquesta fila ja té les seves {{count}} llànties d'oli.",
         "groupFull.col_one": "Aquesta columna ja té la seva llàntia d'oli.",
         "groupFull.col_many": "Aquesta columna ja té les seves {{count}} llànties d'oli.",
-        "groupFull.row_other": "Aquesta fila ja té les seves {{count}} llànties d'oli.",
         "groupFull.col_other": "Aquesta columna ja té les seves {{count}} llànties d'oli.",
         "groupTight.row_one": "En aquesta fila només queda una llosa.",
         "groupTight.row_many": "En aquesta fila només queden {{count}} lloses.",
@@ -867,15 +906,15 @@
         "groupTight.col_other": "En aquesta columna només queden {{count}} lloses.",
         "onlyWay.row_one": "Entre els blocs de pedra, en aquesta fila només queda una casella per a una llàntia d'oli.",
         "onlyWay.row_many": "Només hi ha una manera de fer cabre {{count}} llànties d'oli en aquesta fila.",
+        "onlyWay.row_other": "Només hi ha una manera de fer cabre {{count}} llànties d'oli en aquesta fila.",
         "onlyWay.col_one": "Entre els blocs de pedra, en aquesta columna només queda una casella per a una llàntia d'oli.",
         "onlyWay.col_many": "Només hi ha una manera de fer cabre {{count}} llànties d'oli en aquesta columna.",
-        "onlyWay.row_other": "Només hi ha una manera de fer cabre {{count}} llànties d'oli en aquesta fila.",
         "onlyWay.col_other": "Només hi ha una manera de fer cabre {{count}} llànties d'oli en aquesta columna.",
         "everyWay.row_one": "Vagi on vagi la llàntia d'oli d'aquesta fila, sempre passa per aquí.",
         "everyWay.row_many": "Vagin on vagin les {{count}} llànties d'oli d'aquesta fila, sempre n'hi ha una aquí.",
+        "everyWay.row_other": "Vagin on vagin les {{count}} llànties d'oli d'aquesta fila, sempre n'hi ha una aquí.",
         "everyWay.col_one": "Vagi on vagi la llàntia d'oli d'aquesta columna, sempre passa per aquí.",
         "everyWay.col_many": "Vagin on vagin les {{count}} llànties d'oli d'aquesta columna, sempre n'hi ha una aquí.",
-        "everyWay.row_other": "Vagin on vagin les {{count}} llànties d'oli d'aquesta fila, sempre n'hi ha una aquí.",
         "everyWay.col_other": "Vagin on vagin les {{count}} llànties d'oli d'aquesta columna, sempre n'hi ha una aquí.",
         "lineBlock.rowsToCols": "Les files marcades tenen les seves llànties d'oli a les caselles d'aquelles columnes, així que aquelles columnes no en tenen cap de sobres.",
         "lineBlock.colsToRows": "Les columnes marcades tenen les seves llànties d'oli a les caselles d'aquelles files, així que aquelles files no en tenen cap de sobres.",
@@ -895,9 +934,9 @@
         "touch": "Aquí hi ha una {{token}}, i dues parades no poden estar una al costat de l'altra, ni tan sols per les cantonades.",
         "groupFull.row_one": "Aquesta fila ja té la seva parada.",
         "groupFull.row_many": "Aquesta fila ja té les seves {{count}} parades.",
+        "groupFull.row_other": "Aquesta fila ja té les seves {{count}} parades.",
         "groupFull.col_one": "Aquesta columna ja té la seva parada.",
         "groupFull.col_many": "Aquesta columna ja té les seves {{count}} parades.",
-        "groupFull.row_other": "Aquesta fila ja té les seves {{count}} parades.",
         "groupFull.col_other": "Aquesta columna ja té les seves {{count}} parades.",
         "groupTight.row_one": "En aquesta fila només queda un lloc.",
         "groupTight.row_many": "En aquesta fila només queden {{count}} llocs.",
@@ -907,15 +946,15 @@
         "groupTight.col_other": "En aquesta columna només queden {{count}} llocs.",
         "onlyWay.row_one": "Entre les cases, en aquesta fila només queda una casella per a una parada.",
         "onlyWay.row_many": "Només hi ha una manera de fer cabre {{count}} parades en aquesta fila.",
+        "onlyWay.row_other": "Només hi ha una manera de fer cabre {{count}} parades en aquesta fila.",
         "onlyWay.col_one": "Entre les cases, en aquesta columna només queda una casella per a una parada.",
         "onlyWay.col_many": "Només hi ha una manera de fer cabre {{count}} parades en aquesta columna.",
-        "onlyWay.row_other": "Només hi ha una manera de fer cabre {{count}} parades en aquesta fila.",
         "onlyWay.col_other": "Només hi ha una manera de fer cabre {{count}} parades en aquesta columna.",
         "everyWay.row_one": "Vagi on vagi la parada d'aquesta fila, sempre passa per aquí.",
         "everyWay.row_many": "Vagin on vagin les {{count}} parades d'aquesta fila, sempre n'hi ha una aquí.",
+        "everyWay.row_other": "Vagin on vagin les {{count}} parades d'aquesta fila, sempre n'hi ha una aquí.",
         "everyWay.col_one": "Vagi on vagi la parada d'aquesta columna, sempre passa per aquí.",
         "everyWay.col_many": "Vagin on vagin les {{count}} parades d'aquesta columna, sempre n'hi ha una aquí.",
-        "everyWay.row_other": "Vagin on vagin les {{count}} parades d'aquesta fila, sempre n'hi ha una aquí.",
         "everyWay.col_other": "Vagin on vagin les {{count}} parades d'aquesta columna, sempre n'hi ha una aquí.",
         "lineBlock.rowsToCols": "Les files marcades tenen les seves parades a les caselles d'aquelles columnes, així que aquelles columnes no en tenen cap de sobres.",
         "lineBlock.colsToRows": "Les columnes marcades tenen les seves parades a les caselles d'aquelles files, així que aquelles files no en tenen cap de sobres.",
@@ -935,9 +974,9 @@
         "touch": "Aquí hi ha un {{token}}, i dos lotus no poden flotar un al costat de l'altre, ni tan sols per les cantonades.",
         "groupFull.row_one": "Aquesta fila ja té el seu lotus.",
         "groupFull.row_many": "Aquesta fila ja té els seus {{count}} lotus.",
+        "groupFull.row_other": "Aquesta fila ja té els seus {{count}} lotus.",
         "groupFull.col_one": "Aquesta columna ja té el seu lotus.",
         "groupFull.col_many": "Aquesta columna ja té els seus {{count}} lotus.",
-        "groupFull.row_other": "Aquesta fila ja té els seus {{count}} lotus.",
         "groupFull.col_other": "Aquesta columna ja té els seus {{count}} lotus.",
         "groupTight.row_one": "En aquesta fila només queda un tros d'aigua.",
         "groupTight.row_many": "En aquesta fila només queden {{count}} trossos d'aigua.",
@@ -947,15 +986,15 @@
         "groupTight.col_other": "En aquesta columna només queden {{count}} trossos d'aigua.",
         "onlyWay.row_one": "Entre les roques, en aquesta fila només queda una casella per a un lotus.",
         "onlyWay.row_many": "Només hi ha una manera de fer cabre {{count}} lotus en aquesta fila.",
+        "onlyWay.row_other": "Només hi ha una manera de fer cabre {{count}} lotus en aquesta fila.",
         "onlyWay.col_one": "Entre les roques, en aquesta columna només queda una casella per a un lotus.",
         "onlyWay.col_many": "Només hi ha una manera de fer cabre {{count}} lotus en aquesta columna.",
-        "onlyWay.row_other": "Només hi ha una manera de fer cabre {{count}} lotus en aquesta fila.",
         "onlyWay.col_other": "Només hi ha una manera de fer cabre {{count}} lotus en aquesta columna.",
         "everyWay.row_one": "Vagi on vagi el lotus d'aquesta fila, sempre passa per aquí.",
         "everyWay.row_many": "Vagin on vagin els {{count}} lotus d'aquesta fila, sempre n'hi ha un aquí.",
+        "everyWay.row_other": "Vagin on vagin els {{count}} lotus d'aquesta fila, sempre n'hi ha un aquí.",
         "everyWay.col_one": "Vagi on vagi el lotus d'aquesta columna, sempre passa per aquí.",
         "everyWay.col_many": "Vagin on vagin els {{count}} lotus d'aquesta columna, sempre n'hi ha un aquí.",
-        "everyWay.row_other": "Vagin on vagin els {{count}} lotus d'aquesta fila, sempre n'hi ha un aquí.",
         "everyWay.col_other": "Vagin on vagin els {{count}} lotus d'aquesta columna, sempre n'hi ha un aquí.",
         "lineBlock.rowsToCols": "Les files marcades tenen els seus lotus a les caselles d'aquelles columnes, així que aquelles columnes no en tenen cap de sobres.",
         "lineBlock.colsToRows": "Les columnes marcades tenen els seus lotus a les caselles d'aquelles files, així que aquelles files no en tenen cap de sobres.",
@@ -975,9 +1014,9 @@
         "touch": "Aquí hi ha un {{token}}, i dos gats no poden dormir un al costat de l'altre, ni tan sols per les cantonades.",
         "groupFull.row_one": "Aquesta fila ja té el seu gat.",
         "groupFull.row_many": "Aquesta fila ja té els seus {{count}} gats.",
+        "groupFull.row_other": "Aquesta fila ja té els seus {{count}} gats.",
         "groupFull.col_one": "Aquesta columna ja té el seu gat.",
         "groupFull.col_many": "Aquesta columna ja té els seus {{count}} gats.",
-        "groupFull.row_other": "Aquesta fila ja té els seus {{count}} gats.",
         "groupFull.col_other": "Aquesta columna ja té els seus {{count}} gats.",
         "groupTight.row_one": "En aquesta fila només queda una llosa.",
         "groupTight.row_many": "En aquesta fila només queden {{count}} lloses.",
@@ -987,15 +1026,15 @@
         "groupTight.col_other": "En aquesta columna només queden {{count}} lloses.",
         "onlyWay.row_one": "Entre les columnes del temple, en aquesta fila només queda una casella per a un gat.",
         "onlyWay.row_many": "Només hi ha una manera de fer cabre {{count}} gats en aquesta fila.",
+        "onlyWay.row_other": "Només hi ha una manera de fer cabre {{count}} gats en aquesta fila.",
         "onlyWay.col_one": "Entre les columnes del temple, en aquesta columna només queda una casella per a un gat.",
         "onlyWay.col_many": "Només hi ha una manera de fer cabre {{count}} gats en aquesta columna.",
-        "onlyWay.row_other": "Només hi ha una manera de fer cabre {{count}} gats en aquesta fila.",
         "onlyWay.col_other": "Només hi ha una manera de fer cabre {{count}} gats en aquesta columna.",
         "everyWay.row_one": "Vagi on vagi el gat d'aquesta fila, sempre passa per aquí.",
         "everyWay.row_many": "Vagin on vagin els {{count}} gats d'aquesta fila, sempre n'hi ha un aquí.",
+        "everyWay.row_other": "Vagin on vagin els {{count}} gats d'aquesta fila, sempre n'hi ha un aquí.",
         "everyWay.col_one": "Vagi on vagi el gat d'aquesta columna, sempre passa per aquí.",
         "everyWay.col_many": "Vagin on vagin els {{count}} gats d'aquesta columna, sempre n'hi ha un aquí.",
-        "everyWay.row_other": "Vagin on vagin els {{count}} gats d'aquesta fila, sempre n'hi ha un aquí.",
         "everyWay.col_other": "Vagin on vagin els {{count}} gats d'aquesta columna, sempre n'hi ha un aquí.",
         "lineBlock.rowsToCols": "Les files marcades tenen els seus gats a les caselles d'aquelles columnes, així que aquelles columnes no en tenen cap de sobres.",
         "lineBlock.colsToRows": "Les columnes marcades tenen els seus gats a les caselles d'aquelles files, així que aquelles files no en tenen cap de sobres.",
@@ -1040,6 +1079,11 @@
       "market": "Parades de mercat",
       "lotus": "La bassa dels lotus",
       "cats": "Els gats del temple"
+    },
+    "controls": {
+      "move": "tria una casella",
+      "mark": "canvia la marca",
+      "sweep": "mantén i mou: descarta una fila"
     }
   },
   "pairPuzzle": {
@@ -1056,13 +1100,13 @@
         "pair": "Cada sarcòfag té una mòmia just a dalt, a baix, a l'esquerra o a la dreta, i cada mòmia descansa al costat del seu propi sarcòfag.",
         "count": "El número del costat d'una fila o columna diu quantes mòmies hi ha. Es posa verd quan la línia en té exactament aquestes, i vermell quan ja no pot ser.",
         "touch": "Dues mòmies no poden estar una al costat de l'altra, ni tan sols per les cantonades.",
-        "enter": "Toca una casella per descartar-la, un altre cop per posar-hi una mòmia, i un altre cop per esborrar-la. Arrossega per sobre de diverses caselles per descartar-les totes. Els sarcòfags no es poden tocar."
+        "enter": "Tria una casella per descartar-la, un altre cop per posar-hi una mòmia, i un altre cop per esborrar-la. Pots descartar diverses caselles seguides d'una sola passada. Els sarcòfags no es poden marcar."
       },
       "beetles": {
         "pair": "Cada bola de fems té un escarabat just a dalt, a baix, a l'esquerra o a la dreta, i cada escarabat és al costat de la seva pròpia bola per fer-la rodolar.",
         "count": "El número del costat d'una fila o columna diu quants escarabats hi ha. Es posa verd quan la línia en té exactament aquests, i vermell quan ja no pot ser.",
         "touch": "Dos escarabats no poden estar un al costat de l'altre, ni tan sols per les cantonades.",
-        "enter": "Toca una casella per descartar-la, un altre cop per posar-hi un escarabat, i un altre cop per esborrar-lo. Arrossega per sobre de diverses caselles per descartar-les totes. Les boles de fems no es poden tocar."
+        "enter": "Tria una casella per descartar-la, un altre cop per posar-hi un escarabat, i un altre cop per esborrar-lo. Pots descartar diverses caselles seguides d'una sola passada. Les boles de fems no es poden marcar."
       }
     },
     "hint": {
@@ -1142,6 +1186,11 @@
           "place_other": "Posa un escarabat a cada casella assenyalada."
         }
       }
+    },
+    "controls": {
+      "move": "tria una casella",
+      "mark": "canvia la marca",
+      "sweep": "mantén i mou: descarta una fila"
     }
   },
   "rushHour": {
@@ -1156,11 +1205,11 @@
     "rules": {
       "default": {
         "lanes": "Un bloc només llisca pel seu carril: mai de costat, mai fora del tauler.",
-        "shove": "Arrossega un bloc per empènyer-lo. S'atura quan troba alguna cosa pel mig."
+        "shove": "Empeny un bloc pel seu carril. S'atura quan troba alguna cosa pel mig."
       },
       "market": {
         "lanes": "Un trineu només llisca pel carril on és: mai de costat, mai fora del carrer.",
-        "shove": "Arrossega un trineu per empènyer-lo. S'atura quan troba alguna cosa pel mig."
+        "shove": "Empeny un trineu pel seu carril. S'atura quan troba alguna cosa pel mig."
       }
     },
     "hint": {
@@ -1188,29 +1237,35 @@
           "down": "Empeny-la carrer avall, fins a l'anella."
         }
       }
+    },
+    "controls": {
+      "pick": "tria un bloc",
+      "grab": "agafa'l",
+      "slide": "fes-lo lliscar",
+      "release": "deixa'l anar"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "Els números que ja són a la bresca són part del trencaclosques: no es mouen.",
-        "enter": "Toca un número per continuar la sèrie des d'allà, i després toca una cel·la buida que el toqui per seguir. O arrossega directament per les cel·les per on passa.",
-        "back": "Toca un número que hagis posat i torna'l a tocar per treure'l, juntament amb tot el que en penja. Si continues la sèrie per un altre costat d'un número, passa el mateix. Desfés torna enrere el teu últim moviment."
+        "enter": "Dibuixa una línia des d'un número per les cel·les buides del costat per continuar la sèrie.",
+        "back": "Tria un número que hagis posat i torna'l a triar per treure'l, juntament amb tot el que en penja. Si continues la sèrie per un altre costat d'un número, passa el mateix. Desfés torna enrere el teu últim moviment."
       },
       "channel": {
         "given": "Els camps que ja tenen número són part del trencaclosques: no es mouen.",
-        "enter": "Toca un camp amb número per portar l'aigua des d'allà, i després toca un camp sec del costat per continuar cavant. O arrossega directament pels camps per on passa el canal.",
-        "back": "Toca un camp que hagis cavat i torna'l a tocar per tapar-lo, juntament amb el canal que en quedi tallat. Si caves per un altre costat d'un camp, passa el mateix. Desfés torna enrere el teu últim moviment."
+        "enter": "Cava un canal des d'un camp amb número pels camps secs del costat per portar l'aigua més lluny.",
+        "back": "Tria un camp que hagis cavat i torna'l a triar per tapar-lo, juntament amb el canal que en quedi tallat. Si caves per un altre costat d'un camp, passa el mateix. Desfés torna enrere el teu últim moviment."
       },
       "scribe": {
         "given": "Els números escrits en vermell són del mateix trencaclosques: no es mouen.",
-        "enter": "Toca un número per agafar la ploma des d'allà, i després toca un espai buit del costat per continuar escrivint. O arrossega directament per la línia.",
-        "back": "Toca un número que hagis escrit i torna'l a tocar per esborrar-lo, juntament amb la línia que en quedi tallada. Si escrius per un altre costat d'un número, passa el mateix. Desfés torna enrere el teu últim moviment."
+        "enter": "Escriu una línia des d'un número pels espais buits del costat per continuar el compte.",
+        "back": "Tria un número que hagis escrit i torna'l a triar per esborrar-lo, juntament amb la línia que en quedi tallada. Si escrius per un altre costat d'un número, passa el mateix. Desfés torna enrere el teu últim moviment."
       },
       "chambers": {
         "given": "Les cambres que ja tenen número les van excavar els constructors: no es mouen.",
-        "enter": "Toca una cambra amb número per continuar el passadís des d'allà, i després toca una cambra tancada del costat per obrir-hi pas. O arrossega directament per les cambres per on passa el passadís.",
-        "back": "Toca una cambra que hagis obert i torna-la a tocar per tancar-la, juntament amb el passadís que en quedi tallat. Si obres pas per un altre costat d'una cambra, passa el mateix. Desfés torna enrere el teu últim moviment."
+        "enter": "Obre un passadís des d'una cambra amb número per les cambres tancades del costat per continuar-lo.",
+        "back": "Tria una cambra que hagis obert i torna-la a triar per tancar-la, juntament amb el passadís que en quedi tallat. Si obres pas per un altre costat d'una cambra, passa el mateix. Desfés torna enrere el teu últim moviment."
       }
     },
     "goal": {
@@ -1274,6 +1329,13 @@
       "channel": "El canal",
       "scribe": "El full de l'escriba",
       "chambers": "Cambres segellades"
+    },
+    "controls": {
+      "move": "ves a una cel·la del costat; amunt i avall tiren cap a l'esquerra",
+      "right": "amunt a la dreta o avall a la dreta",
+      "grab": "agafa la sèrie, o treu el teu número",
+      "carry": "amb la sèrie agafada: continua-la; amunt i avall van cap al costat on pot continuar",
+      "drop": "deixa la sèrie"
     }
   },
   "sudoku": {
@@ -1281,13 +1343,13 @@
       "default": {
         "chambers": "Les línies gruixudes divideixen la graella en sis cambres, de dues caselles d'ample i tres d'alt.",
         "given": "Els números que ja estan gravats són part del trencaclosques: no es mouen.",
-        "enter": "Toca una casella i després un número. Si tornes a tocar el mateix número, el treus.",
+        "enter": "Tria una casella i després un número. Si tornes a triar el mateix número, el treus.",
         "notes": "Canvia al llapis per apuntar els números que encara hi podrien anar. Desfés torna enrere el teu últim moviment."
       },
       "papyrus": {
         "chambers": "Les línies gruixudes divideixen el full en sis requadres, de dos espais d'ample i tres d'alt.",
         "given": "Els signes escrits en vermell són del mateix trencaclosques: no es mouen.",
-        "enter": "Toca un espai i després un signe. Si tornes a tocar el mateix signe, l'esborres.",
+        "enter": "Tria un espai i després un signe. Si tornes a triar el mateix signe, l'esborres.",
         "notes": "Agafa la ploma de canya per apuntar els signes que encara hi podrien anar. Desfés torna enrere el teu últim moviment."
       }
     },
@@ -1356,6 +1418,14 @@
     "name": {
       "default": "Sis cambres",
       "papyrus": "El registre de l'escriba"
+    },
+    "controls": {
+      "move": "tria una casella",
+      "type": "escriu un número",
+      "choose": "tria un número o la goma",
+      "place": "escriu-lo",
+      "pencil": "llapis",
+      "erase": "esborra"
     }
   },
   "crocodile": {
@@ -1369,6 +1439,10 @@
     "hint": {
       "biggest": "Aquest cocodril vol la resposta més gran. És {{value}}.",
       "smallest": "Aquest cocodril vol la resposta més petita. És {{value}}."
+    },
+    "controls": {
+      "move": "tria una pedra",
+      "step": "trepitja-la"
     }
   },
   "canisters": {
@@ -1405,35 +1479,35 @@
         "sums": "Cada quantitat que pots fer és dos números de la taula sumats o restats: la mida d'un recipient, el que té a dins, o el lloc que li queda.",
         "backwards": "Així que ves enrere des de la quantitat que et demanen: quins dos números la fan, i com aconsegueixes tenir-los tots dos alhora?"
       },
-      "claim": "Quan tinguis la quantitat, toca «aquest». Si dius el recipient equivocat, perds un moviment.",
+      "claim": "Quan tinguis la quantitat, tria «aquest». Si dius el recipient equivocat, perds un moviment.",
       "legs": "Després ve la quantitat següent, mesurada amb el que hagi quedat als recipients.",
       "default": {
-        "moves": "Toca un recipient per agafar-lo, i després toca'n un altre per abocar-hi. S'atura quan el primer queda buit o el segon queda ple.",
+        "moves": "Agafa un recipient, i després tria'n un altre per abocar-hi. S'atura quan el primer queda buit o el segon queda ple.",
         "contents": "Aquesta és tota l'aigua que hi ha: un recipient comença ple, i no se'n pot llençar ni anar a buscar més.",
         "levels": "Cada recipient diu quant en té, i quant n'hi cap quan és ple."
       },
       "grain": {
-        "moves": "Toca una mesura per aixecar-la, i després toca'n una altra per tirar-hi el gra. S'atura quan la primera queda buida o la segona queda plena fins a dalt.",
+        "moves": "Aixeca una mesura, i després tria'n una altra per tirar-hi el gra. S'atura quan la primera queda buida o la segona queda plena fins a dalt.",
         "contents": "Aquest és tot el gra que hi ha: una mesura comença plena, i no se'n pot escombrar ni anar a buscar més al graner.",
         "levels": "Cada mesura diu quant en té, i quant n'hi cap quan és plena fins a dalt."
       },
       "oil": {
-        "moves": "Toca una gerra per aixecar-la, i després toca'n una altra per abocar-hi. S'atura quan la primera queda buida o la segona queda plena.",
+        "moves": "Aixeca una gerra, i després tria'n una altra per abocar-hi. S'atura quan la primera queda buida o la segona queda plena.",
         "contents": "Aquest és tot l'oli que hi ha: una gerra comença plena, i no se'n pot llençar ni anar a buscar més.",
         "levels": "Cada gerra diu quant en té, i quant n'hi cap quan és plena."
       },
       "wine": {
-        "moves": "Toca una àmfora per aixecar-la, i després toca'n una altra per abocar-hi. S'atura quan la primera queda buida o la segona queda plena.",
+        "moves": "Aixeca una àmfora, i després tria'n una altra per abocar-hi. S'atura quan la primera queda buida o la segona queda plena.",
         "contents": "Aquest és tot el vi que hi ha: una àmfora comença plena, i no se'n pot vessar ni anar a buscar més al celler.",
         "levels": "Cada àmfora diu quant en té, i quant n'hi cap quan és plena."
       },
       "natron": {
-        "moves": "Toca un vas per aixecar-lo, i després toca'n un altre per tirar-hi el natró. S'atura quan el primer queda buit o el segon queda ple fins a la tapa.",
+        "moves": "Aixeca un vas, i després tria'n un altre per tirar-hi el natró. S'atura quan el primer queda buit o el segon queda ple fins a la tapa.",
         "contents": "Aquest és tot el natró que hi ha: un vas comença ple, i no se'n pot escombrar ni anar a buscar més.",
         "levels": "Cada vas diu quant en té, i quant n'hi cap quan és ple fins a la tapa."
       },
       "ink": {
-        "moves": "Toca un pot per aixecar-lo, i després toca'n un altre per abocar-hi. S'atura quan el primer queda buit o el segon queda ple.",
+        "moves": "Aixeca un pot, i després tria'n un altre per abocar-hi. S'atura quan el primer queda buit o el segon queda ple.",
         "contents": "Aquesta és tota la tinta que hi ha: un pot comença ple, i no se'n pot llençar ni fer-ne de nova.",
         "levels": "Cada pot diu quant en té, i quant n'hi cap quan és ple."
       }
@@ -1459,7 +1533,12 @@
     "legs": "{{done}} de {{total}} mesurats",
     "wanted": "Mesura",
     "claim": "aquest",
-    "claimAria": "Digues que el de {{capacity}} té la quantitat"
+    "claimAria": "Digues que el de {{capacity}} té la quantitat",
+    "controls": {
+      "move": "tria un recipient o l'«aquest» de sota",
+      "press": "agafa, aboca aquí o digues que és aquest",
+      "putDown": "torna a deixar el recipient que portes"
+    }
   },
   "procession": {
     "name": {
@@ -1479,8 +1558,8 @@
     "rules": {
       "default": {
         "lengths": "Cada fila és una cosa que passa, i dura tant com ample és la seva barra. Quan passa, ho has de descobrir tu.",
-        "marks": "Una línia de sota el dia es posa vermella mentre no es compleix. Toca-la per encerclar les files de què parla.",
-        "drag": "Arrossega una barra per la seva fila. Mai surt del dia."
+        "marks": "Una línia de sota el dia es posa vermella mentre no es compleix. Tria-la per encerclar les files de què parla.",
+        "drag": "Fes lliscar una barra per la seva fila. Mai surt del dia."
       }
     },
     "hint": {
@@ -1489,7 +1568,7 @@
         "squeeze": "Només queda una mica de dia, i això és tot el que hi cap.",
         "apart": "Al revés no cap dins del dia.",
         "split": "Prova-ho al revés i una altra cosa deixa de funcionar.",
-        "move": "Arrossega la barra encerclada fins a les marques assenyalades."
+        "move": "Fes lliscar la barra encerclada fins a les marques assenyalades."
       }
     },
     "events": {
@@ -1554,6 +1633,11 @@
       "hint": "Cada rajola que trepitges allibera la seva feina. Posa el dia en ordre, i després trepitja les rajoles en aquest ordre.",
       "read": "El dia ja està llegit. Trepitja les seves rajoles en aquest ordre, començant per la primera.",
       "hintButton": "Pista"
+    },
+    "controls": {
+      "row": "tria una fila",
+      "slide": "fes lliscar la seva barra",
+      "mark": "tria una línia de sota el dia"
     }
   },
   "story": {
@@ -1576,6 +1660,13 @@
       "pick": "Posa el signe correcte al seu lloc.",
       "cannot": "No coneixes el signe que va aquí. Encara no."
     },
+    "formula": {
+      "wrong": "A aquesta línia li falta un signe. No està mal tallat: no es va tallar mai.",
+      "fixed": "La línia és sencera.",
+      "pick": "Posa el signe que t'han donat al lloc buit.",
+      "cannot": "Ningú no t'ha donat el signe per a aquest lloc. Encara no.",
+      "gap": "El signe que falta"
+    },
     "sphinx": {
       "wrong": "La mateixa escriptura que a fora, però aquí la sorra no hi va arribar mai. Dos signes encara ben tallats, i un forat on hi havia el tercer.",
       "fixed": "Això és tot.",
@@ -1592,7 +1683,7 @@
       "shrines": "Un disc de llum, i un santuari sobre cada sortida d'aquest encreuament. Els miralls del terra poden portar la llum a qualsevol d'ells.",
       "doors": "La sortida on arriba la llum queda oberta, i les altres tancades. Un camí de llum, una sortida.",
       "returning": "Triar no et fa perdre res. Torna a entrar quan vulguis i envia la llum per un altre camí: aquella sortida s'obre, i aquesta es tanca.",
-      "tap": "Toca un mirall per girar-lo. Si el tornes a tocar, torna a com estava."
+      "tap": "Tria un mirall per girar-lo. Torna'l a triar per deixar-lo com estava."
     },
     "doorOpen": "Sortida {{way}}: oberta",
     "doorShut": "Sortida {{way}}: tancada",
@@ -1601,6 +1692,10 @@
       "e": "est",
       "s": "sud",
       "w": "oest"
+    },
+    "controls": {
+      "move": "tria un mirall",
+      "turn": "gira'l"
     }
   },
   "handle": {
@@ -1853,5 +1948,35 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Dibuixar reescriu el text: tots els comentaris es mouen a dalt de tot"
+  },
+  "saveCard": {
+    "title": "Targeta de viatge",
+    "explain": "Porta la teva expedició a un altre dispositiu: fes una targeta aquí i llegeix-la a l'altre en menys de 15 minuts.",
+    "make": "Fes una targeta de viatge",
+    "share": "Comparteix la targeta",
+    "download": "Baixa la targeta",
+    "read": "Llegeix una targeta de viatge",
+    "busy": "Un moment…",
+    "makeFailed": "No s'ha pogut fer la targeta.",
+    "shareFailed": "No s'ha pogut compartir; baixa la targeta.",
+    "confirm_one": "Vols canviar l'expedició d'aquest dispositiu per la de la targeta ({{count}} viatge)?",
+    "confirm_many": "Vols canviar l'expedició d'aquest dispositiu per la de la targeta ({{count}} viatges)?",
+    "confirm_other": "Vols canviar l'expedició d'aquest dispositiu per la de la targeta ({{count}} viatges)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Targeta de viatge · emporta't l'expedició",
+    "validUntil": "vàlida fins a {{time}}",
+    "codes_one": "{{count}} codi",
+    "codes_many": "{{count}} codis",
+    "codes_other": "{{count}} codis",
+    "refused": {
+      "notACard": "Això no és una targeta de viatge.",
+      "tampered": "Aquesta targeta s'ha modificat i ja no es pot llegir.",
+      "expired": "Aquesta targeta ha caducat; fes-ne una de nova.",
+      "future": "Aquesta targeta ve del futur: comprova l'hora als dos dispositius.",
+      "otherEpoch": "Aquesta targeta és d'una altra versió del joc.",
+      "newerGame": "Aquesta targeta ve d'una versió més nova: primer actualitza el joc."
+    },
+    "writeFailed": "No s'ha pogut escriure la partida guardada; aquest dispositiu ha conservat la seva.",
+    "writeLost": "No s'ha pogut substituir la partida guardada, i la d'aquest dispositiu pot haver quedat incompleta."
   }
 }

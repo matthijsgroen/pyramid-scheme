@@ -239,6 +239,21 @@
       "description": "Karaliska galvassega ar sargājošu kobru, ko faraoni valkāja kā dievišķu aizsardzību."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Maize",
+      "description": "Augstais kukulis, maizes zīme. To iedeva Ipi, kurš četrdesmit gadus skaitīja graudus un vienreiz tos atdeva."
+    },
+    "o2": {
+      "name": "Linaudekls"
+    },
+    "o3": {
+      "name": "Ūdens"
+    },
+    "o4": {
+      "name": "Laiva"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Niedres lapa",

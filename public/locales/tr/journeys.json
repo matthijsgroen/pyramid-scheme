@@ -21,19 +21,24 @@
     "mapHint": "Bu parçada bir pazar yolu ve bir kiler kapısı çizili. Bir tüccarın saklandığı yer, daha fazlası değil."
   },
   "junior_1": {
-    "name": "Kutsal İbislerin Göçü"
+    "name": "Kutsal İbislerin Göçü",
+    "description": "Nil boyunca uzanan sazlık bataklıklar ve içlerinde dolaşan ibisler. Kutsal kuşlar, ama sandığın sebepten değil."
   },
   "junior_2": {
-    "name": "Ustalar Vadisi"
+    "name": "Ustalar Vadisi",
+    "description": "Deir el-Medine, mezar yapan ustaların köyü. Atölyeleri hâlâ ayakta, yaptıkları işlerin bir kısmı da öyle."
   },
   "junior_3": {
-    "name": "Thoth Tapınağı"
+    "name": "Thoth Tapınağı",
+    "description": "Thoth'un tapınağı. Adını herkes bilir; üç kişiye onun neyin tanrısı olduğunu sor, üç farklı cevap alırsın."
   },
   "junior_4": {
-    "name": "İskenderiye Feneri"
+    "name": "İskenderiye Feneri",
+    "description": "İskenderiye Feneri, dünyanın yedi harikasından biri. Ondan geriye kalanlar limanda, suyun altında yatıyor."
   },
   "junior_treasure_tomb": {
     "name": "Soylunun Gizli Odası",
+    "description": "Soylu bir kadının odası, yerden tavana boyalı, ve içindeki her şey hâlâ onun bıraktığı yerde.",
     "mapHint": "İnce mürekkep, köşede armalı bir mühür. Önemli biri bu odanın unutulmasını istemiş."
   },
   "expert_1": {

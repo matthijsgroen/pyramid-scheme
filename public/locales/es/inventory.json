@@ -239,6 +239,21 @@
       "description": "Corona del faraón con una cobra que lo protege."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Pan",
+      "description": "El pan alto, el signo del pan. Lo dio Ipi, que contó grano durante cuarenta años y lo regaló una sola vez."
+    },
+    "o2": {
+      "name": "Lino"
+    },
+    "o3": {
+      "name": "Agua"
+    },
+    "o4": {
+      "name": "Barca"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Hoja de junco",

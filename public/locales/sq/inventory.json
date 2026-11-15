@@ -239,6 +239,21 @@
       "description": "Kurorë mbretërore me një kobër mbrojtëse. Faraonët e mbanin si mbrojtje hyjnore."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Bukë",
+      "description": "Buka e gjatë, shenja për bukën. E dhënë nga Ipi, që numëroi grurë për dyzet vjet dhe e dha një herë."
+    },
+    "o2": {
+      "name": "Li"
+    },
+    "o3": {
+      "name": "Ujë"
+    },
+    "o4": {
+      "name": "Varkë"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Gjethe kallami",

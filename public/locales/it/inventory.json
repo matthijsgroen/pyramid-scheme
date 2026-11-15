@@ -239,6 +239,21 @@
       "description": "Il copricapo del re con il cobra protettore. I faraoni lo portavano per essere protetti dagli dèi."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Pane",
+      "description": "La pagnotta alta, il segno del pane. L'ha data Ipi, che ha contato grano per quarant'anni e una volta sola ha regalato qualcosa."
+    },
+    "o2": {
+      "name": "Lino"
+    },
+    "o3": {
+      "name": "Acqua"
+    },
+    "o4": {
+      "name": "Barca"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Foglia di canna",

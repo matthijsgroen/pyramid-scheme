@@ -28,7 +28,7 @@
   "tombTutorial3": "Hitungan kecil memberi tahu kalau tandanya benar. Begitu kita tahu tanda mana masuk ke mana.",
   "tombTutorial4": "Sudah terisi semua? Nanti muncul kunci angka. Hitungan besar itu kodenya, lalu makamnya terbuka!",
   "hieroglyphUnlock": "Kita punya benda istimewa. Dengan benda ini kita bisa menulis di salah satu balok tersegel!",
-  "hieroglyphUnlock2": "Ketuk batu yang bersinar, lalu seret benda itu ke atasnya untuk membukanya. Satu balok per piramida.",
+  "hieroglyphUnlock2": "Pilih batu yang bersinar, lalu bawa benda itu ke sana untuk membukanya. Satu balok per piramida.",
   "errorHighlightTutorial": "Harta yang kita temukan itu punya trik keren. Kalau ada jawaban salah, satu kesalahan akan menyala merah!",
   "errorHighlightTutorial2": "Cuma satu balok yang menyala setiap kali, jadi tetap menantang. Tapi itu membantu mencarinya!",
   "earlyFeedbackTutorial": "Lihat balok-balok penanda itu? Mereka jadi hijau atau merah waktu kamu mengisinya. Langsung ketahuan!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Lihat apa yang ada di lapak! Sekarang aku jualan angkutan juga."
+      },
+      "2": {
+        "explorer": "Aku cuma lihat gambar."
+      },
+      "3": {
+        "fez": "Yang asli makannya lebih banyak."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "Baris kedua. Air kepada yang haus."
+        "explorer": "Baris kedua. _Pakaian kepada yang telanjang._"
       },
       "2": {
-        "fez": "Roti, sekarang air. Ada yang ingin sekali dikenang sebagai orang dermawan."
+        "fez": "Roti, sekarang pakaian. Ada yang ingin sekali dikenang sebagai orang dermawan."
       },
       "3": {
         "explorer": "Semua orang punya kalimat itu. Setiap dinding, setiap makam, dua baris yang sama."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Pakaian kepada yang telanjang. Baris ketiga."
+        "explorer": "_Air kepada yang haus._ Baris ketiga."
       },
       "2": {
-        "fez": "Roti, air, pakaian. Itu daftar barang yang diberikan."
+        "fez": "Roti, pakaian, air. Itu daftar barang yang diberikan."
       },
       "3": {
         "explorer": "Di makam orang yang membawa semua barangnya."
@@ -1599,8 +1605,42 @@
       "explorer": "Lumayan."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Di situ ada yang kurang untuk orang yang lapar. Roti, kalau menurutku. Dan aku kenal orang yang menghitung setiap karung gandum selama empat puluh tahun."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, kami butuh roti. Untuk dinding."
+        },
+        "2": {
+          "ipi": "Roti? Punyaku? Kamu tahu harga gandum berapa?"
+        },
+        "3": {
+          "fez": "Ini untuk baris tentang memberi barang."
+        },
+        "4": {
+          "ipi": "…Memberi. Cuma-cuma."
+        },
+        "5": {
+          "ipi": "Baiklah. Satu roti. Tapi dicatat: _Ipi memberi roti._"
+        },
+        "6": {
+          "fez": "Dia memberi sesuatu! Kamu lihat itu?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Roti itu — sudah ada yang makan belum? Soalnya kalau belum, aku mau minta kembali."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Masih di sini? Ke utara! Henut! Sebelas deben!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "Dindingnya. Tanda ketiga. Masih bukan namaku."
+          "henut": "Dindingnya. Tanda kedua. Masih bukan namaku."
         }
       },
       "wall2": {

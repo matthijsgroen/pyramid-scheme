@@ -239,6 +239,21 @@
       "description": "Kraljevska kruna s kobrom koja štiti. Faraoni su je nosili kao zaštitu bogova."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Hljeb",
+      "description": "Visoki hljeb, znak za hljeb. Dao ga je Ipi, koji je četrdeset godina brojao žito i jednom ga poklonio."
+    },
+    "o2": {
+      "name": "Lan"
+    },
+    "o3": {
+      "name": "Voda"
+    },
+    "o4": {
+      "name": "Brod"
+    }
+  },
   "signs": {
     "s1": {
       "name": "List trske",

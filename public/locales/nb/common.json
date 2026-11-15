@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Vi får ikke lastet inn spillet ditt",
     "body": "Nettleseren vil ikke gi oss det lagrede spillet ditt akkurat nå. Det er ikke borte: last inn siden på nytt for å prøve igjen.",
-    "banner": "Spillet blir ikke lagret. Trykk for å laste inn på nytt.",
+    "banner": "Spillet blir ikke lagret. Last inn på nytt.",
     "reload": "Last inn på nytt",
     "continue": "Spill videre uten å lagre",
     "reset": "Begynn på nytt (slett lagring)",
@@ -29,7 +29,6 @@
     "evening": "Kveld",
     "night": "Natt"
   },
-  "tomb": {},
   "ui": {
     "level": "Nivå",
     "symbols": "tegn",
@@ -73,6 +72,10 @@
     "interruptExpedition": "Avbryt ekspedisjonen",
     "confirmInterruptExpedition": "Er du sikker på at du vil avbryte denne ekspedisjonen? Det du har klart på ekspedisjonen, blir lagret, men det du har gjort på dette nivået, forsvinner!",
     "cancel": "Avbryt",
+    "leaveSite": "Forlate dette stedet?",
+    "confirmLeaveSite": "Velg Forlat for å gå ut igjen, eller Bli for å utforske videre.",
+    "leave": "Forlat",
+    "stay": "Bli",
     "settings": "Innstillinger",
     "language": "Språk",
     "close": "Lukk",
@@ -106,8 +109,12 @@
     "solvedUnaided": "Løst uten ett eneste hint",
     "solvedWithHints_one": "Løst med {{count}} hint",
     "solvedWithHints_other": "Løst med {{count}} hint",
-    "tapToContinue": "Trykk for å fortsette",
-    "goal": "Mål"
+    "tapToContinue": "Fortsett",
+    "goal": "Mål",
+    "controls": "Styring",
+    "controlsUndo": "angre",
+    "controlsHint": "hint",
+    "controlsLeave": "tilbake til kartet"
   },
   "trap": {
     "warning": "⚠ Gang med felle",
@@ -126,6 +133,7 @@
     "turnAround": "Snu",
     "wardDescription": {
       "starter": "En kjøpmanns segl stenger denne gangen – bare vaktnøkkelen hans kan åpne den.",
+      "junior": "En adelskvinnes våpenskjold stenger denne veien – bare vaktnøkkelen hennes kan åpne den.",
       "expert": "En øversteprests tempelvakt vokter denne døra – den må åpnes med den hellige nøkkelen.",
       "master": "En faraos kongesegl binder denne gangen – bare herskerens nøkkel kan bryte det.",
       "wizard": "En vakt fra gudene holder denne porten – bare den guddommelige nøkkelen slipper deg forbi."
@@ -134,13 +142,14 @@
     "lockedColor": "Du har ikke funnet den nøkkelen i denne etasjen ennå."
   },
   "chest": {
-    "tapToOpen": "Trykk for å åpne",
+    "tapToOpen": "Åpne",
     "money_one": "{{count}} mynt",
     "money_other": "{{count}} mynter",
     "mapPiece": "Kartbit",
     "mapPieceDescription": "En skjør bit av et kart til et sted som er glemt for lenge siden. Synd at det er så langt fra helt …",
     "mapPieceProgress": "{{found}} av {{required}} kartbiter samlet",
     "mapPieceComplete": "Kartet er helt – det fører til {{name}}.",
+    "hieroglyph": "Hieroglyf",
     "hieroglyphFragment": "Hieroglyfbit",
     "fragmentProgress": "{{found}} av {{required}} biter funnet",
     "tombKey": "Gravnøkkel",
@@ -157,8 +166,9 @@
   },
   "loot": {
     "youFound": "Du fant",
+    "youReceived": "Du fikk",
     "expeditionReward": "Ekstra belønning for å fullføre ekspedisjonen",
-    "clickToContinue": "Trykk hvor som helst for å fortsette"
+    "clickToContinue": "Fortsett"
   },
   "money": {
     "label": "Mynter"
@@ -252,7 +262,7 @@
     "tabNew_other": "{{label}} · {{count}} nye",
     "empty": "Kista di er fortsatt tom",
     "newLabel": "NY",
-    "clickForDetails": "Trykk på en rute for å se mer",
+    "clickForDetails": "Velg en rute for å se mer",
     "categories": {
       "deities": "🏺 Guder",
       "professions": "⚱️ Yrker",
@@ -260,6 +270,7 @@
       "artifacts": "💎 Gjenstander",
       "treasures": "💰 Skatter",
       "junk": "🔷 Småtteri",
+      "offerings": "🍞 Gaver",
       "signs": "✍️ Tegn"
     },
     "treasureCategories": {
@@ -340,22 +351,22 @@
   },
   "balance": {
     "rules": {
-      "tap": "Trykk på et tegn nedenfor, og så på et tall. Trykk på det tallet igjen for å ta det bort.",
+      "tap": "Velg et tegn nedenfor, og så et tall. Velg det tallet igjen for å ta det bort.",
       "same": "Et tegn veier like mye på hver vekt.",
-      "cancel": "Ta det samme bort fra begge vektskålene, så er vekta fortsatt i balanse. Trykk på en merket bit for å gjøre det – det som blir igjen, blir en ny rad.",
-      "swap": "Trykk på et tegn som ikke har noe likt på den andre siden, og så på en rad der det tegnet står alene, for å bytte det mot det den raden er verdt."
+      "cancel": "Ta det samme bort fra begge vektskålene, så er vekta fortsatt i balanse. Velg en merket bit for å gjøre det – det som blir igjen, blir en ny rad.",
+      "swap": "Velg et tegn som ikke har noe likt på den andre siden, og så en rad der det tegnet står alene, for å bytte det mot det den raden er verdt."
     },
     "hint": {
       "mistake": "En av vektene du har gitt, får en vekt til å tippe. Ta den bort og se en gang til.",
       "alone": "På raden som lyser, er {{glyph}} den eneste biten uten tall. Finn ut hva den veier.",
       "equalShares": "Raden som lyser, har bare {{glyph}} mot et tall. Del tallet likt mellom dem.",
       "difference": "De to radene som lyser, er like bortsett fra {{glyph}}. Sammenlign dem.",
-      "cancelGlyph": "Begge vektskålene på raden som lyser, har {{glyph}}. Trykk på en for å ta den bort fra begge sider – raden er fortsatt i balanse.",
-      "cancelStones": "Begge vektskålene på raden som lyser, har vanlige tall. Trykk på et for å ta like mye bort fra begge sider.",
-      "swap": "Én rad som lyser, viser hva én {{glyph}} er verdt alene. Trykk på {{glyph}} i den andre raden som lyser, og trykk så på den raden."
+      "cancelGlyph": "Begge vektskålene på raden som lyser, har {{glyph}}. Velg en for å ta den bort fra begge sider – raden er fortsatt i balanse.",
+      "cancelStones": "Begge vektskålene på raden som lyser, har vanlige tall. Velg et for å ta like mye bort fra begge sider.",
+      "swap": "Én rad som lyser, viser hva én {{glyph}} er verdt alene. Velg {{glyph}} i den andre raden som lyser, og velg så den raden."
     },
     "swap": {
-      "pick": "Trykk på en rad som lyser, for å bytte denne {{glyph}} mot det den raden sier den er verdt.",
+      "pick": "Velg en rad som lyser, for å bytte denne {{glyph}} mot det den raden sier den er verdt.",
       "none": "Ingenting her sier hva én {{glyph}} alene er verdt, og ingenting på den andre siden passer."
     },
     "goal": {
@@ -365,11 +376,16 @@
     "name": {
       "default": "Skålvekt",
       "weighing": "Veiingen av hjertet"
+    },
+    "controls": {
+      "move": "velg en bit, en rad eller en knapp",
+      "press": "trykk på den",
+      "weigh": "gi det valgte tegnet den vekten"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Trykk én gang for å stryke et tall, én gang til for å merke det som et du beholder, og én gang til for å fjerne merket.",
+      "tap": "Velg et tall én gang for å stryke det, én gang til for å merke det som et du beholder, og én gang til for å fjerne merket.",
       "totals": "Det lille tallet under hvert mål er hva den linja blir til sammen akkurat nå."
     },
     "hint": {
@@ -430,12 +446,16 @@
       }
     },
     "goal": "Hver rad og hver kolonne blir til sammen tallet ved siden av.",
-    "name": "Opptellingen"
+    "name": "Opptellingen",
+    "controls": {
+      "move": "velg et tall",
+      "mark": "stryk, behold eller fjern"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Et tegn mellom to ruter peker mot det minste av de to tallene.",
-      "enter": "Trykk på en rute, og så på et tall. Trykker du på det samme tallet igjen, blir det tatt bort.",
+      "enter": "Velg en rute, og så et tall. Velger du det samme tallet igjen, blir det tatt bort.",
       "notes": "Bytt til blyanten for å skrive ned tallene en rute fortsatt kan ha. Angre tar tilbake det siste trekket ditt."
     },
     "hint": {
@@ -486,14 +506,22 @@
       }
     },
     "goal": "Hver rad og hver kolonne har hvert tall nøyaktig én gang.",
-    "name": "Større og mindre"
+    "name": "Større og mindre",
+    "controls": {
+      "move": "velg en rute",
+      "type": "skriv et tall",
+      "choose": "velg et tall eller viskelæret",
+      "place": "skriv det",
+      "pencil": "blyant",
+      "erase": "visk ut"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Et speil bøyer lyset fra begge sidene sine. De små merkene rundt det viser de andre måtene det kan ligge på: de fleste snur lyset en kvart runde, og noen snur det litt mindre og sender det på skrå.",
       "walls": "En steinblokk sluker lyset. Det gjør kanten av brettet også.",
-      "tap": "Trykk på en bit for å endre den: et speil snur seg, en skyvebit flytter seg til neste plass. Har den hvit kant, kan du flytte den; alt annet hører til gåten.",
-      "nodes": "Noen steiner er koblet til en kontakt i gulvet, og de flytter seg ikke når du trykker. Send lyset over kontakten, så glir steinen til side."
+      "tap": "Velg en bit for å endre den: et speil snur seg, en skyvebit flytter seg til neste plass. Har den hvit kant, kan du flytte den; alt annet hører til gåten.",
+      "nodes": "Noen steiner er koblet til en kontakt i gulvet, og dem kan du ikke flytte selv. Send lyset over kontakten, så glir steinen til side."
     },
     "hint": {
       "entryRun": "Begynn der lyset allerede går: det går rett fra skiva til det treffer den første biten du kan endre. De rutene får lys uansett hva du gjør.",
@@ -526,7 +554,7 @@
       "triple": "Tre like etter hverandre er aldri lov, verken bortover eller nedover.",
       "copies": "To rader kan ikke være like, og to kolonner kan heller ikke være like.",
       "signs": "Et tegn mellom to ruter sier hvordan de er: = betyr like, × betyr forskjellige.",
-      "enter": "Trykk på en rute for å sette en sol der, trykk igjen for en måne, og én gang til for å tømme den."
+      "enter": "Velg en rute for å sette en sol der, igjen for en måne, og én gang til for å tømme den."
     },
     "hint": {
       "mistake": "Et av disse merkene kan ikke være riktig.",
@@ -550,7 +578,11 @@
       }
     },
     "goal": "Hver rute har en sol eller en måne, og hver linje har like mange av hver.",
-    "name": "Sol og måne"
+    "name": "Sol og måne",
+    "controls": {
+      "move": "velg en rute",
+      "mark": "bytt merke"
+    }
   },
   "constellation": {
     "rules": {
@@ -558,25 +590,25 @@
         "straight": "Lysstreker går rett bortover eller nedover, fra en stjerne til den neste.",
         "pair": "To stjerner kan ha høyst to streker mellom seg.",
         "cross": "Streker krysser aldri hverandre, og går aldri gjennom en stjerne.",
-        "enter": "Dra fra en stjerne mot naboen for å tegne en strek, igjen for en dobbel, og én gang til for å fjerne den."
+        "enter": "Tegn en strek fra en stjerne mot naboen, igjen for en dobbel, og én gang til for å fjerne den."
       },
       "causeway": {
         "straight": "Veiene går rett bortover eller nedover, fra en byggeplass til den neste.",
         "pair": "To byggeplasser kan ha høyst to veier mellom seg.",
         "cross": "Veier krysser aldri hverandre, og går aldri gjennom en byggeplass.",
-        "enter": "Dra fra en byggeplass mot naboen for å legge en vei, igjen for å gjøre den dobbel, og én gang til for å rive den opp."
+        "enter": "Legg en vei fra en byggeplass mot naboen, igjen for å gjøre den dobbel, og én gang til for å rive den opp."
       },
       "irrigation": {
         "straight": "Kanaler går rett bortover eller nedover, fra et basseng til det neste.",
         "pair": "To bassenger kan ha høyst to kanaler mellom seg.",
         "cross": "Kanaler krysser aldri hverandre, og går aldri gjennom et basseng.",
-        "enter": "Dra fra et basseng mot naboen for å grave en kanal, igjen for å gjøre den bredere, og én gang til for å fylle den igjen."
+        "enter": "Grav en kanal fra et basseng mot naboen, igjen for å gjøre den bredere, og én gang til for å fylle den igjen."
       },
       "ceiling": {
         "straight": "Snorer går rett bortover eller nedover, fra en stjerne til den neste.",
         "pair": "To stjerner kan ha høyst to snorer mellom seg.",
         "cross": "Snorer krysser aldri hverandre, og går aldri gjennom en stjerne.",
-        "enter": "Dra fra en stjerne mot naboen for å legge en snor, igjen for å gjøre den dobbel, og én gang til for å ta den bort."
+        "enter": "Spenn en snor fra en stjerne mot naboen, igjen for å gjøre den dobbel, og én gang til for å ta den bort."
       }
     },
     "hint": {
@@ -664,37 +696,44 @@
       "causeway": "Steinveien",
       "irrigation": "Vannverket",
       "ceiling": "Det malte taket"
+    },
+    "controls": {
+      "pick": "velg en stjerne",
+      "grab": "ta tak",
+      "draw": "tegn en strek den veien",
+      "release": "slipp",
+      "alt": "hold og pek: en strek, en dobbel, ingen"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "To stjerner kan ikke røre hverandre – hjørner teller også.",
-        "enter": "Trykk på en rute for å stryke den, trykk igjen for å sette en stjerne der, og én gang til for å fjerne den."
+        "enter": "Velg en rute for å stryke den, igjen for å sette en stjerne der, og én gang til for å fjerne den."
       },
       "fields": {
         "touch": "To gårder kan ikke røre hverandre – hjørner teller også. Så nær ville de måttet dele én brønn.",
-        "enter": "Trykk på en jordlapp for å stryke den, trykk igjen for å bygge en gård, og én gang til for å fjerne den."
+        "enter": "Velg en jordlapp for å stryke den, igjen for å bygge en gård, og én gang til for å fjerne den."
       },
       "lamps": {
         "touch": "To oljelamper kan ikke stå ved siden av hverandre – hjørner teller også. Lyset fra dem ville overlappet, og oljen ville gått til spille.",
         "walls": "De grå steinblokkene er en del av gulvet: ingenting kan stå på dem, og de er ikke ruter.",
-        "enter": "Trykk på en steinhelle for å stryke den, trykk igjen for å sette en oljelampe der, og én gang til for å fjerne den."
+        "enter": "Velg en steinhelle for å stryke den, igjen for å sette en oljelampe der, og én gang til for å fjerne den."
       },
       "market": {
         "touch": "To boder kan ikke stå ved siden av hverandre – hjørner teller også. Konkurrenter setter seg aldri rett ved siden av hverandre.",
         "walls": "Husene er en del av torget: ingen kan sette opp en bod i et hus, og de er ikke plasser.",
-        "enter": "Trykk på en plass for å stryke den, trykk igjen for å sette opp en bod der, og én gang til for å fjerne den."
+        "enter": "Velg en plass for å stryke den, igjen for å sette opp en bod der, og én gang til for å fjerne den."
       },
       "lotus": {
         "touch": "To lotusblomster kan ikke flyte ved siden av hverandre – hjørner teller også. Hver blomst trenger åpent vann rundt seg.",
         "walls": "Steinene stikker opp av dammen: ingenting kan flyte på dem, og de er ikke ruter.",
-        "enter": "Trykk på en vannflekk for å stryke den, trykk igjen for å sette en lotus der, og én gang til for å fjerne den."
+        "enter": "Velg en vannflekk for å stryke den, igjen for å sette en lotus der, og én gang til for å fjerne den."
       },
       "cats": {
         "touch": "To katter kan ikke sove ved siden av hverandre – hjørner teller også. Hver katt har sin egen solflekk.",
         "walls": "Søylene holder templet oppe: ingen katt kan sove på dem, og de er ikke ruter.",
-        "enter": "Trykk på en steinhelle for å stryke den, trykk igjen for å legge en katt der, og én gang til for å fjerne den."
+        "enter": "Velg en steinhelle for å stryke den, igjen for å legge en katt der, og én gang til for å fjerne den."
       }
     },
     "hint": {
@@ -800,20 +839,20 @@
         "mistake": "Dette merket kan ikke være riktig.",
         "touch": "En {{token}} her, og to oljelamper kan ikke stå ved siden av hverandre – hjørner teller også.",
         "groupFull.row_one": "Denne raden har allerede sin oljelampe.",
-        "groupFull.col_one": "Denne kolonnen har allerede sin oljelampe.",
         "groupFull.row_other": "Denne raden har allerede sine {{count}} oljelamper.",
+        "groupFull.col_one": "Denne kolonnen har allerede sin oljelampe.",
         "groupFull.col_other": "Denne kolonnen har allerede sine {{count}} oljelamper.",
         "groupTight.row_one": "Denne raden har bare én steinhelle igjen.",
         "groupTight.row_other": "Denne raden har bare {{count}} steinheller igjen.",
         "groupTight.col_one": "Denne kolonnen har bare én steinhelle igjen.",
         "groupTight.col_other": "Denne kolonnen har bare {{count}} steinheller igjen.",
         "onlyWay.row_one": "Mellom steinblokkene er det bare én rute igjen i denne raden til en oljelampe.",
-        "onlyWay.col_one": "Mellom steinblokkene er det bare én rute igjen i denne kolonnen til en oljelampe.",
         "onlyWay.row_other": "Det finnes bare én måte å få plass til {{count}} oljelamper i denne raden.",
+        "onlyWay.col_one": "Mellom steinblokkene er det bare én rute igjen i denne kolonnen til en oljelampe.",
         "onlyWay.col_other": "Det finnes bare én måte å få plass til {{count}} oljelamper i denne kolonnen.",
         "everyWay.row_one": "Uansett hvor oljelampen i denne raden havner, er den alltid her.",
-        "everyWay.col_one": "Uansett hvor oljelampen i denne kolonnen havner, er den alltid her.",
         "everyWay.row_other": "Uansett hvor de {{count}} oljelampene i denne raden havner, er én alltid her.",
+        "everyWay.col_one": "Uansett hvor oljelampen i denne kolonnen havner, er den alltid her.",
         "everyWay.col_other": "Uansett hvor de {{count}} oljelampene i denne kolonnen havner, er én alltid her.",
         "lineBlock.rowsToCols": "De merkede radene har oljelampene sine i rutene i de kolonnene, så de kolonnene har ingen til overs.",
         "lineBlock.colsToRows": "De merkede kolonnene har oljelampene sine i rutene i de radene, så de radene har ingen til overs.",
@@ -830,20 +869,20 @@
         "mistake": "Dette merket kan ikke være riktig.",
         "touch": "En {{token}} her, og to boder kan ikke stå ved siden av hverandre – hjørner teller også.",
         "groupFull.row_one": "Denne raden har allerede sin bod.",
-        "groupFull.col_one": "Denne kolonnen har allerede sin bod.",
         "groupFull.row_other": "Denne raden har allerede sine {{count}} boder.",
+        "groupFull.col_one": "Denne kolonnen har allerede sin bod.",
         "groupFull.col_other": "Denne kolonnen har allerede sine {{count}} boder.",
         "groupTight.row_one": "Denne raden har bare én plass igjen.",
         "groupTight.row_other": "Denne raden har bare {{count}} plasser igjen.",
         "groupTight.col_one": "Denne kolonnen har bare én plass igjen.",
         "groupTight.col_other": "Denne kolonnen har bare {{count}} plasser igjen.",
         "onlyWay.row_one": "Mellom husene er det bare én rute igjen i denne raden til en bod.",
-        "onlyWay.col_one": "Mellom husene er det bare én rute igjen i denne kolonnen til en bod.",
         "onlyWay.row_other": "Det finnes bare én måte å få plass til {{count}} boder i denne raden.",
+        "onlyWay.col_one": "Mellom husene er det bare én rute igjen i denne kolonnen til en bod.",
         "onlyWay.col_other": "Det finnes bare én måte å få plass til {{count}} boder i denne kolonnen.",
         "everyWay.row_one": "Uansett hvor boden i denne raden havner, er den alltid her.",
-        "everyWay.col_one": "Uansett hvor boden i denne kolonnen havner, er den alltid her.",
         "everyWay.row_other": "Uansett hvor de {{count}} bodene i denne raden havner, er én alltid her.",
+        "everyWay.col_one": "Uansett hvor boden i denne kolonnen havner, er den alltid her.",
         "everyWay.col_other": "Uansett hvor de {{count}} bodene i denne kolonnen havner, er én alltid her.",
         "lineBlock.rowsToCols": "De merkede radene har bodene sine i rutene i de kolonnene, så de kolonnene har ingen til overs.",
         "lineBlock.colsToRows": "De merkede kolonnene har bodene sine i rutene i de radene, så de radene har ingen til overs.",
@@ -860,20 +899,20 @@
         "mistake": "Dette merket kan ikke være riktig.",
         "touch": "En {{token}} her, og to lotusblomster kan ikke flyte ved siden av hverandre – hjørner teller også.",
         "groupFull.row_one": "Denne raden har allerede sin lotus.",
-        "groupFull.col_one": "Denne kolonnen har allerede sin lotus.",
         "groupFull.row_other": "Denne raden har allerede sine {{count}} lotusblomster.",
+        "groupFull.col_one": "Denne kolonnen har allerede sin lotus.",
         "groupFull.col_other": "Denne kolonnen har allerede sine {{count}} lotusblomster.",
         "groupTight.row_one": "Denne raden har bare én vannflekk igjen.",
         "groupTight.row_other": "Denne raden har bare {{count}} vannflekker igjen.",
         "groupTight.col_one": "Denne kolonnen har bare én vannflekk igjen.",
         "groupTight.col_other": "Denne kolonnen har bare {{count}} vannflekker igjen.",
         "onlyWay.row_one": "Mellom steinene er det bare én rute igjen i denne raden til en lotus.",
-        "onlyWay.col_one": "Mellom steinene er det bare én rute igjen i denne kolonnen til en lotus.",
         "onlyWay.row_other": "Det finnes bare én måte å få plass til {{count}} lotusblomster i denne raden.",
+        "onlyWay.col_one": "Mellom steinene er det bare én rute igjen i denne kolonnen til en lotus.",
         "onlyWay.col_other": "Det finnes bare én måte å få plass til {{count}} lotusblomster i denne kolonnen.",
         "everyWay.row_one": "Uansett hvor lotusen i denne raden havner, er den alltid her.",
-        "everyWay.col_one": "Uansett hvor lotusen i denne kolonnen havner, er den alltid her.",
         "everyWay.row_other": "Uansett hvor de {{count}} lotusblomstene i denne raden havner, er én alltid her.",
+        "everyWay.col_one": "Uansett hvor lotusen i denne kolonnen havner, er den alltid her.",
         "everyWay.col_other": "Uansett hvor de {{count}} lotusblomstene i denne kolonnen havner, er én alltid her.",
         "lineBlock.rowsToCols": "De merkede radene har lotusblomstene sine i rutene i de kolonnene, så de kolonnene har ingen til overs.",
         "lineBlock.colsToRows": "De merkede kolonnene har lotusblomstene sine i rutene i de radene, så de radene har ingen til overs.",
@@ -890,20 +929,20 @@
         "mistake": "Dette merket kan ikke være riktig.",
         "touch": "En {{token}} her, og to katter kan ikke sove ved siden av hverandre – hjørner teller også.",
         "groupFull.row_one": "Denne raden har allerede sin katt.",
-        "groupFull.col_one": "Denne kolonnen har allerede sin katt.",
         "groupFull.row_other": "Denne raden har allerede sine {{count}} katter.",
+        "groupFull.col_one": "Denne kolonnen har allerede sin katt.",
         "groupFull.col_other": "Denne kolonnen har allerede sine {{count}} katter.",
         "groupTight.row_one": "Denne raden har bare én steinhelle igjen.",
         "groupTight.row_other": "Denne raden har bare {{count}} steinheller igjen.",
         "groupTight.col_one": "Denne kolonnen har bare én steinhelle igjen.",
         "groupTight.col_other": "Denne kolonnen har bare {{count}} steinheller igjen.",
         "onlyWay.row_one": "Mellom søylene er det bare én rute igjen i denne raden til en katt.",
-        "onlyWay.col_one": "Mellom søylene er det bare én rute igjen i denne kolonnen til en katt.",
         "onlyWay.row_other": "Det finnes bare én måte å få plass til {{count}} katter i denne raden.",
+        "onlyWay.col_one": "Mellom søylene er det bare én rute igjen i denne kolonnen til en katt.",
         "onlyWay.col_other": "Det finnes bare én måte å få plass til {{count}} katter i denne kolonnen.",
         "everyWay.row_one": "Uansett hvor katten i denne raden havner, er den alltid her.",
-        "everyWay.col_one": "Uansett hvor katten i denne kolonnen havner, er den alltid her.",
         "everyWay.row_other": "Uansett hvor de {{count}} kattene i denne raden havner, er én alltid her.",
+        "everyWay.col_one": "Uansett hvor katten i denne kolonnen havner, er den alltid her.",
         "everyWay.col_other": "Uansett hvor de {{count}} kattene i denne kolonnen havner, er én alltid her.",
         "lineBlock.rowsToCols": "De merkede radene har kattene sine i rutene i de kolonnene, så de kolonnene har ingen til overs.",
         "lineBlock.colsToRows": "De merkede kolonnene har kattene sine i rutene i de radene, så de radene har ingen til overs.",
@@ -944,6 +983,11 @@
       "market": "Markedsboder",
       "lotus": "Lotusdammen",
       "cats": "Tempelkatter"
+    },
+    "controls": {
+      "move": "velg en rute",
+      "mark": "bytt merke",
+      "sweep": "hold og flytt: stryk en rad"
     }
   },
   "pairPuzzle": {
@@ -960,13 +1004,13 @@
         "pair": "Hver sarkofag har én mumie som hviler rett over, under, til venstre eller til høyre for den, og hver mumie hviler ved siden av sin egen sarkofag.",
         "count": "Tallet ved siden av en rad eller kolonne sier hvor mange mumier den har. Det blir grønt når linja har akkurat så mange, og rødt når det ikke kan gå.",
         "touch": "To mumier kan ikke ligge ved siden av hverandre – hjørner teller også.",
-        "enter": "Trykk på en rute for å stryke den, trykk igjen for å legge en mumie der, og én gang til for å fjerne den. Dra over flere ruter for å stryke mange på en gang. Sarkofagene kan du ikke trykke på."
+        "enter": "Velg en rute for å stryke den, igjen for å legge en mumie der, og én gang til for å fjerne den. Stryk flere ruter etter hverandre i ett strøk. Sarkofagene kan ikke merkes."
       },
       "beetles": {
         "pair": "Hver møkkball har én bille rett over, under, til venstre eller til høyre for den, og hver bille står ved siden av sin egen ball å rulle.",
         "count": "Tallet ved siden av en rad eller kolonne sier hvor mange biller den har. Det blir grønt når linja har akkurat så mange, og rødt når det ikke kan gå.",
         "touch": "To biller kan ikke stå ved siden av hverandre – hjørner teller også.",
-        "enter": "Trykk på en rute for å stryke den, trykk igjen for å sette en bille der, og én gang til for å fjerne den. Dra over flere ruter for å stryke mange på en gang. Møkkballene kan du ikke trykke på."
+        "enter": "Velg en rute for å stryke den, igjen for å sette en bille der, og én gang til for å fjerne den. Stryk flere ruter etter hverandre i ett strøk. Møkkballene kan ikke merkes."
       }
     },
     "hint": {
@@ -1030,6 +1074,11 @@
           "place_other": "Sett en bille på hver skraverte rute."
         }
       }
+    },
+    "controls": {
+      "move": "velg en rute",
+      "mark": "bytt merke",
+      "sweep": "hold og flytt: stryk en rad"
     }
   },
   "rushHour": {
@@ -1044,11 +1093,11 @@
     "rules": {
       "default": {
         "lanes": "En blokk glir bare langs sin egen bane – aldri sidelengs, aldri ut av brettet.",
-        "shove": "Dra en blokk for å skyve den. Den stopper der noe står i veien."
+        "shove": "Skyv en blokk langs sporet sitt. Den stopper der noe står i veien."
       },
       "market": {
         "lanes": "En slede glir bare langs banen den står i – aldri sidelengs, aldri ut av gata.",
-        "shove": "Dra en slede for å skyve den. Den stopper der noe står i veien."
+        "shove": "Skyv en slede langs sporet sitt. Den stopper der noe står i veien."
       }
     },
     "hint": {
@@ -1076,29 +1125,35 @@
           "down": "Skyv den ned gata, helt til ringen."
         }
       }
+    },
+    "controls": {
+      "pick": "velg en blokk",
+      "grab": "ta tak",
+      "slide": "skyv",
+      "release": "slipp"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "Tallene som allerede står i vokskaka, hører til gåten – de blir stående.",
-        "enter": "Trykk på et tall for å fortsette rekka derfra, og trykk så på en tom celle som rører det, for å føre den videre – eller dra rett gjennom cellene den skal gå.",
-        "back": "Trykk på et tall du har lagt, og trykk igjen for å ta det bort, sammen med alt som henger fast i det. Fører du rekka en annen vei ut fra et tall, skjer det samme. Angre tar tilbake det siste trekket ditt."
+        "enter": "Tegn en strek fra et tall gjennom de tomme cellene ved siden av for å føre rekka videre.",
+        "back": "Velg et tall du har lagt, og velg det igjen for å ta det bort, sammen med alt som henger fast i det. Fører du rekka en annen vei ut fra et tall, skjer det samme. Angre tar tilbake det siste trekket ditt."
       },
       "channel": {
         "given": "Åkrene som allerede har tall, hører til gåten – de blir stående.",
-        "enter": "Trykk på en åker med tall for å ta vannet derfra, og trykk så på en tørr åker ved siden av for å grave videre – eller dra rett langs åkrene kanalen skal gå.",
-        "back": "Trykk på en åker du har gravd, og trykk igjen for å fylle den igjen, sammen med kanalen som blir kuttet av fra den. Graver du en annen vei ut fra en åker, skjer det samme. Angre tar tilbake det siste trekket ditt."
+        "enter": "Grav en kanal fra en åker med tall gjennom de tørre åkrene ved siden av for å lede vannet videre.",
+        "back": "Velg en åker du har gravd, og velg den igjen for å fylle den igjen, sammen med kanalen som blir kuttet av fra den. Graver du en annen vei ut fra en åker, skjer det samme. Angre tar tilbake det siste trekket ditt."
       },
       "scribe": {
         "given": "Tallene som er skrevet med rødt blekk, hører til gåten – de blir stående.",
-        "enter": "Trykk på et tall for å ta sivpennen der, og trykk så på en tom plass ved siden av for å skrive videre – eller dra rett langs linja.",
-        "back": "Trykk på et tall du har skrevet, og trykk igjen for å skrape det bort, sammen med linja som blir kuttet av fra det. Skriver du en annen vei ut fra et tall, skjer det samme. Angre tar tilbake det siste trekket ditt."
+        "enter": "Skriv en linje fra et tall gjennom de tomme plassene ved siden av for å telle videre.",
+        "back": "Velg et tall du har skrevet, og velg det igjen for å skrape det bort, sammen med linja som blir kuttet av fra det. Skriver du en annen vei ut fra et tall, skjer det samme. Angre tar tilbake det siste trekket ditt."
       },
       "chambers": {
         "given": "Kamrene som allerede har tall, ble hogd ut av byggmesterne – de blir stående.",
-        "enter": "Trykk på et kammer med tall for å fortsette gangen derfra, og trykk så på et forseglet kammer ved siden av for å bryte gjennom – eller dra rett langs kamrene gangen skal gå.",
-        "back": "Trykk på et kammer du har åpnet, og trykk igjen for å forsegle det, sammen med gangen som blir kuttet av fra det. Bryter du gjennom en annen vei ut fra et kammer, skjer det samme. Angre tar tilbake det siste trekket ditt."
+        "enter": "Bryt en gang fra et kammer med tall gjennom de forseglede kamrene ved siden av for å komme videre.",
+        "back": "Velg et kammer du har åpnet, og velg det igjen for å forsegle det, sammen med gangen som blir kuttet av fra det. Bryter du gjennom en annen vei ut fra et kammer, skjer det samme. Angre tar tilbake det siste trekket ditt."
       }
     },
     "goal": {
@@ -1162,6 +1217,13 @@
       "channel": "Kanalen",
       "scribe": "Skriverens ark",
       "chambers": "Forseglede kamre"
+    },
+    "controls": {
+      "move": "gå til en celle ved siden av; opp og ned går skrått til venstre",
+      "right": "skrått opp eller ned til høyre",
+      "grab": "ta opp rekka, eller ta bort tallet ditt",
+      "carry": "med rekka i hånda: før den videre; opp og ned velger siden der den kan fortsette",
+      "drop": "legg fra deg rekka"
     }
   },
   "sudoku": {
@@ -1169,13 +1231,13 @@
       "default": {
         "chambers": "De tykke strekene deler rutenettet i seks kamre, to ruter brede og tre høye.",
         "given": "Tallene som allerede er hogd inn, hører til gåten – de blir stående.",
-        "enter": "Trykk på en rute, og så på et tall. Trykker du på det samme tallet igjen, blir det tatt bort.",
+        "enter": "Velg en rute, og så et tall. Velger du det samme tallet igjen, blir det tatt bort.",
         "notes": "Bytt til blyanten for å skrive ned tallene en rute fortsatt kan ha. Angre tar tilbake det siste trekket ditt."
       },
       "papyrus": {
         "chambers": "De tykke strekene deler arket i seks felt, to plasser brede og tre høye.",
         "given": "Tegnene som er skrevet med rødt blekk, hører til gåten – de blir stående.",
-        "enter": "Trykk på en plass, og så på et tegn. Trykker du på det samme tegnet igjen, blir det skrapt bort.",
+        "enter": "Velg en plass, og så et tegn. Velger du det samme tegnet igjen, blir det skrapt bort.",
         "notes": "Ta sivpennen for å skrive inn tegnene en plass fortsatt kan ha. Angre tar tilbake det siste trekket ditt."
       }
     },
@@ -1242,6 +1304,14 @@
     "name": {
       "default": "Seks kamre",
       "papyrus": "Skriverens liste"
+    },
+    "controls": {
+      "move": "velg en rute",
+      "type": "skriv et tall",
+      "choose": "velg et tall eller viskelæret",
+      "place": "skriv det",
+      "pencil": "blyant",
+      "erase": "visk ut"
     }
   },
   "crocodile": {
@@ -1255,6 +1325,10 @@
     "hint": {
       "biggest": "Denne krokodillen vil ha det største svaret. Det er {{value}}.",
       "smallest": "Denne krokodillen vil ha det minste svaret. Det er {{value}}."
+    },
+    "controls": {
+      "move": "velg en stein",
+      "step": "tråkk på den"
     }
   },
   "canisters": {
@@ -1285,35 +1359,35 @@
         "sums": "Hver mengde du kan lage, er to tall på benken lagt sammen eller trukket fra hverandre: hvor mye en beholder rommer, hva som er i den, eller hvor mye plass den har igjen.",
         "backwards": "Så jobb deg bakover fra mengden som trengs – hvilke to tall blir det, og hvordan får du de to til å stå der samtidig?"
       },
-      "claim": "Når du har mengden, trykker du på «denne». Velger du feil beholder, koster det et trekk.",
+      "claim": "Når du har mengden, velger du «denne». Velger du feil beholder, koster det et trekk.",
       "legs": "Så den neste mengden, målt fra det beholderne har igjen.",
       "default": {
-        "moves": "Trykk på en beholder for å løfte den, og trykk så på en annen for å helle over i den. Du slutter å helle når den første er tom eller den andre er full.",
+        "moves": "Løft en beholder, og velg så en annen for å helle over i den. Du slutter å helle når den første er tom eller den andre er full.",
         "contents": "Dette er alt vannet som finnes – én beholder er full fra start, og ingenting kan helles ut eller hentes.",
         "levels": "Hver beholder viser hvor mye som er i den, og hvor mye den rommer når den er full."
       },
       "grain": {
-        "moves": "Trykk på et mål for å løfte det, og trykk så på et annet for å tømme kornet over i det. Du slutter når det første er tomt eller det andre er fylt til kanten.",
+        "moves": "Løft et mål, og velg så et annet for å tømme kornet over i det. Du slutter når det første er tomt eller det andre er fylt til kanten.",
         "contents": "Dette er alt kornet som finnes – ett mål er fullt fra start, og ingenting kan feies bort eller hentes fra kornlageret.",
         "levels": "Hvert mål viser hvor mye som er i det, og hvor mye det rommer når det er fylt til kanten."
       },
       "oil": {
-        "moves": "Trykk på en krukke for å løfte den, og trykk så på en annen for å helle over i den. Du slutter å helle når den første er tom eller den andre er full.",
+        "moves": "Løft en krukke, og velg så en annen for å helle over i den. Du slutter å helle når den første er tom eller den andre er full.",
         "contents": "Dette er all oljen som finnes – én krukke er full fra start, og ingenting kan helles ut eller hentes.",
         "levels": "Hver krukke viser hvor mye som er i den, og hvor mye den rommer når den er full."
       },
       "wine": {
-        "moves": "Trykk på en amfora for å løfte den, og trykk så på en annen for å helle over i den. Du slutter å helle når den første er tom eller den andre er full.",
+        "moves": "Løft en amfora, og velg så en annen for å helle over i den. Du slutter å helle når den første er tom eller den andre er full.",
         "contents": "Dette er all vinen som finnes – én amfora er full fra start, og ingenting kan søles eller hentes fra kjelleren.",
         "levels": "Hver amfora viser hvor mye som er i den, og hvor mye den rommer når den er full."
       },
       "natron": {
-        "moves": "Trykk på en krukke for å løfte den, og trykk så på en annen for å tømme natronet over i den. Du slutter når den første er tom eller den andre er fylt opp til lokket.",
+        "moves": "Løft en krukke, og velg så en annen for å tømme natronet over i den. Du slutter når den første er tom eller den andre er fylt opp til lokket.",
         "contents": "Dette er alt natronet som finnes – én krukke er full fra start, og ingenting kan feies bort eller hentes.",
         "levels": "Hver krukke viser hvor mye som er i den, og hvor mye den rommer når den er fylt opp til lokket."
       },
       "ink": {
-        "moves": "Trykk på en krukke for å løfte den, og trykk så på en annen for å helle over i den. Du slutter å helle når den første er tom eller den andre er full.",
+        "moves": "Løft en krukke, og velg så en annen for å helle over i den. Du slutter å helle når den første er tom eller den andre er full.",
         "contents": "Dette er alt blekket som finnes – én krukke er full fra start, og ingenting kan helles ut eller lages nytt.",
         "levels": "Hver krukke viser hvor mye som er i den, og hvor mye den rommer når den er full."
       }
@@ -1338,7 +1412,12 @@
     "legs": "målt {{done}} av {{total}}",
     "wanted": "Mål opp",
     "claim": "denne",
-    "claimAria": "Si at {{capacity}} har mengden"
+    "claimAria": "Si at {{capacity}} har mengden",
+    "controls": {
+      "move": "velg en beholder eller «denne» under den",
+      "press": "løft, hell over i denne, eller velg «denne»",
+      "putDown": "sett ned igjen beholderen du holder"
+    }
   },
   "procession": {
     "name": {
@@ -1358,8 +1437,8 @@
     "rules": {
       "default": {
         "lengths": "Hver rad er én ting som skjer, og den tar like lang tid som streken er bred. Når den skjer, er det du skal finne ut.",
-        "marks": "En linje under dagen blir rød så lenge den ikke stemmer. Trykk på en for å sette ring rundt radene den handler om.",
-        "drag": "Dra en strek langs sin egen rad. Den forlater aldri dagen."
+        "marks": "En linje under dagen blir rød så lenge den ikke stemmer. Velg en for å sette ring rundt radene den handler om.",
+        "drag": "Skyv en strek langs sin egen rad. Den forlater aldri dagen."
       }
     },
     "hint": {
@@ -1368,7 +1447,7 @@
         "squeeze": "Det er bare så mye igjen av dagen, og dette er alt som får plass.",
         "apart": "Andre veien rundt får ikke plass i dagen.",
         "split": "Prøv det andre veien rundt, så går noe annet galt.",
-        "move": "Dra streken med ring rundt over på de skraverte strekene."
+        "move": "Skyv streken med ring rundt over på de skraverte strekene."
       }
     },
     "events": {
@@ -1396,6 +1475,11 @@
       "hint": "Hver flis du tråkker på, setter i gang det den står for. Sett dagen i rekkefølge, og gå så på flisene i den rekkefølgen.",
       "read": "Dagen er lest. Gå på flisene i denne rekkefølgen, fra den første.",
       "hintButton": "Hint"
+    },
+    "controls": {
+      "row": "velg en rad",
+      "slide": "skyv streken",
+      "mark": "velg en linje under dagen"
     }
   },
   "story": {
@@ -1418,6 +1502,13 @@
       "pick": "Sett det riktige tegnet på plassen.",
       "cannot": "Du kjenner ikke tegnet som hører hjemme her. Ikke ennå."
     },
+    "formula": {
+      "wrong": "Det mangler et tegn på denne linja. Ikke hogd feil – aldri hogd i det hele tatt.",
+      "fixed": "Linja er hel.",
+      "pick": "Sett tegnet du fikk, på den tomme plassen.",
+      "cannot": "Ingen har gitt deg tegnet til denne plassen. Ikke ennå.",
+      "gap": "Tegnet som mangler"
+    },
     "sphinx": {
       "wrong": "Den samme skriften som utenfor, men sanden kom aldri hit inn. To tegn er fortsatt helt tydelige, og det er et tomt rom der det tredje var.",
       "fixed": "Det er hele navnet.",
@@ -1434,7 +1525,7 @@
       "shrines": "Én lysskive, og en helligdom over hver vei ut av dette krysset. Speilene på gulvet kan sende lyset til hvilken som helst av dem.",
       "doors": "Veien ut som lyset når, står åpen, og de andre er stengt. Én lysvei, én vei videre.",
       "returning": "Du mister ingenting ved å velge. Gå tilbake inn når du vil, og send lyset en annen vei i stedet – da åpner den veien seg, og denne stenges.",
-      "tap": "Trykk på et speil for å snu det. Trykker du igjen, går det tilbake."
+      "tap": "Velg et speil for å snu det. Velg det igjen for å snu det tilbake."
     },
     "doorOpen": "{{way}} vei ut: åpen",
     "doorShut": "{{way}} vei ut: stengt",
@@ -1443,6 +1534,10 @@
       "e": "Østlig",
       "s": "Sørlig",
       "w": "Vestlig"
+    },
+    "controls": {
+      "move": "velg et speil",
+      "turn": "snu det"
     }
   },
   "handle": {
@@ -1692,5 +1787,33 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Når du tegner, skrives teksten om: alle kommentarer flyttes til toppen"
+  },
+  "saveCard": {
+    "title": "Reisekort",
+    "explain": "Ta med ekspedisjonen din til en annen enhet: lag et kort her, og les det inn der innen 15 minutter.",
+    "make": "Lag reisekort",
+    "share": "Del kort",
+    "download": "Last ned kort",
+    "read": "Les reisekort",
+    "busy": "Et øyeblikk …",
+    "makeFailed": "Kortet kunne ikke lages.",
+    "shareFailed": "Deling virket ikke; last ned kortet i stedet.",
+    "confirm_one": "Bytte ut ekspedisjonen på denne enheten med den på kortet ({{count}} reise)?",
+    "confirm_other": "Bytte ut ekspedisjonen på denne enheten med den på kortet ({{count}} reiser)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Reisekort · ta med ekspedisjonen din",
+    "validUntil": "gyldig til {{time}}",
+    "codes_one": "{{count}} kode",
+    "codes_other": "{{count}} koder",
+    "refused": {
+      "notACard": "Dette er ikke et reisekort.",
+      "tampered": "Dette kortet er blitt endret og kan ikke leses lenger.",
+      "expired": "Dette kortet er utløpt; lag et nytt.",
+      "future": "Dette kortet kommer fra framtida: sjekk klokka på begge enhetene.",
+      "otherEpoch": "Dette kortet er fra en annen versjon av spillet.",
+      "newerGame": "Dette kortet kommer fra en nyere versjon: oppdater spillet først."
+    },
+    "writeFailed": "Spillet kunne ikke lagres; denne enheten beholdt sitt eget.",
+    "writeLost": "Spillet kunne ikke byttes ut, og spillet på denne enheten kan være ufullstendig."
   }
 }

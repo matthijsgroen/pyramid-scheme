@@ -28,7 +28,7 @@
   "tombTutorial3": "Is-somom iż-żgħar jurik meta sinjal ikun tajjeb. Hekk insibu liema sinjal imur fejn.",
   "tombTutorial4": "Imlejt kollox? Imbagħad jidher katnazz bin-numri. Is-somma l-kbira hi l-kodiċi — u l-qabar jinfetaħ!",
   "hieroglyphUnlock": "Għandna oġġett speċjali — bih nistgħu niktbu fuq wieħed minn dawk il-blokki ssiġillati!",
-  "hieroglyphUnlock2": "Agħfas ġebla li tleqq, imbagħad kaxkar l-oġġett fuqha biex tiftaħha. Blokka waħda kull piramida.",
+  "hieroglyphUnlock2": "Agħżel ġebla li tleqq, imbagħad ġib l-oġġett sa fuqha biex tiftaħha. Blokka waħda kull piramida.",
   "errorHighlightTutorial": "Dak it-teżor li sibna għandu trick tajjeb — imla tweġiba ħażina u żball wieħed jixgħel aħmar!",
   "errorHighlightTutorial2": "Blokka waħda biss tixgħel kull darba, allura għadha sfida. Imma tgħin biex issib fejn hu!",
   "earlyFeedbackTutorial": "Tara dawk il-blokki ta' kontroll? Isiru ħodor jew ħomor hekk kif timlihom — tgħidlek minnufih!",
@@ -1077,6 +1077,12 @@
     "forSale": {
       "1": {
         "fez": "Ara x'hemm fuq il-mejda! Issa nagħmel it-trasport ukoll."
+      },
+      "2": {
+        "explorer": "Jien nara tpinġija biss."
+      },
+      "3": {
+        "fez": "L-oriġinal jiekol aktar."
       }
     },
     "boughtDonkey": {
@@ -1452,10 +1458,10 @@
     },
     "expert": {
       "1": {
-        "explorer": "It-tieni linja. L-ilma lil min kien bil-għatx."
+        "explorer": "It-tieni linja. _Ħwejjeġ lil min kien għeri._"
       },
       "2": {
-        "fez": "Ħobż, u issa ilma. Xi ħadd ried ħafna jiftakruh bħala ġeneruż."
+        "fez": "Ħobż, u issa ħwejjeġ. Xi ħadd ried ħafna jiftakruh bħala ġeneruż."
       },
       "3": {
         "explorer": "Kulħadd għandu hekk. Kull ħajt, kull qabar, l-istess żewġ linji."
@@ -1469,10 +1475,10 @@
     },
     "master": {
       "1": {
-        "explorer": "Ħwejjeġ lil min kien għeri. It-tielet linja."
+        "explorer": "_L-ilma lil min kien bil-għatx._ It-tielet linja."
       },
       "2": {
-        "fez": "Ħobż, ilma, ħwejjeġ. Hija lista ta' affarijiet li ngħataw."
+        "fez": "Ħobż, ħwejjeġ, ilma. Hija lista ta' affarijiet li ngħataw."
       },
       "3": {
         "explorer": "Fil-qabar ta' raġel li ħa kollox miegħu."
@@ -1599,8 +1605,42 @@
       "explorer": "Tgħaddi."
     }
   },
+  "formula": {
+    "junior": {
+      "hint": {
+        "1": {
+          "fez": "Hemmhekk nieqsa xi ħaġa għal min hu bil-ġuħ. Ħobż, ngħid jien. U naf raġel li għadd kull xkora qamħ għal erbgħin sena."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Ipi, għandna bżonn il-ħobż. Għal ħajt."
+        },
+        "2": {
+          "ipi": "Ħobż? Tiegħi? Taf kemm jiswa l-qamħ?"
+        },
+        "3": {
+          "fez": "Hu għal linja dwar li tagħti l-affarijiet b'xejn."
+        },
+        "4": {
+          "ipi": "…Tagħti. B'xejn."
+        },
+        "5": {
+          "ipi": "Mela tajjeb. Ħobża waħda. Imma tinkiteb: _Ipi ta l-ħobż._"
+        },
+        "6": {
+          "fez": "Ta xi ħaġa b'xejn! Rajtu?"
+        }
+      }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": {
+        "1": {
+          "ipi": "Dik il-ħobża — xi ħadd kielha diġà? Għax jekk le, nixtieqha lura."
+        }
+      },
       "north1": {
         "1": {
           "ipi": "Għadek hawn? It-tramuntana! Henut! Ħdax-il deben!"
@@ -1635,7 +1675,7 @@
     "junior": {
       "wall1": {
         "1": {
-          "henut": "Il-ħajt. It-tielet sinjal. Għadu mhux ismi."
+          "henut": "Il-ħajt. It-tieni sinjal. Għadu mhux ismi."
         }
       },
       "wall2": {

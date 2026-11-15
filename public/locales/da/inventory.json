@@ -239,6 +239,21 @@
       "description": "Kongens hovedpynt med en beskyttende kobra. Faraoerne bar den for at være beskyttet af guderne."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Brød",
+      "description": "Det høje brød, tegnet for brød. Givet af Ipi, der talte korn i fyrre år og gav det væk én gang."
+    },
+    "o2": {
+      "name": "Linned"
+    },
+    "o3": {
+      "name": "Vand"
+    },
+    "o4": {
+      "name": "Båd"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Sivblad",

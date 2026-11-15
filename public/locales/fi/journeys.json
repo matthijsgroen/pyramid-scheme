@@ -21,19 +21,24 @@
     "mapHint": "Paperinpalassa on luonnos kauppatiestä ja kellarin ovesta. Kauppiaan piilopaikka, ei mitään hienompaa."
   },
   "junior_1": {
-    "name": "Pyhien iibisten muutto"
+    "name": "Pyhien iibisten muutto",
+    "description": "Ruokosoita Niilin varrella ja iibis, joka kahlaa niiden halki. Pyhiä lintuja — eikä sen syyn takia, jota luulet."
   },
   "junior_2": {
-    "name": "Käsityöläisten laakso"
+    "name": "Käsityöläisten laakso",
+    "description": "Deir el-Medina, haudanrakentajien kylä. Heidän työpajansa ovat yhä pystyssä, ja niin on osa työstäkin."
   },
   "junior_3": {
-    "name": "Thothin temppeli"
+    "name": "Thothin temppeli",
+    "description": "Thothin temppeli. Kaikki tuntevat hänen nimensä; kysy kolmelta, minkä jumala hän oli, niin saat kolme vastausta."
   },
   "junior_4": {
-    "name": "Aleksandrian majakka"
+    "name": "Aleksandrian majakka",
+    "description": "Aleksandrian majakka, yksi maailman seitsemästä ihmeestä. Se, mitä siitä on jäljellä, on satamassa veden alla."
   },
   "junior_treasure_tomb": {
     "name": "Ylhäisen piilotettu holvi",
+    "description": "Ylhäisen naisen holvi, maalattu lattiasta kattoon, ja kaikki on yhä siellä, mihin hän sen pani.",
     "mapHint": "Hienoa mustetta ja vaakunasinetti nurkassa. Joku arvohenkilö halusi tämän huoneen unohtuvan."
   },
   "expert_1": {
