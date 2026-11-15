@@ -110,7 +110,7 @@ import {
   tileRegionsFor,
   type RoomClaims,
 } from "./roomClaims"
-import { nodeArtStep, occupantOffset, prefabArtOffset, standingOffset } from "./standingSpot"
+import { chestArtOffset, nodeArtStep, occupantOffset, prefabArtOffset, standingOffset } from "./standingSpot"
 import { markerCell, walkPoints, type WalkPoint } from "./roomWalk"
 import { prefabRoomAt, prefabRoomCells } from "@/game/roomShape"
 import { OccupantFigure } from "./OccupantFigure"
@@ -188,7 +188,6 @@ type Props = {
  * tile rather than guessed: the flame's own pixels land 24 units to one side of centre. WHICH side is a
  * fact about the file — see `flameOnRight` where the flights are placed. */
 const STAIR_FLAME_DX = CELL * 0.43
-const CHEST_LIFT = CELL * 0.12
 
 /** Where the standing torch's flame stands across its frame, measured off the painted tile: its pixels
  * land 25 units from the left edge, a hair left of centre. */
@@ -599,12 +598,10 @@ export const nodeSpritesFor = (
               )
             : undefined
         if (!url && !leverUrls) continue
-        const { dx, dy } = prefabArtOffset(grid, claims, r, c) ?? nodeArtStep(grid, claims, r, c)
-        // THE EXPLORER STANDS IN FRONT OF THE CHEST HE OPENS: its floor line sits above his, never level with
-        // or below it, so the depth sort draws him over it.
+        const { dx, dy } = chestArtOffset(grid, claims, r, c)
         const placed = {
           x: cx + dx - CELL / 2,
-          y: cy + Math.min(dy, 0) - CHEST_LIFT + CELL / 2 - PROP_H,
+          y: cy + dy + CELL / 2 - PROP_H,
           mirrored: false,
           // A chest whose family keeps its room open wears no ✓ and is not dimmed: the ✓ and the fade are
           // the pair that say emptied.
