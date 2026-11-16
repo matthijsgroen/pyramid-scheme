@@ -1692,20 +1692,6 @@ export const SiteMapView = ({
     () => new Set(explorerPos ? litPlaceCells(grid, claims, explorerPos) : []),
     [grid, claims, explorerPos]
   )
-  const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
-  // The place the explorer stands is drawn as current rather than done — see `drawnAsCurrent`. The wall
-  // over every arch is part of its run (see `buildTileRegions`); a doorway whose tier has no arch art
-  // stands no arch, so it stays an opening in the wall with nothing over it.
-  const regions = useMemo(
-    () =>
-      tileRegionsFor(
-        drawnAsCurrent(grid, torchPlace),
-        claims,
-        ownedKeys,
-        new Set(doorways.filter(({ tier: at }) => tileOrPlaceholder(at, "arch")).map(({ row, col }) => `${row},${col}`))
-      ),
-    [grid, torchPlace, claims, ownedKeys, doorways]
-  )
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const cornerRocks = useMemo(() => cornerRocksFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // Reckoned from where the explorer stands: the water is what he cannot walk into from there.
@@ -1736,18 +1722,6 @@ export const SiteMapView = ({
       waypoint?.[0] !== settledWaypoint?.[0] ||
       waypoint?.[1] !== settledWaypoint?.[1])
   )
-  // The walls that rise in front of floor, and the ones the explorer is behind: where he stands, and on a
-  // walk every cell from where he set out to where he is going, so a wall clears before he reaches it and
-  // stays clear until he has arrived past it.
-  const runs = useMemo(() => frontRuns(regions), [regions])
-  const behindKey =
-    explorerPos && !explorerHidden
-      ? walkCells(isTraveling ? settledExplorerPos : explorerPos, explorerPos).join("|")
-      : ""
-  const walls = useMemo(
-    (): WallFades => ({ runs, faded: fadedRuns(runs, behindKey ? behindKey.split("|") : []) }),
-    [runs, behindKey]
-  )
 
   const weight = useMemo(
     () =>
@@ -1769,6 +1743,42 @@ export const SiteMapView = ({
         mechanismStyle
       ),
     [grid, claims, tier, mechanismStates, currentFloor, isTraveling, settledExplorerPos, weight, mechanismStyle]
+  )
+  // A GATE HUNG IN A DOORWAY IS ITS DOOR: the leaf stands in the band an arch would, so that doorway stands no arch.
+  const doorways = useMemo(() => {
+    const gated = new Set(
+      nodeSprites.flatMap(({ key, footprint }) => {
+        if (!key.startsWith("gate:") || footprint.length !== 2) return []
+        const [[r1, c1], [r2, c2]] = footprint.map(cell => cell.split(",").map(Number))
+        return c1 === c2 && r1 !== r2 ? [`${Math.max(r1, r2)},${c1}`] : []
+      })
+    )
+    return doorwaysFor(grid, claims, ownedKeys).filter(({ row, col }) => !gated.has(`${row},${col}`))
+  }, [grid, claims, ownedKeys, nodeSprites])
+  // The place the explorer stands is drawn as current rather than done — see `drawnAsCurrent`. The wall
+  // over every arch is part of its run (see `buildTileRegions`); a doorway whose tier has no arch art
+  // stands no arch, so it stays an opening in the wall with nothing over it.
+  const regions = useMemo(
+    () =>
+      tileRegionsFor(
+        drawnAsCurrent(grid, torchPlace),
+        claims,
+        ownedKeys,
+        new Set(doorways.filter(({ tier: at }) => tileOrPlaceholder(at, "arch")).map(({ row, col }) => `${row},${col}`))
+      ),
+    [grid, torchPlace, claims, ownedKeys, doorways]
+  )
+  // The walls that rise in front of floor, and the ones the explorer is behind: where he stands, and on a
+  // walk every cell from where he set out to where he is going, so a wall clears before he reaches it and
+  // stays clear until he has arrived past it.
+  const runs = useMemo(() => frontRuns(regions), [regions])
+  const behindKey =
+    explorerPos && !explorerHidden
+      ? walkCells(isTraveling ? settledExplorerPos : explorerPos, explorerPos).join("|")
+      : ""
+  const walls = useMemo(
+    (): WallFades => ({ runs, faded: fadedRuns(runs, behindKey ? behindKey.split("|") : []) }),
+    [runs, behindKey]
   )
   const drawnPlates = useMemo(
     () =>
