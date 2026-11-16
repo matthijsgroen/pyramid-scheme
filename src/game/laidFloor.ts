@@ -606,7 +606,9 @@ export type Lengthening = { kind: "region" | "corridor"; id: string; nodes: numb
  * content took, in a region whose appetite takes its kind, and a region always keeps the nodes its mechanics' seats
  * want: on the route those come off the route's nodes, off it off the region's own. A section's rooms stand
  * in walk order from the way in, its puzzles first and its end room last, spread along the walk; a floor the
- * spread cannot seat is packed from the way in instead.
+ * spread cannot seat is packed from the way in instead. An end room with only empty nodes past it to a dead end, in a
+ * region with a node to spare beyond what its seats want, stands at that dead end, so no corridor runs on beyond it
+ * to nothing.
  *
  * A SECTION ASSIGNED TO A CORRIDOR STANDS ON THAT CORRIDOR'S NODES ONLY, spread along it the same way, so the
  * lock's obstacles stand between its rooms where the corridor carries them. The assigned sections are filled
@@ -626,6 +628,9 @@ export const fillLaidFloor = (
     | "drops"
     | "seatDemand"
     | "stretches"
+    | "n"
+    | "passages"
+    | "joins"
   >,
   taken: ReadonlySet<CellKey>,
   demands: readonly AbsorbedDemand[],
@@ -668,6 +673,18 @@ export const fillLaidFloor = (
     { nodes: candidates, members: demands.filter(demand => demand.corridor === undefined) },
   ]
 
+  // The dead end a node's corridor runs on to, through empty nodes only, walking away from the way in.
+  const neighbours = neighboursOf(floor.passages, floor.joins, floor.n)
+  const deadEndPast = (from: CellKey, free: (key: CellKey) => boolean): CellKey | undefined => {
+    for (let at = from; ;) {
+      const ways = neighbours.get(at) ?? []
+      if (at !== from && ways.length === 1) return at
+      const next = ways.find(key => floor.depth.get(key)! > floor.depth.get(at)!)
+      if (ways.length !== 2 || next === undefined || !free(next)) return undefined
+      at = next
+    }
+  }
+
   const fill = (spread: boolean): { placed: AbsorbedPlace[]; missing: MissingRoom[] } => {
     const room = new Map(allowance)
     const used = new Set<CellKey>()
@@ -702,6 +719,19 @@ export const fillLaidFloor = (
         }
         placedOf.set(demand, { section, cells })
       })
+    // Once every section stands, an end room moves on to its corridor's dead end where its region has a node spare.
+    for (const demand of demands) {
+      const { kinds, open = false } = demand
+      const { cells } = placedOf.get(demand)!
+      if (cells.length !== kinds.length) continue
+      const end = cells[cells.length - 1]
+      if ((room.get(poolOf(end)) ?? 0) <= 0) continue
+      const tip = deadEndPast(end, key => candidates.includes(key) && !used.has(key) && poolOf(key) === poolOf(end))
+      if (tip === undefined || !accepts(tip, kinds[kinds.length - 1], open)) continue
+      used.delete(end)
+      used.add(tip)
+      cells[cells.length - 1] = tip
+    }
     return { placed: demands.map(demand => placedOf.get(demand)!), missing }
   }
 

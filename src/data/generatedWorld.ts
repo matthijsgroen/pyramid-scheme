@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 396053688
+export const worldContentHash = 989426655
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -7094,6 +7094,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         packing: 0.2,
         seed: 390963684767486,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 21,
+            startingN: 21,
+            packing: 0.2,
+            targetDistance: 14,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d15", pieceIndex: 0 },
         rewards: [
           { type: "campPart", structure: "tent", part: "wovenCloth" },
@@ -10449,6 +10461,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.16,
         seed: 2816278010141107,
+        carveFrom: {
+          attempt: 3,
+          rung: {
+            n: 21,
+            startingN: 21,
+            packing: 0.16,
+            targetDistance: 13,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p2", pieceIndex: 0 },
         rewards: [
           { type: "waterskin" },
@@ -12759,6 +12783,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.16,
         seed: 5207779554184530,
+        carveFrom: {
+          attempt: 1,
+          rung: {
+            n: 23,
+            startingN: 23,
+            packing: 0.16,
+            targetDistance: 16,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art14", pieceIndex: 1 },
         rewards: [
           { type: "waterskin" },
@@ -13151,7 +13187,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         corridorStraightness: 0.35,
         packing: 0.1,
-        seed: 3982655454,
+        seed: 3982655365,
         mainEndReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
         rewards: [
           { type: "waterskin" },
@@ -15214,6 +15250,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 3,
         packing: 0.2,
         seed: 7907893988303842,
+        carveFrom: {
+          attempt: 16,
+          rung: {
+            n: 33,
+            startingN: 33,
+            packing: 0.8,
+            targetDistance: 40,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
+        },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d9", pieceIndex: 2 },
         rewards: [{ type: "waterskin" }, { type: "waterskin" }, undefined, undefined, undefined],
         locks: [
