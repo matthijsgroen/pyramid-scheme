@@ -1,9 +1,11 @@
 // designed by: Claude
 // LESSON, junior: a stone set on a plate holds its door open; lift it and the door shuts. The shut door comes
-// first, in the yard; the plate and a stone on a shelf wait in a side room, so the player goes looking for them.
+// first, in the yard; the plate waits in a side room and the stone on a shelf in a nook past it, so the player goes
+// looking for both and carries the stone back to the plate.
 
 in -- yard
 yard -[p]- out
 yard -- side
+side -- shelf
 p plate @side
-ledge plate @side stone
+ledge plate @shelf stone
