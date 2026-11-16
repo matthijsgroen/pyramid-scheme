@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { Direction, FloorGrid, GridCell } from "../siteTypes"
-import { trimBareTails } from "./trimBareTails"
+import { trimBareTails, waysToNothing } from "./trimBareTails"
 
 const empty: GridCell = { type: "empty" }
 const corridor = (dirs: Direction[], more: Partial<Extract<GridCell, { type: "corridor" }>> = {}): GridCell => ({
@@ -56,6 +56,8 @@ describe("a corridor leading to nothing", () => {
     }
     const behindADoor = gridOf([[room(["e"]), door, corridor(["w"], { region: "side" })]])
     expect(trimBareTails(behindADoor)).toBe(behindADoor)
+    // Kept, it still leads to nothing, which the layout search refuses.
+    expect(waysToNothing(behindADoor)).toEqual(["0,2"])
   })
 
   it("leaves a floor where every corridor ends at something untouched", () => {

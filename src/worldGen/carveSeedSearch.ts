@@ -3,6 +3,7 @@ import { lockGroundUnfed } from "@/game/lockPuzzles"
 import type { AssemblerReason, AssemblerResult, CarveStart, FloorConfig, FloorGrid } from "@/game/siteTypes"
 import type { CorridorAssignment } from "@/game/corridorSidePaths"
 import { roomlessRouteStubs } from "@/game/routeStubs"
+import { waysToNothing } from "@/game/carve/trimBareTails"
 
 /** What every picked layout meets, in the order they are asked; a carve that fails one is never asked the next.
  * Packing and the carve's attempt are no criteria: they order the search (`searchCarvePair`). */
@@ -12,6 +13,7 @@ export const HARD_CRITERIA = [
   "every region gets what it takes",
   "no dead region",
   "every stub holds a room",
+  "no corridor leads to nothing",
 ] as const
 export type HardCriterion = (typeof HARD_CRITERIA)[number]
 export type CarveRefusal = { criterion: HardCriterion; detail: string }
@@ -24,6 +26,7 @@ export const AUTHORING_FIELD: Record<HardCriterion, string> = {
     "its regions' `takes`, or pathPuzzles and sideSections (what the floor has to give them)",
   "no dead region": "locks",
   "every stub holds a room": "sideSections or locks",
+  "no corridor leads to nothing": "sideSections (something to stand in an empty region) or locks",
 }
 
 /** A layout that meets every hard criterion. `laddered`: it carves only on the runtime ladder, past attempt 0. */
@@ -88,6 +91,8 @@ export const refusal = (result: AssemblerResult, floor: Pick<FloorConfig, "locks
   if (dead.length > 0) return { criterion: "no dead region", detail: dead.join(", ") }
   const bare = roomlessRouteStubs(result.grid)
   if (bare.length > 0) return { criterion: "every stub holds a room", detail: bare.join(", ") }
+  const nothing = waysToNothing(result.grid)
+  if (nothing.length > 0) return { criterion: "no corridor leads to nothing", detail: nothing.join(", ") }
   return null
 }
 
