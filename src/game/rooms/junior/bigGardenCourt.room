@@ -1,21 +1,21 @@
 // designed by: Claude
-// junior. A big garden court: the lotus pool in the middle of an open court, a lotus column between two potted trees on
-// the north wall.
-// On a floor with a patron, the god's statues stand in the south corners.
+// junior. A big garden court: the lotus pool in the middle of an open court, a lotus column on the north wall, potted
+// trees in the south corners. On a floor with a patron, the god's statues stand in the north corners, facing into the
+// court.
 room bigGardenCourt
 tier junior
 activity gardenCourt
 
 layout
 # # d # d # #
-# t . c . t #
+# p . c . p #
 d . . . . . d
 # . b b . . #
 d . . . . . d
-# p . s . p #
+# t . s . t #
 # # d # d # #
 
-t wall pottedTree
+t floor pottedTree
 c wall pillar
 b floor lotusPool
 p floor? patron

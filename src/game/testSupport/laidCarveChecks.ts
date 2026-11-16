@@ -75,8 +75,22 @@ const lockGround = (grid: FloorGrid, filledIn: ReadonlySet<string>): string[] =>
  */
 export const expectCarveReadsLaid = (grid: FloorGrid, laid: LaidFloor): void => {
   const routeKeys = laid.route.map(([r, c]) => `${r},${c}`)
-  const laidNodes = new Set([...routeKeys, ...laid.chains.flatMap(chain => chain.cells.map(([r, c]) => `${r},${c}`))])
-  expect(lockGround(grid, new Set(laid.absorbed.flatMap(({ cells }) => cells)))).toEqual([...laidNodes].sort())
+  const absorbed = new Set(laid.absorbed.flatMap(({ cells }) => cells))
+  // A chain node the carve left bare at a dead end is cut off (`trimBareTails`); nothing on the route or holding a
+  // side path's room ever is.
+  const trimmed = laid.chains
+    .flatMap(chain => chain.cells.map(([r, c]) => `${r},${c}`))
+    .filter(node => at(grid, node).type === "empty")
+  for (const node of trimmed) {
+    expect(routeKeys, `${node} is on the route`).not.toContain(node)
+    expect(absorbed.has(node), `${node} holds a side path's room`).toBe(false)
+  }
+  const laidNodes = new Set(
+    [...routeKeys, ...laid.chains.flatMap(chain => chain.cells.map(([r, c]) => `${r},${c}`))].filter(
+      node => !trimmed.includes(node)
+    )
+  )
+  expect(lockGround(grid, absorbed)).toEqual([...laidNodes].sort())
   for (const node of laidNodes) expect((at(grid, node) as { region?: string }).region).toBe(laid.label.get(node))
 
   const passages = new Set(laid.passages)
