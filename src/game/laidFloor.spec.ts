@@ -13,6 +13,7 @@ import {
 } from "./laidFloor"
 import type { LaidFloor } from "./laidFloor"
 import { layLockPlan, startingGridSize } from "./layLocks"
+import { makePkey } from "./carve/grid"
 import { planLockFloor } from "./lockPlan"
 import type { LockPlan } from "./lockPlan"
 import { freeRegions } from "./lockAuthoring"
@@ -266,6 +267,9 @@ const straight = (labels: string[]) => {
     drops: [],
     seatDemand: new Map<string, number>(),
     stretches: new Map<string, string[]>(),
+    n: 2 * labels.length,
+    passages: keys.slice(1).map((_, i) => makePkey(2 * labels.length)(0, 2 * i, 0, 2 * i + 2)),
+    joins: [],
   }
 }
 
@@ -344,6 +348,23 @@ describe("the floor's side sections filled into the laid nodes", () => {
     expect(shut.open.has(cells[0])).toBe(true)
     const none = fillLaidFloor(shut, new Set(), [{ section: 0, kinds: ["reward"], open: true }], appetite)
     expect(none).toEqual({ missing: [{ kind: "reward", open: true }] })
+  })
+
+  it("stands an end room at the dead end its corridor runs on to where its region has a node to spare", () => {
+    const route = straight(["entrance", "hall", "hall", "exit"])
+    const spur = ["2,2", "4,2", "6,2"]
+    const floor = {
+      ...route,
+      label: new Map([...route.label, ...spur.map((key): [string, string] => [key, "vault"])]),
+      depth: new Map([...route.depth, ...spur.map((key, i): [string, number] => [key, i + 2])]),
+      open: new Set([...route.open, ...spur]),
+      passages: [...route.passages, ...[0, 2, 4].map(r => makePkey(route.n)(r, 2, r + 2, 2))],
+    }
+    const demand = [{ section: 0, kinds: ["puzzle", "reward"] as Array<"puzzle" | "reward"> }]
+    expect(cellsOf(fillLaidFloor(floor, new Set(), demand, appetite))[0][1]).toBe("6,2")
+    // With every spare vault node wanted by a seat, the end room keeps its spread place.
+    const seated = { ...floor, seatDemand: new Map([["vault", 2]]) }
+    expect(cellsOf(fillLaidFloor(seated, new Set(), demand, appetite))[0][1]).toBe("4,2")
   })
 
   it("packs from the way in when spreading the rooms along the walk would strand one", () => {
