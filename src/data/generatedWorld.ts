@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 989426655
+export const worldContentHash = 418714377
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -6278,20 +6278,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "shrineRoom", min: 0, max: 1, central: 0.5 },
         ],
         packing: 0.2,
-        outsideLock: [5],
-        seed: 1491887413430962,
-        carveFrom: {
-          attempt: 3,
-          rung: {
-            n: 21,
-            startingN: 21,
-            packing: 0.2,
-            targetDistance: 14,
-            chainWind: 1,
-            chainFloor: 0,
-            recovery: false,
-          },
-        },
+        seed: 458394325,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a2", pieceIndex: 1 },
         rewards: [
           { type: "campFind", step: "spiceRack" },
@@ -6308,14 +6295,20 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
                 yard: { takes: "free" },
                 out: { takes: "free" },
                 side: { takes: "free" },
+                shelf: { takes: "free" },
               },
-              connections: [["in", "yard"], { between: ["yard", "out"], barriers: ["yard-out"] }, ["yard", "side"]],
+              connections: [
+                ["in", "yard"],
+                { between: ["yard", "out"], barriers: ["yard-out"] },
+                ["yard", "side"],
+                ["side", "shelf"],
+              ],
               gates: { "yard-out": { from: "yard", to: "out", owners: ["p"] } },
               mechanics: {},
               weights: {
                 plates: {
                   p: { in: "side", stone: false, opens: { weighted: ["yard-out"], empty: [] } },
-                  ledge: { in: "side", stone: true, opens: { weighted: [], empty: [] } },
+                  ledge: { in: "shelf", stone: true, opens: { weighted: [], empty: [] } },
                 },
               },
               in: "in",
@@ -14956,12 +14949,12 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 7907893988303841,
         carveFrom: {
-          attempt: 1,
+          attempt: 10,
           rung: {
-            n: 17,
-            startingN: 17,
-            packing: 0.1,
-            targetDistance: 11,
+            n: 21,
+            startingN: 21,
+            packing: 0.2,
+            targetDistance: 14,
             chainWind: 1,
             chainFloor: 0,
             recovery: false,
@@ -14978,14 +14971,20 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
                 yard: { takes: "free" },
                 out: { takes: "free" },
                 side: { takes: "free" },
+                shelf: { takes: "free" },
               },
-              connections: [["in", "yard"], { between: ["yard", "out"], barriers: ["yard-out"] }, ["yard", "side"]],
+              connections: [
+                ["in", "yard"],
+                { between: ["yard", "out"], barriers: ["yard-out"] },
+                ["yard", "side"],
+                ["side", "shelf"],
+              ],
               gates: { "yard-out": { from: "yard", to: "out", owners: ["p"] } },
               mechanics: {},
               weights: {
                 plates: {
                   p: { in: "side", stone: false, opens: { weighted: ["yard-out"], empty: [] } },
-                  ledge: { in: "side", stone: true, opens: { weighted: [], empty: [] } },
+                  ledge: { in: "shelf", stone: true, opens: { weighted: [], empty: [] } },
                 },
               },
               in: "in",
