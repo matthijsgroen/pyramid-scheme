@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 418714377
+export const worldContentHash = 822845777
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -4664,9 +4664,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "gardenCourt",
             mirror: false,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["##d#d##", "#t.c.t#", "d..b..d", "#p.s.p#", "##d#d##"] }],
+            layouts: [{ name: "", cells: ["##d#d##", "#p.c.p#", "d..b..d", "#t.s.t#", "##d#d##"] }],
             places: {
-              t: { letter: "t", layer: "wall", optional: false, kinds: ["pottedTree"], cols: 1, rows: 1 },
+              t: { letter: "t", layer: "floor", optional: false, kinds: ["pottedTree"], cols: 1, rows: 1 },
               c: { letter: "c", layer: "wall", optional: false, kinds: ["pillar"], cols: 1, rows: 1 },
               b: { letter: "b", layer: "floor", optional: false, kinds: ["basin"], cols: 1, rows: 1 },
               p: { letter: "p", layer: "floor", optional: true, kinds: ["patron"], cols: 1, rows: 1 },
@@ -7059,9 +7059,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "gardenCourt",
             mirror: false,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["##d#d##", "#t.c.t#", "d..b..d", "#p.s.p#", "##d#d##"] }],
+            layouts: [{ name: "", cells: ["##d#d##", "#p.c.p#", "d..b..d", "#t.s.t#", "##d#d##"] }],
             places: {
-              t: { letter: "t", layer: "wall", optional: false, kinds: ["pottedTree"], cols: 1, rows: 1 },
+              t: { letter: "t", layer: "floor", optional: false, kinds: ["pottedTree"], cols: 1, rows: 1 },
               c: { letter: "c", layer: "wall", optional: false, kinds: ["pillar"], cols: 1, rows: 1 },
               b: { letter: "b", layer: "floor", optional: false, kinds: ["basin"], cols: 1, rows: 1 },
               p: { letter: "p", layer: "floor", optional: true, kinds: ["patron"], cols: 1, rows: 1 },
