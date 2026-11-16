@@ -12,6 +12,35 @@ const withoutWay = (cell: GridCell, dir: Direction): GridCell => {
     : { ...cell, dirs }
 }
 
+const markedCells = (grid: FloorGrid) =>
+  new Set([grid.entrancePos, grid.exitPos, ...Object.values(grid.staircases)].map(([r, c]) => `${r},${c}`))
+
+// The one way out of a plain corridor dead end — no drop, gate, designed room's floor, hidden way, stair, entrance or
+// exit on it, no drop's lip beside it — or nothing where the cell is not one.
+const bareDeadEnd = (
+  cells: ReadonlyArray<ReadonlyArray<GridCell>>,
+  marked: ReadonlySet<string>,
+  r: number,
+  c: number
+): Direction | undefined => {
+  const cell = cells[r][c]
+  if (cell.type !== "corridor" || cell.dirs.size !== 1 || marked.has(`${r},${c}`)) return undefined
+  if (cell.obstacle || cell.openGate || cell.prefabRoom || cell.hidden) return undefined
+  const lip = Object.values(STEP).some(([dr, dc]) => {
+    const near = cells[r + dr]?.[c + dc]
+    return near?.type === "corridor" && near.obstacle !== undefined
+  })
+  return lip ? undefined : [...cell.dirs][0]
+}
+
+/** Every corridor dead end on the floor that leads to nothing (`bareDeadEnd`), as `r,c`. */
+export const waysToNothing = (grid: FloorGrid): string[] => {
+  const marked = markedCells(grid)
+  return grid.cells.flatMap((row, r) =>
+    row.flatMap((_, c) => (bareDeadEnd(grid.cells, marked, r, c) ? [`${r},${c}`] : []))
+  )
+}
+
 /**
  * NO CORRIDOR LEADS TO NOTHING. A plain corridor cell with one way out — no drop, no gate, no designed room's floor,
  * nothing hidden, no stair, entrance or exit on it, and no drop's lip beside it — is ground the player walks to and
@@ -20,9 +49,7 @@ const withoutWay = (cell: GridCell, dir: Direction): GridCell => {
  * nothing in it is a fault the lock's walk has to see (`walkFloorLock`'s `regionLost`), not one to cut out of sight.
  */
 export const trimBareTails = (grid: FloorGrid): FloorGrid => {
-  const marked = new Set(
-    [grid.entrancePos, grid.exitPos, ...Object.values(grid.staircases)].map(([r, c]) => `${r},${c}`)
-  )
+  const marked = markedCells(grid)
   const cells = grid.cells.map(row => [...row])
   // The regions holding a room that is no door: a door is the way in, not something found there.
   const roomed = new Set(
@@ -30,17 +57,11 @@ export const trimBareTails = (grid: FloorGrid): FloorGrid => {
       row.flatMap(cell => (cell.type === "room" && cell.region && !cell.requiredKeyId ? [cell.region] : []))
     )
   )
-  // The one way out of a bare dead end, or nothing where the cell is not one.
   const bareWay = (r: number, c: number): Direction | undefined => {
     const cell = cells[r][c]
-    if (cell.type !== "corridor" || cell.dirs.size !== 1 || marked.has(`${r},${c}`)) return undefined
-    if (cell.obstacle || cell.openGate || cell.prefabRoom || cell.hidden) return undefined
-    if (cell.region && !roomed.has(cell.region)) return undefined
-    const lip = Object.values(STEP).some(([dr, dc]) => {
-      const near = cells[r + dr]?.[c + dc]
-      return near?.type === "corridor" && near.obstacle !== undefined
-    })
-    return lip ? undefined : [...cell.dirs][0]
+    return cell.type === "corridor" && cell.region && !roomed.has(cell.region)
+      ? undefined
+      : bareDeadEnd(cells, marked, r, c)
   }
   let trimmed = false
   for (let r0 = 0; r0 < grid.rows; r0++)

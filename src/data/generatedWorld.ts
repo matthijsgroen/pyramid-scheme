@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 822845777
+export const worldContentHash = 1080765463
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -4934,21 +4934,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "water",
         encountersByIndex: { 0: "star-battle", 1: "hidato", 2: "canisters", 3: "procession" },
         chambers: 2,
-        packing: 0.2,
+        packing: 0.36,
+        sidePacking: 0.2,
         outsideLock: [2, 3, 4],
-        seed: 3205065412912521,
-        carveFrom: {
-          attempt: 47,
-          rung: {
-            n: 41,
-            startingN: 33,
-            packing: 1,
-            targetDistance: 42,
-            chainWind: 0.41379310344827586,
-            chainFloor: 1,
-            recovery: true,
-          },
-        },
+        seed: 1902847410,
         mainEndReward: { type: "mosaicPiece", tier: "junior" },
         rewards: [
           { type: "campFind", step: "pot" },
@@ -7519,9 +7508,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: ["scribe", "puzzle"],
         encountersByIndex: { 0: "constellation", 1: "balance-scale", 2: "star-battle", 3: "lightbeam", 4: "hidato" },
         chambers: 2,
-        packing: 0.2,
+        packing: 0.24,
+        sidePacking: 0.2,
         outsideLock: [4, 5, 6],
-        seed: 1401747239,
+        seed: 1401747213,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11", pieceIndex: 2 },
         rewards: [
           { type: "campPart", structure: "tent", part: "tentPegs" },
@@ -13454,9 +13444,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           5: "eclipse",
         },
         chambers: 3,
-        packing: 0.1,
+        packing: 0.26,
+        sidePacking: 0.1,
         outsideLock: [4],
-        seed: 3982655361,
+        seed: 3982655424,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d9", pieceIndex: 1 },
         rewards: [
           { type: "waterskin" },
