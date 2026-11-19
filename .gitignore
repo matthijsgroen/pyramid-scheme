@@ -31,3 +31,7 @@ storybook-static
 .claude/settings.local.json
 .playwright-mcp/
 .superpowers/
+
+# Stryker mutation testing
+reports/mutation
+.stryker-tmp

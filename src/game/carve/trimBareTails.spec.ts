@@ -34,6 +34,23 @@ describe("a corridor leading to nothing", () => {
     expect(shape(trimBareTails(grid))).toEqual(["e|w| | | "])
   })
 
+  it("is taken off running north to south too", () => {
+    const grid = gridOf([[room(["s"])], [corridor(["n", "s"])], [corridor(["n"])]])
+    expect(shape(trimBareTails(grid))).toEqual(["", " ", " "])
+  })
+
+  it("takes the way out of the room's exits as well", () => {
+    const fork: GridCell = {
+      ...room(["w", "e"]),
+      exits: [
+        { dir: "w", kind: "main" },
+        { dir: "e", kind: "fork" },
+      ],
+    } as GridCell
+    const trimmed = trimBareTails(gridOf([[room(["e"]), fork, corridor(["w"])]])).cells[0][1]
+    expect(trimmed.type === "room" && trimmed.exits).toEqual([{ dir: "w", kind: "main" }])
+  })
+
   it("stays where it reaches a drop's lip, a stair or a hidden way", () => {
     const lip = gridOf([[room(["e"]), corridor(["w"]), corridor(["e"], { obstacle: { dir: "e", kind: "drop" } })]])
     expect(trimBareTails(lip)).toBe(lip)
