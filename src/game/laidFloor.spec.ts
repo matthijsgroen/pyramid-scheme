@@ -295,6 +295,37 @@ describe("the floor's side sections filled into the laid nodes", () => {
     expect(hall.routeLabels[steps[2]]).toBe("vault")
   })
 
+  it("reads walk order off the depth, whatever order the labels come in", () => {
+    const backwards = { ...hall, label: new Map([...hall.label].reverse()) }
+    const [cells] = cellsOf(
+      fillLaidFloor(backwards, new Set(), [{ section: 0, kinds: ["puzzle", "puzzle", "reward"] }], appetite)
+    )
+    const steps = cells.map(stepOf)
+    expect([...steps].sort((a, b) => a - b)).toEqual(steps)
+  })
+
+  it("takes the nearest node that fits before the spread place over a farther one past it", () => {
+    const floor = straight(["entrance", ...Array(4).fill("hall"), ...Array(4).fill("vault"), "hall", "exit"])
+    const [cells] = cellsOf(fillLaidFloor(floor, new Set(), [{ section: 0, kinds: ["puzzle"] }], appetite))
+    expect(cells.map(stepOf)).toEqual([4])
+  })
+
+  it("never stands two sections on one node", () => {
+    const floor = straight(["entrance", "hall", "hall", "vault", "vault", "vault", "exit"])
+    const placed = cellsOf(
+      fillLaidFloor(
+        floor,
+        new Set(),
+        [
+          { section: 0, kinds: ["puzzle"] },
+          { section: 1, kinds: ["puzzle"] },
+        ],
+        appetite
+      )
+    )
+    expect(new Set(placed.flat()).size).toBe(2)
+  })
+
   it("puts a room only in a region whose appetite takes its kind, though a refusing node lies nearer its spread", () => {
     // The vault nodes ahead of the hall are the nearest to where the puzzle is spread to.
     const floor = straight(["entrance", "vault", "vault", "hall", "hall", "vault", "exit"])

@@ -129,6 +129,20 @@ why they run when somebody makes one rather than on every pull request. A fixtur
 the fixture and compares it with `toStrictEqual` — without that the split is a lie, since a stored board
 that has drifted lets the whole spec pass while every board the game deals is broken.
 
+## `yarn mutate` — finding the test a function lacks
+
+Stryker changes one operator at a time in the code you name and reports each change no spec notices:
+
+```sh
+SPECS="src/game/carve/**/*.spec.ts" yarn mutate src/game/carve/trimBareTails.ts:20-77
+```
+
+**Always narrow it with `SPECS`.** Many specs carve at describe level, so every mutant there runs the whole suite:
+about 90 minutes a function. Narrowed, it takes minutes. A survivor means "not killed by THESE specs" — look for an
+integration spec before writing a test. A timeout counts as killed but often only made the code slower, and plenty of
+survivors change nothing (an unreachable guard, a tie-break). So the score is no gate: read the survivors, write the
+tests that are missing. The report lands in `reports/mutation/`.
+
 ---
 
 ## Test description style
