@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 80431366
+export const worldContentHash = 1097742714
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -6237,12 +6237,13 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             mirror: true,
             holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#d####", "#.bbh#", "d....d", "#.s..#", "##d#d#"] }],
+            layouts: [{ name: "", cells: ["#N####", "#pbbh#", "d....d", "#.s..#", "##d#d#"] }],
             places: {
               b: { letter: "b", layer: "wall", optional: false, kinds: ["bed"], cols: 2, rows: 1 },
               h: { letter: "h", layer: "wall", optional: false, kinds: ["headrest"], cols: 1, rows: 1 },
+              p: { letter: "p", layer: "floor", optional: true, kinds: ["patron"], unless: "N", cols: 1, rows: 1 },
             },
-            specials: { s: "stop" },
+            specials: { N: "door", s: "stop" },
           },
           shrineRoom: {
             name: "shrineRoom",
@@ -6267,7 +6268,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "shrineRoom", min: 0, max: 1, central: 0.5 },
         ],
         packing: 0.2,
-        seed: 458394325,
+        seed: 458394303,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a2", pieceIndex: 1 },
         rewards: [
           { type: "campFind", step: "spiceRack" },
@@ -7020,12 +7021,13 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             mirror: true,
             holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#d####", "#.bbh#", "d....d", "#.s..#", "##d#d#"] }],
+            layouts: [{ name: "", cells: ["#N####", "#pbbh#", "d....d", "#.s..#", "##d#d#"] }],
             places: {
               b: { letter: "b", layer: "wall", optional: false, kinds: ["bed"], cols: 2, rows: 1 },
               h: { letter: "h", layer: "wall", optional: false, kinds: ["headrest"], cols: 1, rows: 1 },
+              p: { letter: "p", layer: "floor", optional: true, kinds: ["patron"], unless: "N", cols: 1, rows: 1 },
             },
-            specials: { s: "stop" },
+            specials: { N: "door", s: "stop" },
           },
           dressingRoom: {
             name: "dressingRoom",
@@ -7280,12 +7282,13 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             mirror: true,
             holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#d####", "#.bbh#", "d....d", "#.s..#", "##d#d#"] }],
+            layouts: [{ name: "", cells: ["#N####", "#pbbh#", "d....d", "#.s..#", "##d#d#"] }],
             places: {
               b: { letter: "b", layer: "wall", optional: false, kinds: ["bed"], cols: 2, rows: 1 },
               h: { letter: "h", layer: "wall", optional: false, kinds: ["headrest"], cols: 1, rows: 1 },
+              p: { letter: "p", layer: "floor", optional: true, kinds: ["patron"], unless: "N", cols: 1, rows: 1 },
             },
-            specials: { s: "stop" },
+            specials: { N: "door", s: "stop" },
           },
           banquetRoom: {
             name: "banquetRoom",
@@ -7293,13 +7296,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "banquet",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#d##d#", "#.hg.#", "d.tt.d", "#..s.#", "#d##d#"] }],
+            layouts: [{ name: "", cells: ["#N##d#", "#phg.#", "d.tt.d", "#..s.#", "#d##d#"] }],
             places: {
               h: { letter: "h", layer: "wall", optional: false, kinds: ["harp"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: false, kinds: ["hanging", "jarRack"], cols: 1, rows: 1 },
               t: { letter: "t", layer: "floor", optional: false, kinds: ["banquetTable"], cols: 2, rows: 1 },
+              p: { letter: "p", layer: "floor", optional: true, kinds: ["patron"], unless: "N", cols: 1, rows: 1 },
             },
-            specials: { s: "stop" },
+            specials: { N: "door", s: "stop" },
           },
         },
         prefabPlacements: [
@@ -8203,15 +8207,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "banquet",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["##d##d##", "#j.hg.k#", "d......d", "#..tt..#", "#...s..#", "##d##d##"] }],
+            layouts: [{ name: "", cells: ["##N##d##", "#jphg.k#", "d......d", "#..tt..#", "#...s..#", "##d##d##"] }],
             places: {
               j: { letter: "j", layer: "wall", optional: false, kinds: ["jarRack"], cols: 1, rows: 1 },
               k: { letter: "k", layer: "wall", optional: false, kinds: ["jarRack"], cols: 1, rows: 1 },
               h: { letter: "h", layer: "wall", optional: false, kinds: ["harp"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: false, kinds: ["hanging"], cols: 1, rows: 1 },
               t: { letter: "t", layer: "floor", optional: false, kinds: ["banquetTable"], cols: 2, rows: 1 },
+              p: { letter: "p", layer: "floor", optional: true, kinds: ["patron"], unless: "N", cols: 1, rows: 1 },
             },
-            specials: { s: "stop" },
+            specials: { N: "door", s: "stop" },
           },
           bedroom: {
             name: "bedroom",
@@ -8220,12 +8225,13 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             mirror: true,
             holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#d####", "#.bbh#", "d....d", "#.s..#", "##d#d#"] }],
+            layouts: [{ name: "", cells: ["#N####", "#pbbh#", "d....d", "#.s..#", "##d#d#"] }],
             places: {
               b: { letter: "b", layer: "wall", optional: false, kinds: ["bed"], cols: 2, rows: 1 },
               h: { letter: "h", layer: "wall", optional: false, kinds: ["headrest"], cols: 1, rows: 1 },
+              p: { letter: "p", layer: "floor", optional: true, kinds: ["patron"], unless: "N", cols: 1, rows: 1 },
             },
-            specials: { s: "stop" },
+            specials: { N: "door", s: "stop" },
           },
           courtWorks: {
             name: "courtWorks",
@@ -8247,9 +8253,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         outsideLock: [4],
         seed: 3907394367270173,
         carveFrom: {
-          attempt: 4,
+          attempt: 2,
           rung: {
-            n: 23,
+            n: 21,
             startingN: 21,
             packing: 0.2,
             targetDistance: 12,
@@ -8556,13 +8562,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "banquet",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#d##d#", "#.hg.#", "d.tt.d", "#..s.#", "#d##d#"] }],
+            layouts: [{ name: "", cells: ["#N##d#", "#phg.#", "d.tt.d", "#..s.#", "#d##d#"] }],
             places: {
               h: { letter: "h", layer: "wall", optional: false, kinds: ["harp"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: false, kinds: ["hanging", "jarRack"], cols: 1, rows: 1 },
               t: { letter: "t", layer: "floor", optional: false, kinds: ["banquetTable"], cols: 2, rows: 1 },
+              p: { letter: "p", layer: "floor", optional: true, kinds: ["patron"], unless: "N", cols: 1, rows: 1 },
             },
-            specials: { s: "stop" },
+            specials: { N: "door", s: "stop" },
           },
         },
         prefabPlacements: [
@@ -8570,7 +8577,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "banquetRoom", min: 0, max: 1, central: 0.8 },
         ],
         packing: 0.2,
-        seed: 625093919,
+        seed: 625093920,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art2", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined],
         locks: [

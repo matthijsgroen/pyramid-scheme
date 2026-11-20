@@ -1,5 +1,6 @@
 // designed by: Claude
-// junior. The bedroom: the bed on its lion legs along the north wall, the headrest beside it.
+// junior. The bedroom: the bed on its lion legs along the north wall, the headrest beside it. On a floor with a
+// patron, the god's statue stands at the north wall where no corridor comes in.
 room bedroom
 tier junior
 activity bedroom
@@ -7,12 +8,14 @@ mirror
 holds chest
 
 layout
-# d # # # #
-# . b b h #
+# N # # # #
+# p b b h #
 d . . . . d
 # . s . . #
 # # d # d #
 
 b wall bed
 h wall headrest
+N door
+p floor? patron unless N
 s stop

@@ -1,13 +1,14 @@
 // designed by: Claude
-// junior. A big banquet hall: the table in the middle, the harp and the frieze between wine racks on the north wall.
+// junior. A big banquet hall: the table in the middle, the harp and the frieze between wine racks on the north wall. On a
+// floor with a patron, the god's statue stands at the north wall where no corridor comes in.
 room bigBanquetHall
 tier junior
 activity banquet
 mirror
 
 layout
-# # d # # d # #
-# j . h g . k #
+# # N # # d # #
+# j p h g . k #
 d . . . . . . d
 # . . t t . . #
 # . . . s . . #
@@ -18,4 +19,6 @@ k wall jarRack
 h wall harp
 g wall hanging
 t floor banquetTable
+N door
+p floor? patron unless N
 s stop
