@@ -2482,7 +2482,7 @@ const markerAt = (container: HTMLElement, r: number, c: number) => {
 }
 
 /** The shapes one cell's node marker is drawn out of, in order — a puzzle room has a body to put an
- * icon inside, a junction is a small diamond, and a junction that divides is bare arms. */
+ * icon inside, a junction is a small diamond, and a junction that divides is its arms on a puzzle's tile. */
 const markerShapesAt = (container: HTMLElement, r: number, c: number) => {
   const { cx, cy } = cellCenter(r, c)
   const box = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
@@ -2558,8 +2558,8 @@ describe("a junction that carries a board is drawn as one", () => {
     return markerShapesAt(container, 0, 0)
   }
 
-  it("draws bare arms rather than a puzzle room's body", () => {
-    expect(shapesOf(junction(CLOSES_FAMILY))).toEqual(["path"])
+  it("draws its dividing arms on a puzzle's tile, so they read against the floor", () => {
+    expect(shapesOf(junction(CLOSES_FAMILY))).toEqual(["rect", "path"])
   })
 
   it("leaves a bare junction its own small diamond", () => {

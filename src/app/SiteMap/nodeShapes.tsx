@@ -231,29 +231,42 @@ const ForkShape = ({ state }: ShapeProps) => {
   return <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill="#1e160e" stroke={stroke} strokeWidth={1.5} />
 }
 
-/** A junction that carries a board: one way in that splits into two. The mechanic drawn literally, so
- * it is read before the player walks onto it — bare arms rather than a room's body, because a junction
- * is the space between rooms and there is no chamber here to draw walls around. It wears the puzzle
- * palette (amber until it is solved, green once it answers) at a puzzle's size, so it stands among the
- * other things there are to do rather than among the junctions. */
+/** A junction that carries a board: one way in that splits into two, drawn literally so it is read before
+ * the player walks onto it. It sits on a puzzle's tile in the puzzle palette (amber until it is solved,
+ * green once it answers), so the fork reads against the stone floor and stands among the other things
+ * there are to do. */
 const SwitchShape = ({ state }: ShapeProps) => {
   const r = NODE_RADIUS_PUZZLE
-  const arm = r * 0.65
+  const arm = r * 0.55
   return (
-    <path
-      d={`M ${-arm},${-arm} L 0,0 L ${arm},${-arm} M 0,0 L 0,${r - 6}`}
-      fill="none"
-      stroke={puzzleIcon[state]}
-      strokeWidth={3}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+    <>
+      <rect
+        x={-r}
+        y={-r}
+        width={r * 2}
+        height={r * 2}
+        rx={2}
+        fill={puzzleFill[state]}
+        stroke={puzzleStroke[state]}
+        strokeWidth={1.5}
+      />
+      {state !== "fogged" && (
+        <path
+          d={`M ${-arm},${-arm} L 0,0 L ${arm},${-arm} M 0,0 L 0,${arm}`}
+          fill="none"
+          stroke={puzzleIcon[state]}
+          strokeWidth={3}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      )}
+    </>
   )
 }
 
 /** A handle stands as an ordinary "encounter" room (not a "fork" — see `shapeKindFor`), so it wears the
- * same opaque, outlined backdrop the other rooms do rather than the switch's bare backdrop-less path;
- * that backdrop alone already separates it from the switch at map zoom. The icon drawn on top is a
+ * same opaque, outlined backdrop the other rooms do; its handle colours and lever icon separate it from
+ * the switch at map zoom. The icon drawn on top is a
  * lever: a mounted post with an arm swung off it and a grip on its end, literal rather than abstract so
  * a player learns "this is a lever" on sight. */
 const HandleShape = ({ state, mark }: ShapeProps) => {

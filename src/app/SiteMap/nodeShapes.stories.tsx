@@ -5,7 +5,7 @@ import { NodeShape } from "./nodeShapes"
 
 // THE LOOK, away from a floor: every marker at every state, in one grid, so a new shape (or a palette
 // change to an old one) can be judged beside its neighbours rather than one at a time. This is the story
-// Task 6's brief asks to be opened to compare the handle's lever against the switch's bare path and the
+// Task 6's brief asks to be opened to compare the handle's lever against the switch's forked arms and the
 // gate's bars — the closest shapes on the map — at map zoom, over both grounds the game actually uses.
 
 const meta = {
