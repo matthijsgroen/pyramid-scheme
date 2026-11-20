@@ -132,6 +132,10 @@ export type FloorConfig = {
   chambersByIndex?: Record<number, ActivityId | true>
   /** How many pass-through chambers the main path holds in all. Mirrors game/siteTypes.ts. */
   chambers?: number
+  /** How many lootless puzzles its long bare corridors take. Mirrors game/siteTypes.ts. */
+  corridorPuzzles?: number
+  /** The family each corridor puzzle was dealt, baked. Mirrors game/siteTypes.ts. */
+  corridorEncounters?: Array<string | string[]>
   /** The designed rooms this names, the counted ones and the pinned ones. Mirrors game/siteTypes.ts. */
   prefabs?: Record<string, Prefab>
   prefabPlacements?: { room: string; min: number; max: number; central: number }[]

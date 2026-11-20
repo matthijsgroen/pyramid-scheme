@@ -1,3 +1,4 @@
+import { corridorEncounter } from "../carve/corridorPuzzles"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { roomDifficulty } from "@/game/roomDifficulty"
 import type { FamilyGenerationCtx, FamilyMeta } from "@/game/families/familyMeta"
@@ -169,6 +170,11 @@ export const enumerateConfigs = (world: Record<string, SiteConfig[]>, families: 
           for (const forkShape of FORK_SHAPES)
             ask(familyId, floor.difficulty, { difficulty: floor.difficulty, forkShape }, count)
         for (const { familyId, ctx } of doorBoardsOf(floor, families)) ask(familyId, floor.difficulty, ctx, 1)
+        for (let k = 0; k < (floor.corridorPuzzles ?? 0); k++) {
+          const baked = corridorEncounter(floor, k)
+          for (const familyId of Array.isArray(baked) ? baked : baked ? [baked] : [])
+            ask(familyId, floor.difficulty, { difficulty: floor.difficulty }, 1)
+        }
       }
 
   return [...demand.values()].sort((a, b) => b.rooms - a.rooms)

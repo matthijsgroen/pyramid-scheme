@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1080765463
+export const worldContentHash = 80431366
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -9272,6 +9272,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: ["light", "sky"],
         encountersByIndex: { 0: "canisters", 1: "eclipse", 2: "twin-stars", 3: "star-battle", 4: "lightbeam" },
         chambers: 2,
+        corridorPuzzles: 2,
+        corridorEncounters: ["lightbeam", "star-battle"],
         prefabs: {
           shrineRoom: {
             name: "shrineRoom",

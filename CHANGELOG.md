@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Long bare corridors can hold a puzzle without loot.
 - Walk the map with arrow keys or WASD.
 - A light grows behind a chest as it opens, in its own colour for ward chests.
 - Constellation: Enter picks up a star, then an arrow draws the line.

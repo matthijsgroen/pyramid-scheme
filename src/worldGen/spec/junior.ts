@@ -250,7 +250,7 @@ export const juniorRules: Rule[] = [
   journey("junior_4").pyramid(1, lessonOnMainFloor("waterMoves", house("bigBanquetHall", "bedroom", "courtWorks"))),
   journey("junior_4").pyramid(2, lockOnMainFloor("sluice", house(["bakery", 0.5], "banquetRoom"))),
   journey("junior_4").pyramid(3, lockOnMainFloor("seesaw")),
-  journey("junior_4").pyramid(4, lockOnMainFloor("lamplighter", house("shrineRoom"))),
+  journey("junior_4").pyramid(4, lockOnMainFloor("lamplighter", { ...house("shrineRoom"), corridorPuzzles: 2 })),
   journey("junior_4").pyramid(5, lockOnMainFloor("tide", house("dressingRoom", "courtWorks"))),
 
   // Each tomb's first level: the cave, one floor of junior puzzles on the way to the pillar.
