@@ -1,5 +1,5 @@
 import type { Direction, FloorGrid, GridCell } from "./siteTypes"
-import { oneWayRuns } from "./gridNavigation"
+import { oneWayRuns, revealAll } from "./gridNavigation"
 
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 
@@ -83,6 +83,21 @@ export const concealShutGround = (grid: FloorGrid, from: readonly [number, numbe
   return {
     ...grid,
     cells: grid.cells.map((row, r) =>
+      row.map((cell, c): GridCell =>
+        cell.type !== "empty" && hidden.has(`${r},${c}`) ? { ...cell, state: "fogged" } : cell
+      )
+    ),
+  }
+}
+
+/** Every cell seen, except the ground a shut barrier cuts off from `from`: nothing there was ever walked or
+ * lit, so it stays fogged and only the barrier's own cell shows. An open barrier cuts off nothing. */
+export const revealOpenGround = (grid: FloorGrid, from: readonly [number, number]): FloorGrid => {
+  const hidden = concealedBehindBarriers(grid, from)
+  const seen = revealAll(grid)
+  return {
+    ...seen,
+    cells: seen.cells.map((row, r) =>
       row.map((cell, c): GridCell =>
         cell.type !== "empty" && hidden.has(`${r},${c}`) ? { ...cell, state: "fogged" } : cell
       )
