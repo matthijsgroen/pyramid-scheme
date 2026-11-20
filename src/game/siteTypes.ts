@@ -377,6 +377,9 @@ export type RoomCell = {
   // family re-deriving which TableauLevel it presents from journeyId + the section's own
   // encounterArgs.runNr + this index, not from floor position).
   pathIndex?: number
+  /** Which of the floor's corridor puzzles this room is (FloorConfig.corridorPuzzles), in the order they were seated:
+   * a lootless puzzle standing in a long bare corridor, on no chain. */
+  corridorPuzzle?: number
   // This room's position among the rooms of its own family on its chain (main path, or one section),
   // 0-based in path order. A family keys authored content by it (a tableau's level), so a room of
   // another family standing before it never renumbers it.
@@ -896,6 +899,11 @@ export type FloorConfig = {
   /** How many pass-through chambers the floor asks for, `chambersByIndex` among them. An intent: the carve seats
    * as many as have room, the main path's gaps first, then its side paths, and never refuses the floor for the rest. */
   chambers?: number
+  /** How many lootless puzzles the floor's long bare corridors take (`seatCorridorPuzzles`). An intent: the finished
+   * carve seats as many as it has runs for and never refuses the floor for the rest. */
+  corridorPuzzles?: number
+  /** The family each corridor puzzle was dealt from the floor's role, baked (assignEncounters). */
+  corridorEncounters?: Array<string | string[]>
   /** Every designed room the floor names, parsed, keyed by name: the baked world carries them. */
   prefabs?: Record<string, Prefab>
   /** The counted designed rooms the floor holds, every field filled in. `min` are required, `max` allowed; `central`

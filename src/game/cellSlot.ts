@@ -63,6 +63,8 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
   // one of — its terminal chest or shop, its own key-gate, the switch standing in its junction — are
   // named by what fills them.
   if (cell.pathIndex !== undefined) return `p${cell.pathIndex}`
+  // A corridor puzzle stands on no chain: it is named by its place among the floor's corridor puzzles.
+  if (cell.corridorPuzzle !== undefined) return `xcorridor:${cell.corridorPuzzle}`
   // A MECHANISM'S ROOM IS NAMED BY ITS OWN AUTHORED IDENTITY, UNIFORMLY — a handle, a control and a
   // switch alike, and never by the family that realises it. Family alone stops picking out a single room
   // the moment a region layout can stand more than one control on the main path (FloorConfig.controls),

@@ -109,6 +109,7 @@ export type BuildFloorOptions = {
   activitiesByIndex?: FloorConfig["activitiesByIndex"]
   chambersByIndex?: FloorConfig["chambersByIndex"]
   chambers?: number
+  corridorPuzzles?: number
   prefabs?: FloorConfig["prefabs"]
   prefabPlacements?: FloorConfig["prefabPlacements"]
   prefabsByIndex?: FloorConfig["prefabsByIndex"]
@@ -170,6 +171,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
     ? { chambersByIndex: opts.chambersByIndex }
     : {}),
   ...(opts.chambers ? { chambers: opts.chambers } : {}),
+  ...(opts.corridorPuzzles ? { corridorPuzzles: opts.corridorPuzzles } : {}),
   ...(opts.prefabs && Object.keys(opts.prefabs).length ? { prefabs: opts.prefabs } : {}),
   ...(opts.prefabPlacements?.length ? { prefabPlacements: opts.prefabPlacements } : {}),
   ...(opts.prefabsByIndex && Object.keys(opts.prefabsByIndex).length ? { prefabsByIndex: opts.prefabsByIndex } : {}),
@@ -345,6 +347,7 @@ const applyFloorLocks = (
     const floor = floors[fi]
     floor.locks = overlay.locks
     if (overlay.packing !== undefined) floor.packing = overlay.packing
+    if (overlay.corridorPuzzles !== undefined) floor.corridorPuzzles = overlay.corridorPuzzles
     if (overlay.rooms !== undefined) {
       delete floor.prefabs
       delete floor.prefabPlacements
@@ -475,6 +478,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           activitiesByIndex: resolveNodeActivities(fc.nodes, floorPP),
           chambersByIndex: resolveNodeChambers(fc.nodes, floorPP),
           chambers: fc.chambers ?? constraint.chambers,
+          corridorPuzzles: fc.corridorPuzzles,
           // A floor's own list replaces the site's, the way `chambers` does.
           ...resolveFloorRooms(fc.rooms ?? constraint.rooms, resolveNodeRooms(fc.nodes, floorPP), lookupRoom, {
             difficulty: floorDiff,

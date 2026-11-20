@@ -222,6 +222,8 @@ const floorFieldEmitters: {
   activitiesByIndex: v => (Object.keys(v).length ? `activitiesByIndex: ${serializeEncountersByIndex(v)}` : null),
   chambersByIndex: v => (Object.keys(v).length ? `chambersByIndex: ${serializeChambersByIndex(v)}` : null),
   chambers: v => (v ? `chambers: ${v}` : null),
+  corridorPuzzles: v => (v ? `corridorPuzzles: ${v}` : null),
+  corridorEncounters: v => (v.length ? `corridorEncounters: ${JSON.stringify(v)}` : null),
   prefabs: v => (Object.keys(v).length ? `prefabs: ${JSON.stringify(v)}` : null),
   prefabPlacements: v => (v.length ? `prefabPlacements: ${JSON.stringify(v)}` : null),
   prefabsByIndex: v => (Object.keys(v).length ? `prefabsByIndex: ${serializeEncountersByIndex(v)}` : null),

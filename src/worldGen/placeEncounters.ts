@@ -119,6 +119,14 @@ export const assignEncounters = (
           floor.role = role
           dealChain(floor, role, seedFor("main"), allocate)
         }
+        // Corridor puzzles stand on no chain: a hand of their own from the floor's role.
+        if (floor.corridorPuzzles)
+          floor.corridorEncounters = allocate(
+            floor.role ?? roleOf(floor.encounter, "puzzle"),
+            floor.difficulty,
+            seedFor("corridor"),
+            floor.corridorPuzzles
+          )
         // Side sections + their nested sub-sections.
         floor.sideSections.forEach((section, si) =>
           assignSection(section, seedFor, `s${si}`, allocate, capacityFor, isTrap)

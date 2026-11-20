@@ -4,6 +4,7 @@ import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { EncounterResolution, ResolveEncounter } from "@/game/siteAssembler"
 import type { FloorConfig, SiteConfig, SubSection } from "@/game/siteTypes"
 import { plainSwitchId } from "@/game/cellSlot"
+import { corridorEncounter, corridorPuzzleAddress } from "@/game/carve/corridorPuzzles"
 import { expandFloorLocks } from "@/game/floorLocks"
 import { isForkSwitch } from "@/game/obstacles"
 import { configHash } from "./configHash"
@@ -131,6 +132,17 @@ export const buildBoardIndexes = (
               ordinal
             )
           }
+        // A corridor puzzle is dealt one board for every one the floor asks for, seated or not: how many stand is the
+        // carve's to say, and an unseated one only leaves its board unused.
+        for (let k = 0; k < (floor.corridorPuzzles ?? 0); k++) {
+          const { familyId }: EncounterResolution = resolveEncounter(corridorEncounter(floor, k), "puzzle")
+          const seedable = byId.get(familyId)?.seedable
+          if (!seedable) continue
+          const bucket = configHash(seedable.resolveOptions({ difficulty: floor.difficulty }))
+          const ordinal = nextInBucket.get(bucket) ?? 0
+          nextInBucket.set(bucket, ordinal + 1)
+          indexes.set(addressKey(journeyId, levelIndex, floorIndex, familyId, corridorPuzzleAddress(k)), ordinal)
+        }
         // A switch's bucket also reads its junction's shape, which only the carve settles, so its ordinal is
         // dealt per family and tier: every shape's list then holds each switch of that tier at its own entry.
         for (const { mechanismId, encounter } of switchesOf(floor)) {

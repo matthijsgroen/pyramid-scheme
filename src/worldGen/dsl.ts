@@ -278,6 +278,8 @@ export type FloorConstraint<TExtra extends string = never> = {
   /** How many pass-through chambers this floor's main path holds in all, its `chamberAfter` ones among them; the
    * carve spreads the rest over the gaps between its puzzles. Unset inherits the site's. */
   chambers?: number
+  /** How many lootless puzzles stand in this floor's long bare corridors — see FloorConfig.corridorPuzzles. */
+  corridorPuzzles?: number
   /** The designed rooms this floor's main path holds, by `.room` name. Unset inherits the site's; a floor's own list
    * replaces it. Structural. */
   rooms?: RoomPlacement[]
@@ -543,7 +545,7 @@ export type PyramidConstraint = {
    * else but the floor's own `packing`, where the lock needs one the pyramid's other floors do not, and its own
    * `rooms`, which replace the site's on that floor alone (a ward wing at another difficulty keeps none). Refused beside
    * `floors`, and for a floor index the pyramid does not build. */
-  floorLocks?: Record<number, Pick<FloorConstraint, "locks" | "realisations" | "packing" | "rooms">>
+  floorLocks?: Record<number, Pick<FloorConstraint, "locks" | "realisations" | "packing" | "rooms" | "corridorPuzzles">>
   /** Baseline floor count for the main path itself, before any ward wings. Default 1. */
   mainFloors?: number
   /** Ward-gated bonus floors branching off the last main floor. A `number` auto-generates that

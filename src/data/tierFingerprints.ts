@@ -28,11 +28,12 @@ export const carvedFloorDigest = (grid: FloorGrid): string =>
     .slice(0, 16)
 
 // The fields that record WHICH puzzle family stands in a room, and nothing else: `encounter` (a
-// section's or floor's family) and `encountersByIndex` (the same, per room). They are the output of
+// section's or floor's family), `encountersByIndex` (the same, per room) and `corridorEncounters` (per corridor
+// puzzle). They are the output of
 // dealing families out of a bag, so registering a family may reshuffle them while the tier's shape
 // and loot stay put. Everything else stays in the hash, including `role` and `encounterArgs`, which
 // are what the author asked for rather than what was dealt.
-export const FAMILY_RECORD_KEYS: ReadonlySet<string> = new Set(["encounter", "encountersByIndex"])
+export const FAMILY_RECORD_KEYS: ReadonlySet<string> = new Set(["encounter", "encountersByIndex", "corridorEncounters"])
 
 // The carve pin (`seed`, `packing`, `sidePacking`, `carveFrom`) is the bake's output, written on every floor: it changes how a
 // floor is drawn, never its rooms, gates or loot, so re-pinning it must not read as a tier drifting. Removed beside
