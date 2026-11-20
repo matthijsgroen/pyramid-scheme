@@ -28,7 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - A puzzle at a junction sits on a tile on the map, so its fork reads against the floor.
-
 - Wall decorations sit centred on the taller walls.
 - Developer tools no longer ship in the released game.
 - Opening a treasure chest shows the painted chest from the map.
