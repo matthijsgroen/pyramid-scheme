@@ -301,12 +301,16 @@ export const stepsBetween = (a: WalkPoint, b: WalkPoint): number =>
 export const walkSteps = (points: readonly WalkPoint[]): number =>
   points.slice(1).reduce((sum, p, i) => sum + stepsBetween(points[i], p), 0)
 
-/** Where a cell's marker is drawn: a prefab room's node at its stop, a cell something used is drawn on at itself
- * (`drawnOwner`), any other absorbed arm cell at its door. */
+/** Where a cell's marker is drawn: a prefab room's node at its stop, unless its art stands on the node itself, which
+ * is then tapped where it is drawn (the stop's own cell still taps the node); a cell something used is drawn on at
+ * itself (`drawnOwner`); any other absorbed arm cell at its door. */
 export const markerCell = (grid: FloorGrid, r: number, c: number): Cell => {
   const node = nodeOf(grid, [r, c])
   if (!node) return [r, c]
-  if (node[0] === r && node[1] === c) return drawnAt(grid, node)?.marker ?? [r, c]
+  if (node[0] === r && node[1] === c) {
+    const drawn = drawnAt(grid, node)
+    return !drawn || (drawn.art[0] === r && drawn.art[1] === c) ? [r, c] : drawn.marker
+  }
   if (drawnOwner(grid, r, c)) return [r, c]
   return armOf(grid, node, [r, c])?.inside ?? [r, c]
 }

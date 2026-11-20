@@ -6,12 +6,14 @@ activity banquet
 mirror
 
 layout
-# # # d #
-# h . . #
+# # # N #
+# h . p #
 d . m . d
 # . s . #
 # d # d #
 
 h wall harp
 m mechanism
+N door
+p floor? patron unless N
 s stop
