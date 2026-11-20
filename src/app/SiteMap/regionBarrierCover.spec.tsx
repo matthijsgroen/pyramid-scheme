@@ -143,12 +143,19 @@ afterEach(() => {
 
 describe("a shut region barrier's region is covered by its realisation", { timeout: 60_000 }, () => {
   eachFloor((name, state) =>
-    it(`${name}, ${state}: every visible cell of each shut barrier's region the explorer cannot walk to carries the cover, and no other cell does`, () => {
+    it(`${name}, ${state}: every visible cell of each shut barrier's region the explorer cannot walk to carries the cover, and no other ground does`, () => {
       const { grid, from, shut, realisation } = floorAt(name, state)
       const { container } = render(<SiteMapView grid={grid} />)
       const walkable = walkableFrom(grid, from)
       const wanted = regionsOf(shut).flatMap(region => visibleRegion(grid, region).filter(key => !walkable.has(key)))
-      expect(coverCells(container).map(keyOf).sort(), `${name} / ${state}`).toEqual(wanted.sort())
+      // Past those, the cover lies only on void a covered chamber claims as its floor.
+      const onGround = coverCells(container)
+        .map(keyOf)
+        .filter(key => {
+          const [r, c] = key.split(",").map(Number)
+          return grid.cells[r][c].type !== "empty"
+        })
+      expect(onGround.sort(), `${name} / ${state}`).toEqual(wanted.sort())
       for (const { at } of visibleDoors(grid, shut))
         expect(coverCells(container).map(keyOf), `${name} / ${state}: the blockage is covered`).toContain(at.join(","))
       for (const region of regionsOf(shut)) {
@@ -238,11 +245,14 @@ describe("the cover fades in across the blockage and is full past it", { timeout
       for (const region of regionsOf(shut))
         for (const el of coverCells(container, region)) {
           const key = keyOf(el)
+          const [r, c] = key.split(",").map(Number)
+          // A chamber's claimed floor takes its owner's fade (RegionBarrierCovers.spec).
+          if (grid.cells[r][c].type === "empty") continue
           const sides = walkedUpFrom(grid, walkable, key)
           if (!doors.has(key)) expect(sides, `${name} / ${key}: only a blockage borders walkable ground`).toEqual([])
           // "to bottom" is a gradient's default direction, and the style serialises it away.
           const wanted = sides
-            .map(dir => `linear-gradient(to ${TOWARD[dir]}, rgba(0, 0, 0, 0.5), black 28px)`.replace("to bottom, ", ""))
+            .map(dir => `linear-gradient(to ${TOWARD[dir]}, rgba(0, 0, 0, 0), black 56px)`.replace("to bottom, ", ""))
             .join(", ")
           expect(el.style.maskImage, `${name} / ${state} / ${region} / ${key}`).toBe(wanted)
           expect(el.style.opacity, `${name} / ${key}: no flat thinning`).toBe("")

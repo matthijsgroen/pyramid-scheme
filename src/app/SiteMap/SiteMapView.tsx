@@ -2570,6 +2570,7 @@ export const SiteMapView = ({
                 blockage reads above it. */}
             <RegionBarrierCovers
               grid={grid}
+              claims={claims}
               tier={tier}
               standing={barrierCovers.standing}
               leaving={barrierCovers.leaving}
