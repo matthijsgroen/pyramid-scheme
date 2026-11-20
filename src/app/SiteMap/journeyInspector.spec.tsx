@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import type { FloorGrid, GridCell } from "@/game/siteTypes"
 import { assembleFloor } from "@/game/siteAssembler"
+import { revealOpenGround } from "@/game/concealment"
 import { onRouteSluiceFloor } from "@/game/testSupport/regionBarrierFixtures"
 import { journeys } from "@/data/journeys"
 import "@/mods/registerModApps"
@@ -74,5 +75,51 @@ describe("the journey inspector steps between floors", { timeout: 120_000 }, () 
 
     expect(screen.getByText(/floor 2\/2/)).toBeTruthy()
     expect(container.querySelectorAll("[data-region-cover]")).toHaveLength(0)
+  })
+})
+
+describe("the revealed inspector keeps ground behind a shut region barrier fogged", () => {
+  const KEY = "obstacle:test:door"
+  const way = (dirs: ("w" | "e")[]): GridCell => ({ type: "corridor", dirs: new Set(dirs), state: "fogged" })
+  const lever: GridCell = {
+    type: "room",
+    roomType: "encounter",
+    dirs: new Set(["e"]),
+    state: "fogged",
+    mechanism: {
+      states: ["off", "on"],
+      initial: "off",
+      returnsToInitial: true,
+      positions: [{ state: "on", gateKeyId: KEY }],
+    },
+  }
+  const barrierRoom = (open: boolean): GridCell => ({
+    type: "room",
+    roomType: "encounter",
+    dirs: new Set(["w", "e"]),
+    state: "fogged",
+    ...(open ? {} : { requiredKeyId: KEY }),
+    regionBarrier: { region: "vault", entrance: "hall", realisation: "water" },
+  })
+  const floorWith = (open: boolean): FloorGrid => {
+    const row = [lever, way(["w", "e"]), barrierRoom(open), way(["w", "e"]), way(["w"])]
+    return {
+      cells: [row],
+      rows: 1,
+      cols: row.length,
+      entrancePos: [0, 0],
+      exitPos: [0, row.length - 1],
+      siteId: "test",
+      staircases: {},
+    }
+  }
+  const fogged = (grid: FloorGrid) => grid.cells[0].map(cell => cell.type !== "empty" && cell.state === "fogged")
+
+  it("fogs the ground past the shut barrier and shows the barrier's own cell", () => {
+    expect(fogged(revealOpenGround(floorWith(false), [0, 0]))).toEqual([false, false, false, true, true])
+  })
+
+  it("reveals that ground once the barrier is open", () => {
+    expect(fogged(revealOpenGround(floorWith(true), [0, 0]))).toEqual([false, false, false, false, false])
   })
 })

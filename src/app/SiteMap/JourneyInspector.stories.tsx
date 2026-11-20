@@ -2,6 +2,7 @@ import { useState, useMemo } from "react"
 import { assemblePlayedFloor, maskHiddenCells, maskWardCells } from "./useAssembledFloor"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { completeCell, getCell, revealAll as revealGrid } from "../../game/gridNavigation"
+import { revealOpenGround } from "../../game/concealment"
 import type { FloorGrid, TreasureReward } from "../../game/siteTypes"
 import { generatedWorldConfigs } from "../../data/generatedWorld"
 import { journeys } from "../../data/journeys"
@@ -256,6 +257,13 @@ const JourneyInspector = ({
 
   const pos: readonly [number, number] = explorerPos ?? grid?.entrancePos ?? [0, 0]
 
+  // Revealed, the ground a shut region barrier cuts off from the explorer stays fogged, as in play.
+  const drawnGrid = useMemo(
+    () => (grid && revealAll ? revealOpenGround(grid, [pos[0], pos[1]]) : grid),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- by value, so a fresh position tuple does not recompute
+    [grid, revealAll, pos[0], pos[1]]
+  )
+
   const waypoint = place && place.pos[0] === pos[0] && place.pos[1] === pos[1] ? place.waypoint : undefined
 
   const handleClick = (tapRow: number, tapCol: number) => {
@@ -388,13 +396,12 @@ const JourneyInspector = ({
         </div>
         <div className="relative">
           <SiteMapView
-            grid={grid}
+            grid={drawnGrid ?? grid}
             dressedOn={baseGrid ?? undefined}
             onCellClick={handleClick}
             explorerPos={pos}
             waypoint={waypoint}
             currentFloor={currentFloor}
-            revealAllCells={revealAll}
             freeWalk={revealAll}
           />
         </div>
