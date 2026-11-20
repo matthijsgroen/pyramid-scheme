@@ -165,9 +165,8 @@ describe("useAssembledFloor — hidden junctions", () => {
   })
 
   /**
-   * Masking rebuilds a room that comes out a passthrough as a corridor — which would shed a switch's
-   * family, its tags and its exits, and leave its solved state nothing to come back to (a corridor has
-   * no slot). So a floor that loses cells to masking has to hand the switch back whole.
+   * A switch's family, tags and exits are what its solved state comes back to, so a floor that loses
+   * cells to masking has to hand the switch back whole.
    */
   it("brings a switch through masking whole, on a floor that hides a branch", () => {
     const config: FloorConfig = {
@@ -650,9 +649,8 @@ describe("maskHiddenCells — a hidden path hung off the entrance", () => {
     expect(masked).toMatchObject({ type: "room", roomType: "portal", dirs: new Set(["w", "e"]) })
   })
 
-  it("still reads a plain room left a passthrough as corridor", () => {
-    expect(maskHiddenCells(grid(room(["n", "w", "e"], "encounter")), new Set()).masked.cells[1][1].type).toBe(
-      "corridor"
-    )
+  it("keeps a junction left a passthrough a room, so finding the path only adds its door", () => {
+    const masked = maskHiddenCells(grid(room(["n", "w", "e"], "fork")), new Set()).masked.cells[1][1]
+    expect(masked).toMatchObject({ type: "room", roomType: "fork", dirs: new Set(["w", "e"]) })
   })
 })

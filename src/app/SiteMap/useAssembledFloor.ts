@@ -342,35 +342,8 @@ export const maskHiddenCells = (
         }
 
         if (dirsChanged || exitsChanged) {
-          // Downgrade room → corridor if hidden dir removal leaves it as a passthrough corner. It is
-          // still the same cell, so everything that NAMES it comes along: without the address and the
-          // ordinal, a player standing on a downgraded room has nowhere to be written down.
-          //
-          // NEVER A ROOM THAT HOLDS SOMETHING. Rebuilt as a corridor it would shed its family, its tags
-          // and its exits, and a corridor has no slot, so a switch's puzzle would vanish and its solved
-          // state would have nowhere to come back to. A room beside a peeled connector reaches this. Nor a
-          // portal: the entrance, the exit and a stairhead are where the player arrives and leaves, so a hidden
-          // path hung off one must leave it a room.
-          if (
-            cell.type === "room" &&
-            dirsChanged &&
-            newDirs.size <= 2 &&
-            cell.family === undefined &&
-            cell.roomType !== "portal"
-          ) {
-            return {
-              type: "corridor",
-              dirs: newDirs as ReadonlySet<Direction>,
-              state: cell.state,
-              sectionAddress: cell.sectionAddress,
-              sectionHash: cell.sectionHash,
-              legacySectionHash: cell.legacySectionHash,
-              ordinal: cell.ordinal,
-              difficulty: cell.difficulty,
-              ...(cell.tileset ? { tileset: cell.tileset } : {}),
-              hidden: cell.hidden,
-            }
-          }
+          // A ROOM STAYS A ROOM, whatever ways it loses to a hidden path: found, the path only adds its doors, and
+          // the map never turns a corridor into a chamber under the player.
           return { ...cell, dirs: newDirs as ReadonlySet<Direction>, ...(exits ? { exits } : {}) }
         }
       }

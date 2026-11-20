@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - A puzzle at a junction sits on a tile on the map, so its fork reads against the floor.
 - Wall decorations sit centred on the taller walls.
 - Developer tools no longer ship in the released game.
@@ -73,6 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - On desktop, clicking the camp's map points you to the expedition list.
 - The language list is sorted alphabetically.
 
@@ -85,6 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The language picker lists your own languages first.
 - Walls stand taller and show their murals; they fade when you walk behind them.
 
@@ -108,6 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - New art for the starter pyramids, with rooms furnished for what was done in them.
 - Hearts refill at the camp, and waterskins heal on the spot.
 - Saved games start over with this release.
@@ -116,6 +120,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - A tomb's card no longer shows a progress percentage. It was counting the tomb's floors as if they
   were stops on a journey, which they are not — a tomb is one place you keep going back into.
 
@@ -136,6 +141,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Your progress in a pyramid survives its corridors being rebuilt or its rooms re-authored: only what actually changed comes back unexplored.
 - Settings shows which version your save is on, beside the game version.
 
@@ -154,6 +160,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - A puzzle you walk away from keeps what you had worked out: the board is waiting as you left it when you come back, even after closing the game. Solving it clears it.
 - Revisiting a pyramid you already finished no longer asks you to solve its outer board again — the numbers you worked out are shown, and you step straight inside.
 - A lit room keeps its stone. The lamp now brightens the masonry instead of washing pale light over it, so slabs, joints and the grain of the floor read in the light the way they do in the dark.
@@ -170,6 +177,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - A lit room now reads as lit: the light has a source at your torch and falls away from it, it lands warm rather than pale, and it reaches the walls, the furniture and the explorer instead of stopping at the floor. The explorer stands in it rather than on top of it, with a shadow at their feet like everything else on the floor.
 - Dust in a tomb is now fine specks rather than a few circles: far smaller, far more of them, drifting quicker and wandering as they cross.
 - The dark in a tomb now keeps the colour of the stone it falls on, so floors and furniture stay warm or cold as their rank is instead of greying out, and a wall stands clearly back from the floor in front of it. Every rank sits at the same brightness in its own hue.
@@ -178,6 +186,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Canister hints now give the sums a board is made of instead of naming a pour, and how-to-play says how to work back from the amount asked for.
 - Exploration is now remembered by where a room sits in its corridor, so a reshaped pyramid keeps what you had walked.
 
@@ -209,6 +218,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The site map is lit rather than evenly bright: torchlight now carries real warmth against the tier’s own dark.
 - The Ordered Hours’ funerary board is a day cutting a tomb — plastering, carving, painting — rather than a burial.
 
@@ -227,6 +237,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - A puzzle and its rules sit on their own dark block, so the wall of the room you walked into is still behind you without competing with the board you are trying to read.
 
 ### Fixed
@@ -263,6 +274,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Light puzzles stop repeating themselves: every board draws a shape of its own, at every difficulty.
 
 ### Fixed
@@ -274,6 +286,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - A sudoku hint that says a number fits nowhere else now rings the squares that shut the others out.
 - Every puzzle keeps its step-back and its hint in the same two places, in a pair of buttons under the board.
 - Reset has moved up beside the way out — it is the one control that throws a board away.
@@ -300,6 +313,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The market street is lit: it runs from sun at the head of the lane into shade at its foot, every sledge
   throws a shadow onto it, and your own sledge is the warm one among the grey working ones.
 
@@ -317,6 +331,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The canister puzzle teaches one idea a tier now: two pours to start, then a leftover to park and pick up
   again, then a line long enough that the two compound, then a fourth canister. One amount to measure a
   board rather than two, and it no longer turns up in the very first rooms.
@@ -360,6 +375,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Updated the crocodile puzzle to new standards.
 
 ### Fixed
@@ -377,6 +393,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - A side passage now serves the difficulty it was built for, not the floor's.
 - Meeting the same board twice on a run is far less likely.
 - The Great Pyramid of Giza now draws on every kind of puzzle, not only the two that trade in goods.
@@ -395,6 +412,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - A solved star battle board lights its answers one at a time before the win. Less motion skips it.
 - A solved sumplete board checks its own sums off before the win. Less motion skips it.
 - A solved futoshiki board counts itself up to its last number before the win. Less motion skips it.
@@ -410,6 +428,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The one-star grid can wear the flood plain too, the farmland face its two-star twin wears.
 - A pyramid keeps its explored corridors, found passages and opened chests when the puzzles inside it are rewritten.
 - Changing how long or how winding a pyramid's corridors are now resets the floors it changed.
@@ -437,6 +456,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Puzzle boards come from a list checked ahead of time, so a room stops searching when you open it.
 - The game starts from a smaller download, a fifth lighter: the mosaic window's glass now arrives with the window.
 - Every puzzle states its goal in one line above the how-to-play, worded for the place it is.
@@ -463,6 +483,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Every light puzzle is new, and every difficulty asks for real reasoning: tapping each piece in turn no longer solves one.
 - The light difficulties play differently — one leans on stone, one on sliding pieces, one on sockets and doors.
 - Light puzzles show what a piece will do before you tap it, and animate the tap.
@@ -485,6 +506,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Comparison grids show only the signs the puzzle turns on: a starter board carries four or five, not sixteen.
 - A comparison grid leans on its signs rather than pre-filled numbers, so every board teaches what a sign means.
 - Wizard comparison grids ask for four harder kinds of reasoning, so they no longer solve like master ones.
@@ -506,6 +528,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Sumplete puzzles are always solvable by reasoning; boards that would need a guess are never handed out.
 - Sumplete boards grow with the tier, from 4×4 up to 7×7, and fit a phone screen without pinching.
 - Each Sumplete row and column shows what it currently adds up to under its target.
@@ -522,6 +545,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The proximity dot beside the detector button grows as well as pulses faster, so its three bands are easier to tell apart.
 - A running detector stays on when you walk into another pyramid, instead of switching itself off at every entrance.
 
@@ -529,6 +553,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - A detector keeps reading with its readout closed. The button opens and closes the readout; tapping the running detector stops it.
 - A pulsing dot carries the reading while the readout is shut — slower or faster as the find gets closer.
 - The dot never says more than your detector level knows: a level-1 compass reports "somewhere in this pyramid".
@@ -537,6 +562,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The interior HUD takes less room: your detectors share one button, and the hearts are smaller.
 - That row now wraps instead of running off the screen and pushing your coin balance out of sight.
 - The passageway detector answers at every range it has reached, and says so when the answer is nothing.
@@ -567,6 +593,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Wizard pyramids are less sprawling: fewer dead-end side corridors, so the tier reads as a deep descent.
 - A crocodile guards every tomb treasure from the junior tomb down. Starter tombs stay crocodile-free.
 
@@ -578,6 +605,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Hieroglyph fragments spread across a tier's pyramids instead of piling into its first ones.
 
 ### Fixed
@@ -589,6 +617,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - A hieroglyph you're still collecting shows only the fragment you have carved so far, with its count.
 
 ### Fixed
@@ -603,12 +632,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - A tomb treasure opens the next difficulty: hold any one of a tomb's four unlock treasures and that tier is yours.
 
 ## 0.32.1 - 2026-08-08
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Finding a tomb treasure says what it does for you.
 
 ### Fixed
@@ -625,6 +656,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Reaching an exit asks whether to step outside, so walking into one no longer ends the expedition.
 - Taking a staircase walks you to the stairs first, and you arrive standing on the staircase.
 
@@ -636,6 +668,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The mosaic is five scenes instead of one abstract window, with Anubis standing over all five.
 - Each scene belongs to one difficulty and fills as you play it, and pieces drop on paths of that difficulty.
 - You place pieces yourself: a "Place 4 pieces" button drops them in one at a time, lowest scene first.
@@ -656,6 +689,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - A locked treasure location hints at where its map leads, and shows the same part-gathered scroll.
 - A tomb's name is held back until its map is whole.
 - Dropped the progress bar and "25% collected" line from locked locations.
@@ -664,6 +698,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - A map piece hints at where its map leads, instead of showing the same line every time.
 - A map piece shows how much you have gathered; the last one names the tomb.
 - A hieroglyph fragment's "2 of 3 fragments found" sits on its own line.
@@ -679,6 +714,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Trapped corridors are twice as long: two to four questions before the payoff.
 - Trap timers are shorter — expert 12s → 8s, master 9s → 6s, wizard 6s → 4s.
 - Starter and junior traps are timed now, at 8 seconds.
@@ -726,6 +762,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Ward gates hold more varied bonus pockets, mixing in tiers other than their own.
 - Starter "merchant" moments turn up throughout the game as a breather, sometimes holding a real fragment.
 - Cross-tier bonus pockets hold a real hieroglyph fragment far more often.
@@ -734,6 +771,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Hieroglyph fragments stay strictly within their own difficulty.
 - Most symbols now need some tomb descent to finish; a few early ones turn up freely.
 
@@ -741,6 +779,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Each tier has 4 tier-unlock treasures instead of 1, so one key no longer opens all of a tier's ward-gated content.
 - Some of those treasures gate a bonus pocket much later, so an old key may still have something new to open.
 
@@ -758,6 +797,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The "still something here" marker on a completed expedition is a pulsing green dot, matching the map.
 
 ### Fixed
@@ -796,6 +836,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Hieroglyph fragments land in pyramids of their own tier far more often.
 
 ### Fixed
@@ -813,18 +854,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The chest holding a tomb's ward key is an ornate golden chest instead of the plain wooden one.
 
 ## 0.29.2 - 2026-07-18
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Tomb tableau puzzles ramp up as you descend: each room widens the numbers and adds operators.
 
 ## 0.29.1 - 2026-07-18
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The Collection screen lists ward treasures first, then hieroglyph fragments, then trinkets.
 - Loot leans more toward loose coins, with fewer trap consumables scattered around.
 - Tomb tableau rooms ask for new hieroglyphs as you descend, instead of almost every symbol at once.
@@ -851,6 +895,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Removed the length indicator from journey and tomb cards.
 
 ### Fixed
@@ -873,6 +918,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The short story on a tomb tableau is fully readable from the start, instead of unscrambling as you solve.
 
 ### Fixed
@@ -890,6 +936,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Reworded the popup shown when you find a map piece or a mosaic tile, in-world rather than mechanical.
 
 ## 0.27.3 - 2026-07-17
@@ -902,6 +949,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - A collected hieroglyph solves every tableau that needs it and is never used up.
 - The tableau screen shows which hieroglyphs you have, and your progress on the ones you are collecting.
 
@@ -913,6 +961,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Revisiting a completed journey opens its map to pick a pyramid, instead of dropping you into the first.
 
 ## 0.27.0 - 2026-07-17
@@ -931,6 +980,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The opening journey's first three pyramids branch to ward-gated bonus floors, each hiding a puzzle or trap.
 - Master pyramids have two ward-gated bonus floors; wizard pyramids have three, plus a two-floor main path.
 - Some pyramids use a single key for several locked doors, more often at higher difficulties.
@@ -953,12 +1003,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Puzzles, chests and a floor's treasure room are spread along the whole path, instead of packed near the entrance.
 
 ## 0.26.3 - 2026-07-05
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The journey list shows a checkmark for completed expeditions, without the "completed N times" count.
 
 ### Fixed
@@ -969,6 +1021,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The interior map is scaled back down — the narrow-screen fix left it too large everywhere.
 
 ## 0.26.1 - 2026-07-05
@@ -985,12 +1038,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The interior map is zoomed in twice as far as the previous pass.
 
 ## 0.25.3 - 2026-07-05
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The interior map is more zoomed in — corridors, rooms and icons are all noticeably bigger.
 
 ### Fixed
@@ -1001,12 +1056,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Side paths branch off throughout the main path instead of bunching up after its last puzzle room.
 
 ## 0.25.1 - 2026-07-04
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Room icons on the interior map are larger and easier to make out on mobile.
 - A long corridor's tap target sits next to you rather than at its far end, and is a direction arrow.
 
@@ -1027,6 +1084,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - Junctions, treasure rooms, staircases and exits appear as larger, uniquely shaped rooms.
 - The corridor leading to a locked gate blends into the neighbouring room.
 - Interior corridors wind more naturally, with occasional wider junctions where several paths meet.
@@ -1073,6 +1131,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
 - The pyramid map scrolls to keep the explorer dot centred, so you can always see what is ahead.
 - Completed rooms and corridors are tappable again, letting you move back to any room you have visited.
 - Expeditions no longer award items on completion; items are found inside the pyramid instead.
