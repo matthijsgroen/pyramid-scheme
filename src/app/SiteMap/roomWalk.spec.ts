@@ -241,6 +241,19 @@ describe("a walk through a prefab room", () => {
     expect(markerCell(grid, 5, 6)).toEqual([6, 6])
     expect(markerCell(grid, 4, 1)).toEqual([4, 1])
   })
+
+  it("keeps the node's tap on the node where its art stands on the node itself, the stop still tapping it too", () => {
+    const [r, c] = node
+    const cell = grid.cells[r][c]
+    if (cell.type !== "room" || !cell.prefabRoom) throw new Error("no prefab room")
+    const cells = grid.cells.map(row => [...row])
+    cells[r][c] = { ...cell, prefabRoom: { ...cell.prefabRoom, nodeArt: [r, c] } }
+    const artOnNode: FloorGrid = { ...grid, cells }
+    const stop = roomStop(artOnNode, r, c)!
+    expect(markerCell(artOnNode, r, c)).toEqual([r, c])
+    expect(markerCell(artOnNode, ...stop)).toEqual(stop)
+    expect(drawnOwner(artOnNode, ...stop)).toEqual([r, c])
+  })
 })
 
 describe("a walk between two doors of a room goes round what stands in its middle", () => {

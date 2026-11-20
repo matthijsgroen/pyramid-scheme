@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1097742714
+export const worldContentHash = 743939600
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -7065,9 +7065,12 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "banquet",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["###d#", "#h..#", "d.m.d", "#.s.#", "#d#d#"] }],
-            places: { h: { letter: "h", layer: "wall", optional: false, kinds: ["harp"], cols: 1, rows: 1 } },
-            specials: { m: "mechanism", s: "stop" },
+            layouts: [{ name: "", cells: ["###N#", "#h.p#", "d.m.d", "#.s.#", "#d#d#"] }],
+            places: {
+              h: { letter: "h", layer: "wall", optional: false, kinds: ["harp"], cols: 1, rows: 1 },
+              p: { letter: "p", layer: "floor", optional: true, kinds: ["patron"], unless: "N", cols: 1, rows: 1 },
+            },
+            specials: { m: "mechanism", N: "door", s: "stop" },
           },
         },
         prefabPlacements: [
