@@ -1,13 +1,14 @@
 // designed by: Claude
-// junior. The banquet: the table laid in the middle of the floor, the harp and the frieze on the north wall.
+// junior. The banquet: the table laid in the middle of the floor, the harp and the frieze on the north wall. On a floor
+// with a patron, the god's statue stands at the north wall where no corridor comes in.
 room banquetRoom
 tier junior
 activity banquet
 mirror
 
 layout
-# d # # d #
-# . h g . #
+# N # # d #
+# p h g . #
 d . t t . d
 # . . s . #
 # d # # d #
@@ -15,4 +16,6 @@ d . t t . d
 h wall harp
 g wall hanging | jarRack
 t floor banquetTable
+N door
+p floor? patron unless N
 s stop
