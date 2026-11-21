@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it } from "vitest"
 import type { Direction, FloorGrid, GridCell, Tileset } from "@/game/siteTypes"
 import type { RegionBarrierRealisationMeta } from "@/game/regionBarrierRealisation"
 import type { RegionBarrierCover } from "@/game/regionBarrierCover"
-import { CELL, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
+import { CELL, FACE_H, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
 import type { RoomClaims } from "./roomClaims"
 import { RegionBarrierCovers } from "./RegionBarrierCovers"
 
@@ -188,5 +188,76 @@ describe("a realisation that declares motion ripples, one that declares none lie
         expect(offset(parseFloat(cell.style.left) + parseFloat(layer.style.left), bx, period)).toBeCloseTo(0)
         expect(offset(parseFloat(cell.style.top) + parseFloat(layer.style.top), by, period)).toBeCloseTo(0)
       }
+  })
+})
+
+describe("a realisation that declares a wall wash shows on the back wall behind it, thinning toward the top", () => {
+  const dry: RegionBarrierRealisationMeta = { id: "dust", ownerMod: "made-up", texture: "dust", fallback: "#999" }
+  const wet: RegionBarrierRealisationMeta = { ...dry, id: "brine", texture: "brine", motion: "ripple", wallWash: 0.5 }
+  const metas = new Map([dry, wet].map(meta => [meta.id, meta]))
+  const resolve = (id: string | undefined) => (id ? metas.get(id) : undefined)
+  const painted = (_tier: Tileset, name: string): string | undefined => `/made-up/${name}.png`
+
+  const washesOf = (realisation: string, leaving = false) => {
+    const covers = [{ ...cover, realisation }]
+    const { container } = render(
+      <RegionBarrierCovers
+        grid={grid}
+        claims={claims}
+        tier="junior"
+        standing={leaving ? [] : covers}
+        leaving={leaving ? covers : []}
+        resolve={resolve}
+        urlOf={painted}
+      />
+    )
+    return new Map(
+      Array.from(container.querySelectorAll<HTMLElement>("[data-wall-wash]")).map(el => [
+        el.getAttribute("data-wall-wash")!,
+        el,
+      ])
+    )
+  }
+
+  it("covers the face standing behind a covered cell, from the cell's top up the face's whole height", () => {
+    const wash = washesOf("brine").get("1,2")!
+    expect(wash.style.top).toBe(`${cellTop(1) - FACE_H}px`)
+    expect(wash.style.height).toBe(`${FACE_H}px`)
+    expect(wash.style.left).toBe(`${cellLeft(2) - SIDE_W}px`)
+    expect(wash.style.maskImage).toBe("linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0))")
+  })
+
+  it("leaves a cell bare whose north side is open floor", () => {
+    const washes = washesOf("brine")
+    for (const key of ["1,1", "2,1", "1,3", "2,3"]) expect(washes.has(key), key).toBe(false)
+  })
+
+  it("leaves every wall dry for a realisation that declares no wash", () => {
+    expect(washesOf("dust").size).toBe(0)
+  })
+
+  it("ripples with the cover, its texture anchored at the map's origin", () => {
+    const wash = washesOf("brine").get("1,2")!
+    const layers = Array.from(wash.querySelectorAll<HTMLElement>("[data-ripple-layer]"))
+    expect(layers.map(el => el.getAttribute("data-ripple-layer"))).toEqual(["base", "cross"])
+    for (const layer of layers) {
+      const [bx, by] = layer.style.backgroundPosition.split(" ").map(parseFloat)
+      expect(bx).toBe(-parseFloat(wash.style.left))
+      expect(by).toBe(-parseFloat(wash.style.top))
+    }
+  })
+
+  it("fades in sideways with the blockage, from the same edge as the cover below it", () => {
+    const wash = washesOf("brine").get("0,1")!
+    expect(wash.style.maskImage).toBe(
+      `linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)), linear-gradient(to right, rgba(0, 0, 0, 0), black ${CELL}px)`
+    )
+    const sideways = parseFloat(wash.style.maskPosition.split(",")[1])
+    expect(parseFloat(wash.style.left) + sideways).toBe(cellLeft(1))
+  })
+
+  it("fades out with the cover when the barrier opens", () => {
+    const wash = washesOf("brine", true).get("1,2")!
+    expect(wash.closest("[data-leaving]")).not.toBeNull()
   })
 })
