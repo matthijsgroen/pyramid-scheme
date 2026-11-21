@@ -4,7 +4,7 @@ import { CELL, FACE_GROW, FACE_H, FACE_PATTERN_Y, ROW_PITCH } from "./mapScale"
 import { FACE_TOP } from "./roomClaims"
 import { tileUrl } from "./tileAssets"
 import { MEGATILE } from "./tileLayers"
-import { stateWash, tierPalette } from "./tileMaterials"
+import { tierPalette } from "./tileMaterials"
 import { grownFaceRects, rectsToPath, type FrontRun, type Rect } from "./tileRegions"
 import { wallFade } from "./wallFades"
 
@@ -37,17 +37,15 @@ export const FrontWalls = ({ runs, faded }: { runs: readonly FrontRun[]; faded: 
           className={fade.className}
           style={{ position: "absolute", left: bx, top: by, width: bw, height: bh, opacity: fade.opacity }}
         >
-          {run.pieces.map(({ rect: [x, y, w, h], tier, state }) => {
+          {run.pieces.map(({ rect: [x, y, w, h], tier }) => {
             const top = y - FACE_GROW
             const palette = tierPalette[tier]
             const art = tileUrl(tier, "wall-face")
-            const wash = stateWash[state]
             const flat = (colour: string) => `linear-gradient(${colour}, ${colour})`
-            // Topmost first, in the order the SVG stone lays them: the state's wash over everything, the
-            // wall's own top, the rank's darkening of its walls, and the face as painted — sampled at the
-            // same place in the art the stone samples it, so a run reads as one wall with the faces beside it.
+            // Topmost first, in the order the SVG stone lays them: the wall's own top, the rank's darkening of
+            // its walls, and the face as painted — sampled at the same place in the art the stone samples it, so
+            // a run reads as one wall with the faces beside it. No state wash: that darkens floor only (TileLayers).
             const layers: { image: string; size: string; position?: string; repeat?: string }[] = [
-              ...(wash ? [{ image: flat(washColour(wash)), size: "100% 100%" }] : []),
               { image: flat(palette.wallBase), size: `100% ${FACE_TOP}px` },
               ...(palette.faceNight > 0
                 ? [

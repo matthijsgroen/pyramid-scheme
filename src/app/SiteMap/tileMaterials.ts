@@ -198,6 +198,8 @@ export const nightAlpha = (tier: Tileset): number => Number(tierPalette[tier].sh
 
 // Fog is an overlay over the one material, never a second set of art: a wash per cell state, and
 // nothing at all on `reachable`, which is the brightness everything else is read against.
+// It lies on FLOOR and what stands on it, never on stone: walls, rock and the seams between cells take
+// their state from whichever floor they touch, so a wash there would step tone cell by cell along one run.
 // `fogged` never reaches the renderer — an unlit cell is not drawn (SiteMapView's litClaimOwner) —
 // but the key exists so the region maps stay total over CellState.
 // Kept gentle on purpose. A room takes its state cell by cell — a claimed cell borrows its owner's,
