@@ -216,7 +216,10 @@ export const TileLayers = ({
                         <path key={rect.join(",")} d={rectsToPath([rect])} fill={sillFill(rect)} opacity={0.9} />
                       ))}
                     {shadows && <path data-face-shadow="" d={shadows} fill={palette.outline} opacity={0.45} />}
-                    {wash && <path d={room + corridor + mass + wornWash} fill={wash.fill} opacity={wash.opacity} />}
+                    {/* The state wash darkens FLOOR only. Stone is masonry, not lighting: a wall or a stretch of
+                        rock borrows its state from whichever floor it touches, so a wash on it would cut one
+                        run into cell-wide pieces of different darkness. What fog hides is never drawn at all. */}
+                    {wash && <path d={room + corridor + wornWash} fill={wash.fill} opacity={wash.opacity} />}
                   </g>
                 )
               })}
@@ -230,7 +233,6 @@ export const TileLayers = ({
           return (
             <g key={t}>
               {ALL_STATES.map(state => {
-                const wash = stateWash[state]
                 const faces = rectsToPath(grownFaceRects(groups.wallFace[state]))
                 const tops = rectsToPath(faceTopRects(groups.wallFace[state], FACE_TOP))
                 if (!faces) return null
@@ -257,7 +259,6 @@ export const TileLayers = ({
                         fill={palette.wallBase}
                       />
                     )}
-                    {wash && <path d={faces} fill={wash.fill} opacity={wash.opacity} />}
                   </g>
                 )
               })}

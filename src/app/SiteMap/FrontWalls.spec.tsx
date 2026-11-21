@@ -67,6 +67,17 @@ describe("a wall standing in front of floor", () => {
     expect(frontWalls(container).filter(wall => wall.hasAttribute("data-faded"))).toEqual([])
     for (const wall of frontWalls(container)) expect(Number(wall.style.opacity)).toBe(1)
   })
+
+  it("takes no wash from the state of the floor around it, so a run reads in one tone", () => {
+    const seen = gridOf(behindAWall().cells.map(row => row.map(cell => ({ ...cell, state: "visible" as const }))))
+    const { container } = render(<SiteMapView grid={seen} explorerPos={[1, 2]} />)
+    const pieces = drawnWalls(container).flatMap(wall =>
+      Array.from(wall.querySelectorAll<HTMLElement>("[data-front-piece]"))
+    )
+
+    expect(pieces.length).toBeGreaterThan(0)
+    for (const piece of pieces) expect(piece.style.backgroundImage).not.toMatch(/rgba\(0,\s*0,\s*0,\s*0\.12\)/)
+  })
 })
 
 // The same two corridors, with a chest standing in the upper one, behind the lower one's wall.
