@@ -245,7 +245,8 @@
       "description": "Korkea leipä, leivän merkki. Sen antoi Ipi, joka laski viljaa neljäkymmentä vuotta ja antoi sitä kerran pois."
     },
     "o2": {
-      "name": "Pellava"
+      "name": "Pellava",
+      "description": "Taiteltu kangas hapsuineen, vaatteiden merkki. Henutin lahja. Hän valitsi jokaisen langan itse ja antoi pois hienoimman."
     },
     "o3": {
       "name": "Vesi"

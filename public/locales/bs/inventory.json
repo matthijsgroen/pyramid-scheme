@@ -245,7 +245,8 @@
       "description": "Visoki hljeb, znak za hljeb. Dao ga je Ipi, koji je četrdeset godina brojao žito i jednom ga poklonio."
     },
     "o2": {
-      "name": "Lan"
+      "name": "Lan",
+      "description": "Presavijena tkanina s resama, znak za odjeću. Od Henut, koja je sama izabrala svaku nit i poklonila najfiniju."
     },
     "o3": {
       "name": "Voda"

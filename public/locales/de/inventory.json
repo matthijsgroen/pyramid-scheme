@@ -245,7 +245,8 @@
       "description": "Das hohe Brot, das Zeichen für Brot. Von Ipi, der vierzig Jahre lang Korn gezählt und es ein einziges Mal verschenkt hat."
     },
     "o2": {
-      "name": "Leinen"
+      "name": "Leinen",
+      "description": "Gefalteter Stoff mit Fransen, das Zeichen für Kleidung. Von Henut, die jeden Faden selbst ausgesucht und den feinsten verschenkt hat."
     },
     "o3": {
       "name": "Wasser"

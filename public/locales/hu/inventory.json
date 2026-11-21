@@ -245,7 +245,8 @@
       "description": "A magas cipó, a kenyér jele. Ipi adta, aki negyven évig számolta a gabonát, és egyszer odaadta."
     },
     "o2": {
-      "name": "Len"
+      "name": "Len",
+      "description": "Összehajtott, rojtos szövet, a ruházat jele. Henuttól való, aki minden szálat maga választott ki, és a legfinomabbat adta oda."
     },
     "o3": {
       "name": "Víz"

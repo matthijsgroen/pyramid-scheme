@@ -778,6 +778,20 @@
         "5": { "ipi": "Bine. O pâine. Dar se trece în scris: _Ipi a dat pâine._" },
         "6": { "fez": "A dat ceva! Ai văzut?" }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Aici lipsește ceva pentru cei goi. In, aș zice. Și cunosc o doamnă care nu a purtat niciodată aceeași rochie de două ori."
+        }
+      },
+      "gift": {
+        "1": { "explorer": "Henut, avem nevoie de in. Pentru un zid." },
+        "2": { "henut": "Inul meu? Știi din ce e țesut?" },
+        "3": { "fez": "E pentru un rând despre a da lucruri altora. Numele tău va sta alături." },
+        "4": { "henut": "…Numele meu. Pe un zid." },
+        "5": { "henut": "Atunci ia-l pe cel fin. Nimeni nu va citi _„Henut a dat zdrențe.”_" }
+      }
     }
   },
   "revisit": {
@@ -791,6 +805,7 @@
       "later2": { "1": { "ipi": "Patruzeci de ani de socoteli, și niciuna nu iese. Niciuna!" } }
     },
     "junior": {
+      "gave1": { "1": { "henut": "E pus deja? Cu numele meu alături? Scris corect de data asta — fără gâscă." } },
       "wall1": { "1": { "henut": "Zidul. Al doilea semn. Tot nu e numele meu." } },
       "wall2": { "1": { "henut": "Tu ești tot aici, și gâsca aia e tot pe zidul meu. Repar-o." } },
       "priest1": { "1": { "henut": "Tot numele meu. Am verificat. Acum — Karnak, preotul. Hai, du-te." } },

@@ -245,7 +245,8 @@
       "description": "Roti yang tinggi, tanda untuk roti. Pemberian Ipi, yang menghitung gandum selama empat puluh tahun dan sekali memberikannya."
     },
     "o2": {
-      "name": "Linen"
+      "name": "Linen",
+      "description": "Kain terlipat berumbai, tanda untuk pakaian. Pemberian Henut, yang memilih setiap benang sendiri dan memberikan yang terhalus."
     },
     "o3": {
       "name": "Air"

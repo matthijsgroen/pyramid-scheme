@@ -764,6 +764,20 @@
         "5": { "ipi": "No, prav. En hlebec. Ampak to se zapiše: _Ipi je dal kruh._" },
         "6": { "fez": "Nekaj je podaril! Vidiš to?" }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Tu manjka nekaj za nage. Lan, bi rekel. In poznam damo, ki nikoli ni dvakrat oblekla iste obleke."
+        }
+      },
+      "gift": {
+        "1": { "explorer": "Henut, lan potrebujeva. Za zid." },
+        "2": { "henut": "Moj lan? Veš, iz česa je stkan?" },
+        "3": { "fez": "Za vrstico o podarjanju je. Tvoje ime bo ob njej." },
+        "4": { "henut": "…Moje ime. Na zidu." },
+        "5": { "henut": "No, vzemi tistega finega. Nihče ne bo bral _„Henut je dala capre.“_" }
+      }
     }
   },
   "revisit": {
@@ -777,6 +791,7 @@
       "later2": { "1": { "ipi": "Štirideset let knjig, pa niti ena se ne izide. Niti ena!" } }
     },
     "junior": {
+      "gave1": { "1": { "henut": "Je že gor? Z mojim imenom ob njem? Tokrat pravilno zapisanim – brez gosi." } },
       "wall1": { "1": { "henut": "Zid. Drugi znak. Še vedno ni moje ime." } },
       "wall2": { "1": { "henut": "Ti si še vedno tukaj in tista gos je še vedno na mojem zidu. Popravi jo." } },
       "priest1": { "1": { "henut": "Še vedno moje ime. Preverila sem. Zdaj pa – Karnak, duhovnik. Kar pojdi." } },

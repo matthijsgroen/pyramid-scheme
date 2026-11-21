@@ -245,7 +245,8 @@
       "description": "An builín ard, an comhartha d’arán. Tugtha ag Ipi, a chomhair grán ar feadh daichead bliain agus a thug uaidh é uair amháin."
     },
     "o2": {
-      "name": "Línéadach"
+      "name": "Línéadach",
+      "description": "Éadach fillte le fritheadh, comhartha an éadaigh. Ó Henut, a roghnaigh gach snáithe í féin agus a thug uaithi an ceann is míne."
     },
     "o3": {
       "name": "Uisce"

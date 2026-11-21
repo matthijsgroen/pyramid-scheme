@@ -245,7 +245,8 @@
       "description": "Háa brauðið, táknið fyrir brauð. Gefið af Ipi, sem taldi korn í fjörutíu ár og gaf það einu sinni frá sér."
     },
     "o2": {
-      "name": "Lín"
+      "name": "Lín",
+      "description": "Samanbrotinn dúkur með kögri, táknið fyrir fatnað. Frá Henut, sem valdi hvern þráð sjálf og gaf þann fínasta."
     },
     "o3": {
       "name": "Vatn"

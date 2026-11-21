@@ -759,6 +759,20 @@
         "5": { "ipi": "No dobře. Jeden bochník. Ale zapíše se to: _Ipi dal chleba._" },
         "6": { "fez": "On něco dal! Vidíš to?" }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Tady chybí něco pro nahé. Len, řekl bych. A znám jednu dámu, která nikdy neměla dvakrát stejné šaty."
+        }
+      },
+      "gift": {
+        "1": { "explorer": "Henut, potřebujeme len. Na zeď." },
+        "2": { "henut": "Můj len? Víš vůbec, z čeho je utkaný?" },
+        "3": { "fez": "Je to na řádek o rozdávání. Tvoje jméno bude hned vedle." },
+        "4": { "henut": "…Moje jméno. Na zdi." },
+        "5": { "henut": "Tak si vezmi ten jemný. Nikdo nebude číst _„Henut dala hadry.“_" }
+      }
     }
   },
   "revisit": {
@@ -772,6 +786,7 @@
       "later2": { "1": { "ipi": "Čtyřicet let účtů, a ani jeden nesedí. Ani jeden!" } }
     },
     "junior": {
+      "gave1": { "1": { "henut": "Už to tam je? S mým jménem vedle? Tentokrát správně napsaným – žádná husa." } },
       "wall1": { "1": { "henut": "Ta zeď. Druhý znak. Pořád to není moje jméno." } },
       "wall2": { "1": { "henut": "Ty jsi pořád tady a ta husa je pořád na mé zdi. Oprav to." } },
       "priest1": { "1": { "henut": "Pořád moje jméno. Zkontrolovala jsem to. A teď – Karnak, ten kněz. Šup." } },

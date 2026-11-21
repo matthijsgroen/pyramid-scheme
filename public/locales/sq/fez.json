@@ -1632,6 +1632,30 @@
           "fez": "Dha diçka! E pe këtë?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Këtu mungon diçka për të zhveshurit. Li, do të thoja. Dhe unë njoh një zonjë që nuk e veshi kurrë dy herë të njëjtin fustan."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, na duhet li. Për një mur."
+        },
+        "2": {
+          "henut": "Lirin tim? E di nga çfarë është endur?"
+        },
+        "3": {
+          "fez": "Është për një rresht për dhënien e gjërave. Emri yt do të vihet pranë tij."
+        },
+        "4": {
+          "henut": "…Emri im. Në mur."
+        },
+        "5": {
+          "henut": "Atëherë merr atë të hollin. Askush nuk do të lexojë _„Henut dha leckë.“_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "A është lart tashmë? Me emrin tim pranë? Shkruar saktë këtë herë — pa patë."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "Muri. Shenja e dytë. Ende nuk është emri im."

@@ -784,6 +784,20 @@
         "5": { "ipi": "Okej. Ett bröd. Men det skrivs upp: _Ipi gav bröd._" },
         "6": { "fez": "Han gav bort något! Såg du det?" }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Här saknas något för de nakna. Linne, skulle jag säga. Och jag känner en dam som aldrig bar samma klänning två gånger."
+        }
+      },
+      "gift": {
+        "1": { "explorer": "Henut, vi behöver linne. Till en vägg." },
+        "2": { "henut": "Mitt linne? Vet ni vad det är vävt av?" },
+        "3": { "fez": "Det är till en rad om att ge bort saker. Ditt namn hamnar bredvid." },
+        "4": { "henut": "…Mitt namn. På en vägg." },
+        "5": { "henut": "Ta det fina då. Ingen kommer att läsa _”Henut gav trasor.”_" }
+      }
     }
   },
   "revisit": {
@@ -797,6 +811,9 @@
       "later2": { "1": { "ipi": "Fyrtio år av böcker, och inte en enda går jämnt ut. Inte en enda!" } }
     },
     "junior": {
+      "gave1": {
+        "1": { "henut": "Sitter det uppe än? Med mitt namn bredvid? Rättstavat den här gången – ingen gås." }
+      },
       "wall1": { "1": { "henut": "Väggen. Andra tecknet. Det är fortfarande inte mitt namn." } },
       "wall2": {
         "1": { "henut": "Ni är fortfarande här, och den där gåsen sitter fortfarande på min vägg. Rätta till det." }

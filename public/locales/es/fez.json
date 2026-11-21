@@ -1632,6 +1632,30 @@
           "fez": "¡Regaló algo! ¿Lo viste?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Aquí falta algo para los desnudos. Lino, diría yo. Y conozco a una dama que jamás se puso dos veces el mismo vestido."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, necesitamos lino. Para una pared."
+        },
+        "2": {
+          "henut": "¿Mi lino? ¿Sabes de qué está tejido?"
+        },
+        "3": {
+          "fez": "Es para una línea sobre regalar cosas. Tu nombre irá al lado."
+        },
+        "4": {
+          "henut": "…Mi nombre. En una pared."
+        },
+        "5": {
+          "henut": "Entonces llévate el fino. Nadie va a leer _“Henut dio harapos.”_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "¿Ya está puesto? ¿Con mi nombre al lado? Bien escrito esta vez: sin ganso."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "La pared. El segundo signo. Sigue sin ser mi nombre."

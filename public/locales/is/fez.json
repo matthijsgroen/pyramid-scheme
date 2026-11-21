@@ -1632,6 +1632,30 @@
           "fez": "Hann gaf eitthvað frá sér! Sástu þetta?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Hér vantar eitthvað handa þeim sem eru naktir. Lín, myndi ég segja. Og ég þekki frú sem klæddist aldrei sama kjólnum tvisvar."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, okkur vantar lín. Fyrir vegg."
+        },
+        "2": {
+          "henut": "Línið mitt? Veistu úr hverju það er ofið?"
+        },
+        "3": {
+          "fez": "Það er fyrir línu um að gefa hluti frá sér. Nafnið þitt kemur við hliðina á henni."
+        },
+        "4": {
+          "henut": "…Nafnið mitt. Á vegg."
+        },
+        "5": {
+          "henut": "Taktu þá fína línið. Enginn ætlar að lesa _„Henut gaf tuskur.“_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "Er það komið upp? Með nafnið mitt við hliðina? Rétt stafsett í þetta sinn — engin gæs."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "Veggurinn. Annað táknið. Það er enn ekki nafnið mitt."

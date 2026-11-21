@@ -1632,6 +1632,30 @@
           "fez": "Odaadott valamit! Láttad ezt?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Itt hiányzik valami a meztelenek számára. Len, azt mondanám. És ismerek egy hölgyet, aki sosem viselte kétszer ugyanazt a ruhát."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, lenre van szükségünk. Egy falhoz."
+        },
+        "2": {
+          "henut": "Az én lenem? Tudod te, miből szövik?"
+        },
+        "3": {
+          "fez": "Egy sorhoz kell, ami arról szól, hogy odaadunk dolgokat. A te neved odakerül mellé."
+        },
+        "4": {
+          "henut": "…A nevem. Egy falon."
+        },
+        "5": {
+          "henut": "Akkor vidd a finomat. Senki nem fogja olvasni, hogy _„Henut rongyokat adott.”_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "Már fent van? A nevem mellette? Ezúttal helyesen leírva – liba nélkül."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "A fal. A második jel. Még mindig nem az én nevem."

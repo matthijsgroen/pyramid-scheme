@@ -245,7 +245,8 @@
       "description": "Ogi luzea, ogiaren ikurra. Ipik emana: berrogei urtez garia zenbatu zuen, eta behin eman zuen."
     },
     "o2": {
-      "name": "Lihoa"
+      "name": "Lihoa",
+      "description": "Zerrenda duen oihal tolestua, janzkien ikurra. Henutena, hari bakoitza berak aukeratu eta finena eman zuen."
     },
     "o3": {
       "name": "Ura"

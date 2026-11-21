@@ -1632,6 +1632,30 @@
           "fez": "Han gav noget væk! Så du det?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Her mangler der noget til de nøgne. Linned, vil jeg mene. Og jeg kender en dame, der aldrig bar den samme kjole to gange."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, vi skal bruge linned. Til en mur."
+        },
+        "2": {
+          "henut": "Mit linned? Ved du, hvad det er vævet af?"
+        },
+        "3": {
+          "fez": "Det er til en linje om at give ting væk. Dit navn kommer til at stå ved siden af."
+        },
+        "4": {
+          "henut": "…Mit navn. På en mur."
+        },
+        "5": {
+          "henut": "Så tag det fine. Ingen kommer til at læse _»Henut gav klude.«_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "Er det oppe endnu? Med mit navn ved siden af? Stavet rigtigt denne gang — ingen gås."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "Muren. Det andet tegn. Det er stadig ikke mit navn."

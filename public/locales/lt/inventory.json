@@ -245,7 +245,8 @@
       "description": "Aukštas kepalas, duonos ženklas. Jį davė Ipi, kuris keturiasdešimt metų skaičiavo grūdus ir vieną kartą juos atidavė."
     },
     "o2": {
-      "name": "Drobė"
+      "name": "Drobė",
+      "description": "Sulankstyta drobė su kutais, drabužių ženklas. Henut dovana: kiekvieną siūlą ji pasirinko pati ir atidavė pačią plonąją."
     },
     "o3": {
       "name": "Vanduo"

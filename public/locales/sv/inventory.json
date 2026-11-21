@@ -245,7 +245,8 @@
       "description": "Det höga brödet, tecknet för bröd. Givet av Ipi, som räknade säd i fyrtio år och gav bort den en gång."
     },
     "o2": {
-      "name": "Linne"
+      "name": "Linne",
+      "description": "Vikt tyg med fransar, tecknet för kläder. Från Henut, som själv valde varje tråd och gav bort den finaste."
     },
     "o3": {
       "name": "Vatten"

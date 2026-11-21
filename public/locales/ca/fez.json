@@ -780,6 +780,20 @@
         "5": { "ipi": "D'acord. Un pa. Però queda escrit: _Ipi va donar pa._" },
         "6": { "fez": "Ha regalat una cosa! Ho has vist?" }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Aquí falta alguna cosa per als qui van nus. Lli, diria jo. I conec una dama que mai no va portar dues vegades el mateix vestit."
+        }
+      },
+      "gift": {
+        "1": { "explorer": "Henut, necessitem lli. Per a una paret." },
+        "2": { "henut": "El meu lli? Saps de què està teixit?" },
+        "3": { "fez": "És per a una línia sobre regalar coses. El teu nom hi anirà al costat." },
+        "4": { "henut": "…El meu nom. En una paret." },
+        "5": { "henut": "Doncs agafa el fi. Ningú no llegirà _«Henut va donar parracs.»_" }
+      }
     }
   },
   "revisit": {
@@ -795,6 +809,9 @@
       "later2": { "1": { "ipi": "Quaranta anys de comptes, i no me'n quadra ni un. Ni un!" } }
     },
     "junior": {
+      "gave1": {
+        "1": { "henut": "Ja hi és, a la paret? Amb el meu nom al costat? Ben escrit, aquest cop — sense oca." }
+      },
       "wall1": { "1": { "henut": "La paret. El segon signe. Encara no és el meu nom." } },
       "wall2": { "1": { "henut": "Tu encara ets aquí, i aquella oca encara és a la meva paret. Arregla-ho." } },
       "priest1": { "1": { "henut": "Encara és el meu nom. Ho he mirat. I ara: Karnak, el sacerdot. Au, ves." } },

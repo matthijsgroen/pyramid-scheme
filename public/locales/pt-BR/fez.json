@@ -1632,6 +1632,30 @@
           "fez": "Ele deu uma coisa de graça! Você viu isso?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Aqui falta algo para os nus. Linho, eu diria. E eu conheço uma dama que nunca usou o mesmo vestido duas vezes."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, a gente precisa de linho. Para uma parede."
+        },
+        "2": {
+          "henut": "O meu linho? Você sabe do que ele é tecido?"
+        },
+        "3": {
+          "fez": "É para uma linha sobre dar coisas de graça. O seu nome vai ao lado."
+        },
+        "4": {
+          "henut": "…O meu nome. Numa parede."
+        },
+        "5": {
+          "henut": "Então leve o fino. Ninguém vai ler _“Henut deu trapos.”_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "Já está lá? Com o meu nome do lado? Escrito direito desta vez — sem ganso."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "A parede. O segundo sinal. Continua não sendo o meu nome."

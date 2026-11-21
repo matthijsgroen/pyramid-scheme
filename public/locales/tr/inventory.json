@@ -245,7 +245,8 @@
       "description": "Uzun somun, ekmeğin işareti. Kırk yıl tahıl sayan ve onu bir kez başkasına veren Ipi verdi."
     },
     "o2": {
-      "name": "Keten"
+      "name": "Keten",
+      "description": "Püsküllü, katlanmış kumaş; giysinin işareti. Her ipliği kendi seçen ve en inceyi veren Henut'tan."
     },
     "o3": {
       "name": "Su"

@@ -1632,6 +1632,30 @@
           "fez": "Hy joech wat wei! Seachsto dat?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Hjir ûntbrekt wat foar de neakenen. Linnen, soe ik sizze. En ik ken in dame dy't noait twa kear deselde jurk droech."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, wy hawwe linnen nedich. Foar in muorre."
+        },
+        "2": {
+          "henut": "Myn linnen? Witsto wol wêr't dat fan weven is?"
+        },
+        "3": {
+          "fez": "It is foar in rigel oer dingen weijaan. Dyn namme komt der neist."
+        },
+        "4": {
+          "henut": "…Myn namme. Op in muorre."
+        },
+        "5": {
+          "henut": "Nim dan it fine. Nimmen sil _„Henut joech lompen.“_ lêze."
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "Hinget it al? Mei myn namme derby? Dizze kear goed stavere — gjin goes."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "De muorre. It twadde teken. It is noch hieltyd myn namme net."

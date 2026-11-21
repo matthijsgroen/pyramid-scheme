@@ -245,7 +245,8 @@
       "description": "Det høje brød, tegnet for brød. Givet af Ipi, der talte korn i fyrre år og gav det væk én gang."
     },
     "o2": {
-      "name": "Linned"
+      "name": "Linned",
+      "description": "Foldet stof med frynser, tegnet for tøj. Fra Henut, som selv valgte hver en tråd og gav det fineste væk."
     },
     "o3": {
       "name": "Vand"

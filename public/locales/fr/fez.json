@@ -1632,6 +1632,30 @@
           "fez": "Il a donné quelque chose ! Tu as vu ça ?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Il manque ici quelque chose pour les gens tout nus. Du lin, je dirais. Et je connais une dame qui n’a jamais porté deux fois la même robe."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, il nous faut du lin. Pour un mur."
+        },
+        "2": {
+          "henut": "Mon lin ? Tu sais de quoi il est tissé ?"
+        },
+        "3": {
+          "fez": "C’est pour une ligne sur les choses qu’on donne. Ton nom sera juste à côté."
+        },
+        "4": {
+          "henut": "…Mon nom. Sur un mur."
+        },
+        "5": {
+          "henut": "Alors prends le fin. Personne ne va lire _« Henut a donné des chiffons. »_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "C’est déjà posé ? Avec mon nom à côté ? Bien orthographié, cette fois — pas d’oie."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "Le mur. Le deuxième signe. Ce n’est toujours pas mon nom."

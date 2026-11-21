@@ -1632,6 +1632,30 @@
           "fez": "Ha regalato qualcosa! L'hai visto?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Qui manca qualcosa per chi è nudo. Del lino, direi. E conosco una dama che non ha mai indossato due volte lo stesso vestito."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, ci serve del lino. Per un muro."
+        },
+        "2": {
+          "henut": "Il mio lino? Lo sai di cosa è tessuto?"
+        },
+        "3": {
+          "fez": "È per una riga che parla di regalare le cose. Il tuo nome ci va accanto."
+        },
+        "4": {
+          "henut": "…Il mio nome. Su un muro."
+        },
+        "5": {
+          "henut": "Allora prendi quello fine. Nessuno leggerà _«Henut ha dato degli stracci.»_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "È già su? Con il mio nome accanto? Scritto bene, stavolta — niente oca."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "Il muro. Il secondo segno. Non è ancora il mio nome."

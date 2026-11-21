@@ -1632,6 +1632,30 @@
           "fez": "Rhoddodd e rywbeth i ffwrdd! Welaist ti hynna?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Mae rhywbeth ar goll yma i'r rhai noeth. Lliain, faswn i'n dweud. A dw i'n nabod menyw na wisgodd yr un ffrog ddwywaith erioed."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, mae angen lliain arnon ni. Ar gyfer wal."
+        },
+        "2": {
+          "henut": "Fy lliain i? Wyt ti'n gwybod beth mae e wedi'i wehyddu ohono?"
+        },
+        "3": {
+          "fez": "Mae e ar gyfer llinell am roi pethau i ffwrdd. Mae dy enw di'n mynd wrth ei ymyl."
+        },
+        "4": {
+          "henut": "…Fy enw i. Ar wal."
+        },
+        "5": {
+          "henut": "Cymer yr un gorau, 'te. Does neb am ddarllen _“Rhoddodd Henut glytiau.”_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "Ydy e lan eto? Gyda fy enw i wrth ei ymyl? Wedi'i sillafu'n iawn y tro hwn — dim gŵydd."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "Y wal. Yr ail arwydd. Dydy e dal ddim yn fy enw i."

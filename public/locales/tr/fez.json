@@ -1632,6 +1632,30 @@
           "fez": "Bir şey verdi! Gördün mü bunu?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Burada çıplaklar için bir şey eksik. Keten, derdim. Ve hiçbir elbiseyi iki kez giymeyen bir hanım tanıyorum."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, ketene ihtiyacımız var. Bir duvar için."
+        },
+        "2": {
+          "henut": "Benim ketenim mi? Neyden dokunduğunu biliyor musun?"
+        },
+        "3": {
+          "fez": "Bir şeyleri başkasına vermekle ilgili bir satır için. Adın hemen yanına gelecek."
+        },
+        "4": {
+          "henut": "…Benim adım. Bir duvarda."
+        },
+        "5": {
+          "henut": "O zaman ince olanı al. Kimse _“Henut paçavra verdi.”_ yazısını okumayacak."
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "Asıldı mı artık? Yanında benim adımla? Bu sefer doğru yazılmış — kaz yok."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "Duvar. İkinci işaret. Hâlâ benim adım değil."

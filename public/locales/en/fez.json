@@ -820,8 +820,18 @@
       }
     },
     "expert": {
-      "hint": { "1": { "fez": "[Fez at the expert wall: the slot wants linen, go back to Henut — designer copy]" } },
-      "gift": { "1": { "henut": "[Henut gives linen — designer copy]" } }
+      "hint": {
+        "1": {
+          "fez": "Something for the naked is missing here. Linen, I'd say. And I know a lady who never wore the same dress twice."
+        }
+      },
+      "gift": {
+        "1": { "explorer": "Henut, we need linen. For a wall." },
+        "2": { "henut": "My linen? Do you know what that is woven from?" },
+        "3": { "fez": "It's for a line about giving things away. Your name goes next to it." },
+        "4": { "henut": "…My name. On a wall." },
+        "5": { "henut": "Then take the fine one. Nobody is reading _\"Henut gave rags.\"_" }
+      }
     },
     "master": {
       "hint": {
@@ -847,7 +857,7 @@
       "later2": { "1": { "ipi": "Forty years of books, and not one of them balances. Not one!" } }
     },
     "junior": {
-      "gave1": { "1": { "henut": "[Henut, after giving linen — designer copy]" } },
+      "gave1": { "1": { "henut": "Is it up yet? With my name beside it? Spelled properly this time — no goose." } },
       "wall1": { "1": { "henut": "The wall. Second sign. It is still not my name." } },
       "wall2": { "1": { "henut": "You are still here, and that goose is still on my wall. Fix it." } },
       "priest1": { "1": { "henut": "Still my name. I checked. Now — Karnak, the priest. Off you go." } },
