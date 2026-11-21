@@ -11,6 +11,10 @@ import { REGION_COVER_FADE_OUT_MS } from "./useRegionBarrierCovers"
 /** The texture repeats once per this many map units, in both directions, anchored at the map's origin so it runs on across cells. */
 const TEXTURE_UNITS = CELL * 8
 
+/** How dark a shut barrier's ground lies, so it reads as out of reach. A layer of the cover itself, so it shares
+ * the cover's fade at the dry edge and leaves with the cover when the barrier opens; what stands above stays lit. */
+const SHUT_WASH = 0.35
+
 type Fill = ({ url: string; ripple: boolean } | { color: string }) & { wash?: number }
 
 /** A drifting layer of rippling water: the texture at its own scale, moving one period along one axis per loop.
@@ -318,6 +322,10 @@ export const RegionBarrierCovers = ({
                 }}
               >
                 {rippling && <Ripple url={fill.url} box={box} />}
+                <div
+                  data-shut-wash
+                  style={{ position: "absolute", inset: 0, backgroundColor: `rgba(0, 0, 0, ${SHUT_WASH})` }}
+                />
               </div>
               {wash && (
                 <div data-wall-wash={keyOf(at)} style={{ position: "absolute", ...wall, ...paint(wall), ...wash }}>
