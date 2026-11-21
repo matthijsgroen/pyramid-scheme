@@ -95,6 +95,42 @@ export const chestTileUrl = (tileset: Tileset, rank: Tileset, tile: string, open
   chestTileIn(tileUrl, placeholderUrl, tileset, rank, tile, open)
 
 /**
+ * Each tile's LARGE EDITION by the tile's own url: `tiles-large/<folder>/<name>.webp` beside
+ * `tiles/<folder>/<name>.png`, the same import at 576 px wide (`import-tile --large`). A tile without one
+ * is simply absent.
+ */
+export const pairLargeEditions = (
+  tiles: Record<string, string>,
+  larges: Record<string, string>
+): ReadonlyMap<string, string> => {
+  const largeByKey = new Map<string, string>()
+  for (const [path, url] of Object.entries(larges)) {
+    const match = /\/tiles-large\/(.+)\.webp$/.exec(path)
+    if (match) largeByKey.set(match[1], url)
+  }
+  const paired = new Map<string, string>()
+  for (const [path, url] of Object.entries(tiles)) {
+    const match = /\/tiles\/(.+)\.png$/.exec(path)
+    const large = match && largeByKey.get(match[1])
+    if (large) paired.set(url, large)
+  }
+  return paired
+}
+
+const largeEditions = pairLargeEditions(
+  urls,
+  import.meta.glob("../../assets/tiles-large/*/*.webp", { eager: true, query: "?url", import: "default" })
+)
+
+/** A tile's large edition where it has one, the tile itself where it does not. */
+export const largeEditionOr = (larges: ReadonlyMap<string, string>, url: string | undefined): string | undefined =>
+  (url && larges.get(url)) || url
+
+/** The chest the chest screen draws, big and alone: `chestTileUrl`'s pick, in its large edition when there is one. */
+export const chestScreenUrl = (tileset: Tileset, rank: Tileset, tile: string, open: boolean): string | undefined =>
+  largeEditionOr(largeEditions, chestTileUrl(tileset, rank, tile, open))
+
+/**
  * Every drawing a tier has for one name: `<name>`, `<name>-2`, `<name>-3`, as far as they go.
  *
  * The same convention `sharedTileFrames` uses for animation frames, and for the same reason — adding one

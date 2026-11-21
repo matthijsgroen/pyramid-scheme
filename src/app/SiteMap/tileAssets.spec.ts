@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { Tileset } from "@/game/siteTypes"
-import { chestTileIn, tileVariants } from "./tileAssets"
+import { chestTileIn, largeEditionOr, pairLargeEditions, tileVariants } from "./tileAssets"
 
 // The resolver reads a glob of real files, so these assert the CONTRACT rather than a fixture: whatever is
 // on disk, a name resolves to at least its own drawing, and every url it returns is distinct.
@@ -61,5 +61,29 @@ describe("chestTileIn", () => {
 
   it("stands in the nearest placeholder when nothing is painted", () => {
     expect(resolve([], ["wardChest", "chestProp"], "wardChest", true)).toBe("placeholder/wardChest")
+  })
+})
+
+describe("the chest screen's large edition", () => {
+  const larges = pairLargeEditions(
+    {
+      "../../assets/tiles/madeUp/box.png": "/box.png",
+      "../../assets/tiles/madeUp/boxOpen.png": "/boxOpen.png",
+      "../../assets/tiles/placeholder/box.png": "/placeholder-box.png",
+    },
+    { "../../assets/tiles-large/madeUp/box.webp": "/box-large.webp" }
+  )
+
+  it("draws a tile's large edition when it has one", () => {
+    expect(largeEditionOr(larges, "/box.png")).toBe("/box-large.webp")
+  })
+
+  it("falls back to the tile itself when it has none", () => {
+    expect(largeEditionOr(larges, "/boxOpen.png")).toBe("/boxOpen.png")
+    expect(largeEditionOr(larges, "/placeholder-box.png")).toBe("/placeholder-box.png")
+  })
+
+  it("draws nothing where the tile lookup found nothing", () => {
+    expect(largeEditionOr(larges, undefined)).toBeUndefined()
   })
 })

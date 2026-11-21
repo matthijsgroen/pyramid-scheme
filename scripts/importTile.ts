@@ -92,6 +92,9 @@
  *                    the tile at width/2 by height/2 units, so the pixels it holds are the pixels it shows.
  *   --flip           mirror horizontally. The renderer mirrors EAST into west, so a side view drawn
  *                    facing left has to come in facing right
+ *   --large          write the LARGE EDITION instead of the tile: the same cut, seat and grading at
+ *                    LARGE_SCALE pixels per unit, as src/assets/tiles-large/<tier>/<name>.webp. For art
+ *                    also drawn alone and big (the chest screen); run it with the tile's own flags.
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs"
@@ -106,6 +109,9 @@ import { pathToFileURL } from "url"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const OUT_ROOT = join(__dirname, "..", "src", "assets", "tiles")
+/** `--large`: a prop 576 pixels wide, the chest screen's 192 CSS px on a 3x phone. */
+const LARGE = process.argv.includes("--large")
+const LARGE_SCALE = 576 / CELL
 
 /**
  * How many STORED pixels a tile carries per map unit.
@@ -125,7 +131,7 @@ const OUT_ROOT = join(__dirname, "..", "src", "assets", "tiles")
  * tiles least hurt by it — a floor is a repeating pattern seen mostly at 1:1 — but it is a real seam
  * until those masters are identified or re-rolled.
  */
-const SPRITE_SCALE = Number(process.env.SPRITE_SCALE ?? 2)
+const SPRITE_SCALE = LARGE ? LARGE_SCALE : Number(process.env.SPRITE_SCALE ?? 2)
 /** Map units to stored pixels. Every slot dimension goes through this, or the slots desynchronise. */
 const px = (units: number): number => Math.round(units * SPRITE_SCALE)
 
@@ -641,9 +647,9 @@ const main = async (): Promise<void> => {
     )
   }
 
-  const dir = join(OUT_ROOT, tier)
+  const dir = join(LARGE ? `${OUT_ROOT}-large` : OUT_ROOT, tier)
   mkdirSync(dir, { recursive: true })
-  const out = join(dir, `${name}.png`)
+  const out = join(dir, LARGE ? `${name}.webp` : `${name}.png`)
   const repeat = Number(arg("repeat", "1"))
   if (!Number.isInteger(repeat) || repeat < 1) {
     console.error(
@@ -734,7 +740,8 @@ const main = async (): Promise<void> => {
     .png({ compressionLevel: 9 })
     .toBuffer()
   const stars = Number(arg("stars", "0"))
-  const rendered = stars > 0 ? await liftPoints(washed, stars) : washed
+  const graded = stars > 0 ? await liftPoints(washed, stars) : washed
+  const rendered = LARGE ? await sharp(graded).webp({ quality: 90, alphaQuality: 100 }).toBuffer() : graded
 
   // ONLY WRITE WHAT CHANGED. `art/rebuild.sh` re-imports all 190 tiles to prove no geometry change has
   // silently invalidated a master, and the proof it wants is that the BYTES come back the same — which

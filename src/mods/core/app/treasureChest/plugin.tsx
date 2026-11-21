@@ -4,7 +4,7 @@ import { createPortal } from "react-dom"
 import { useTranslation } from "react-i18next"
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { getRewardHandler } from "@/app/SiteMap/rewardHandlerRegistry"
-import { ART_IMAGE_RENDERING, CHEST_TILE, chestTileUrl } from "@/app/SiteMap/tileAssets"
+import { ART_IMAGE_RENDERING, CHEST_TILE, chestScreenUrl } from "@/app/SiteMap/tileAssets"
 import { TREASURE_CHEST_META } from "@/mods/core/game/treasureChest/meta"
 
 // A treasure chest is an encounter with zero challenge and zero fail cost — clicking it IS
@@ -34,7 +34,8 @@ export const TreasureComponent: FamilyPlugin["Component"] = ({ ctx, onSolved }) 
   const tile = ownChest ? art.tile : CHEST_TILE
   // A tileset that is no rank (the cave) has no chest of its own, as on the map: the rank's is drawn.
   const rank = ctx.difficulty ?? "starter"
-  const url = chestTileUrl(ctx.tileset ?? rank, rank, tile, opened)
+  // The large edition: the map tile is 112 px wide, and this one is drawn at 192 CSS px.
+  const url = chestScreenUrl(ctx.tileset ?? rank, rank, tile, opened)
   const label = t("chest.tapToOpen")
 
   return createPortal(
