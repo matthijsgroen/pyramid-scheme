@@ -5893,7 +5893,48 @@ def add_backdrop(hex_colour, obj):
     return plane
 
 
-def render(out_path, width, height, engine, samples):
+def height_pass(obj, k, floor_z, width, height):
+    """--pass=height: every surface EMITS how high above the floor it stands, so `import-tile --wet` can cut the
+    waterline at a depth it converts with the frame it already knows.
+
+    The value is the height before the shear, `z' - k*y` (the shear left y alone), measured from the floor the
+    object stands on (`floor_z`, where seating put the primitive's own z=0) and written as a FRACTION OF THE
+    FRAME'S HEIGHT: 0 at the floor, 1 one frame-height up, clamped to that range. In that unit the import needs no
+    camera numbers: the frame is resized to the master as the mask is, so frame fractions are master pixels once
+    multiplied by the master's height.
+
+    The front-most surface is the right one to read. Along a sight line in this projection height only falls with
+    depth, so a pixel whose nearest surface is under the water has nothing above it further back either."""
+    cam = bpy.context.scene.camera.data
+    per_frame = max(width, height) / (cam.ortho_scale * height)
+    mat = bpy.data.materials.new("height")
+    mat.use_nodes = True
+    nodes, links = mat.node_tree.nodes, mat.node_tree.links
+    nodes.clear()
+    geo = nodes.new("ShaderNodeNewGeometry")
+    xyz = nodes.new("ShaderNodeSeparateXYZ")
+    unsheared = nodes.new("ShaderNodeMath")
+    unsheared.operation = "MULTIPLY_ADD"
+    unsheared.inputs[1].default_value = -k
+    scaled = nodes.new("ShaderNodeMath")
+    scaled.operation = "MULTIPLY_ADD"
+    scaled.inputs[1].default_value = per_frame
+    scaled.inputs[2].default_value = -floor_z * per_frame
+    scaled.use_clamp = True
+    emit = nodes.new("ShaderNodeEmission")
+    emit.inputs["Strength"].default_value = 1.0
+    out = nodes.new("ShaderNodeOutputMaterial")
+    links.new(geo.outputs["Position"], xyz.inputs[0])
+    links.new(xyz.outputs["Y"], unsheared.inputs[0])
+    links.new(xyz.outputs["Z"], unsheared.inputs[2])
+    links.new(unsheared.outputs[0], scaled.inputs[0])
+    links.new(scaled.outputs[0], emit.inputs["Color"])
+    links.new(emit.outputs[0], out.inputs["Surface"])
+    obj.data.materials.clear()
+    obj.data.materials.append(mat)
+
+
+def render(out_path, width, height, engine, samples, height_pass=False):
     scene = bpy.context.scene
     if engine == "cycles":
         scene.render.engine = "CYCLES"
@@ -5935,6 +5976,13 @@ def render(out_path, width, height, engine, samples):
     scene.render.resolution_percentage = 100
     scene.render.image_settings.file_format = "PNG"
     scene.render.image_settings.color_mode = "RGBA"
+    if height_pass:
+        # A measurement, not a picture: no display curve, no dither, 16 bits, and a pixel filter narrow enough that
+        # an edge pixel is one surface's height rather than an average with the empty frame behind it.
+        scene.view_settings.view_transform = "Raw"
+        scene.render.dither_intensity = 0.0
+        scene.render.filter_size = 0.01
+        scene.render.image_settings.color_depth = "16"
     scene.render.filepath = out_path
     bpy.ops.render.render(write_still=True)
 
@@ -6155,6 +6203,10 @@ def main():
                 if ox0 - 0.001 <= bx0 < ox1 - 0.001 and oy0 - 0.001 <= by0 < oy1 - 0.001:
                     continue  # the opening itself
                 ground(sw - gap, sd - gap, thick, bx0 + sw / 2, by0 + sd / 2, oz - thick / 2, paving)
+    if arg("pass") == "height":
+        height_pass(obj, k, origin[2], width, height)
+        render(out, width, height, engine, int(arg("samples", "64")), height_pass=True)
+        return
     render(out, width, height, engine, int(arg("samples", "64")))
     # What it will actually BE, in map units, before a single repaint is spent on it. The import trims to
     # the object and scales it into a 56x84 slot, so drawn height is 56 * (height / width) capped at 84 —

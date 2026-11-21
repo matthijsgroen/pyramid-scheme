@@ -481,6 +481,18 @@ mask does not, because the repaint's own shadow is never usable — see Step 4.
 All three share one frame to the pixel: the camera and the backdrop are both fitted to the object, and
 `--only=shadow` removes the object only after they have been. So they composite without alignment.
 
+**A fourth for a prop that can stand in water: the height pass.** Same parameters as the mask, plus
+`--pass=height`:
+
+```
+yarn render-prop … --shadow=0 --pass=height --background=none --out=~/tile-previews/render-x-wet.png
+```
+
+Every surface emits how high above its floor it stands (before the shear), as a fraction of the frame's height,
+in a 16-bit PNG. `import-tile --wet=<that file>` cuts it at the water's depth and writes `<name>.wet-<depth>.png`
+beside the tile, the waterline the map masks the prop with where it stands in water (Step 4). `art/rebuild.sh`
+renders it in `scaffold` and `meshscaffold` alongside the other two.
+
 **Gate: look at the scaffold.** It must already read as the object — brown, in palette, its top clearly
 lighter than its front. A GREY render is unrecognisable: asked to repaint an untextured grey table, the
 generator read it as a pair of wooden door panels and filled them with photographic burl. `--colour`
@@ -647,6 +659,18 @@ in their place. On the merchant's near-black floor nobody saw it; on the noblema
 every prop sat in a hole. And `make_shadow` paints the floor colour darkened, so `--floor` has to name the
 rank being built — left at its default, four of the nobleman's props were seated in a patch of the
 MERCHANT's floor.
+
+**`--wet` writes the prop's WATERLINE, `<name>.wet-<depth>.png`, beside the tile.** It takes the height pass
+(Step 2) and cuts it at the water realisation's `submerge` (`WATER_META` in
+`src/mods/topology/game/regionBarrier/meta.ts`, the one place the depth lives; the file name carries it). The depth
+is measured from the floor the object stands on, not from the tile's bottom edge, and converted to master pixels
+with the frame this import builds, so `--scale`, `--lift`, `--cells`, `--tall`, `--crop-below`, `--tight` and
+`--no-trim` all move it exactly as they move the art; the cut is then carried through the same trim, seat and
+resize. The rendered shadow is always under water; paint the repaint added past the model's silhouette takes the
+side of the nearest pixel the renders know (within 3 map units, or `--mask-grow`), and paint farther out is kept unless a pixel known to be under lies above it in its column.
+The map masks a sprite standing in water of that depth with it (`Submerged`, `wetMaskUrl`); a sprite without one
+fades out at a straight line `submerge` above its tile's bottom. Only the junior props are imported with `--wet`
+so far; `ONLY=junior sh art/rebuild.sh` re-imports one tier's tiles.
 
 **A hole and a hanging thing take NO seat at all.** `--shadow=0` on every render and no `--seat`: a wall
 item hangs, so there is nothing under it, and a pit is an absence — `make_shadow` would lay a second dark

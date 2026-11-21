@@ -7,7 +7,11 @@
 #          the rank's own paving shows through it. It is painted the rank's floor darkened, so --floor
 #          has to name the rank being built: left at the default, the nobleman's props each sat in a
 #          patch of the MERCHANT's floor, 62 luminance darker than the one they stand on.
-# The scaffold that was handed to the generator is a third, and is not needed here.
+#   WET    the object's HEIGHT PASS (`--pass=height`), in the same frame: each pixel how high above the floor it
+#          stands. An import given --wet cuts it at the water's depth into `<name>.wet-<depth>.png`, the
+#          waterline the map masks the prop with where it stands in water (importTile.ts, `--wet`). Only the
+#          junior props pass --wet so far; a prop without a waterline file fades out at a straight line.
+# The scaffold that was handed to the generator is another, and is not needed here.
 #
 # The shadow is rendered rather than painted because a repaint will not paint one: told to, the
 # generator paints an invented floor across the footprint instead, and the tile arrives with nothing
@@ -18,9 +22,22 @@ cd "$(dirname "$0")/.."
 BLENDER=${BLENDER:-/Applications/Blender.app/Contents/MacOS/Blender}
 OBJ=$(mktemp -t propobj).png
 SHADOW=$(mktemp -t propshadow).png
-trap 'rm -f "$OBJ" "$SHADOW"' EXIT
+WET=$(mktemp -t propwet).png
+trap 'rm -f "$OBJ" "$SHADOW" "$WET"' EXIT
 
-# Renders the pair a prop is imported with. First argument is the primitive, the rest are passed on —
+# ONLY=junior sh art/rebuild.sh imports one tier's tiles and skips every import that names another --tier. The
+# renders still all run, so each import keeps the scaffold it follows.
+if [ -n "$ONLY" ]; then
+  yarn() {
+    case " $* " in
+      *" --tier=$ONLY "*) command yarn "$@" ;;
+      *" --tier="*) ;;
+      *) command yarn "$@" ;;
+    esac
+  }
+fi
+
+# Renders the three a prop is imported with. First argument is the primitive, the rest are passed on —
 # and every one of them must match what the master was painted over, or the mask keeps a silhouette the
 # paint no longer fills.
 scaffold() {
@@ -34,9 +51,11 @@ scaffold() {
     --shadow=0 --background=none --out="$OBJ" "$@" --colour=#a49781 --floor=#6c6257 >/dev/null
   "$BLENDER" -b -P scripts/renderProp.py -- --primitive="$prim" \
     --only=shadow --background=none --out="$SHADOW" "$@" --colour=#a49781 --floor=#6c6257 >/dev/null
+  "$BLENDER" -b -P scripts/renderProp.py -- --primitive="$prim" \
+    --shadow=0 --pass=height --background=none --out="$WET" "$@" --colour=#a49781 --floor=#6c6257 >/dev/null
 }
 
-# The same pair for a prop whose subject is a MUSEUM SCAN rather than a primitive. Step 0's table sends
+# The same three for a prop whose subject is a MUSEUM SCAN rather than a primitive. Step 0's table sends
 # statues and coffins here; everything downstream is identical, because the pipeline only ever wanted a
 # mesh and does not care where it came from.
 #
@@ -57,6 +76,8 @@ meshscaffold() {
     --shadow=0 --background=none --out="$OBJ" "$@" --colour=#a49781 --floor=#6c6257 >/dev/null
   "$BLENDER" -b -P scripts/renderProp.py -- --mesh="$MESHES/$mesh" \
     --only=shadow --background=none --out="$SHADOW" "$@" --colour=#a49781 --floor=#6c6257 >/dev/null
+  "$BLENDER" -b -P scripts/renderProp.py -- --mesh="$MESHES/$mesh" \
+    --shadow=0 --pass=height --background=none --out="$WET" "$@" --colour=#a49781 --floor=#6c6257 >/dev/null
 }
 
 # A chest is imported twice with the same flags: the map's tile, and the large edition the chest screen
@@ -802,11 +823,11 @@ yarn import-tile art/masters/surfaces/junior-wall-face.webp --tier=junior --name
 # from -43 to -23, which is where the rank's other dressed stone sits (its stela is -18).
 scaffold palm --spin=22
 yarn import-tile art/masters/props/junior/pillar.webp --tier=junior --name=pillar --slot=prop \
-  --filter=smooth --mask="$OBJ" --mask-grow=100 --seat="$SHADOW" --brightness=0.82 --saturation=1.5
+  --filter=smooth --wet="$WET" --mask="$OBJ" --mask-grow=100 --seat="$SHADOW" --brightness=0.82 --saturation=1.5
 
 scaffold shelf --contents=linen --spin=5
 yarn import-tile art/masters/props/junior/shelf.webp --tier=junior --name=shelf --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.80 --saturation=2.0
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=0.80 --saturation=2.0
 
 # The nobleman's LAID TABLE, on `prim_market --contents=laid` — a meal set out, where the merchant's is a
 # balance and a heap of grain. The jar stands in a RING for prim_basin's reason: `jar()` tapers to a point.
@@ -844,23 +865,23 @@ yarn import-tile art/masters/props/junior/shelf.webp --tier=junior --name=shelf 
 # separation — it is still one of the darkest things the rank owns — and takes the clipped tail to 11.1%.
 scaffold basin --contents=bowl --spin=14
 yarn import-tile art/masters/props/junior/basin.webp --tier=junior --name=basin --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=1.2
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=1.2
 
 scaffold hanging --contents=linen --spin=38
 yarn import-tile art/masters/props/junior/hanging.webp --tier=junior --name=hanging --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.88 --saturation=1.4
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=0.88 --saturation=1.4
 
 scaffold market --contents=laid --spin=-16
 yarn import-tile art/masters/props/junior/offeringTable.webp --tier=junior --name=offeringTable \
-  --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+  --slot=prop --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 
 scaffold lamp --contents=stand --spin=8
 yarn import-tile art/masters/props/junior/lamp.webp --tier=junior --name=lamp --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=1.6
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=1.6
 
 scaffold sealedChest --spin=-27
 chest_tile art/masters/props/junior/chestProp.webp --tier=junior --name=chestProp --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=1.12
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=1.12
 
 # The same chest open, an edit of the shut master, imported untrimmed so it lands exactly where the shut
 # import put the chest: the shut trim scaled it 1.04 and moved it -74,+214 px. The seat goes the same way
@@ -869,14 +890,15 @@ OPEN=$(mktemp -t chestopen).png
 magick -size 1688x2530 xc:"#ff00ff" \( art/masters/props/junior/chestPropOpen.webp -resize 1688x2530! -resize 104% \) \
   -geometry -74+214 -composite "$OPEN"
 magick -size 448x672 xc:none \( "$SHADOW" -resize 104% \) -geometry -20+57 -composite "$SHADOW"
-chest_tile "$OPEN" --tier=junior --name=chestPropOpen --slot=prop --filter=smooth --seat="$SHADOW" --no-trim \
+magick -size 448x672 xc:none \( "$WET" -resize 104% \) -geometry -20+57 -composite -depth 16 "$WET"
+chest_tile "$OPEN" --tier=junior --name=chestPropOpen --slot=prop --filter=smooth --wet="$WET" --seat="$SHADOW" --no-trim \
   --brightness=1.12
 rm -f "$OPEN"
 
 # The ward-key chest: the cavetto chest in gold leaf, copper and faience over ebony.
 scaffold sealedChest --contents=cavetto --spin=-27 --colour=#3a2a20 --floor=#e2a86f
 chest_tile art/masters/props/junior/wardChest.webp --tier=junior --name=wardChest --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 
 # The same chest open, untrimmed like starter's: the shut trim scaled it 1.0244 and moved it -42,+251 px
 # (-11,+67 at the render's scale). The mask is the shut silhouette plus the top 340 rows for the lid.
@@ -886,32 +908,33 @@ magick -size 1686x2528 xc:"#ff00ff" \( art/masters/props/junior/wardChestOpen.we
 magick -size 448x672 xc:none \( "$OBJ" -resize 102.44% \) -geometry -11+67 -composite \
   \( -size 448x340 xc:white \) -geometry +0+0 -composite "$OBJ"
 magick -size 448x672 xc:none \( "$SHADOW" -resize 102.44% \) -geometry -11+67 -composite "$SHADOW"
-chest_tile "$OPEN" --tier=junior --name=wardChestOpen --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW" \
+magick -size 448x672 xc:none \( "$WET" -resize 102.44% \) -geometry -11+67 -composite -depth 16 "$WET"
+chest_tile "$OPEN" --tier=junior --name=wardChestOpen --slot=prop --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" \
   --no-trim
 rm -f "$OPEN"
 
 scaffold falseDoor --spin=6
 yarn import-tile art/masters/props/junior/shrine.webp --tier=junior --name=shrine --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 
 scaffold mat --spin=9 --shadow=0.5 --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/masters/props/junior/mat.webp --tier=junior --name=mat --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.6
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.6
 
 # --lit=1: the nobleman's brazier burns where the merchant's holds cold ash.
 scaffold brazier --lit=1 --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/masters/props/junior/brazier.webp --tier=junior --name=brazier --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7 --brightness=0.92
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --scale=0.7 --brightness=0.92
 
 # --shadow=0.6 keeps a flat fall's footprint faint. Only the SHADOW render takes it — scaffold() passes
 # --shadow=0 ahead of "$@" for the mask, so the mask cannot pick one up.
 scaffold rubblePile --contents=plaster --shadow=0.6 --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/masters/props/junior/rubblePile.webp --tier=junior --name=rubblePile --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85 --saturation=1.25
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=0.85 --saturation=1.25
 
 scaffold jarrack --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/masters/props/junior/jarRack.webp --tier=junior --name=jarRack --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.92
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=0.92
 
 # The nobleman's own kinds (themed-rooms.md, Junior): the banquet, the dressing room, the garden court, the
 # bedroom and the bakery. Each block runs once its master is in; until then the scaffold is in the repaint
@@ -922,52 +945,52 @@ yarn import-tile art/masters/props/junior/jarRack.webp --tier=junior --name=jarR
 if [ -f art/masters/props/junior/banquetTable.webp ]; then
   scaffold banquetTable --spin=-6 --width=672 --height=448 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/banquetTable.webp --tier=junior --name=banquetTable --slot=prop \
-    --cells=2x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+    --cells=2x1 --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 fi
 if [ -f art/masters/props/junior/lotusPool.webp ]; then
   scaffold basin --contents=pool --width=672 --height=448 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/lotusPool.webp --tier=junior --name=lotusPool --slot=prop \
-    --cells=2x1 --filter=smooth --mask="$OBJ"
+    --cells=2x1 --filter=smooth --wet="$WET" --mask="$OBJ"
 fi
 if [ -f art/masters/props/junior/harp.webp ]; then
   scaffold harp --spin=4 --width=448 --height=1120 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/harp.webp --tier=junior --name=harp --slot=prop \
-    --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+    --tall=1 --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 fi
 if [ -f art/masters/props/junior/dressingTable.webp ]; then
   scaffold dressingTable --spin=4 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/dressingTable.webp --tier=junior --name=dressingTable --slot=prop \
-    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+    --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 fi
 if [ -f art/masters/props/junior/wigStand.webp ]; then
   scaffold wigStand --spin=10 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/wigStand.webp --tier=junior --name=wigStand --slot=prop \
-    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+    --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 fi
 if [ -f art/masters/props/junior/pottedTree.webp ]; then
   scaffold pottedTree --spin=12 --width=448 --height=1120 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/pottedTree.webp --tier=junior --name=pottedTree --slot=prop \
-    --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+    --tall=1 --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 fi
 if [ -f art/masters/props/junior/bed.webp ]; then
   scaffold bed --spin=5 --width=672 --height=448 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/bed.webp --tier=junior --name=bed --slot=prop \
-    --cells=2x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+    --cells=2x1 --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 fi
 if [ -f art/masters/props/junior/headrest.webp ]; then
   scaffold headrest --spin=6 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/headrest.webp --tier=junior --name=headrest --slot=prop \
-    --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.55
+    --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --scale=0.55
 fi
 if [ -f art/masters/props/junior/grindstone.webp ]; then
   scaffold grindstone --spin=6 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/grindstone.webp --tier=junior --name=grindstone --slot=prop \
-    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+    --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 fi
 if [ -f art/masters/props/junior/breadOven.webp ]; then
   scaffold breadOven --spin=14 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/breadOven.webp --tier=junior --name=breadOven --slot=prop \
-    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+    --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 fi
 
 # Henut's name panel as the reading screen's backdrop, 1024 wide: the screen writes her signs inside the
@@ -1397,7 +1420,7 @@ yarn import-tile art/masters/props/expert/rubblePile.webp --tier=expert --name=r
 # lamp at -63 and the chest at -15.
 scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
 yarn import-tile art/masters/props/junior/statue.webp --tier=junior --name=statue --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.76 --saturation=1.3
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=0.76 --saturation=1.3
 
 # The nobleman's COFFIN, propped upright — `prim_statue --contents=mummiform`, the pose that stands a
 # sarcophagus on end so its anthropoid outline lands in the FRONT plane, the one plane the shear leaves
@@ -1416,7 +1439,7 @@ yarn import-tile art/masters/props/junior/statue.webp --tier=junior --name=statu
 # masked-away version costs nothing, this one does not.
 scaffold statue --contents=mummiform --spin=11 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
 yarn import-tile art/masters/props/junior/sarcophagus.webp --tier=junior --name=sarcophagus --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 
 # The nobleman's PLASTER FALL, and the difference from his standing pile is entirely paint: the pile is
 # `--contents=plaster` and this is `--contents=spill`, the same primitive laid flat on the floor. What
@@ -1434,7 +1457,7 @@ yarn import-tile art/masters/props/junior/sarcophagus.webp --tier=junior --name=
 # saturation was tried and pushed warmth from -35 to -21 without helping anything read.
 scaffold rubblePile --contents=spill --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/masters/props/junior/rubbleSpill.webp --tier=junior --name=rubbleSpill --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.84
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=0.84
 
 # The nobleman's LEDGER BOARD. FLAT — no mesh, no mask, no seat, the same route as the merchant's tally
 # board and his own stela: a plank on two pegs is a slab, and its own silhouette becomes the tile.
@@ -1515,7 +1538,7 @@ yarn import-tile art/masters/props/junior/stela-anubis.webp --tier=junior --name
 # tail, which is the cleanest pair of numbers at this rank.
 scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/masters/props/junior/shrine-anubis.webp --tier=junior --name=shrine-anubis --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.8
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=0.8
 
 # ANUBIS COUCHANT in the vault, 6 rooms, and the tile that cost three rolls to three different faults —
 # worth reading in order, because two of them were the prompt correcting itself into the opposite ditch.
@@ -1542,7 +1565,7 @@ yarn import-tile art/masters/props/junior/shrine-anubis.webp --tier=junior --nam
 # shipped Anubis measures 35.9% for the same reason.
 scaffold statue --contents=couchant --spin=-22 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
 yarn import-tile art/masters/props/junior/statue-anubis.webp --tier=junior --name=statue-anubis --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.9
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=0.9
 
 # THOTH on the nobleman's FALSE-DOOR STELA, 7 rooms. The rank's second god, and the reason his patron
 # art is worth painting at all: before the Noble's Hidden Vault was dedicated to Anubis every
@@ -1573,7 +1596,7 @@ yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=
 # 7 from the floor; 0.85 gives 0.0% and 32 darker.
 scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/masters/props/junior/shrine-thoth.webp --tier=junior --name=shrine-thoth --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 
 # BASTET in the merchant's household SHRINE, 3 rooms, and the second patron tile at his rank. Same
 # `prim_shrine` default as his generic — a mudbrick box with a figure and a lamp in the niche — with a
@@ -1633,7 +1656,7 @@ yarn import-tile art/masters/props/starter/shrine-ra.webp --tier=starter --name=
 # variant should measure: the same object at the same rank with a different god on it.
 scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
 yarn import-tile art/masters/props/junior/statue-thoth.webp --tier=junior --name=statue-thoth --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.8 --saturation=1.3
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=0.8 --saturation=1.3
 
 # The priest's COFFIN, propped upright — `prim_statue --contents=mummiform`, the pose that puts an
 # anthropoid outline in the FRONT plane, the one plane this shear leaves alone.

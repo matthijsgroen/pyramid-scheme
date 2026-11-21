@@ -5,7 +5,7 @@ import type { ResolveRegionBarrierRealisation } from "@/game/regionBarrierRealis
 import { resolveRegionBarrierRealisation } from "@/mods/allRegionBarrierRealisations"
 import { CELL, FACE_H, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
 import { isPassable, type RoomClaims } from "./roomClaims"
-import { tileUrl } from "./tileAssets"
+import { tileUrl, wetMaskUrl } from "./tileAssets"
 import { REGION_COVER_FADE_OUT_MS } from "./useRegionBarrierCovers"
 
 /** The texture repeats once per this many map units, in both directions, anchored at the map's origin so it runs on across cells. */
@@ -89,37 +89,54 @@ export const submergeDepths = (
 /** How many map units the waterline fades over, upward from where the hidden part ends. */
 const WATERLINE_FADE = 6
 
+/** The tile a standing sprite is drawn with, and how: filling its box, or fitted inside it and centred, and
+ * mirrored or not. Its waterline file is drawn the same way. */
+export type SubmergedTile = { url: string; fit: "fill" | "contain"; mirrored?: boolean }
+
 /**
- * Something standing in water or sand: drawn whole, with everything below `depth` above its floor line hidden and a
- * short fade at the line. The mask is the sprite's own box, so its children stay in map space inside it.
+ * Something standing in water or sand: drawn whole, with what is under the surface hidden. Where its tile has a
+ * waterline baked at this depth (`wetMaskUrl`) that is the mask, cut along the object's own shape at `depth` above
+ * the floor it stands on; otherwise everything below `depth` above its floor line, with a short fade at the line.
+ * The mask is the sprite's own box, so its children stay in map space inside it.
  */
 export const Submerged = ({
   box: [x, y, w, h],
   baseY,
   depth,
   id,
+  tile,
+  maskFor = wetMaskUrl,
   children,
 }: {
   box: readonly [number, number, number, number]
   baseY: number
   depth: number
   id: string
+  tile?: SubmergedTile
+  maskFor?: (tileUrl: string, depth: number) => string | undefined
   children: ReactNode
 }) => {
   const line = baseY - depth - y
+  const wet = tile && maskFor(tile.url, depth)
+  const mask: CSSProperties = wet
+    ? {
+        maskImage: `url("${wet}")`,
+        maskSize: tile.fit === "fill" ? "100% 100%" : "contain",
+        maskPosition: "center",
+        maskRepeat: "no-repeat",
+      }
+    : { maskImage: `linear-gradient(to bottom, black ${line - WATERLINE_FADE}px, transparent ${line}px)` }
+  // A mirrored sprite's waterline is mirrored with it: the box is flipped, and its content flipped back.
+  const flip = wet && tile.mirrored ? "scaleX(-1)" : undefined
   return (
     <div
       data-submerged={id}
-      style={{
-        position: "absolute",
-        left: x,
-        top: y,
-        width: w,
-        height: h,
-        maskImage: `linear-gradient(to bottom, black ${line - WATERLINE_FADE}px, transparent ${line}px)`,
-      }}
+      {...(wet ? { "data-waterline": wet } : {})}
+      style={{ position: "absolute", left: x, top: y, width: w, height: h, transform: flip, ...mask }}
     >
-      <div style={{ position: "absolute", left: -x, top: -y, width: 0, height: 0 }}>{children}</div>
+      <div style={{ position: "absolute", left: 0, top: 0, width: w, height: h, transform: flip }}>
+        <div style={{ position: "absolute", left: -x, top: -y, width: 0, height: 0 }}>{children}</div>
+      </div>
     </div>
   )
 }

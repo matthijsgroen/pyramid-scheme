@@ -92,7 +92,7 @@ import { TileLayers } from "./tileLayers"
 import { regionBarrierCovers } from "@/game/regionBarrierCover"
 import type { ResolveRegionBarrierRealisation } from "@/game/regionBarrierRealisation"
 import { resolveRegionBarrierRealisation } from "@/mods/allRegionBarrierRealisations"
-import { RegionBarrierCovers, Submerged, submergeDepths } from "./RegionBarrierCovers"
+import { RegionBarrierCovers, Submerged, submergeDepths, type SubmergedTile } from "./RegionBarrierCovers"
 import { useRegionBarrierCovers } from "./useRegionBarrierCovers"
 import { REVEAL_FADE_MS, useRevealWave } from "./useRevealWave"
 import { ARROW_RADIUS, PROMPT_LIFT, ringPoint } from "./arrowRing"
@@ -225,6 +225,8 @@ type StandingSprite = {
   /** The cell whose floor it stands on, as "r,c", where it stands in water or sand covering that cell. Unset for what
    * does not stand on a floor or is somebody walking. */
   standsOn?: string
+  /** The tile it is drawn with and how it fills `box`, for its waterline where it stands in water (`wetMaskUrl`). */
+  tile?: SubmergedTile
   node: ReactNode
 }
 
@@ -848,6 +850,21 @@ const LIT_DECORATIONS = new Set<DecorationKind>(["lamp"])
  * the way across a chamber: a flame that lit only its own tile left the place it stands in unlit. */
 const LAMP_POOL_RADIUS = CELL * 0.9
 
+/** The drawing a room's prop is shown as (see `Decoration`). */
+const decorationTileUrl = (kind: DecorationKind, tier: Tileset, seed: string, patron?: Patron): string | undefined => {
+  // A PATRON BEATS A VARIANT. Both choose a drawing, and where a site names a god that choice is
+  // authored rather than positional — a dedicated tomb whose statues varied by cell would be saying two
+  // things at once. Falls straight through to the variant pick wherever no patron art exists, which is
+  // everywhere today.
+  const dedicated = patron ? patronTileUrl(tier, kind, patron) : undefined
+  const own = dedicated && dedicated !== tileOrPlaceholder(tier, kind) ? dedicated : undefined
+  const variants = tileVariants(tier, kind)
+  return (
+    own ??
+    (variants.length > 1 ? variants[hashString(`${seed}:${kind}`) % variants.length] : tileOrPlaceholder(tier, kind))
+  )
+}
+
 /** One room's prop. `seed` decides WHICH drawing of the kind, where a kind has more than one.
  *
  * The choice is positional and deterministic — the cell's own coordinates inside its site — which keeps it
@@ -871,16 +888,7 @@ const Decoration = ({
   /** Drawn mirrored left to right: a ground object in a mirrored prefab room. */
   flip?: boolean
 }) => {
-  // A PATRON BEATS A VARIANT. Both choose a drawing, and where a site names a god that choice is
-  // authored rather than positional — a dedicated tomb whose statues varied by cell would be saying two
-  // things at once. Falls straight through to the variant pick wherever no patron art exists, which is
-  // everywhere today.
-  const dedicated = patron ? patronTileUrl(tier, kind, patron) : undefined
-  const own = dedicated && dedicated !== tileOrPlaceholder(tier, kind) ? dedicated : undefined
-  const variants = tileVariants(tier, kind)
-  const url =
-    own ??
-    (variants.length > 1 ? variants[hashString(`${seed}:${kind}`) % variants.length] : tileOrPlaceholder(tier, kind))
+  const url = decorationTileUrl(kind, tier, seed, patron)
   return (
     <>
       {/* Under the sprite, so the light is on the floor and the lamp is standing in it. */}
@@ -1868,6 +1876,7 @@ export const SiteMapView = ({
       ...(sprite.light ? { light: sprite.light } : {}),
       // A node sprite is keyed by the cell of the node it stands for.
       ...(sprite.offFloor ? {} : { standsOn: sprite.key.slice(sprite.key.indexOf(":") + 1) }),
+      ...(sprite.url ? { tile: { url: sprite.url, fit: "fill" as const, mirrored: sprite.mirrored } } : {}),
       // A drop is the exception: the player stands IN FRONT of it rather than working it, so on its own
       // mouth the general tie holds (he stands in front of what shares his floor line) and its parapet
       // never covers him. A plate is the other: he stands on it, so it is always under him.
@@ -1948,11 +1957,13 @@ export const SiteMapView = ({
       const owner = litClaimOwner(grid, claims, r, c)
       if (!owner) continue
       const frame = propFrame(r, c, decorationFootprint(kind))
+      const url = decorationTileUrl(kind, cellTileset(owner, grid, tier), `${grid.siteId}:${cellKey}`, grid.patron)
       sprites.push({
         key: `prop:${cellKey}`,
         baseY: frame.baseY,
         box: [frame.x, frame.y, frame.w, frame.h],
         standsOn: cellKey,
+        ...(url ? { tile: { url, fit: "contain" as const } } : {}),
         node: (
           <PropAt
             key={`prop:${cellKey}`}
@@ -1969,11 +1980,13 @@ export const SiteMapView = ({
     // A prefab room's object fades while it would hide him; one walked over lies under him (`underfoot`).
     for (const prop of prefabProps) {
       if (prop.layer === "ground") continue
+      const url = decorationTileUrl(prop.kind, prop.tier, `${grid.siteId}:${prop.at}`, grid.patron)
       sprites.push({
         key: `prefab:${prop.at}`,
         baseY: prop.frame.baseY,
         box: [prop.frame.x, prop.frame.y, prop.frame.w, prop.frame.h],
         standsOn: prop.at,
+        ...(url ? { tile: { url, fit: "contain" as const, mirrored: prop.flip } } : {}),
         node: (
           <PrefabPropAt
             key={`prefab:${prop.at}`}
@@ -2021,7 +2034,7 @@ export const SiteMapView = ({
         return {
           ...s,
           node: (
-            <Submerged key={s.key} id={s.key} box={s.box!} baseY={s.baseY} depth={depth}>
+            <Submerged key={s.key} id={s.key} box={s.box!} baseY={s.baseY} depth={depth} tile={s.tile}>
               {s.node}
             </Submerged>
           ),

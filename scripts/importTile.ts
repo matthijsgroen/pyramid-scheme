@@ -90,6 +90,12 @@
  *   --tight=9.464    the tile is the art's own ink bounds, with no slot frame round it, at 2 pixels to a
  *                    map unit; the number is how many MASTER pixels make one map unit. The renderer draws
  *                    the tile at width/2 by height/2 units, so the pixels it holds are the pixels it shows.
+ *   --wet=height.png (prop) also write `<name>.wet-<depth>.png` beside the tile: the WATERLINE the map masks the
+ *                    prop with where it stands in water. The file is the scaffold's height pass
+ *                    (`render-prop --pass=height`, in the frame of --mask and --seat); it is cut at the water
+ *                    realisation's `submerge` above the floor the object stands on, converted to master pixels
+ *                    with the frame this import builds, and carried through the same trim, seat and resize as
+ *                    the art, so it cannot drift from the tile. The shadow on the floor is always under.
  *   --flip           mirror horizontally. The renderer mirrors EAST into west, so a side view drawn
  *                    facing left has to come in facing right
  *   --large          write the LARGE EDITION instead of the tile: the same cut, seat and grading at
@@ -106,6 +112,9 @@ import { keyOut } from "./keyOut"
 import { tierPalette } from "../src/app/SiteMap/tileMaterials"
 import type { Difficulty } from "../src/data/difficultyLevels"
 import { pathToFileURL } from "url"
+import { WATER_META } from "../src/mods/topology/game/regionBarrier/meta"
+import { wetMaskFile } from "../src/app/SiteMap/wetMaskName"
+import { waterline } from "./wetMask"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const OUT_ROOT = join(__dirname, "..", "src", "assets", "tiles")
@@ -541,7 +550,39 @@ const applyGamma = async (input: Buffer, exponent: number): Promise<Buffer> => {
     .toBuffer()
 }
 
-const seatOnFloorLine = async (img: sharp.Sharp, aspect: number, scale: number, lift: number): Promise<sharp.Sharp> => {
+/**
+ * Where the art's pixels went on the way to the tile: the region of the image as it stood after the mask, the
+ * seat and the glow, laid at (`x`, `y`) in a frame of `frameW` x `frameH`, which is then resized to the tile.
+ * `--wet` replays it, so the waterline lands where the art did.
+ */
+type Placement = {
+  left: number
+  top: number
+  width: number
+  height: number
+  frameW: number
+  frameH: number
+  x: number
+  y: number
+}
+
+const wholeImage = (width: number, height: number): Placement => ({
+  left: 0,
+  top: 0,
+  width,
+  height,
+  frameW: width,
+  frameH: height,
+  x: 0,
+  y: 0,
+})
+
+const seatOnFloorLine = async (
+  img: sharp.Sharp,
+  aspect: number,
+  scale: number,
+  lift: number
+): Promise<{ img: sharp.Sharp; placement: Placement }> => {
   // Encoded, not raw: `composite` needs an image it can parse, and a sharp instance built from a raw
   // buffer has no format of its own to fall back on.
   const trimmed = await img.trim({ threshold: 1 }).png().toBuffer({ resolveWithObject: true })
@@ -553,19 +594,17 @@ const seatOnFloorLine = async (img: sharp.Sharp, aspect: number, scale: number, 
   const frameW = Math.max(width, Math.round(frameH * aspect))
   // Rendered out before it goes back into the pipeline, because sharp resizes BEFORE it composites: left
   // lazy, the frame would be shrunk to the slot first and then asked to take a full-size object onto it.
+  const x = Math.round((frameW - width) / 2)
+  const y = Math.max(0, frameH - height - Math.round(frameH * lift))
   const seated = await sharp({
     create: { width: frameW, height: frameH, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
   })
-    .composite([
-      {
-        input: trimmed.data,
-        left: Math.round((frameW - width) / 2),
-        top: Math.max(0, frameH - height - Math.round(frameH * lift)),
-      },
-    ])
+    .composite([{ input: trimmed.data, left: x, top: y }])
     .png()
     .toBuffer()
-  return sharp(seated)
+  const left = -(trimmed.info.trimOffsetLeft ?? 0)
+  const top = -(trimmed.info.trimOffsetTop ?? 0)
+  return { img: sharp(seated), placement: { left, top, width, height, frameW, frameH, x, y } }
 }
 
 const main = async (): Promise<void> => {
@@ -607,6 +646,11 @@ const main = async (): Promise<void> => {
   // Last of the three, and OVER rather than under: added light needs something under it to add to.
   const glowPath = arg("glow")
   if (glowPath) img = await glowOver(img, glowPath)
+  const wetPath = arg("wet")
+  if (wetPath && (slot !== "prop" || arg("repeat", "1") !== "1")) throw new Error("--wet is a prop's, drawn once")
+  // The image every geometry step below starts from, which is the frame the height pass is fitted to.
+  const cut = wetPath ? (await img.clone().png().toBuffer({ resolveWithObject: true })).info : undefined
+  let placement = wholeImage(cut?.width ?? 0, cut?.height ?? 0)
   const cropBelow = arg("crop-below")
   if (cropBelow) {
     const whole = await img.ensureAlpha().png().toBuffer({ resolveWithObject: true })
@@ -614,6 +658,7 @@ const main = async (): Promise<void> => {
     img = sharp(
       await sharp(whole.data).extract({ left: 0, top: 0, width: whole.info.width, height: kept }).png().toBuffer()
     )
+    placement = wholeImage(whole.info.width, kept)
   }
   const tight = arg("tight")
   if (tight) {
@@ -622,9 +667,14 @@ const main = async (): Promise<void> => {
     w = Math.round((ink.info.width / Number(tight)) * TIGHT_PX_PER_UNIT)
     h = Math.round((ink.info.height / Number(tight)) * TIGHT_PX_PER_UNIT)
     img = sharp(ink.data)
+    placement = {
+      ...wholeImage(ink.info.width, ink.info.height),
+      left: -(ink.info.trimOffsetLeft ?? 0),
+      top: -(ink.info.trimOffsetTop ?? 0),
+    }
   }
   if (seat && !tight && !process.argv.includes("--no-trim"))
-    img = await seatOnFloorLine(img, w / h, Number(arg("scale", "1")), Number(arg("lift", "0")))
+    ({ img, placement } = await seatOnFloorLine(img, w / h, Number(arg("scale", "1")), Number(arg("lift", "0"))))
   // `--trim` is the positive of `--no-trim`, for the slots that never trim at all.
   //
   // A prop's frame is thrown away and its object re-seated; a WALL item's frame IS its placement, so a
@@ -758,6 +808,120 @@ const main = async (): Promise<void> => {
   console.log(
     `${out} — ${meta.width}x${meta.height}, ${slot} slot${key === "none" ? "" : `, keyed ${key}`}${unchanged ? " (unchanged)" : ""}`
   )
+
+  if (wetPath && cut && !LARGE) {
+    const unitsTall = tight ? h / TIGHT_PX_PER_UNIT : frame.h * span
+    const wetOut = join(dir, wetMaskFile(name, WET_DEPTH))
+    const mask = await waterlineTile({
+      wetPath,
+      seatPath: shadowPath,
+      width: cut.width,
+      height: cut.height,
+      placement,
+      tileW: w,
+      tileH: h,
+      masterPerUnit: placement.frameH / unitsTall,
+      grow: Number(arg("mask-grow", "0")),
+    })
+    const same = existsSync(wetOut) && readFileSync(wetOut).equals(mask)
+    if (!same) writeFileSync(wetOut, mask)
+    console.log(`${wetOut} — waterline at ${WET_DEPTH} units${same ? " (unchanged)" : ""}`)
+  }
+}
+
+/**
+ * How deep a prop's waterline mask is cut, in map units: the water realisation's own `submerge`, the one place the
+ * number lives. The file name carries it, so the map uses a mask only where the water is that deep.
+ */
+const WET_DEPTH = WATER_META.submerge!
+
+/**
+ * The prop's waterline at the tile's size, for `--wet`: the height pass thresholded at `WET_DEPTH` in the master's
+ * own pixels, then carried through the same region, frame and resize the art took (`Placement`), and softened a
+ * pixel. Alpha is what shows above the water; the map hands it to CSS `mask-image`.
+ */
+const waterlineTile = async ({
+  wetPath,
+  seatPath,
+  width,
+  height,
+  placement,
+  tileW,
+  tileH,
+  masterPerUnit,
+  grow,
+}: {
+  wetPath: string
+  seatPath: string | undefined
+  width: number
+  height: number
+  placement: Placement
+  tileW: number
+  tileH: number
+  masterPerUnit: number
+  grow: number
+}): Promise<Buffer> => {
+  // Nearest, so an edge pixel keeps one surface's height instead of an average with the empty frame.
+  const pass = await sharp(wetPath)
+    .ensureAlpha()
+    .resize(width, height, { fit: "fill", kernel: "nearest" })
+    // rgb16, or sharp reads the pass through its 8-bit pipeline and `ushort` only widens what is left.
+    .toColourspace("rgb16")
+    .raw({ depth: "ushort" })
+    .toBuffer({ resolveWithObject: true })
+  const values = new Uint16Array(pass.data.buffer, pass.data.byteOffset, pass.data.byteLength / 2)
+  const channels = pass.info.channels
+  const n = width * height
+  const heights = new Float32Array(n)
+  const object = new Uint8Array(n)
+  for (let i = 0; i < n; i++) {
+    heights[i] = (values[i * channels] / 65535) * height
+    object[i] = values[i * channels + channels - 1] >> 8
+  }
+  // Fitted the way `underlayShadow` fits it, so the footprint is where the tile's own shadow is.
+  const shadow = seatPath
+    ? new Uint8Array(
+        await sharp(seatPath).ensureAlpha().resize(width, height, { fit: "fill" }).extractChannel(3).raw().toBuffer()
+      )
+    : new Uint8Array(n)
+  const alpha = waterline({
+    heights,
+    object,
+    shadow,
+    width,
+    height,
+    depth: WET_DEPTH * masterPerUnit,
+    reach: Math.round(Math.max(grow, 3 * masterPerUnit)),
+  })
+  const rgba = Buffer.alloc(n * 4, 255)
+  for (let i = 0; i < n; i++) rgba[i * 4 + 3] = alpha[i]
+  const region = await sharp(rgba, { raw: { width, height, channels: 4 } })
+    .extract({ left: placement.left, top: placement.top, width: placement.width, height: placement.height })
+    .png()
+    .toBuffer()
+  const framed = await sharp({
+    create: {
+      width: placement.frameW,
+      height: placement.frameH,
+      channels: 4,
+      background: { r: 255, g: 255, b: 255, alpha: 0 },
+    },
+  })
+    .composite([{ input: region, left: placement.x, top: placement.y }])
+    .png()
+    .toBuffer()
+  const soft = await sharp(framed)
+    .resize(tileW, tileH, { fit: "fill", kernel: "lanczos3" })
+    .blur(0.6)
+    .extractChannel(3)
+    .raw()
+    .toBuffer()
+  // Grey and alpha, the grey white: CSS masks by alpha, and a constant channel costs nothing to store.
+  const greyAlpha = Buffer.alloc(soft.length * 2, 255)
+  for (let i = 0; i < soft.length; i++) greyAlpha[i * 2 + 1] = soft[i]
+  return sharp(greyAlpha, { raw: { width: tileW, height: tileH, channels: 2 } })
+    .png({ compressionLevel: 9 })
+    .toBuffer()
 }
 
 // Only when RUN, not when imported. `growMask` has a spec beside this file, and importing the module to

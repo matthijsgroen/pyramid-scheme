@@ -57,7 +57,7 @@ const artFor = async (tier: string): Promise<Map<string, number>> => {
   for (const dir of [join(TILES, "default"), join(TILES, tier)]) {
     if (!existsSync(dir)) continue
     for (const f of readdirSync(dir, { withFileTypes: true }))
-      if (f.isFile() && f.name.endsWith(".png"))
+      if (f.isFile() && f.name.endsWith(".png") && !f.name.includes(".wet-"))
         colours.set(f.name.replace(/\.png$/, ""), await coloursIn(join(dir, f.name)))
   }
   return colours
