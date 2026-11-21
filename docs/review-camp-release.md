@@ -52,7 +52,7 @@ it ships; tick it off there.
 - [ ] Pass-through chambers read as rooms on the re-laid junior floors (1.17 a floor today).
 - [x] The nobleman's ward door, `door/ward-junior`.
 - [x] Henut's rooms, her wall's answer and the scribes at Thoth merged (PR #382), and the money fill.
-- [ ] The last junior bake done, then junior's carve recorded: `yarn junior-freeze:record`, commit
+- [x] The last junior bake done, then junior's carve recorded: `yarn junior-freeze:record`, commit
       `src/data/juniorCarve.json`; `yarn junior-freeze` passes, not skipped (handover-junior-release.md, E1).
 
 **Checks in the game:**
