@@ -9,64 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Long bare corridors can hold a puzzle without loot.
-- Walk the map with arrow keys or WASD.
-- A light grows behind a chest as it opens, in its own colour for ward chests.
-- Constellation: Enter picks up a star, then an arrow draws the line.
-- Escape closes dialogs, the shop and puzzles; Enter moves a conversation on.
-- Hidato, procession, balance, canisters, shrine beam and the crocodile pit show their keys and buttons under the rules.
-- Backspace erases a number on the board, and goes back where nothing erases.
-- A game controller walks the map, moves through dialogs and backs out of them.
-- The Tally, Sun and Moon, star and number-square puzzles, pair puzzles, mirror switches, scales, canisters, blockades, ordered hours and their doors, star maps, honeycombs, the crocodile pit, reflex traps, levers, torches, reading walls and pyramid boards play by keys or controller; hold Shift or Y to sweep marks.
-- Move your save to another device with a travel card in Settings.
-- The camp and its windows play by keys or controller, and Start opens Settings.
-- [ and ] or the shoulder buttons switch tabs in the camp windows.
-- Escape or the controller's B goes on from a found treasure and a finished level, and leaves the expedition.
-- Puzzle rules show the keys or controller buttons, and the prompts and pills show their button.
-- Eclipse, sumplete, pair puzzle, star battle and futoshiki show their keys and buttons under the rules.
+- Junior difficulty unlocked.
+- Move your save to another device.
 
 ### Changed
 
-- A junction beside an unfound hidden path stays a room on the map instead of turning into a corridor.
-- A puzzle at a junction sits on a tile on the map, so its fork reads against the floor.
-- Wall decorations sit centred on the taller walls.
-- Developer tools no longer ship in the released game.
-- Opening a treasure chest shows the painted chest from the map.
-- A taken chest stands open, and a ward key's chest looks like treasure.
-- Puzzle rules no longer assume a finger: they describe the move, the Controls block the keys.
-- Hints and buttons no longer say tap: they read right with keys and controller too.
-
-### Fixed
-
-- The chest screen draws the chest sharp instead of blurry.
-- Walls read as one even tone instead of blotchy bands.
-- A gate standing in a doorway no longer has an arch drawn over it.
-- Some pyramid floors open faster.
-- The explorer stands in front of a chest while opening it, not behind it.
-- The pyramid block you are filling in no longer pops out.
-- Typing a number on a phone no longer switches to the keyboard look.
-- Fixed pulling a lever in a room by tapping it, and pulling it again with Enter.
-- Standing in a doorway, the arrow up through its arch shows again.
-- Fixed the arrow toward a puzzle hiding behind it.
-- Fixed tapping a chest, puzzle or figure in a room you stand in.
-- Fixed tapping Fez in his stall.
-- In a room with a lever or torch, the explorer stands in front of it, not below it.
-- Sudoku: the cursor steps away when the board is solved, and [ ] skip numbers already used up.
-- Canisters: a picked-up vessel shows it is held, and Enter or Escape puts it down.
-- Beside a drop on the map, the arrows show only the ways you can walk, and a corner right beside you gets an arrow.
-- On the unequal and sun-and-moon puzzles the signs beside the keyboard cursor step out with it instead of hiding.
-- The game works offline again.
-- The noble's ward gates call their owner a woman.
-- Fez's remark about how you solve puzzles now waits for the right tier.
-- At Fez's stall the explorer no longer sees an animal that is not there.
-- Entering a room no longer stands the explorer on its lever.
-- A chest no longer pokes through the wall beside it.
-- Opening a chest no longer makes it jump.
-- The tutorials checkbox in Settings shows when keys or controller reach it.
-- Keys and controller reach the treasures and trinkets in the collection.
-- Arrow keys go back where they came from, and reach the tab row in camp windows.
-- Hidato: up and down reach the other upper or lower neighbour when one side has none.
-- Hidato: with a run picked up, up and down go to the side where it can go on.
+- Better keyboard and controller play.
 
 ## 0.47.0 - 2026-11-10
 
