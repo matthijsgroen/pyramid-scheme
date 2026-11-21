@@ -122,4 +122,16 @@ describe("the revealed inspector keeps ground behind a shut region barrier fogge
   it("reveals that ground once the barrier is open", () => {
     expect(fogged(revealOpenGround(floorWith(true), [0, 0]))).toEqual([false, false, false, false, false])
   })
+
+  it("shows two cells of the flooded region past the shut barrier, and fogs the rest", () => {
+    const vault = (dirs: ("w" | "e")[]): GridCell => ({
+      type: "corridor",
+      dirs: new Set(dirs),
+      state: "fogged",
+      region: "vault",
+    })
+    const row = [lever, way(["w", "e"]), barrierRoom(false), ...[1, 2, 3].map(() => vault(["w", "e"])), vault(["w"])]
+    const grid: FloorGrid = { ...floorWith(false), cells: [row], cols: row.length, exitPos: [0, row.length - 1] }
+    expect(fogged(revealOpenGround(grid, [0, 0]))).toEqual([false, false, false, false, false, true, true])
+  })
 })
