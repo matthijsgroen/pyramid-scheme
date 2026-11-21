@@ -802,6 +802,18 @@ body {
     }
   }
 
+  /* A rippling region barrier cover's drifting layer. The element sets its own duration, delay and the distance
+     it travels (`--ripple-x`, `--ripple-y`: exactly one texture period), so the last frame matches the first. */
+  --animate-region-ripple: region-ripple linear infinite;
+  @keyframes region-ripple {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(var(--ripple-x, 0), var(--ripple-y, 0), 0);
+    }
+  }
+
   /* A hidden corridor coming out of the rock once the player opens it: the rock warms at its edge as it gives, then
      goes. Duration and delay are the element's own (REVEAL_FADE_MS, the wave's step), so the timer that drops the
      layer cannot drift from it. */
@@ -1193,5 +1205,12 @@ body {
   .animate-into-tomb,
   .animate-walk-beside {
     animation-duration: 1ms;
+  }
+  /* Rippling water lies still at its first frame, its crossing layer left out, so it shows the plain texture. */
+  .animate-region-ripple {
+    animation: none;
+  }
+  [data-ripple-layer="cross"] {
+    display: none;
   }
 }

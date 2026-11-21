@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react"
+import { useState, type CSSProperties } from "react"
 import type { Direction, FloorGrid, Tileset } from "@/game/siteTypes"
 import type { CoverCell, RegionBarrierCover } from "@/game/regionBarrierCover"
 import type { ResolveRegionBarrierRealisation } from "@/game/regionBarrierRealisation"
@@ -11,7 +11,15 @@ import { REGION_COVER_FADE_OUT_MS } from "./useRegionBarrierCovers"
 /** The texture repeats once per this many map units, in both directions, anchored at the map's origin so it runs on across cells. */
 const TEXTURE_UNITS = CELL * 8
 
-type Fill = { url: string } | { color: string }
+type Fill = { url: string; ripple: boolean } | { color: string }
+
+/** A drifting layer of rippling water: the texture at its own scale, moving one period along one axis per loop.
+ * The crossing layer is fainter, smaller and runs across the first, so where they overlap the light shifts. */
+type Drift = { layer: "base" | "cross"; units: number; axis: "x" | "y"; ms: number; opacity?: number }
+const RIPPLE: readonly Drift[] = [
+  { layer: "base", units: TEXTURE_UNITS, axis: "x", ms: 60_000 },
+  { layer: "cross", units: CELL * 5, axis: "y", ms: 45_000, opacity: 0.35 },
+]
 
 type Box = { left: number; top: number; width: number; height: number }
 
@@ -78,7 +86,45 @@ const fillOf = (
   const meta = resolve(realisation)
   if (!meta) return undefined
   const url = meta.texture ? urlOf(tier, meta.texture) : undefined
-  return url ? { url } : { color: meta.fallback }
+  return url ? { url, ripple: meta.motion === "ripple" } : { color: meta.fallback }
+}
+
+/** Every drifting layer runs on one clock: its delay places it where a loop started at time zero would be, so
+ * cells drawn at different moments stay in step and the texture runs on across them. */
+const phaseAt = (now: number, ms: number) => `${-(now % ms)}ms`
+
+/**
+ * Rippling texture inside a cell's box, which clips it. Each layer reaches one period past the box on the side it
+ * drifts from and slides by exactly that period, a transform the compositor runs without repainting; its texture
+ * is anchored at the map's origin like the still cover's.
+ */
+const Ripple = ({ url, box }: { url: string; box: Box }) => {
+  const [now] = useState(() => performance.now())
+  return RIPPLE.map(({ layer, units, axis, ms, opacity }) => (
+    <div
+      key={layer}
+      data-ripple-layer={layer}
+      className="animate-region-ripple"
+      style={
+        {
+          position: "absolute",
+          left: axis === "x" ? -units : 0,
+          top: axis === "y" ? -units : 0,
+          width: box.width + (axis === "x" ? units : 0),
+          height: box.height + (axis === "y" ? units : 0),
+          backgroundImage: `url(${url})`,
+          backgroundSize: `${units}px ${units}px`,
+          backgroundPosition: `${-box.left}px ${-box.top}px`,
+          opacity,
+          willChange: "transform",
+          animationDuration: `${ms}ms`,
+          animationDelay: phaseAt(now, ms),
+          "--ripple-x": axis === "x" ? `${units}px` : "0px",
+          "--ripple-y": axis === "y" ? `${units}px` : "0px",
+        } as CSSProperties
+      }
+    />
+  ))
 }
 
 /**
@@ -143,8 +189,10 @@ export const RegionBarrierCovers = ({
         }}
       >
         {placed.map(({ piece: { at, fadeFrom, owner }, box }) => {
-          const paint: CSSProperties =
-            "url" in fill
+          const rippling = "url" in fill && fill.ripple
+          const paint: CSSProperties = rippling
+            ? { overflow: "hidden" }
+            : "url" in fill
               ? {
                   backgroundImage: `url(${fill.url})`,
                   backgroundSize: `${TEXTURE_UNITS}px ${TEXTURE_UNITS}px`,
@@ -161,7 +209,9 @@ export const RegionBarrierCovers = ({
                 ...paint,
                 ...(fadeFrom ? fadeIn(fadeFrom, box, spans.get(owner) ?? box) : {}),
               }}
-            />
+            >
+              {rippling && <Ripple url={fill.url} box={box} />}
+            </div>
           )
         })}
       </div>

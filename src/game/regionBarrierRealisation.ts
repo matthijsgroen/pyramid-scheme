@@ -16,6 +16,9 @@ export type RegionBarrierRealisationMeta = {
   owed?: string
   /** CSS colour of the flat fill the region is drawn with while its texture is not painted. */
   fallback: string
+  /** How the painted texture moves: `"ripple"` drifts it slowly in two crossing layers, as water does. Absent, it
+   * lies still. The flat fill never moves. */
+  motion?: "ripple"
 }
 
 /** Resolves the realisation a barrier names. Given `undefined` an answer means the caller binds a barrier

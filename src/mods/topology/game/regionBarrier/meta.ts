@@ -7,6 +7,7 @@ export const WATER_META: RegionBarrierRealisationMeta = {
   ownerMod: "topology",
   texture: "regionWater",
   fallback: "#2f6f86",
+  motion: "ripple",
 }
 export const SAND_META: RegionBarrierRealisationMeta = {
   id: "sand",
