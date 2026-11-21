@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 import { cleanup, render } from "@testing-library/react"
 import { afterEach, describe, expect, it } from "vitest"
-import type { Direction, FloorGrid, GridCell } from "@/game/siteTypes"
+import type { Direction, FloorGrid, GridCell, Tileset } from "@/game/siteTypes"
+import type { RegionBarrierRealisationMeta } from "@/game/regionBarrierRealisation"
 import type { RegionBarrierCover } from "@/game/regionBarrierCover"
 import { CELL, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
 import type { RoomClaims } from "./roomClaims"
@@ -115,5 +116,77 @@ describe("a blockage fades in softly, as one sheet over its chamber", () => {
   it("lies full past the blockage", () => {
     const cells = drawn()
     for (const key of ["1,2", "1,3", "0,3", "1,4"]) expect(cells.get(key)!.maskImage, key).toBe("")
+  })
+})
+
+describe("a realisation that declares motion ripples, one that declares none lies still", () => {
+  const still: RegionBarrierRealisationMeta = { id: "dust", ownerMod: "made-up", texture: "dust", fallback: "#999" }
+  const moving: RegionBarrierRealisationMeta = { ...still, id: "brine", texture: "brine", motion: "ripple" }
+  const metas = new Map([still, moving].map(meta => [meta.id, meta]))
+  const resolve = (id: string | undefined) => (id ? metas.get(id) : undefined)
+  const painted = (_tier: Tileset, name: string): string | undefined => `/made-up/${name}.png`
+
+  const cellsOf = (realisation: string, urlOf = painted) => {
+    const { container } = render(
+      <RegionBarrierCovers
+        grid={grid}
+        claims={claims}
+        tier="junior"
+        standing={[{ ...cover, realisation }]}
+        leaving={[]}
+        resolve={resolve}
+        urlOf={urlOf}
+      />
+    )
+    return Array.from(container.querySelectorAll<HTMLElement>("[data-cover-cell]"))
+  }
+  const layersOf = (cell: HTMLElement) => Array.from(cell.querySelectorAll<HTMLElement>("[data-ripple-layer]"))
+
+  it("draws two crossing drifting layers in every cell of a rippling cover, clipped to the cell", () => {
+    for (const cell of cellsOf("brine")) {
+      expect(layersOf(cell).map(el => el.getAttribute("data-ripple-layer"))).toEqual(["base", "cross"])
+      expect(cell.style.overflow).toBe("hidden")
+      expect(cell.style.backgroundImage).toBe("")
+    }
+  })
+
+  it("draws no moving layer for a realisation without motion", () => {
+    for (const cell of cellsOf("dust")) {
+      expect(layersOf(cell)).toEqual([])
+      expect(cell.style.backgroundImage).toContain("/made-up/dust.png")
+    }
+  })
+
+  it("draws no moving layer while the texture is not painted and the flat fill stands in", () => {
+    for (const cell of cellsOf("brine", () => undefined)) {
+      expect(layersOf(cell)).toEqual([])
+      expect(cell.style.backgroundColor).not.toBe("")
+    }
+  })
+
+  it("keeps the fade on the cell, so both layers fade in together", () => {
+    const blockage = cellsOf("brine").find(cell => cell.getAttribute("data-cover-cell") === "1,1")!
+    expect(blockage.style.maskImage).toBe(`linear-gradient(to right, rgba(0, 0, 0, 0), black ${CELL}px)`)
+    for (const layer of layersOf(blockage)) expect(layer.style.maskImage).toBe("")
+  })
+
+  it("drifts each layer by exactly one period of its texture, so the loop closes without a seam", () => {
+    for (const cell of cellsOf("brine"))
+      for (const layer of layersOf(cell)) {
+        const period = layer.style.backgroundSize.split(" ")[0]
+        const travel = [layer.style.getPropertyValue("--ripple-x"), layer.style.getPropertyValue("--ripple-y")]
+        expect(travel.filter(t => t !== "0px")).toEqual([period])
+      }
+  })
+
+  it("anchors every layer's texture at the map's origin, so neighbouring cells run on into each other", () => {
+    const offset = (at: number, shift: number, period: number) => (((at + shift) % period) + period) % period
+    for (const cell of cellsOf("brine"))
+      for (const layer of layersOf(cell)) {
+        const [bx, by] = layer.style.backgroundPosition.split(" ").map(parseFloat)
+        const period = parseFloat(layer.style.backgroundSize)
+        expect(offset(parseFloat(cell.style.left) + parseFloat(layer.style.left), bx, period)).toBeCloseTo(0)
+        expect(offset(parseFloat(cell.style.top) + parseFloat(layer.style.top), by, period)).toBeCloseTo(0)
+      }
   })
 })

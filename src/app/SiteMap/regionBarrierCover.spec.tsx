@@ -216,7 +216,8 @@ describe("a shut region barrier's region is covered by its realisation", { timeo
       const cells = regionsOf(shut).flatMap(region => coverCells(container, region))
       expect(cells.length).toBeGreaterThan(0)
       for (const el of cells) {
-        expect(el.style.backgroundImage).toContain("/painted-texture.png")
+        const painted = [el, ...el.querySelectorAll<HTMLElement>("*")].map(part => part.style.backgroundImage)
+        expect(painted.join(" ")).toContain("/painted-texture.png")
         expect(el.style.backgroundColor).toBe("")
       }
     }
