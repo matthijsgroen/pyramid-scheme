@@ -1632,6 +1632,30 @@
           "fez": "Thug sé rud éigin uaidh! An bhfaca tú é sin?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Tá rud éigin ar iarraidh anseo do na nochtaithe. Línéadach, a déarfainn. Agus aithním bean nár chaith an gúna céanna faoi dhó riamh."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "A Henut, tá línéadach uainn. Do bhalla."
+        },
+        "2": {
+          "henut": "Mo línéadach? An bhfuil a fhios agat cad as a bhfuil sé fighte?"
+        },
+        "3": {
+          "fez": "Is le haghaidh líne faoi rudaí a thabhairt uait é. Beidh d’ainm lena thaobh."
+        },
+        "4": {
+          "henut": "…M’ainm. Ar bhalla."
+        },
+        "5": {
+          "henut": "Tóg an ceann mín, mar sin. Ní léifidh aon duine _“Thug Henut ceirteacha.”_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "An bhfuil sé suas fós? Le m’ainm lena thaobh? Litrithe i gceart an uair seo — gan gé."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "An balla. An dara comhartha. Ní hé m’ainm fós é."

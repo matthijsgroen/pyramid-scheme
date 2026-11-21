@@ -245,7 +245,8 @@
       "description": "O pão alto, o sinal do pão. Dado pelo Ipi, que contou cereal durante quarenta anos e só uma vez deu alguma coisa."
     },
     "o2": {
-      "name": "Linho"
+      "name": "Linho",
+      "description": "Tecido dobrado com franjas, o sinal da roupa. Da Henut, que escolheu cada fio ela própria e deu o mais fino."
     },
     "o3": {
       "name": "Água"

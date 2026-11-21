@@ -1632,6 +1632,30 @@
           "fez": "Regalou algo! Viches iso?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Aquí falta algo para os espidos. Liño, diría eu. E coñezo unha dama que nunca levou dúas veces o mesmo vestido."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, necesitamos liño. Para unha parede."
+        },
+        "2": {
+          "henut": "O meu liño? Sabes de que está tecido?"
+        },
+        "3": {
+          "fez": "É para unha liña sobre regalar cousas. O teu nome irá ao carón."
+        },
+        "4": {
+          "henut": "…O meu nome. Nunha parede."
+        },
+        "5": {
+          "henut": "Entón leva o fino. Ninguén vai ler _“Henut deu farrapos.”_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "Xa está posto? Co meu nome ao carón? Ben escrito esta vez: sen ganso."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "A parede. O segundo símbolo. Segue sen ser o meu nome."

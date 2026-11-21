@@ -1632,6 +1632,30 @@
           "fez": "On coś oddał! Widzisz to?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Tu brakuje czegoś dla nagich. Lnu, powiedziałbym. A znam damę, która nigdy nie włożyła dwa razy tej samej sukni."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, potrzebujemy lnu. Do ściany."
+        },
+        "2": {
+          "henut": "Mojego lnu? Wiecie, z czego to utkane?"
+        },
+        "3": {
+          "fez": "To do linijki o rozdawaniu. Twoje imię będzie obok."
+        },
+        "4": {
+          "henut": "…Moje imię. Na ścianie."
+        },
+        "5": {
+          "henut": "No to weźcie ten cienki. Nikt nie będzie czytał _„Henut dała szmaty.”_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "Już wisi? Z moim imieniem obok? Tym razem dobrze napisanym — bez gęsi."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "Ściana. Drugi znak. To dalej nie jest moje imię."

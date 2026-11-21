@@ -1632,6 +1632,30 @@
           "fez": "Dia memberi sesuatu! Kamu lihat itu?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Di sini ada yang kurang untuk mereka yang telanjang. Linen, kurasa. Dan aku kenal seorang nyonya yang tak pernah memakai gaun yang sama dua kali."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, kami butuh linen. Untuk dinding."
+        },
+        "2": {
+          "henut": "Linenku? Kamu tahu itu ditenun dari apa?"
+        },
+        "3": {
+          "fez": "Ini untuk baris tentang memberi barang. Namamu akan ditaruh di sebelahnya."
+        },
+        "4": {
+          "henut": "…Namaku. Di dinding."
+        },
+        "5": {
+          "henut": "Kalau begitu ambil yang halus. Tidak akan ada yang membaca _“Henut memberi kain lusuh.”_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "Sudah terpasang? Dengan namaku di sebelahnya? Ejaannya benar kali ini — tanpa angsa."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "Dindingnya. Tanda kedua. Masih bukan namaku."

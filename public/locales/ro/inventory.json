@@ -245,7 +245,8 @@
       "description": "Pâinea înaltă, semnul pentru pâine. Dată de Ipi, care a numărat grâne patruzeci de ani și a dat ceva o singură dată."
     },
     "o2": {
-      "name": "In"
+      "name": "In",
+      "description": "Pânză împăturită cu franjuri, semnul pentru haine. De la Henut, care a ales fiecare fir singură și a dăruit pânza cea mai fină."
     },
     "o3": {
       "name": "Apă"

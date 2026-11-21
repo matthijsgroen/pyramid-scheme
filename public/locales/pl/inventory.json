@@ -245,7 +245,8 @@
       "description": "Wysoki bochenek, znak chleba. Dar od Ipiego, który przez czterdzieści lat liczył zboże i raz je oddał."
     },
     "o2": {
-      "name": "Len"
+      "name": "Len",
+      "description": "Złożona tkanina z frędzlami, znak ubrania. Od Henut, która sama wybrała każdą nić i oddała najcieńszą."
     },
     "o3": {
       "name": "Woda"

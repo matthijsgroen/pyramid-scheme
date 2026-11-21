@@ -245,7 +245,8 @@
       "description": "Augstais kukulis, maizes zīme. To iedeva Ipi, kurš četrdesmit gadus skaitīja graudus un vienreiz tos atdeva."
     },
     "o2": {
-      "name": "Linaudekls"
+      "name": "Linaudekls",
+      "description": "Salocīts audums ar bārkstīm, apģērba zīme. No Henut, kas katru dzijas pavedienu izvēlējās pati un atdeva smalkāko."
     },
     "o3": {
       "name": "Ūdens"

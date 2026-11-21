@@ -1632,6 +1632,30 @@
           "fez": "Hän antoi jotain pois! Näitkö?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Tästä puuttuu jotain alastomille. Pellavaa, sanoisin. Ja tunnen naisen, joka ei koskaan pitänyt samaa mekkoa kahdesti."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, me tarvitsemme pellavaa. Seinää varten."
+        },
+        "2": {
+          "henut": "Minun pellavaani? Tiedätkö, mistä se on kudottu?"
+        },
+        "3": {
+          "fez": "Se on riviin, jossa annetaan asioita pois. Sinun nimesi tulee sen viereen."
+        },
+        "4": {
+          "henut": "…Minun nimeni. Seinälle."
+        },
+        "5": {
+          "henut": "Ota sitten hieno. Kukaan ei lue sanoja _”Henut antoi riepuja.”_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "Onko se jo ylhäällä? Minun nimeni vieressä? Oikein kirjoitettuna tällä kertaa — ei hanhea."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "Seinä. Toinen merkki. Se ei vieläkään ole minun nimeni."

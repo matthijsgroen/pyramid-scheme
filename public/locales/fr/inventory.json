@@ -245,7 +245,8 @@
       "description": "Le grand pain, le signe du pain. Donné par Ipi, qui a compté le grain pendant quarante ans et l’a donné une seule fois."
     },
     "o2": {
-      "name": "Lin"
+      "name": "Lin",
+      "description": "Étoffe pliée à franges, le signe du vêtement. Offerte par Henut, qui a choisi chaque fil elle-même et donné le plus fin."
     },
     "o3": {
       "name": "Eau"

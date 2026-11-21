@@ -1632,6 +1632,30 @@
           "fez": "Viņš kaut ko atdeva! Tu redzēji?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Šeit kaut kā trūkst kailajiem. Linaudekla, es teiktu. Un es pazīstu kundzi, kas nekad nav valkājusi vienu un to pašu kleitu divreiz."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, mums vajag linaudeklu. Sienai."
+        },
+        "2": {
+          "henut": "Manu linaudeklu? Vai tu zini, no kā tas austs?"
+        },
+        "3": {
+          "fez": "Tas ir vienai rindai par to, kā lietas atdod prom. Tavs vārds būs blakus."
+        },
+        "4": {
+          "henut": "…Mans vārds. Uz sienas."
+        },
+        "5": {
+          "henut": "Tad ņem smalko. Neviens nelasīs _„Henut deva lupatas.“_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "Vai tas jau ir pie sienas? Ar manu vārdu blakus? Šoreiz pareizi uzrakstīts — nekādas zoss."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "Siena. Otrā zīme. Tas joprojām nav mans vārds."

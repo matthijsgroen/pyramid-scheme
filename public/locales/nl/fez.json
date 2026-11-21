@@ -833,8 +833,18 @@
       }
     },
     "expert": {
-      "hint": { "1": { "fez": "[Fez at the expert wall: the slot wants linen, go back to Henut — designer copy]" } },
-      "gift": { "1": { "henut": "[Henut gives linen — designer copy]" } }
+      "hint": {
+        "1": {
+          "fez": "Hier ontbreekt iets voor wie naakt is. Linnen, zou ik zeggen. En ik ken een dame die nooit twee keer dezelfde jurk droeg."
+        }
+      },
+      "gift": {
+        "1": { "explorer": "Henut, we hebben linnen nodig. Voor een muur." },
+        "2": { "henut": "Mijn linnen? Weet je wel waar dat van geweven is?" },
+        "3": { "fez": "Het is voor een regel over dingen weggeven. Jouw naam komt ernaast." },
+        "4": { "henut": "…Mijn naam. Op een muur." },
+        "5": { "henut": "Neem dan het fijne. Niemand leest _\"Henut gaf vodden.\"_" }
+      }
     },
     "master": {
       "hint": {
@@ -860,7 +870,7 @@
       "later2": { "1": { "ipi": "Veertig jaar boeken, en er klopt er niet één. Niet één!" } }
     },
     "junior": {
-      "gave1": { "1": { "henut": "[Henut, after giving linen — designer copy]" } },
+      "gave1": { "1": { "henut": "Hangt het al? Met mijn naam erbij? En dit keer goed gespeld — zonder gans." } },
       "wall1": { "1": { "henut": "De muur. Het tweede teken. Het is nog steeds mijn naam niet." } },
       "wall2": { "1": { "henut": "Jij bent er nog, en die gans staat nog steeds op mijn muur. Zet het recht." } },
       "priest1": { "1": { "henut": "Nog steeds mijn naam. Ik heb gekeken. En nu — Karnak, die priester. Hup." } },

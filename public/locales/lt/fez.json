@@ -1632,6 +1632,30 @@
           "fez": "Jis kažką atidavė! Matei?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Čia trūksta kažko nuogiesiems. Drobės, sakyčiau. O aš pažįstu damą, kuri niekada nenešiojo tos pačios suknelės du kartus."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, mums reikia drobės. Sienai."
+        },
+        "2": {
+          "henut": "Mano drobės? Ar žinai, iš ko ji austa?"
+        },
+        "3": {
+          "fez": "Tai eilutei apie tai, kaip ką nors atiduodi kitiems. Tavo vardas bus šalia."
+        },
+        "4": {
+          "henut": "…Mano vardas. Ant sienos."
+        },
+        "5": {
+          "henut": "Tada imk gražiąją. Niekas neskaitys _„Henut davė skudurų.“_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "Ar jau iškabinta? Su mano vardu šalia? Šįkart parašytu teisingai — jokios žąsies."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "Siena. Antras ženklas. Tai vis dar ne mano vardas."

@@ -1632,6 +1632,30 @@
           "fez": "Nešto je poklonio! Vidiš li ti to?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Ovdje nedostaje nešto za one koji su goli. Lan, rekao bih. A znam jednu damu koja nikad nije dvaput obukla istu haljinu."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, treba nam lan. Za jedan zid."
+        },
+        "2": {
+          "henut": "Moj lan? Znaš li ti od čega je istkan?"
+        },
+        "3": {
+          "fez": "To je za red o poklanjanju stvari. Tvoje ime ide pored njega."
+        },
+        "4": {
+          "henut": "…Moje ime. Na zidu."
+        },
+        "5": {
+          "henut": "Onda uzmi onaj fini. Niko neće čitati _„Henut je dala krpe.“_"
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "Je li već gore? S mojim imenom pored? Ovaj put ispravno napisanim — bez guske."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "Zid. Drugi znak. To još nije moje ime."

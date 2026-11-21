@@ -245,7 +245,8 @@
       "description": "Det høye brødet, tegnet for brød. Gitt av Ipi, som telte korn i førti år og ga det bort én gang."
     },
     "o2": {
-      "name": "Lin"
+      "name": "Lin",
+      "description": "Brettet tøy med frynser, tegnet for klær. Fra Henut, som valgte hver tråd selv og ga bort den fineste."
     },
     "o3": {
       "name": "Vann"

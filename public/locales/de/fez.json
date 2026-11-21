@@ -1632,6 +1632,30 @@
           "fez": "Er hat was verschenkt! Hast du das gesehen?"
         }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Hier fehlt etwas für die Nackten. Leinen, würde ich sagen. Und ich kenne eine Dame, die nie zweimal dasselbe Kleid getragen hat."
+        }
+      },
+      "gift": {
+        "1": {
+          "explorer": "Henut, wir brauchen Leinen. Für eine Wand."
+        },
+        "2": {
+          "henut": "Mein Leinen? Weißt du, woraus das gewebt ist?"
+        },
+        "3": {
+          "fez": "Es ist für eine Zeile übers Verschenken. Dein Name kommt daneben."
+        },
+        "4": {
+          "henut": "…Mein Name. An einer Wand."
+        },
+        "5": {
+          "henut": "Dann nimm das feine. Niemand will _„Henut gab Lumpen.“_ lesen."
+        }
+      }
     }
   },
   "revisit": {
@@ -1673,6 +1697,11 @@
       }
     },
     "junior": {
+      "gave1": {
+        "1": {
+          "henut": "Hängt es schon? Mit meinem Namen daneben? Diesmal richtig geschrieben – keine Gans."
+        }
+      },
       "wall1": {
         "1": {
           "henut": "Die Wand. Das zweite Zeichen. Das ist immer noch nicht mein Name."

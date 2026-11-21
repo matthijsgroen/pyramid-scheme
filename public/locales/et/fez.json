@@ -778,6 +778,20 @@
         "5": { "ipi": "Olgu. Üks päts. Aga see pannakse kirja: _Ipi andis leiba._" },
         "6": { "fez": "Ta andis midagi ära! Kas sa nägid?" }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Siit puudub midagi alastiku jaoks. Linane riie, ütleksin. Ja ma tean daami, kes ei kandnud kunagi kahel korral sama kleiti."
+        }
+      },
+      "gift": {
+        "1": { "explorer": "Henut, meil on linast riiet vaja. Ühe seina jaoks." },
+        "2": { "henut": "Minu linane riie? Kas sa tead, millest see on kootud?" },
+        "3": { "fez": "See on ühe rea jaoks, mis räägib asjade ära andmisest. Sinu nimi tuleb selle kõrvale." },
+        "4": { "henut": "…Minu nimi. Seinale." },
+        "5": { "henut": "Siis võta see peenem. Keegi ei hakka lugema _„Henut andis kaltsu.“_" }
+      }
     }
   },
   "revisit": {
@@ -793,6 +807,9 @@
       "later2": { "1": { "ipi": "Nelikümmend aastat arveraamatuid ja mitte ükski ei klapi. Mitte ükski!" } }
     },
     "junior": {
+      "gave1": {
+        "1": { "henut": "Kas see on juba üleval? Minu nimega kõrval? Seekord õigesti kirjutatud — ilma haneta." }
+      },
       "wall1": { "1": { "henut": "Sein. Teine märk. See ei ole ikka veel minu nimi." } },
       "wall2": { "1": { "henut": "Sina oled ikka veel siin ja see hani on ikka veel minu seinal. Paranda see ära." } },
       "priest1": { "1": { "henut": "Ikka minu nimi. Ma kontrollisin. Nüüd — Karnak, preester. Mine nüüd." } },

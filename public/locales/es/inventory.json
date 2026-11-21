@@ -245,7 +245,8 @@
       "description": "El pan alto, el signo del pan. Lo dio Ipi, que contó grano durante cuarenta años y lo regaló una sola vez."
     },
     "o2": {
-      "name": "Lino"
+      "name": "Lino",
+      "description": "Tela doblada con flecos, el signo de la ropa. De Henut, que eligió cada hilo ella misma y regaló el más fino."
     },
     "o3": {
       "name": "Agua"

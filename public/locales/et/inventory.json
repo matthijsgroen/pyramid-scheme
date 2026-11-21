@@ -245,7 +245,8 @@
       "description": "Kõrge päts, leiva märk. Selle andis Ipi, kes luges nelikümmend aastat vilja ja andis seda ühe korra ära."
     },
     "o2": {
-      "name": "Linane riie"
+      "name": "Linane riie",
+      "description": "Voltitud kangas narmastega, rõivaste märk. Henuti kingitus: ta valis iga lõnga ise ja andis ära kõige peenema."
     },
     "o3": {
       "name": "Vesi"

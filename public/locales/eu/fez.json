@@ -790,6 +790,20 @@
         "5": { "ipi": "Ados. Ogi bat. Baina idatzita geratuko da: _Ipik ogia eman zuen._" },
         "6": { "fez": "Zerbait eman du! Ikusi duzu?" }
       }
+    },
+    "expert": {
+      "hint": {
+        "1": {
+          "fez": "Hemen zerbait falta da biluzientzat. Lihoa, esango nuke. Eta ezagutzen dut inoiz bi aldiz soineko bera jantzi ez zuen andre bat."
+        }
+      },
+      "gift": {
+        "1": { "explorer": "Henut, lihoa behar dugu. Horma baterako." },
+        "2": { "henut": "Nire lihoa? Badakizu zerez ehundua dagoen?" },
+        "3": { "fez": "Gauzak emateari buruzko lerro baterako da. Zure izena alboan joango da." },
+        "4": { "henut": "…Nire izena. Horma batean." },
+        "5": { "henut": "Orduan hartu fina. Inork ez du irakurriko _“Henutek trapuak eman zituen.”_" }
+      }
     }
   },
   "revisit": {
@@ -803,6 +817,9 @@
       "later2": { "1": { "ipi": "Berrogei urteko kontuak, eta bat ere ez dago ondo. Bat ere ez!" } }
     },
     "junior": {
+      "gave1": {
+        "1": { "henut": "Jarrita dago jada? Nire izena alboan duela? Ondo idatzita oraingoan — antzararik gabe." }
+      },
       "wall1": { "1": { "henut": "Horma. Bigarren ikurra. Oraindik ez da nire izena." } },
       "wall2": {
         "1": { "henut": "Hemen zaude oraindik, eta antzara hori nire horman dago oraindik. Konpondu ezazu." }
