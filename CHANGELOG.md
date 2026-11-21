@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - The chest screen draws the chest sharp instead of blurry.
+- Walls read as one even tone instead of blotchy bands.
 - A gate standing in a doorway no longer has an arch drawn over it.
 - Some pyramid floors open faster.
 - The explorer stands in front of a chest while opening it, not behind it.

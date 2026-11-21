@@ -1122,6 +1122,37 @@ describe("SiteMapView — zoom reset", () => {
   })
 })
 
+describe("SiteMapView — the explored-state wash", () => {
+  Element.prototype.scrollTo = vi.fn()
+
+  const passage = (dirs: Direction[], state: CellState): GridCell => ({ type: "corridor", dirs: new Set(dirs), state })
+  // One passage walked through three states, west to east: its walls run past all three.
+  const mixedStates = () =>
+    makeGrid([[passage(["e"], "visible"), passage(["w", "e"], "completed"), passage(["w"], "reachable")]])
+  const subpaths = (d: string | null) => (d ?? "").match(/M[^M]*/g) ?? []
+  const washes = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll<SVGPathElement>("path")).filter(
+      p => p.getAttribute("fill") === "#000000" && [0.12, 0.2].includes(Number(p.getAttribute("opacity")))
+    )
+
+  it("darkens the floor of a cell the explorer has only seen or already finished", () => {
+    const { container } = render(<SiteMapView grid={mixedStates()} explorerPos={[0, 2]} />)
+
+    expect(washes(container).length).toBeGreaterThan(0)
+  })
+
+  it("leaves the wall faces and the rock beside that floor in one even tone", () => {
+    const { container } = render(<SiteMapView grid={mixedStates()} explorerPos={[0, 2]} />)
+    const stone = Array.from(container.querySelectorAll<SVGPathElement>("path")).filter(
+      p => p.hasAttribute("data-face") || p.getAttribute("fill") === tierPalette.starter.wallBase
+    )
+    const washed = new Set(washes(container).flatMap(p => subpaths(p.getAttribute("d"))))
+
+    expect(stone.length).toBeGreaterThan(0)
+    expect(stone.flatMap(p => subpaths(p.getAttribute("d"))).filter(rect => washed.has(rect))).toEqual([])
+  })
+})
+
 describe("SiteMapView — the shade the lamp is read against", () => {
   Element.prototype.scrollTo = vi.fn()
 

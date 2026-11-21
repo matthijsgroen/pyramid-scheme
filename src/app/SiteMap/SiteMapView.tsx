@@ -1294,10 +1294,9 @@ const CornerRocks = ({ rocks, walls, front }: { rocks: readonly CornerRock[]; wa
     {rocks.map(rock => {
       const run = cornerRockRun(walls.runs, rock)
       if (!!run !== front) return null
-      const { row, col, side, tier, state } = rock
+      const { row, col, side, tier } = rock
       const x = side === "w" ? cellLeft(col) - SIDE_W / 2 : cellLeft(col) + CELL + SIDE_W / 2 - ROCK
       const y = cellTop(row) - ROCK / 2
-      const wash = stateWash[state]
       const fade = wallFade(!!run && walls.faded.has(run.key))
       return (
         <div
@@ -1315,22 +1314,6 @@ const CornerRocks = ({ rocks, walls, front }: { rocks: readonly CornerRock[]; wa
             mirrored={side === "e"}
             data-corner-rock={side}
           />
-          {wash && (
-            <div
-              style={{
-                position: "absolute",
-                left: x,
-                top: y,
-                width: ROCK,
-                height: ROCK,
-                background: wash.fill,
-                opacity: wash.opacity,
-                maskImage: `url(${tileUrl(tier, "cornerRock")})`,
-                maskSize: "100% 100%",
-                transform: side === "e" ? "scaleX(-1)" : undefined,
-              }}
-            />
-          )}
         </div>
       )
     })}
@@ -1339,11 +1322,10 @@ const CornerRocks = ({ rocks, walls, front }: { rocks: readonly CornerRock[]; wa
 
 const WallItems = ({ items, patron, walls }: { items: readonly WallItem[]; patron?: Patron; walls: WallFades }) => (
   <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-    {items.map(({ row, col, kind, tier, state }) => {
+    {items.map(({ row, col, kind, tier }) => {
       const url = patronTileUrl(tier, kind, patron)
       // At the tile's own aspect, centred on the face and kept under its cap (`wallItemFrame`).
       const { x, y, w, h } = wallItemFrame(row, col, url ? tileSize(url) : undefined)
-      const wash = stateWash[state]
       // Hung on a front wall, it fades with that wall: an item left standing on a faded face floats. Hung
       // on a wall behind one, it is drawn behind it, as everything standing there is.
       const box: Rect = [x, y, w, h]
@@ -1368,19 +1350,6 @@ const WallItems = ({ items, patron, walls }: { items: readonly WallItem[]; patro
                 height: 10,
                 border: `1.5px solid ${DECORATION_COLOR}`,
                 boxSizing: "border-box",
-              }}
-            />
-          )}
-          {wash && (
-            <div
-              style={{
-                position: "absolute",
-                left: x,
-                top: y,
-                width: w,
-                height: h,
-                background: wash.fill,
-                opacity: wash.opacity,
               }}
             />
           )}
