@@ -202,6 +202,8 @@ type Props = {
   hideHidden?: boolean
   /** Shuts every ward gate and masks what lies past it, as a player without ward keys sees the floor. */
   hideWards?: boolean
+  /** Drains every water/sand region barrier, so the whole floor lies open. */
+  drainBarriers?: boolean
   /** Which pyramid in the journey (1-based, up to levelCount) */
   pyramidNumber: number
   seed: number
@@ -217,6 +219,7 @@ const JourneyInspector = ({
   seed,
   hideHidden,
   hideWards,
+  drainBarriers,
   clutter,
 }: Props) => {
   const journeyList = journeyType === "tomb" ? tombsByTier[tier] : byTier[tier]
@@ -252,8 +255,15 @@ const JourneyInspector = ({
   const grid = useMemo(() => {
     const edged = baseGrid ? applyEdges(baseGrid, currentFloor, solvedEdges) : null
     const unwarded = edged && hideWards ? maskWardCells(edged) : edged
-    return unwarded && hideHidden ? maskHiddenCells(unwarded, new Set()).masked : unwarded
-  }, [baseGrid, currentFloor, solvedEdges, hideHidden, hideWards])
+    const masked = unwarded && hideHidden ? maskHiddenCells(unwarded, new Set()).masked : unwarded
+    if (!masked || !drainBarriers) return masked
+    return {
+      ...masked,
+      cells: masked.cells.map(row =>
+        row.map(cell => (cell.type === "room" && cell.regionBarrier ? { ...cell, regionBarrier: undefined } : cell))
+      ),
+    }
+  }, [baseGrid, currentFloor, solvedEdges, hideHidden, hideWards, drainBarriers])
 
   const pos: readonly [number, number] = explorerPos ?? grid?.entrancePos ?? [0, 0]
 
@@ -498,6 +508,10 @@ const meta = {
       description: "Pyramid number within the journey (max depends on levelCount)",
     },
     seed: { control: { type: "number" } },
+    drainBarriers: {
+      control: "boolean",
+      description: "Drain every water/sand barrier: the whole floor open, nothing under water",
+    },
     clutter: {
       control: { type: "range", min: 0, max: 1, step: 0.05 },
       description: "How much lies strewn on the floor: 0 swept clean, 1 a piece on every free cell",
@@ -516,6 +530,7 @@ export const Inspector: StoryObj<typeof meta> = {
     seed: DEFAULT_SEED,
     hideHidden: false,
     hideWards: false,
+    drainBarriers: false,
   },
 }
 
@@ -526,5 +541,6 @@ export const TombInspector: StoryObj<typeof meta> = {
     journeyIndex: 0,
     pyramidNumber: 1,
     seed: DEFAULT_SEED,
+    drainBarriers: false,
   },
 }
