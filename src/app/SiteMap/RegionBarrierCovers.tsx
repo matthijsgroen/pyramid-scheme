@@ -1,9 +1,9 @@
-import { useState, type CSSProperties } from "react"
+import { Fragment, useState, type CSSProperties } from "react"
 import type { Direction, FloorGrid, Tileset } from "@/game/siteTypes"
 import type { CoverCell, RegionBarrierCover } from "@/game/regionBarrierCover"
 import type { ResolveRegionBarrierRealisation } from "@/game/regionBarrierRealisation"
 import { resolveRegionBarrierRealisation } from "@/mods/allRegionBarrierRealisations"
-import { CELL, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
+import { CELL, FACE_H, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
 import { isPassable, type RoomClaims } from "./roomClaims"
 import { tileUrl } from "./tileAssets"
 import { REGION_COVER_FADE_OUT_MS } from "./useRegionBarrierCovers"
@@ -11,7 +11,7 @@ import { REGION_COVER_FADE_OUT_MS } from "./useRegionBarrierCovers"
 /** The texture repeats once per this many map units, in both directions, anchored at the map's origin so it runs on across cells. */
 const TEXTURE_UNITS = CELL * 8
 
-type Fill = { url: string; ripple: boolean } | { color: string }
+type Fill = ({ url: string; ripple: boolean } | { color: string }) & { wash?: number }
 
 /** A drifting layer of rippling water: the texture at its own scale, moving one period along one axis per loop.
  * The crossing layer is fainter, smaller and runs across the first, so where they overlap the light shifts. */
@@ -86,7 +86,30 @@ const fillOf = (
   const meta = resolve(realisation)
   if (!meta) return undefined
   const url = meta.texture ? urlOf(tier, meta.texture) : undefined
-  return url ? { url, ripple: meta.motion === "ripple" } : { color: meta.fallback }
+  const wash = meta.wallWash ? { wash: meta.wallWash } : {}
+  return url ? { url, ripple: meta.motion === "ripple", ...wash } : { color: meta.fallback, ...wash }
+}
+
+/**
+ * The cover on the back wall behind a cell: at `strength` along the wall's foot, thinning to nothing at its top.
+ * A blockage's sideways fade runs on up the wall from the same edge. Fading in from the north, the cover is clear
+ * at the wall's foot, so the wall stays dry.
+ */
+const washMask = (strength: number, from: readonly Direction[] | undefined, box: Box, span: Box | undefined) => {
+  if (from?.includes("n")) return undefined
+  const sideways = span ? (from ?? []).filter(dir => dir === "w" || dir === "e") : []
+  const layers = [
+    `linear-gradient(to top, rgba(0, 0, 0, ${strength}), rgba(0, 0, 0, 0))`,
+    ...sideways.map(dir => `linear-gradient(to ${TOWARD[dir]}, rgba(0, 0, 0, 0), black ${CELL}px)`),
+  ]
+  const style: CSSProperties = {
+    maskImage: layers.join(", "),
+    maskRepeat: "no-repeat",
+    maskSize: ["100% 100%", ...sideways.map(() => `${span!.width}px 100%`)].join(", "),
+    maskPosition: ["0 0", ...sideways.map(() => `${span!.left - box.left}px 0`)].join(", "),
+    ...(layers.length > 1 ? { maskComposite: "intersect" } : {}),
+  }
+  return style
 }
 
 /** Every drifting layer runs on one clock: its delay places it where a loop started at time zero would be, so
@@ -190,28 +213,45 @@ export const RegionBarrierCovers = ({
       >
         {placed.map(({ piece: { at, fadeFrom, owner }, box }) => {
           const rippling = "url" in fill && fill.ripple
-          const paint: CSSProperties = rippling
-            ? { overflow: "hidden" }
-            : "url" in fill
-              ? {
-                  backgroundImage: `url(${fill.url})`,
-                  backgroundSize: `${TEXTURE_UNITS}px ${TEXTURE_UNITS}px`,
-                  backgroundPosition: `${-box.left}px ${-box.top}px`,
-                }
-              : { backgroundColor: fill.color }
+          const paint = (box: Box): CSSProperties =>
+            rippling
+              ? { overflow: "hidden" }
+              : "url" in fill
+                ? {
+                    backgroundImage: `url(${fill.url})`,
+                    backgroundSize: `${TEXTURE_UNITS}px ${TEXTURE_UNITS}px`,
+                    backgroundPosition: `${-box.left}px ${-box.top}px`,
+                  }
+                : { backgroundColor: fill.color }
+          const [r, c] = at
+          const walled = (col: number) => !isPassable(grid, claims, r - 1, col, "s")
+          // The back wall behind a cell is the face drawn up from the cell's top, a gap wide plus the corner
+          // the cover already reaches into on the west, and the corner on the east where the wall ends over a
+          // covered neighbour whose own north is open.
+          const east =
+            covered.has(`${r},${c + 1}`) && isPassable(grid, claims, r, c, "e") && !walled(c + 1) ? SIDE_W : 0
+          const wall: Box = { left: box.left, top: cellTop(r) - FACE_H, width: box.width + east, height: FACE_H }
+          const behind = walled(c)
+          const wash = fill.wash && behind ? washMask(fill.wash, fadeFrom, wall, spans.get(owner)) : undefined
           return (
-            <div
-              key={keyOf(at)}
-              data-cover-cell={keyOf(at)}
-              style={{
-                position: "absolute",
-                ...box,
-                ...paint,
-                ...(fadeFrom ? fadeIn(fadeFrom, box, spans.get(owner) ?? box) : {}),
-              }}
-            >
-              {rippling && <Ripple url={fill.url} box={box} />}
-            </div>
+            <Fragment key={keyOf(at)}>
+              <div
+                data-cover-cell={keyOf(at)}
+                style={{
+                  position: "absolute",
+                  ...box,
+                  ...paint(box),
+                  ...(fadeFrom ? fadeIn(fadeFrom, box, spans.get(owner) ?? box) : {}),
+                }}
+              >
+                {rippling && <Ripple url={fill.url} box={box} />}
+              </div>
+              {wash && (
+                <div data-wall-wash={keyOf(at)} style={{ position: "absolute", ...wall, ...paint(wall), ...wash }}>
+                  {rippling && <Ripple url={fill.url} box={wall} />}
+                </div>
+              )}
+            </Fragment>
           )
         })}
       </div>

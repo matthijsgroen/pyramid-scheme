@@ -19,6 +19,9 @@ export type RegionBarrierRealisationMeta = {
   /** How the painted texture moves: `"ripple"` drifts it slowly in two crossing layers, as water does. Absent, it
    * lies still. The flat fill never moves. */
   motion?: "ripple"
+  /** How strongly the cover shows on the back wall standing behind it: at this opacity along the wall's foot,
+   * thinning to nothing at its top, as light off water plays on a wall. Absent, the wall stays dry. */
+  wallWash?: number
 }
 
 /** Resolves the realisation a barrier names. Given `undefined` an answer means the caller binds a barrier
