@@ -1,15 +1,26 @@
 import type { Tileset } from "@/game/siteTypes"
 import sizes from "virtual:tile-sizes"
 import { type MechanismStyle, mechanismFolders, mechanismStyleOf } from "./mechanismStyle"
+import { parseWetMaskFile } from "./wetMaskName"
 
 // Every tile is one file, the filename is the key, and a missing one simply resolves to undefined
 // so the caller can fall back (docs/game-design/spritesheet-renderer-prep.md, "The art itself").
 // The glob means adding art is dropping a PNG in — no manifest to keep by hand.
 // Mechanism styles nest (`mechanism/light/bone/`), so their folders are globbed a level deeper than a tileset's.
+// A prop's waterline (`<name>.wet-<depth>.png`, `wetMaskUrl`) lies beside its tile and is not a tile.
 const urls = {
-  ...import.meta.glob("../../assets/tiles/*/*.png", { eager: true, query: "?url", import: "default" }),
+  ...import.meta.glob(["../../assets/tiles/*/*.png", "!**/*.wet-*.png"], {
+    eager: true,
+    query: "?url",
+    import: "default",
+  }),
   ...import.meta.glob("../../assets/tiles/mechanism/**/*.png", { eager: true, query: "?url", import: "default" }),
 } as Record<string, string>
+const wetUrls = import.meta.glob("../../assets/tiles/*/*.wet-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+}) as Record<string, string>
 
 /** Every tile by `<folder>/<name>`, the folder being everything between `tiles/` and the file. */
 const byTier = new Map<string, string>()
@@ -21,6 +32,19 @@ for (const [path, url] of Object.entries(urls)) {
   byTier.set(key, url)
   if (sizes[key]) sizeByUrl.set(url, sizes[key])
 }
+
+/** Each waterline by its tile's url and depth, "url@depth". */
+const wetByTile = new Map<string, string>()
+for (const [path, url] of Object.entries(wetUrls)) {
+  const match = /\/tiles\/(.+)\/([^/]+)$/.exec(path)
+  const wet = match && parseWetMaskFile(match[2])
+  const tile = wet && byTier.get(`${match[1]}/${wet.name}`)
+  if (wet && tile) wetByTile.set(`${tile}@${wet.depth}`, url)
+}
+
+/** The waterline baked for a prop's tile at `depth` map units (`import-tile --wet`): what of the sprite shows above
+ * water that deep over the floor it stands on. Undefined where none was baked at that depth. */
+export const wetMaskUrl = (tileUrl: string, depth: number): string | undefined => wetByTile.get(`${tileUrl}@${depth}`)
 
 /** A tile's stored [width, height] in pixels, known before it loads, for a sprite drawn at its own aspect. */
 export const tileSize = (url: string): readonly [number, number] | undefined => sizeByUrl.get(url)

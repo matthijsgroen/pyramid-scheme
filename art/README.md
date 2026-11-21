@@ -49,7 +49,9 @@ Masters are `.webp` at quality 92. A 1334x2000 painted return is 3.3MB as PNG an
 which is the difference between a repository that can hold the brief's ~224 files and one that cannot.
 
 `rebuild.sh` re-imports every tile it covers from its master. Run it after changing an import flag, or to
-see whether a change to `importTile.ts` moved a tile that is already approved.
+see whether a change to `importTile.ts` moved a tile that is already approved. `ONLY=<tier>` limits the imports
+to one tier's (every render still runs). An import with `--wet` also writes the prop's waterline,
+`<name>.wet-<depth>.png`, from the scaffold's height pass (docs/instructions/prop-pipeline.md, Steps 2 and 4).
 
 ## The other four ranks' surfaces cannot be recovered, and should be re-rolled
 

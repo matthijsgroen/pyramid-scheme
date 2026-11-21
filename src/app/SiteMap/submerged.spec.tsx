@@ -6,6 +6,7 @@ import type { RegionBarrierRealisationMeta, ResolveRegionBarrierRealisation } fr
 import { AXES, dropGrid, obstacleIndexes } from "./floorFixtures.testing"
 import { PROP_H } from "./mapScale"
 import { SiteMapView } from "./SiteMapView"
+import { Submerged } from "./RegionBarrierCovers"
 
 afterEach(cleanup)
 
@@ -28,7 +29,8 @@ const barrier = (dirs: Direction[], realisation: string): RoomCell => ({
   regionBarrier: { region: "pool", entrance: "made-up", realisation },
 })
 
-const deep: RegionBarrierRealisationMeta = { id: "deep", ownerMod: "made-up", fallback: "#000", submerge: 15 }
+// A depth no waterline file is baked at, so the chest keeps the straight line whatever art is on disk.
+const deep: RegionBarrierRealisationMeta = { id: "deep", ownerMod: "made-up", fallback: "#000", submerge: 13 }
 const shallow: RegionBarrierRealisationMeta = { id: "shallow", ownerMod: "made-up", fallback: "#000" }
 const resolve: ResolveRegionBarrierRealisation = id => [deep, shallow].find(meta => meta.id === id)
 
@@ -94,5 +96,46 @@ describe("what stands on a covered floor stands in it", () => {
     expect(container.querySelector(`[data-node-sprite="drop:${lr},${lc}"]`)).not.toBeNull()
     expect(container.querySelector(`[data-cover-cell="${lr},${lc}"]`)).not.toBeNull()
     expect(submerged(container)).toEqual([])
+  })
+})
+
+describe("a sprite standing in water takes its own waterline where one is baked", () => {
+  const box = [10, 20, 56, 84] as const
+  const tile = { url: "/made-up/stool.png", fit: "contain" as const }
+  const baked = (url: string, depth: number) =>
+    url === tile.url && depth === 15 ? "/made-up/stool.wet-15.png" : undefined
+  const outer = (container: HTMLElement) => container.querySelector<HTMLElement>("[data-submerged]")!
+
+  it("masks with the tile's waterline file at the depth it was baked for", () => {
+    const { container } = render(
+      <Submerged id="stool" box={box} baseY={104} depth={15} tile={tile} maskFor={baked}>
+        <i />
+      </Submerged>
+    )
+    expect(outer(container).style.maskImage).toBe(`url("/made-up/stool.wet-15.png")`)
+    expect(outer(container).style.maskSize).toBe("contain")
+  })
+
+  it.each([
+    ["a tile with no waterline", { ...tile, url: "/made-up/jar.png" }, 15],
+    ["a waterline baked for another depth", tile, 12],
+    ["no tile at all", undefined, 15],
+  ] as const)("falls back to the straight waterline for %s", (_, t, depth) => {
+    const { container } = render(
+      <Submerged id="stool" box={box} baseY={104} depth={depth} tile={t} maskFor={baked}>
+        <i />
+      </Submerged>
+    )
+    expect(outer(container).style.maskImage).toMatch(/^linear-gradient/)
+  })
+
+  it("mirrors the waterline with a mirrored sprite and flips its content back", () => {
+    const { container } = render(
+      <Submerged id="stool" box={box} baseY={104} depth={15} tile={{ ...tile, mirrored: true }} maskFor={baked}>
+        <i />
+      </Submerged>
+    )
+    expect(outer(container).style.transform).toBe("scaleX(-1)")
+    expect((outer(container).firstElementChild as HTMLElement).style.transform).toBe("scaleX(-1)")
   })
 })
