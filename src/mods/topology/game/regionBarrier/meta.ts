@@ -9,6 +9,7 @@ export const WATER_META: RegionBarrierRealisationMeta = {
   fallback: "#2f6f86",
   motion: "ripple",
   wallWash: 0.45,
+  submerge: 15,
 }
 export const SAND_META: RegionBarrierRealisationMeta = {
   id: "sand",

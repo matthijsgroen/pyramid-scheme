@@ -90,7 +90,9 @@ import { BeamLight, BeamShafts } from "./MapBeams"
 import { drawnAsCurrent } from "./currentRoom"
 import { TileLayers } from "./tileLayers"
 import { regionBarrierCovers } from "@/game/regionBarrierCover"
-import { RegionBarrierCovers } from "./RegionBarrierCovers"
+import type { ResolveRegionBarrierRealisation } from "@/game/regionBarrierRealisation"
+import { resolveRegionBarrierRealisation } from "@/mods/allRegionBarrierRealisations"
+import { RegionBarrierCovers, Submerged, submergeDepths } from "./RegionBarrierCovers"
 import { useRegionBarrierCovers } from "./useRegionBarrierCovers"
 import { REVEAL_FADE_MS, useRevealWave } from "./useRevealWave"
 import { ARROW_RADIUS, PROMPT_LIFT, ringPoint } from "./arrowRing"
@@ -182,6 +184,9 @@ type Props = {
   keysActive?: boolean
   onBack?: () => void
   className?: string
+  /** Resolves the realisation a region barrier names, for its cover and what stands in it; unset, every registered
+   * mod's. */
+  resolveRealisation?: ResolveRegionBarrierRealisation
 }
 
 /** How far the cresset at a stair's mouth stands from the middle of its cell, measured off the painted
@@ -217,6 +222,9 @@ type StandingSprite = {
   atExplorer?: boolean
   /** The box the sprite is drawn in, in map space, where it can cross a front wall (`FrontWalls`). */
   box?: Rect
+  /** The cell whose floor it stands on, as "r,c", where it stands in water or sand covering that cell. Unset for what
+   * does not stand on a floor or is somebody walking. */
+  standsOn?: string
   node: ReactNode
 }
 
@@ -452,6 +460,8 @@ export const nodeSpritesFor = (
     out.push({
       footprint: clipCells(run.cells.map(([r, c]) => `${r},${c}`)),
       key: `drop:${lr},${lc}`,
+      // The hole and the cable over it are one picture, so water over the run cannot cut the cable's foot alone.
+      offFloor: true,
       url: dropUrl,
       x,
       y,
@@ -744,6 +754,7 @@ export const nodeSpritesFor = (
         out.push({
           footprint,
           key: `pipeHole:${r},${c}`,
+          offFloor: true,
           url,
           x: cx - CELL / 2,
           y: cellTop(r) - WALL_H,
@@ -1678,6 +1689,7 @@ export const SiteMapView = ({
   keysActive = false,
   onBack,
   className,
+  resolveRealisation = resolveRegionBarrierRealisation,
 }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
   const {
@@ -1840,7 +1852,7 @@ export const SiteMapView = ({
 
   // Everything that stands on this floor, in one list: a room's furniture and a node's own, each with
   // the line it stands on. Split at the explorer's own floor line so he is drawn in the middle.
-  const standing = useMemo((): StandingSprite[] => {
+  const upright = useMemo((): StandingSprite[] => {
     const standingOn = explorerPos ? `${explorerPos[0]},${explorerPos[1]}` : null
     // A SQUEEZER IS IN THE CRACK, so the wall he passes stays solid until he lands: fading it for the side he set out
     // from would ghost the wall he is seen squeezing through. Head-on his own fade says he is behind it.
@@ -1854,6 +1866,8 @@ export const SiteMapView = ({
       baseY: sprite.key.startsWith("drop:") ? dropFloorLine(sprite) : sprite.y + (sprite.h ?? PROP_H),
       box: [sprite.x, sprite.y, sprite.w ?? CELL, sprite.h ?? PROP_H],
       ...(sprite.light ? { light: sprite.light } : {}),
+      // A node sprite is keyed by the cell of the node it stands for.
+      ...(sprite.offFloor ? {} : { standsOn: sprite.key.slice(sprite.key.indexOf(":") + 1) }),
       // A drop is the exception: the player stands IN FRONT of it rather than working it, so on its own
       // mouth the general tie holds (he stands in front of what shares his floor line) and its parapet
       // never covers him. A plate is the other: he stands on it, so it is always under him.
@@ -1938,6 +1952,7 @@ export const SiteMapView = ({
         key: `prop:${cellKey}`,
         baseY: frame.baseY,
         box: [frame.x, frame.y, frame.w, frame.h],
+        standsOn: cellKey,
         node: (
           <PropAt
             key={`prop:${cellKey}`}
@@ -1958,6 +1973,7 @@ export const SiteMapView = ({
         key: `prefab:${prop.at}`,
         baseY: prop.frame.baseY,
         box: [prop.frame.x, prop.frame.y, prop.frame.w, prop.frame.h],
+        standsOn: prop.at,
         node: (
           <PrefabPropAt
             key={`prefab:${prop.at}`}
@@ -1992,6 +2008,27 @@ export const SiteMapView = ({
       )
     return sprites.sort((a, b) => a.baseY - b.baseY)
   }, [grid, claims, tier, nodeSprites, explorerPos, squeeze, occupantOf, prefabProps, fadeStretch])
+  // What stands on the floor of a cell a shut barrier's water or sand covers stands in it, while the cover stands.
+  const depths = useMemo(
+    () => submergeDepths(grid, claims, barrierCovers.standing, resolveRealisation),
+    [grid, claims, barrierCovers.standing, resolveRealisation]
+  )
+  const standing = useMemo(
+    (): StandingSprite[] =>
+      upright.map(s => {
+        const depth = s.standsOn && s.box && depths.get(s.standsOn)
+        if (!depth) return s
+        return {
+          ...s,
+          node: (
+            <Submerged key={s.key} id={s.key} box={s.box!} baseY={s.baseY} depth={depth}>
+              {s.node}
+            </Submerged>
+          ),
+        }
+      }),
+    [upright, depths]
+  )
   // What lies on a prefab room's floor and is walked over: under everything that stands, him included.
   const underfoot = useMemo(
     (): StandingSprite[] =>
@@ -2574,6 +2611,7 @@ export const SiteMapView = ({
               tier={tier}
               standing={barrierCovers.standing}
               leaving={barrierCovers.leaving}
+              resolve={resolveRealisation}
             />
 
             {/* A CORRIDOR THE PLAYER JUST OPENED, still rock for a moment and coming out step by step from where they stand. */}
