@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { TreasureComponent } from "./plugin"
 import { EncounterModal } from "@/app/SiteMap/EncounterModal"
 import { registerRewardHandler } from "@/app/SiteMap/rewardHandlerRegistry"
-import { chestTileUrl } from "@/app/SiteMap/tileAssets"
+import { chestScreenUrl } from "@/app/SiteMap/tileAssets"
 import type { FamilyContext } from "@/app/families/familyRegistry"
 
 // i18n is never initialized in tests — identity passthrough is enough.
@@ -53,10 +53,10 @@ describe("the chest's painting", () => {
     vi.useFakeTimers()
     const onSolved = vi.fn()
     renderChest({ type: "mosaicPiece" }, onSolved)
-    expect(chestSrc()).toBe(chestTileUrl("master", "master", "chestProp", false))
+    expect(chestSrc()).toBe(chestScreenUrl("master", "master", "chestProp", false))
 
     fireEvent.click(screen.getByRole("button", { name: "chest.tapToOpen" }))
-    expect(chestSrc()).toBe(chestTileUrl("master", "master", "chestProp", true))
+    expect(chestSrc()).toBe(chestScreenUrl("master", "master", "chestProp", true))
     expect(onSolved).not.toHaveBeenCalled()
 
     act(() => vi.runAllTimers())
@@ -65,7 +65,7 @@ describe("the chest's painting", () => {
 
   it("shows the chest a reward names for itself", () => {
     renderChest({ type: "madeUpRelic" })
-    expect(chestSrc()).toBe(chestTileUrl("master", "master", "wardChest", false))
+    expect(chestSrc()).toBe(chestScreenUrl("master", "master", "wardChest", false))
   })
 
   it("stays open on screen until the light behind it has grown", () => {

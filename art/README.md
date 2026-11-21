@@ -4,7 +4,8 @@ The high-resolution image each map tile was made from, and the command that turn
 
 Nothing here is imported by the app: `art/` sits outside `src/`, so Vite never sees it and none of it
 reaches the bundle. What ships is `src/assets/tiles/<tier>/<name>.png` at slot size — 56x84 for a prop,
-448x448 for a floor — plus `src/assets/tombWall/<tier>.webp` for the tableau, and those stay the only
+448x448 for a floor — plus `src/assets/tombWall/<tier>.webp` for the tableau and `src/assets/tiles-large/<tier>/<name>.webp`
+for the chest screen (a chest at 576 px wide, `import-tile --large`), and those stay the only
 copies the game loads.
 
 ```

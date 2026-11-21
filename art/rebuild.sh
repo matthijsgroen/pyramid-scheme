@@ -59,6 +59,13 @@ meshscaffold() {
     --only=shadow --background=none --out="$SHADOW" "$@" --colour=#a49781 --floor=#6c6257 >/dev/null
 }
 
+# A chest is imported twice with the same flags: the map's tile, and the large edition the chest screen
+# draws it alone at (`--large`, src/assets/tiles-large/).
+chest_tile() {
+  yarn import-tile "$@"
+  yarn import-tile "$@" --large
+}
+
 # starter — the merchant
 
 # The merchant's SURFACES, matched back to their downloads and given rebuild lines for the first time.
@@ -99,7 +106,7 @@ yarn import-tile art/masters/props/starter/shelf.webp --tier=starter --name=shel
 # shadow cut to the crate's part (x < 285) and moved the same distance at the render's scale (+80 px).
 scaffold chest --floor=#d8c8a8
 magick -size 448x672 xc:none \( "$SHADOW" -crop 285x672+0+0 +repage \) -geometry +80+0 -composite "$SHADOW"
-yarn import-tile art/masters/props/starter/chestProp.webp --tier=starter --name=chestProp --slot=prop \
+chest_tile art/masters/props/starter/chestProp.webp --tier=starter --name=chestProp --slot=prop \
   --filter=smooth --seat="$SHADOW" --scale=0.6
 
 # The same crate open, drawn as an edit of the shut master and so standing in the same place in its frame.
@@ -110,12 +117,12 @@ OPEN=$(mktemp -t chestopen).png
 magick -size 1686x2528 xc:"#ff00ff" \( art/masters/props/starter/chestPropOpen.webp -resize 1686x2528! \) \
   -geometry +0+578 -composite "$OPEN"
 magick -size 448x672 xc:none \( "$SHADOW" \) -geometry +0+154 -composite "$SHADOW"
-yarn import-tile "$OPEN" --tier=starter --name=chestPropOpen --slot=prop --filter=smooth --seat="$SHADOW" --no-trim
+chest_tile "$OPEN" --tier=starter --name=chestPropOpen --slot=prop --filter=smooth --seat="$SHADOW" --no-trim
 rm -f "$OPEN"
 
 # The ward-key chest: the same sealed chest as junior's, gold leaf and faience over ebony.
 scaffold sealedChest --spin=-27 --colour=#3a2a20 --floor=#d8c8a8
-yarn import-tile art/masters/props/starter/wardChest.webp --tier=starter --name=wardChest --slot=prop \
+chest_tile art/masters/props/starter/wardChest.webp --tier=starter --name=wardChest --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # The same chest open, an edit of the shut master, imported untrimmed so it lands where the shut import put
@@ -127,7 +134,7 @@ magick -size 1686x2528 xc:"#ff00ff" \( art/masters/props/starter/wardChestOpen.w
 magick -size 448x672 xc:none \( "$OBJ" -resize 104.84% \) -geometry -22+55 -composite \
   \( -size 448x300 xc:white \) -geometry +0+0 -composite "$OBJ"
 magick -size 448x672 xc:none \( "$SHADOW" -resize 104.84% \) -geometry -22+55 -composite "$SHADOW"
-yarn import-tile "$OPEN" --tier=starter --name=wardChestOpen --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW" \
+chest_tile "$OPEN" --tier=starter --name=wardChestOpen --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW" \
   --no-trim
 rm -f "$OPEN"
 
@@ -852,7 +859,7 @@ yarn import-tile art/masters/props/junior/lamp.webp --tier=junior --name=lamp --
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=1.6
 
 scaffold sealedChest --spin=-27
-yarn import-tile art/masters/props/junior/chestProp.webp --tier=junior --name=chestProp --slot=prop \
+chest_tile art/masters/props/junior/chestProp.webp --tier=junior --name=chestProp --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=1.12
 
 # The same chest open, an edit of the shut master, imported untrimmed so it lands exactly where the shut
@@ -862,13 +869,13 @@ OPEN=$(mktemp -t chestopen).png
 magick -size 1688x2530 xc:"#ff00ff" \( art/masters/props/junior/chestPropOpen.webp -resize 1688x2530! -resize 104% \) \
   -geometry -74+214 -composite "$OPEN"
 magick -size 448x672 xc:none \( "$SHADOW" -resize 104% \) -geometry -20+57 -composite "$SHADOW"
-yarn import-tile "$OPEN" --tier=junior --name=chestPropOpen --slot=prop --filter=smooth --seat="$SHADOW" --no-trim \
+chest_tile "$OPEN" --tier=junior --name=chestPropOpen --slot=prop --filter=smooth --seat="$SHADOW" --no-trim \
   --brightness=1.12
 rm -f "$OPEN"
 
 # The ward-key chest: the cavetto chest in gold leaf, copper and faience over ebony.
 scaffold sealedChest --contents=cavetto --spin=-27 --colour=#3a2a20 --floor=#e2a86f
-yarn import-tile art/masters/props/junior/wardChest.webp --tier=junior --name=wardChest --slot=prop \
+chest_tile art/masters/props/junior/wardChest.webp --tier=junior --name=wardChest --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # The same chest open, untrimmed like starter's: the shut trim scaled it 1.0244 and moved it -42,+251 px
@@ -879,7 +886,7 @@ magick -size 1686x2528 xc:"#ff00ff" \( art/masters/props/junior/wardChestOpen.we
 magick -size 448x672 xc:none \( "$OBJ" -resize 102.44% \) -geometry -11+67 -composite \
   \( -size 448x340 xc:white \) -geometry +0+0 -composite "$OBJ"
 magick -size 448x672 xc:none \( "$SHADOW" -resize 102.44% \) -geometry -11+67 -composite "$SHADOW"
-yarn import-tile "$OPEN" --tier=junior --name=wardChestOpen --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW" \
+chest_tile "$OPEN" --tier=junior --name=wardChestOpen --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW" \
   --no-trim
 rm -f "$OPEN"
 
@@ -1358,7 +1365,7 @@ yarn import-tile art/masters/props/default/dropSouth.webp --tier=default --name=
 # was tried — 0.9 gives +71, 0.8 gives +67, 0.7 gives +62 — so the saturation knob buys four points a
 # step and takes the wood with it. Separation is the gate, and it is 82.
 scaffold sealedChest --spin=-24 --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/chestProp.webp --tier=expert --name=chestProp --slot=prop \
+chest_tile art/masters/props/expert/chestProp.webp --tier=expert --name=chestProp --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # His COLLAPSED DOOR PLUG. --brightness=0.85 for the NATRON: the crust between the blocks came back 11.5%
@@ -1687,17 +1694,17 @@ yarn import-tile art/masters/props/default/leverArm.webp --tier=default --name=l
 # chest's own import, and the pharaoh's shut chest has not landed.
 if [ -f art/masters/props/master/chestPropOpen.webp ]; then
   scaffold sealedChest --contents=cavetto --spin=25 --colour=#d9a93f --floor=#57534b
-  yarn import-tile art/masters/props/master/chestPropOpen.webp --tier=master --name=chestPropOpen --slot=prop \
+  chest_tile art/masters/props/master/chestPropOpen.webp --tier=master --name=chestPropOpen --slot=prop \
     --filter=smooth --seat="$SHADOW"
 fi
 if [ -f art/masters/props/master/wardChest.webp ]; then
   scaffold sealedChest --spin=-27 --colour=#4a3a2c --floor=#57534b --colour-metal=#d9a93f
-  yarn import-tile art/masters/props/master/wardChest.webp --tier=master --name=wardChest --slot=prop \
+  chest_tile art/masters/props/master/wardChest.webp --tier=master --name=wardChest --slot=prop \
     --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 fi
 if [ -f art/masters/props/master/wardChestOpen.webp ]; then
   scaffold sealedChest --spin=-27 --colour=#4a3a2c --floor=#57534b --colour-metal=#d9a93f
-  yarn import-tile art/masters/props/master/wardChestOpen.webp --tier=master --name=wardChestOpen --slot=prop \
+  chest_tile art/masters/props/master/wardChestOpen.webp --tier=master --name=wardChestOpen --slot=prop \
     --filter=smooth --seat="$SHADOW"
 fi
 if [ -f art/masters/props/master/throne.webp ]; then
