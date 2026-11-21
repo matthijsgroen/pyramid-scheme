@@ -663,13 +663,9 @@ yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name
 # repeat: it is one band four times wider than it is tall, dished where feet cross it. No make-seamless
 # either — it butts against thresholds rather than tiling.
 #
-# --saturation=2.2 --brightness=1.28, and brightness ABOVE 1 is the only one in this file. The return came
-# back pale cool grey where the rank is warm limestone, and on a near-grey source saturation has almost no
-# chroma to multiply — it converts brightness into colour and drove the tile from lum 143 down to 107
-# before it was warm enough. Lifting and warming together lands #b48d64, lum 148 warmth +80, against the
-# tile it replaces at 143 and +82.
+# --brightness=0.88 and no saturation: the return is already warm sandstone and only needs taking down a step.
 yarn import-tile art/masters/surfaces/junior-threshold.webp --tier=junior --name=threshold --slot=sill \
-  --filter=smooth --key=none --saturation=2.2 --brightness=1.28
+  --filter=smooth --key=none --brightness=0.88
 
 # The nobleman's WALL FACE, re-rolled, and the one re-roll that had to be asked for twice. The first
 # prompt described worn plaster over mudbrick and got a good tile of the WRONG THING: the brief gives
@@ -703,16 +699,10 @@ yarn import-tile art/masters/props/junior/niche.webp --tier=junior --name=niche 
 # and the mask both, and the generation's own silhouette is the tile. Step 0's table is the triage:
 # depth is modelled, flat goes straight to the generator.
 #
-# --brightness=0.74, which is the deepest clip in this file. Dressed limestone against mud plaster comes
-# back the palest thing in the rank: untouched it measured 171 against a wall face at 108. 0.74 puts the
-# jamb stone at +73 warmth and 123 luminance against the wall's +77 and 108 — fifteen lighter, which is
-# the separation the hand-painted market table already uses, and reads as stone set into plaster.
-#
-# NO --contrast, though the incised columns beg for it. The carving does not survive 28 pixels either
-# way, and 1.35 bought nothing but chroma: the jamb went from +74 warmth to +100 while its luminance
-# never moved. Contrast is not free on a warm rank.
-yarn import-tile art/masters/props/junior/stela.webp --tier=junior --name=stela --slot=wall \
-  --filter=smooth --headroom=0.18 --brightness=0.74
+# --tall: the stela fills the wall face from its cap to its foot, so it is painted near-square and lands
+# 112x96. No knobs: it is painted as red granite, darker than the plaster it hangs on, and imports as it is.
+yarn import-tile art/masters/props/junior/stela.webp --tier=junior --name=stela --slot=wall --tall \
+  --filter=smooth
 
 # --margin=1.4 is the whole reason this one is legible: `SLOTS.wall` is `seat: false`, so the import
 # scales the FRAME into 56x28 rather than trimming and re-seating. A niche fills the band by design; a
@@ -742,13 +732,9 @@ yarn import-tile art/masters/surfaces/junior-floor.webp --tier=junior --name=flo
 # repeat: it is one band four times wider than it is tall, dished where feet cross it. No make-seamless
 # either — it butts against thresholds rather than tiling.
 #
-# --saturation=2.2 --brightness=1.28, and brightness ABOVE 1 is the only one in this file. The return came
-# back pale cool grey where the rank is warm limestone, and on a near-grey source saturation has almost no
-# chroma to multiply — it converts brightness into colour and drove the tile from lum 143 down to 107
-# before it was warm enough. Lifting and warming together lands #b48d64, lum 148 warmth +80, against the
-# tile it replaces at 143 and +82.
+# --brightness=0.88 and no saturation: the return is already warm sandstone and only needs taking down a step.
 yarn import-tile art/masters/surfaces/junior-threshold.webp --tier=junior --name=threshold --slot=sill \
-  --filter=smooth --key=none --saturation=2.2 --brightness=1.28
+  --filter=smooth --key=none --brightness=0.88
 
 # The nobleman's WALL FACE, re-rolled, and the one re-roll that had to be asked for twice. The first
 # prompt described worn plaster over mudbrick and got a good tile of the WRONG THING: the brief gives
@@ -767,13 +753,9 @@ yarn import-tile art/masters/surfaces/junior-wall-face.webp --tier=junior --name
   --filter=smooth --key=none --headroom=0.14
 #
 # All four are the merchant's primitives at the nobleman's colour, so they cost a repaint and no model.
-# --brightness on three of them and --saturation on two: the rank's own stone is #e0c193 against the
-# merchant's #a49781, so a repaint that would have been in-palette one rank down comes back over the
-# clamp here.
 
-# The rug has to SEPARATE from the paving or it is paving. Untouched it measured 1 lighter than the slab
-# and vanished; 0.86/0.6 puts it 23 darker, which is the merchant mat's own pair of numbers — the same
-# repaint failure at both ranks, straw drawn far warmer and lighter than the floor it lies on.
+# The rug has to SEPARATE from the paving or it is paving. Its scaffold is painted dark olive reed (#625a2c)
+# and thin (--thickness=0.018), and the return keeps that darkness, so it imports with no knobs.
 # The nobleman's SHRINE: a false-door stela with an offering table before it, on `prim_falsedoor`.
 #
 # NO --brightness and NO --saturation, which is rare in this file and is what the numbers ask for.
@@ -791,43 +773,27 @@ yarn import-tile art/masters/surfaces/junior-wall-face.webp --tier=junior --name
 # it under the rank's dark clamp, where detail stops existing. 1.12 keeps 62 of separation — still the
 # darkest thing the rank owns — and halves the clipped tail. The knob runs both ways and every other use
 # of it in this file happens to go down.
-# The nobleman's LAMP STAND, on `prim_lamp --contents=stand` — bronze, where the merchant's is a pottery
-# lamp on a wooden stool. LIT_DECORATIONS keys the map's light pool by KIND and not by rank, so this tile
-# gets the same pool on the floor the merchant's does, for nothing.
-#
-# --brightness=1.6, the largest lift in this file by a distance, and it is the same story as the chest one
-# rank up. Dark patinated bronze against pale sandstone arrived 97 luminance below a slab of 161 with 38%
-# of the sprite under the dark clamp — more than a third of it flattened to one value. 1.6 leaves 58 of
-# separation and 10.4% clipped, which is as far as it goes before the patina starts to grey out.
+# The nobleman's LAMP STAND, on `prim_lamp --contents=vessel` — a cedar stand carrying a red pottery lamp
+# with its flame on top. LIT_DECORATIONS keys the map's light pool by KIND and not by rank, so this tile
+# gets the same pool on the floor the merchant's does, for nothing. No knobs: the master is painted in the
+# rank's palette and imports as it is.
 # The nobleman's LINEN PRESS, on `prim_shelf --contents=linen` — the merchant's carcass with folded cloth
 # in it instead of pots, and a mirror case on the top course.
 #
-# --brightness=0.80 --saturation=2.0. Whitewashed mudbrick holding white linen is the palest thing this
-# rank owns: untouched it measured 14 LIGHTER than a slab of 161 with 28.5% of the sprite over the light
-# clamp, and nearly achromatic at -73 warmth. 0.80 clears the clamp outright and 2.0 pulls the cool cast
-# back to -58, which stays cooler than the floor on purpose — the stela makes the same argument at this
-# rank, and what matters is the 24 of separation, not its sign.
+# A cedar carcass (#6b4226) with undyed linen (#9a8a6c), darker than the floor it stands on, so it imports
+# with no knobs.
 # The nobleman's PALM COLUMN, on `prim_palm` — a dressed column with a painted capital, not the
 # merchant's leaning timber prop.
 #
-# --mask-grow=100 is the flag this tile invented, and the reason is worth the words. The model gives the
-# capital FIVE fronds; the generator painted a rosette of fourteen, twice and unprompted, which is what a
-# palm capital actually looks like. Cut to the model, nine of them are thrown away and the tile is a
-# five-spoke star. Keyed instead of masked, they all survive and so does the repaint's own opaque shadow,
-# which is the thing --seat exists to replace. Growing the mask keeps both, because the growth admits
-# added paint but refuses added SHADOW — see `growMask` in importTile.ts, which has a spec.
-#
-# --brightness=0.82 --saturation=1.5. Pale limestone on pale sandstone is the worst pairing in the set:
-# untouched the sprite measured ONE luminance from the floor and tile-stats refused it outright — under 10
-# a prop does not read against the ground it stands on. 0.82 puts it 33 darker, and 1.5 brings the warmth
-# from -43 to -23, which is where the rank's other dressed stone sits (its stela is -18).
-scaffold palm --spin=22
+# --contents=palmiform: a painted cedar-brown shaft (#7e5230) under a green palm capital with blue bands,
+# dark against the pale floor, so it imports with no knobs and is cut to the model's own outline.
+scaffold palm --contents=palmiform --spin=22 --colour=#7e5230 --colour-leaf=#3b6b45 --colour-accent=#2a5a9a --floor=#e2a86f
 yarn import-tile art/masters/props/junior/pillar.webp --tier=junior --name=pillar --slot=prop \
-  --filter=smooth --wet="$WET" --mask="$OBJ" --mask-grow=100 --seat="$SHADOW" --brightness=0.82 --saturation=1.5
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 
-scaffold shelf --contents=linen --spin=5
+scaffold shelf --contents=linen --spin=5 --colour=#6b4226 --colour-cloth=#9a8a6c --floor=#e2a86f
 yarn import-tile art/masters/props/junior/shelf.webp --tier=junior --name=shelf --slot=prop \
-  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=0.80 --saturation=2.0
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 
 # The nobleman's LAID TABLE, on `prim_market --contents=laid` — a meal set out, where the merchant's is a
 # balance and a heap of grain. The jar stands in a RING for prim_basin's reason: `jar()` tapers to a point.
@@ -875,9 +841,9 @@ scaffold market --contents=laid --spin=-16
 yarn import-tile art/masters/props/junior/offeringTable.webp --tier=junior --name=offeringTable \
   --slot=prop --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 
-scaffold lamp --contents=stand --spin=8
+scaffold lamp --contents=vessel --spin=8 --colour=#6b4226 --colour-metal=#6b4226 --colour-pottery=#8c4a36 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/lamp.webp --tier=junior --name=lamp --slot=prop \
-  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=1.6
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 
 scaffold sealedChest --spin=-27
 chest_tile art/masters/props/junior/chestProp.webp --tier=junior --name=chestProp --slot=prop \
@@ -917,9 +883,9 @@ scaffold falseDoor --spin=6
 yarn import-tile art/masters/props/junior/shrine.webp --tier=junior --name=shrine --slot=prop \
   --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 
-scaffold mat --spin=9 --shadow=0.5 --colour=#e0c193 --floor=#c39c68
+scaffold mat --spin=9 --thickness=0.018 --shadow=0.5 --colour=#625a2c --floor=#e2a86f
 yarn import-tile art/masters/props/junior/mat.webp --tier=junior --name=mat --slot=prop \
-  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.6
+  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 
 # --lit=1: the nobleman's brazier burns where the merchant's holds cold ash.
 scaffold brazier --lit=1 --colour=#e0c193 --floor=#c39c68
@@ -1427,17 +1393,9 @@ yarn import-tile art/masters/props/junior/statue.webp --tier=junior --name=statu
 # alone. Lying down that outline is in the top face, which this projection compresses to k of its depth,
 # and two passes of it read as a chest with a stepped lid.
 #
-# NO --brightness, and it is the first prop at this rank that needed none. Yellow-ground coffin paint is
-# already inside the palette: 2.1% over the light clamp, 3.4% under the dark one, +(-15) warmth beside
-# the chest at -15, and 13 luminance darker than the floor. Every knob left at 1.0 measures better than
-# any setting of them.
-#
-# The one blemish is a PAINTED SHADOW ON THE PLINTH — a dark wedge the repaint cast from the coffin onto
-# the bier beside it. It survives because it lies INSIDE the mask, where the rendered seat cannot replace
-# it, and at 56 units it reads as a notch out of the bier rather than as shade. The prompt's "paint the
-# shadow at its foot" line is what invites it, and it is worth nothing on a prop that takes --seat: the
-# masked-away version costs nothing, this one does not.
-scaffold statue --contents=mummiform --spin=11 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
+# --no-plinth stands the coffin on the paving itself, as it stands in a room rather than on display. It is
+# painted black-ground, darker than the floor, and imports with no knobs.
+scaffold statue --contents=mummiform --no-plinth=1 --spin=11 --colour=#4a3e34 --colour-figure=#5a4e44 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/sarcophagus.webp --tier=junior --name=sarcophagus --slot=prop \
   --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW"
 
@@ -1462,23 +1420,13 @@ yarn import-tile art/masters/props/junior/rubbleSpill.webp --tier=junior --name=
 # The nobleman's LEDGER BOARD. FLAT — no mesh, no mask, no seat, the same route as the merchant's tally
 # board and his own stela: a plank on two pegs is a slab, and its own silhouette becomes the tile.
 #
-# THE MASTER HAS THE WORD "RED" LETTERED ON IT FOUR TIMES, and it is not a defect in the tile. Three
-# rolls went into this one. The first came back a modern accounting sheet with English column headings
-# and Arabic numerals, which is what asking for hieratic in a scribe's hand buys — hieroglyphs are
-# pictures and come back as pictures, cursive has no pictorial vocabulary and comes back as English.
-# Rewritten to ask for counting strokes it got the marks right and then lettered R-E-D at the foot of
-# every column, because the prompt asked for "a row of larger RED marks" and capitals in these prompts
-# mean a thing to draw. At 56x28 those three letters are two pixels tall and sit in a row of red
-# strokes: they are not legible and not distinguishable from the tallies. A fourth roll would buy
-# nothing the map can see, and the prompt is fixed for whoever needs the next board.
+# Columns of HIEROGLYPHS, not hieratic: a hieroglyph is a picture and comes back a picture, while cursive
+# has no pictorial vocabulary and comes back as English.
 #
-# --brightness=0.80 --saturation=1.6, and the pair is doing two different jobs. Whitewashed cedar is the
-# palest thing this rank owns: untouched it put 42.8% over the light clamp and 0.85 fixed that but left
-# the board 7 luminance from the floor, inside the ten the separation rule refuses. 0.80 gives 17. The
-# saturation is for warmth — bare whitewash measures -73 against a rank that runs -4 to -63, and 1.6
-# brings it to -62, beside the lamp's -63.
-yarn import-tile art/masters/props/junior/tallyBoard.webp --tier=junior --name=tallyBoard --slot=wall \
-  --filter=smooth --headroom=0.18 --brightness=0.80 --saturation=1.6
+# --tall, near-square at 112x96 like the stelae. No knobs: the plaster is painted smoke-darkened warm
+# grey-brown, never white, so it separates from the floor as it is.
+yarn import-tile art/masters/props/junior/tallyBoard.webp --tier=junior --name=tallyBoard --slot=wall --tall \
+  --filter=smooth
 
 # BASTET, the merchant's patron, and the first patron tile in the set — `<kind>-<patron>.png`, which
 # `patronTileUrl` prefers over the generic drawing for five kinds and falls back from silently.
@@ -1516,12 +1464,10 @@ yarn import-tile art/masters/props/starter/statue-bastet.webp --tier=starter --n
 # actually is: one WIDE false door reaching both edges, a dark doorway a third of the picture across
 # with a broad jamb either side, and "ONE object, and it fills the frame" said outright.
 #
-# --brightness=0.74, the same as the generic, and it is not a coincidence: warm cream limestone on pale
-# sandstone is the pairing that rank struggles with. Untouched it put 54.5% over the light clamp and
-# landed 40 LIGHTER than the floor; 0.85 fixed the clamp and left 6 of separation, inside the ten the
-# rule refuses. 0.74 gives 17 darker and 0.0% over.
-yarn import-tile art/masters/props/junior/stela-anubis.webp --tier=junior --name=stela-anubis --slot=wall \
-  --filter=smooth --headroom=0.18 --brightness=0.74
+# --tall, near-square at 112x96 like the generic. No knobs: the slab is painted black, darker than the
+# plaster it hangs on.
+yarn import-tile art/masters/props/junior/stela-anubis.webp --tier=junior --name=stela-anubis --slot=wall --tall \
+  --filter=smooth
 
 # ANUBIS in the vault's FALSE-DOOR SHRINE, 18 rooms. Same `falseDoor` scaffold as the nobleman's generic
 # shrine, so it drops into the same footprint; what makes it his patron's is the black jackal head in the
@@ -1557,34 +1503,29 @@ yarn import-tile art/masters/props/junior/shrine-anubis.webp --tier=junior --nam
 # pulling the same way with "he does not turn to face you", written when the spin was -8 and simply
 # untrue at -22. ROLL 3 landed once rule 2 said "nothing gets smaller as it goes back" — the wording the
 # priest's Anubis landed on — rule 3 stated the turn positively, and rule 4 asked for the plinth's TOP
-# FACE by name. It came back turned a little further than the scaffold, and the envelope absorbed it:
-# 90% IoU, 98.8% of the paint inside the mask.
+# FACE by name.
 #
-# --brightness=0.9 for the PLINTH, not the jackal. Pale limestone put 13.6% over the light clamp; 0.9
-# takes it to 0.0%. The 49% under the dark clamp is the black resin and is not a defect — the priest's
-# shipped Anubis measures 35.9% for the same reason.
-scaffold statue --contents=couchant --spin=-22 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
+# KEYED, NOT MASKED. The master is a repaint that smoothed that roll's blocky carving, and it paints the
+# ears taller than the scaffold's cones: cut to the model, the ear tips go. The scaffold still gives the
+# seat and the waterline. No knobs: a black jackal on a dark cedar chest is darker than the floor as it is.
+scaffold statue --contents=couchant --spin=-22 --colour=#6b4226 --colour-figure=#5a4e44 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/statue-anubis.webp --tier=junior --name=statue-anubis --slot=prop \
-  --filter=smooth --wet="$WET" --mask="$OBJ" --seat="$SHADOW" --brightness=0.9
+  --filter=smooth --wet="$WET" --seat="$SHADOW"
 
 # THOTH on the nobleman's FALSE-DOOR STELA, 7 rooms. The rank's second god, and the reason his patron
 # art is worth painting at all: before the Noble's Hidden Vault was dedicated to Anubis every
 # patron-carrying pyramid of his named Thoth, and a lone god is the generic drawing under another name.
 # FLAT — no mesh, no mask, no seat, the same route as the generic stela.
 #
-# --brightness=0.74, the third tile at this rank to land on exactly that number, and not by habit: warm
-# cream limestone on pale sandstone is the pairing the nobleman struggles with, and it always arrives
-# too light. Untouched this put 49.2% over the light clamp and read 35 LIGHTER than the floor. 0.8 fixed
-# the clamp and left 9 of separation, one under the ten the rule refuses. 0.74 gives 21.
+# --tall, near-square at 112x96 like the generic. No knobs: the slab is painted deep Egyptian blue.
 #
 # --trim, and it is the only tile in the file that needs it. A WALL item never trims: a prop's frame is
 # thrown away and its object re-seated, but a wall item's frame IS its placement, so air round the
-# object becomes air in the band and the tile reads as a sticker stuck on the wall. Measured across the
-# nobleman's three stelae: the two that read fill 96% and 97% of the frame width, this one 74%. --trim
-# cuts the keyed background away and scales the object until it touches the band top and bottom,
-# keeping its aspect, so the leftover air moves to the SIDES where it does no harm.
-yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=stela-thoth --slot=wall \
-  --filter=smooth --headroom=0.18 --brightness=0.74 --trim
+# object becomes air in the band and the tile reads as a sticker stuck on the wall. --trim cuts the
+# keyed background away and scales the object until it touches the band top and bottom, keeping its
+# aspect, so the leftover air moves to the SIDES where it does no harm.
+yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=stela-thoth --slot=wall --tall \
+  --filter=smooth --trim
 
 # THOTH in the nobleman's FALSE-DOOR SHRINE, 3 rooms. Same `falseDoor` scaffold as his generic shrine
 # and as `shrine-anubis`, so all three drop into one footprint and a room reads as the same furniture
