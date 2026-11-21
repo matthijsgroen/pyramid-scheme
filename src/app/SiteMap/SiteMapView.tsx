@@ -293,6 +293,35 @@ export const approachCells = (grid: FloorGrid): Map<string, readonly [number, nu
   return from
 }
 
+/**
+ * Which seam of a gate's cell its leaf hangs in, as a step from that cell. THE BARS FACE THE POCKET, NOT AWAY FROM
+ * THE PLAYER: on a corner the way you came in and the way that is sealed are at right angles, so "opposite the
+ * approach" would hang the leaf on a wall the pocket is not behind. The sealed side is the one whose neighbour is
+ * reached THROUGH the gate. A way a switch shut and the open door it becomes share that seam: the doorway it stands in
+ * is often a cell of the fork's own room, and the seam toward the approach is then the middle of that room. Only a wall
+ * standing in its own cell (`facesApproach`, an unpainted passage) hangs on the seam toward where the walk halts.
+ */
+const gateLeafSeam = (
+  approach: ReadonlyMap<string, readonly [number, number]>,
+  r: number,
+  c: number,
+  dirs: ReadonlySet<Direction>,
+  facesApproach: boolean
+): readonly [number, number] | undefined => {
+  const stands = approach.get(`${r},${c}`)
+  if (!stands) return undefined
+  const [ar, ac] = stands
+  if (facesApproach) return [ar - r, ac - c]
+  const back: Direction = ar < r ? "n" : ar > r ? "s" : ac < c ? "w" : "e"
+  const sealed = [...dirs].find(dir => {
+    if (dir === back) return false
+    const [mr, mc] = DIR_MOVES[dir]
+    const beyond = approach.get(`${r + mr},${c + mc}`)
+    return beyond?.[0] === r && beyond?.[1] === c
+  })
+  return sealed ? DIR_MOVES[sealed] : [r - ar, c - ac]
+}
+
 /** The lever's authored throw: ±36° off upright. Not ours to shrink — at 20° the two states' grips sit
  * 0.42 apart against a 0.68-wide dome and read as one lever wobbling; at 36° each grip clears the dome
  * and the pair reads as a backslash and a forward slash (`prim_lever`'s docstring, `scripts/renderProp.py`).
@@ -481,7 +510,7 @@ export const nodeSpritesFor = (
     c: number,
     tier: Tileset,
     dirs: ReadonlySet<Direction>,
-    { open, wall }: { open: boolean; wall: boolean }
+    { open, wall, facesApproach = false }: { open: boolean; wall: boolean; facesApproach?: boolean }
   ): void => {
     // `gate` is shut and `gate-open` is the same leaf swung back or sunk into the floor; a rank with
     // neither draws the marker alone, exactly as a stairhead did before its flights were painted.
@@ -493,29 +522,9 @@ export const nodeSpritesFor = (
     // own walls, and the gate's would erase a leaf drawn outside them.
     //
     approach ??= approachCells(grid)
-    const stands = approach.get(`${r},${c}`)
-    if (!stands) return
-    const [ar, ac] = stands
-
-    // THE BARS FACE THE POCKET, NOT AWAY FROM THE PLAYER, and on two thirds of the gates in the
-    // world those are different directions. Only `ns` and `ew` gates run straight through; `es`,
-    // `sw`, `nw` and `en` are CORNERS, and on a corner the way you came in and the way that is
-    // sealed are at right angles — so "the side opposite the approach" hung the gate on a wall the
-    // pocket is not even behind, one turn away from the seam it belongs in.
-    //
-    // The sealed side is the one whose neighbour is reached THROUGH this gate, which `approachCells`
-    // already knows: it is the neighbour whose own approach is the gate itself. That also settles a
-    // cell with three ways out, where "not the way I came" would have been a choice of two.
-    const back: Direction = ar < r ? "n" : ar > r ? "s" : ac < c ? "w" : "e"
-    const sealed = [...dirs].find(dir => {
-      if (dir === back) return false
-      const [mr, mc] = DIR_MOVES[dir]
-      const beyond = approach?.get(`${r + mr},${c + mc}`)
-      return beyond?.[0] === r && beyond?.[1] === c
-    })
-    // A WAY A SWITCH SHUT CANNOT BE STOOD ON: the walk halts on the cell before it, so its bars hang
-    // on that seam, across the way the player came, right in front of where he stops.
-    const [dr, dc] = wall ? [ar - r, ac - c] : sealed ? DIR_MOVES[sealed] : [r - ar, c - ac]
+    const seam = gateLeafSeam(approach, r, c, dirs, facesApproach)
+    if (!seam) return
+    const [dr, dc] = seam
 
     // A GATE IS AIMED BY WHICH ONE IS DRAWN, the same as a flight. Shutting a way walked ACROSS, the
     // grille's own plane is the y-z one and this projection draws that as a line, so `-side` is a
@@ -668,7 +677,7 @@ export const nodeSpritesFor = (
             mirrored: false,
             fadeAt: [`${r},${c}`, `${r - 1},${c}`],
           })
-        else gateLeaf(r, c, tier, cell.dirs, { open: false, wall: true })
+        else gateLeaf(r, c, tier, cell.dirs, { open: false, wall: true, facesApproach: true })
       } else if (kind === "gate" && cell.regionBarrier) {
         // A REGION BARRIER IS THE COVER ITSELF, NOT A DOOR HUNG IN THE PASSAGE: the water or sand is drawn
         // under the floor's light (RegionBarrierCovers), and the cell carries no sprite and no marker.
