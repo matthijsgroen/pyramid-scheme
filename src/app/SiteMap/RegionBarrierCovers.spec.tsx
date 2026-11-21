@@ -191,6 +191,47 @@ describe("a realisation that declares motion ripples, one that declares none lie
   })
 })
 
+describe("a shut barrier's ground lies darkened, so it reads as out of reach", () => {
+  const still: RegionBarrierRealisationMeta = { id: "dust", ownerMod: "made-up", texture: "dust", fallback: "#999" }
+  const moving: RegionBarrierRealisationMeta = { ...still, id: "brine", texture: "brine", motion: "ripple" }
+  const metas = new Map([still, moving].map(meta => [meta.id, meta]))
+  const resolve = (id: string | undefined) => (id ? metas.get(id) : undefined)
+  const painted = (_tier: Tileset, name: string): string | undefined => `/made-up/${name}.png`
+
+  const cellsOf = (realisation: string, leaving = false) => {
+    const covers = [{ ...cover, realisation }]
+    const { container } = render(
+      <RegionBarrierCovers
+        grid={grid}
+        claims={claims}
+        tier="junior"
+        standing={leaving ? [] : covers}
+        leaving={leaving ? covers : []}
+        resolve={resolve}
+        urlOf={painted}
+      />
+    )
+    return Array.from(container.querySelectorAll<HTMLElement>("[data-cover-cell]"))
+  }
+  const washOf = (cell: HTMLElement) => cell.querySelector<HTMLElement>(":scope > [data-shut-wash]")
+
+  it.each(["brine", "dust"])("darkens every covered cell of a %s cover with one black wash", realisation => {
+    for (const cell of cellsOf(realisation))
+      expect(washOf(cell)?.style.backgroundColor, cell.getAttribute("data-cover-cell")!).toBe("rgba(0, 0, 0, 0.35)")
+  })
+
+  it("lies inside the cell, over the ripple, so it takes the cell's fade at the dry edge", () => {
+    const blockage = cellsOf("brine").find(cell => cell.getAttribute("data-cover-cell") === "1,1")!
+    expect(blockage.lastElementChild).toBe(washOf(blockage))
+    expect(washOf(blockage)!.style.maskImage).toBe("")
+    expect(blockage.style.maskImage).toBe(`linear-gradient(to right, rgba(0, 0, 0, 0), black ${CELL}px)`)
+  })
+
+  it("fades out with the cover when the barrier opens", () => {
+    for (const cell of cellsOf("brine", true)) expect(washOf(cell)!.closest("[data-leaving]")).not.toBeNull()
+  })
+})
+
 describe("a realisation that declares a wall wash shows on the back wall behind it, thinning toward the top", () => {
   const dry: RegionBarrierRealisationMeta = { id: "dust", ownerMod: "made-up", texture: "dust", fallback: "#999" }
   const wet: RegionBarrierRealisationMeta = { ...dry, id: "brine", texture: "brine", motion: "ripple", wallWash: 0.5 }
