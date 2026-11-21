@@ -110,6 +110,7 @@ describe("a realisation no registered mod provides leaves the barrier as plain g
         fallback: "#2f6f86",
         motion: "ripple",
         wallWash: 0.45,
+        submerge: 15,
       },
       { id: "sand", ownerMod: "topology", texture: "regionSand", fallback: "#c9a45c" },
     ])

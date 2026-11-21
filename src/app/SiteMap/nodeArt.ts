@@ -84,6 +84,9 @@ export type NodeSprite = {
    * and appeared in the corridor on the other side. A room's own footprint is the only shape that both
    * lets a chest overlap the paving beside it and stops it at the masonry. */
   footprint: readonly string[]
+  /** Drawn somewhere other than standing on its cell's floor: a hole in the back wall, or a drop, whose hole and
+   * cable are one picture. Water or sand covering the cell leaves it whole. */
+  offFloor?: true
   /** Cells whose occupant this sprite should go see-through for, as "r,c" keys.
    *
    * THE ARCHWAY'S RULE, for the same reason. A gate is drawn across the mouth of a way through, so the

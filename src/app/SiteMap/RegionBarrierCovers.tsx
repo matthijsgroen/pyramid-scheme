@@ -1,4 +1,4 @@
-import { Fragment, useState, type CSSProperties } from "react"
+import { Fragment, useState, type CSSProperties, type ReactNode } from "react"
 import type { Direction, FloorGrid, Tileset } from "@/game/siteTypes"
 import type { CoverCell, RegionBarrierCover } from "@/game/regionBarrierCover"
 import type { ResolveRegionBarrierRealisation } from "@/game/regionBarrierRealisation"
@@ -66,6 +66,62 @@ const coverPieces = (grid: FloorGrid, cover: RegionBarrierCover, claims: RoomCla
     )
   }
   return pieces
+}
+
+/** How deep things stand in each covered cell, by "r,c": every cell a standing cover lies on, a covered chamber's
+ * claimed floor included, whose realisation declares a depth (`submerge`). */
+// eslint-disable-next-line react-refresh/only-export-components -- read off the cover's own pieces, beside the drawing of them
+export const submergeDepths = (
+  grid: FloorGrid,
+  claims: RoomClaims,
+  covers: readonly RegionBarrierCover[],
+  resolve: ResolveRegionBarrierRealisation = resolveRegionBarrierRealisation
+): Map<string, number> => {
+  const depths = new Map<string, number>()
+  for (const cover of covers) {
+    const depth = resolve(cover.realisation)?.submerge
+    if (!depth) continue
+    for (const { at } of coverPieces(grid, cover, claims)) depths.set(keyOf(at), depth)
+  }
+  return depths
+}
+
+/** How many map units the waterline fades over, upward from where the hidden part ends. */
+const WATERLINE_FADE = 6
+
+/**
+ * Something standing in water or sand: drawn whole, with everything below `depth` above its floor line hidden and a
+ * short fade at the line. The mask is the sprite's own box, so its children stay in map space inside it.
+ */
+export const Submerged = ({
+  box: [x, y, w, h],
+  baseY,
+  depth,
+  id,
+  children,
+}: {
+  box: readonly [number, number, number, number]
+  baseY: number
+  depth: number
+  id: string
+  children: ReactNode
+}) => {
+  const line = baseY - depth - y
+  return (
+    <div
+      data-submerged={id}
+      style={{
+        position: "absolute",
+        left: x,
+        top: y,
+        width: w,
+        height: h,
+        maskImage: `linear-gradient(to bottom, black ${line - WATERLINE_FADE}px, transparent ${line}px)`,
+      }}
+    >
+      <div style={{ position: "absolute", left: -x, top: -y, width: 0, height: 0 }}>{children}</div>
+    </div>
+  )
 }
 
 const union = (a: Box, b: Box): Box => {

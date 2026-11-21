@@ -22,6 +22,9 @@ export type RegionBarrierRealisationMeta = {
   /** How strongly the cover shows on the back wall standing behind it: at this opacity along the wall's foot,
    * thinning to nothing at its top, as light off water plays on a wall. Absent, the wall stays dry. */
   wallWash?: number
+  /** How deep what stands on the covered floor stands in it, in map units: that much of it above its floor line is
+   * hidden under a soft waterline. Absent, everything standing there shows whole. */
+  submerge?: number
 }
 
 /** Resolves the realisation a barrier names. Given `undefined` an answer means the caller binds a barrier
