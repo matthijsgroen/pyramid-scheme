@@ -246,11 +246,11 @@ describe("PyramidExpedition — the journey card", () => {
   }
 
   it("shows on a tall screen while nobody speaks", async () => {
-    expect((await cardFor(false)).className).not.toContain("opacity-0")
+    expect((await cardFor(false)).classList).not.toContain("opacity-0")
   })
 
   it("fades out while a conversation plays", async () => {
-    expect((await cardFor(true)).className).toContain("opacity-0")
+    expect((await cardFor(true)).classList).toContain("opacity-0")
   })
 })
 

@@ -168,14 +168,18 @@ export const PyramidExpedition: FC<{
           </Header>
         </div>
 
-        <div ref={scrollContainerRef} className="flex max-h-(--screen-height) flex-1 overflow-auto overscroll-contain">
+        <div
+          ref={scrollContainerRef}
+          className="group flex max-h-(--screen-height) flex-1 overflow-auto overscroll-contain"
+        >
           <div
             className={clsx(
               // The enter button is pinned bottom-centre. On a screen narrower than this card's own
               // max-width there is no free corner beside it, so the card sits a button's height higher
               // until there is room to share the row.
-              "pointer-events-none absolute bottom-20 left-4 mr-4 mb-safe-bottom hidden max-w-sm rounded-lg bg-black/10 p-4 transition-opacity duration-300 motion-reduce:transition-none md:bottom-10 md:left-10 mdh:block",
-              // A conversation takes the screen; the card would sit under it.
+              "pointer-events-none absolute bottom-20 left-4 mr-4 mb-safe-bottom hidden max-w-sm rounded-lg bg-black/10 p-4 transition-opacity duration-300 motion-reduce:transition-none md:bottom-10 md:left-10 pointer-coarse:group-has-[input:focus]:opacity-0 mdh:block",
+              // A conversation takes the screen; the card would sit under it. On touch, an open keyboard
+              // pans the board down onto the card.
               speaking && "opacity-0",
               textColor
             )}
