@@ -11,7 +11,7 @@ import { authoredKindsFor } from "./authoredKinds"
 import { encodeEdge } from "./edgeId"
 import { allFloors, resolveKeyRequirements } from "./worldFloors.testing"
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
+import type { Direction, FloorConfig, FloorGrid } from "@/game/siteTypes"
 
 // A floor whose layout cannot be carved at the one seed the runtime ever hands it renders
 // "Site layout unavailable." for every player, permanently — 17 authored floors once shipped that way
@@ -557,5 +557,44 @@ describe("a floor's chamber count moves no wall at the pinned layout", () => {
     })
 
     expect(moved, `${moved.length} floor(s):\n${moved.slice(0, 10).join("\n")}`).toEqual([])
+  })
+})
+
+// A side section pitched at another difficulty than its floor is a passage of its own. Where the main path runs
+// through one of its rooms, the player walks it as the main way and never reads it as a side passage.
+describe("a side section of another difficulty is a passage of its own", () => {
+  const STEP: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+
+  it("has no room the main path runs through, in any floor of the world", () => {
+    const swept: string[] = []
+    const traversed = allFloors().flatMap(floor => {
+      const offTier = new Set(
+        floor.config.sideSections.flatMap((section, i) =>
+          section.difficulty === floor.config.difficulty ? [] : [section.label ?? `s${i}`]
+        )
+      )
+      if (offTier.size === 0) return []
+      const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
+        resolveKeyRequirements,
+        floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
+      })
+      if (!result.success) return [`${floor.label}: does not assemble`]
+      const cells = result.grid.cells
+      return cells.flatMap((row, r) =>
+        row.flatMap((cell, c) => {
+          if (cell.type !== "room" || cell.sectionAddress === undefined || !offTier.has(cell.sectionAddress)) return []
+          swept.push(`${floor.label} ${r},${c}`)
+          const mainLinks = [...cell.dirs].filter(dir => {
+            const [dr, dc] = STEP[dir]
+            const next = cells[r + dr]?.[c + dc]
+            return next !== undefined && next.type !== "empty" && next.sectionAddress === "main"
+          })
+          return mainLinks.length >= 2 ? [`${floor.label} ${cell.sectionAddress} ${r},${c}`] : []
+        })
+      )
+    })
+
+    expect(swept.length).toBeGreaterThan(0)
+    expect(traversed, `${traversed.length} room(s) on the main way:\n${traversed.join("\n")}`).toEqual([])
   })
 })

@@ -283,7 +283,7 @@ describe("a lock floor's side sections", () => {
   // A made-up floor standing the lever lock, prepared the way assembleFloor prepares it.
   const lockFloor = (more: Partial<FloorConfig> = {}, planned: (plan: LockPlan) => LockPlan = plan => plan) => {
     const expanded = expandFloorLocks(
-      plain({ difficulty: "expert", realisations: BINDING, locks: [{ lock: leverLock() }], ...more })
+      plain({ difficulty: "starter", realisations: BINDING, locks: [{ lock: leverLock() }], ...more })
     )
     if (!expanded.ok) throw new Error(JSON.stringify(expanded.reasons))
     const result = prepareFloor("site", expanded.config, 7, {}, planned(planLockFloor(expanded)!))
@@ -342,6 +342,14 @@ describe("a lock floor's side sections", () => {
         name
       ).not.toContain(never)
     }
+  })
+
+  it("an open section of another difficulty than the floor's hangs as a branch, one of its own still fits", () => {
+    const sections = lockFloor({
+      sideSections: [section({ pathPuzzles: 1, difficulty: "junior" }), section({ pathPuzzles: 1 })],
+    })
+    expect(assigned(sections)).toEqual([1])
+    expect(sections.branchSections).toEqual([0])
   })
 
   it("a section named in outsideLock hangs as a branch, open or sealed", () => {
