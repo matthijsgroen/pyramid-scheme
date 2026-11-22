@@ -229,7 +229,8 @@ export const buildTileRegions = (
         const around = ringAround(r, c)
         const lit = litTouching(...around)
         // Bare rock is the floor's own, not a section's: it is the backdrop the whole map stands on, so a
-        // passage of another tier does not ring itself in squares of a different brown.
+        // passage of another tier does not ring itself in squares of a different brown. The seams and
+        // corners between squares of bare rock below follow the same rule.
         if (lit) groupsFor(fallbackTier).wallMass[lit].push([x, y, CELL, CELL])
       }
 
@@ -267,7 +268,10 @@ export const buildTileRegions = (
           [r, c],
         ] as const
         const lit = brightest(drawnState(r, c), drawnState(r - 1, c))
-        if (lit) groupsFor(tierAt(...around, [r - 1, c - 1], [r, c - 1])).wallMass[lit].push(northGap)
+        if (lit)
+          groupsFor(here || north ? tierAt(...around, [r - 1, c - 1], [r, c - 1]) : fallbackTier).wallMass[lit].push(
+            northGap
+          )
       }
 
       // ── the west gap: floor when the way is open, otherwise a side wall seen edge-on ──
@@ -285,7 +289,10 @@ export const buildTileRegions = (
           [r, c - 1],
         ] as const
         const lit = brightest(drawnState(r, c), drawnState(r, c - 1))
-        if (lit) groupsFor(tierAt(...around, [r - 1, c], [r - 1, c - 1])).wallMass[lit].push(westGap)
+        if (lit)
+          groupsFor(here || west ? tierAt(...around, [r - 1, c], [r - 1, c - 1]) : fallbackTier).wallMass[lit].push(
+            westGap
+          )
       }
 
       // ── the corner where four cells meet ──
@@ -324,7 +331,9 @@ export const buildTileRegions = (
       // The corner asks the same question the four squares around it do: a pinhole of background where
       // four drawn squares meet is the most visible seam of the three, because it has stone on all sides.
       const cornerLit = brightest(...cornerCells.map(([cr, cc]) => drawnState(cr, cc)))
-      const cornerGroups = groupsFor(tierAt(...cornerCells))
+      const cornerGroups = groupsFor(
+        cornerCells.some(([cr, cc]) => floorOf(cr, cc)) ? tierAt(...cornerCells) : fallbackTier
+      )
       if (insideOneSpace) {
         floorGroup(cornerGroups, here, north, west, northWest)[
           brightest(here.state, north.state, west.state, northWest.state)!
