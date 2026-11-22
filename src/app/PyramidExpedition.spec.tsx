@@ -246,11 +246,31 @@ describe("PyramidExpedition — the journey card", () => {
   }
 
   it("shows on a tall screen while nobody speaks", async () => {
-    expect((await cardFor(false)).className).not.toContain("opacity-0")
+    expect((await cardFor(false)).classList).not.toContain("opacity-0")
   })
 
   it("fades out while a conversation plays", async () => {
-    expect((await cardFor(true)).className).toContain("opacity-0")
+    expect((await cardFor(true)).classList).toContain("opacity-0")
+  })
+
+  it("sits bottom-left on the desert", async () => {
+    const { classList } = await cardFor(false)
+    expect(classList).toContain("bottom-20")
+    expect(classList).not.toContain("top-20")
+  })
+
+  it("sits top-left in a cave", async () => {
+    const cave = makeActiveJourney(1)
+    cave.journey = { ...cave.journey, levels: [{ exterior: "cavern" }] } as TranslatedJourney
+    const { getByRole } = render(
+      <FezContext.Provider value={{ showConversation: () => {} }}>
+        <PyramidExpedition activeJourney={cave} runNr={1} />
+      </FezContext.Provider>
+    )
+    await settle()
+    const caveCard = getByRole("heading", { level: 3, name: journeyData.id, hidden: true }).parentElement!
+    expect(caveCard.classList).toContain("top-20")
+    expect(caveCard.classList).not.toContain("bottom-20")
   })
 })
 
