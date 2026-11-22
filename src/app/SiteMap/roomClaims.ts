@@ -651,9 +651,15 @@ export const FACE_TOP = SIDE_W / 2
 // starter pyramid's ward-chest teaser is authored at a LATER tier on purpose (spec/starter.ts), so
 // room difficulties are the wrong thing to infer a floor's material from: a starter cellar came out
 // built of a pharaoh's granite. Per-room difficulty still dresses the room (props, light).
-/** The stone one cell is built of: the floor's own on this side of a ward, the gate included, else its own tileset. */
-export const cellStone = (grid: FloorGrid, cell: TilesetCell, row: number, col: number): Tileset =>
-  cellsThisSideOfAWard(grid).has(`${row},${col}`) ? floorTier(grid) : cellTileset(cell, grid)
+/** The stone one cell is built of: its own tileset when the DSL names one; the floor's own for a ward gate on the
+ * entrance side, where the sill is laid; else what cellTileset says, so a section is dressed in the tier it was authored at. */
+export const cellStone = (grid: FloorGrid, cell: TilesetCell, row: number, col: number): Tileset => {
+  if (cell.tileset) return cell.tileset
+  const isGate =
+    (cell as { type?: string; tags?: string[] }).type === "room" &&
+    !!(cell as { tags?: string[] }).tags?.includes("gate")
+  return isGate && cellsThisSideOfAWard(grid).has(`${row},${col}`) ? floorTier(grid) : cellTileset(cell, grid)
+}
 
 export const floorTier = (grid: FloorGrid): Tileset => grid.tileset ?? grid.difficulty ?? "starter"
 

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- A side passage built at another tier is drawn in that tier's stone, chest included.
 - A gate in a doorway no longer has an arch drawn over it.
 - The expedition text no longer overlaps the board in a cave or while the phone keyboard is open.
 
