@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.48.2 - 2026-11-22
+
 ### Fixed
 
 - The way-in button beside a pyramid fades out while Fez and the explorer talk.
