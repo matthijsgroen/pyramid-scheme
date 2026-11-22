@@ -97,7 +97,7 @@ export const PyramidExpedition: FC<{
   }, [levelContent])
 
   const storageKey = `level-${activeJourney.journeyId}-${activeJourney.levelNr}-${activeJourney.randomSeed}`
-  const { showConversation } = use(FezContext)
+  const { showConversation, speaking } = use(FezContext)
   const hasBlockedBlocks = useMemo(() => {
     return levelContent?.pyramid.blocks.some(block => !block.isOpen && block.value === undefined) ?? false
   }, [levelContent])
@@ -174,9 +174,12 @@ export const PyramidExpedition: FC<{
               // The enter button is pinned bottom-centre. On a screen narrower than this card's own
               // max-width there is no free corner beside it, so the card sits a button's height higher
               // until there is room to share the row.
-              "absolute bottom-20 left-4 mr-4 mb-safe-bottom hidden max-w-sm rounded-lg bg-black/10 p-4 md:bottom-10 md:left-10 mdh:block",
+              "pointer-events-none absolute bottom-20 left-4 mr-4 mb-safe-bottom hidden max-w-sm rounded-lg bg-black/10 p-4 transition-opacity duration-300 motion-reduce:transition-none md:bottom-10 md:left-10 mdh:block",
+              // A conversation takes the screen; the card would sit under it.
+              speaking && "opacity-0",
               textColor
             )}
+            aria-hidden={speaking || undefined}
           >
             <h3 className="font-pyramid text-lg">{activeJourney.journey.name}</h3>
             <p>{activeJourney.journey.description}</p>
