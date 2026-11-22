@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- The unpack button after a trip stays clear of the bottom edge on phones.
+
 ## 0.48.0 - 2026-11-21
 
 ### Added
