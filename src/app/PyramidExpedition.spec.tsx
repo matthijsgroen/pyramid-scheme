@@ -242,14 +242,14 @@ describe("PyramidExpedition — the journey card", () => {
       </FezContext.Provider>
     )
     await settle()
-    return getByRole("heading", { level: 3, name: journeyData.id }).parentElement!
+    return getByRole("heading", { level: 3, name: journeyData.id, hidden: true }).parentElement!
   }
 
   it("shows on a tall screen while nobody speaks", async () => {
-    expect((await cardFor(false)).className).toContain("mdh:block")
+    expect((await cardFor(false)).className).not.toContain("opacity-0")
   })
 
-  it("stays hidden while a conversation plays", async () => {
-    expect((await cardFor(true)).className).not.toContain("mdh:block")
+  it("fades out while a conversation plays", async () => {
+    expect((await cardFor(true)).className).toContain("opacity-0")
   })
 })
