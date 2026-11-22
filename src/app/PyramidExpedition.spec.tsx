@@ -229,3 +229,27 @@ describe("PyramidExpedition — a level without a board", () => {
     expect(queryByText("ui.enterSite")).toBeNull()
   })
 })
+
+describe("PyramidExpedition — the journey card", () => {
+  beforeEach(async () => {
+    await clearGameData()
+  })
+
+  const cardFor = async (speaking: boolean) => {
+    const { getByRole } = render(
+      <FezContext.Provider value={{ showConversation: () => {}, speaking }}>
+        <PyramidExpedition activeJourney={makeActiveJourney(1)} runNr={1} />
+      </FezContext.Provider>
+    )
+    await settle()
+    return getByRole("heading", { level: 3, name: journeyData.id }).parentElement!
+  }
+
+  it("shows on a tall screen while nobody speaks", async () => {
+    expect((await cardFor(false)).className).toContain("mdh:block")
+  })
+
+  it("stays hidden while a conversation plays", async () => {
+    expect((await cardFor(true)).className).not.toContain("mdh:block")
+  })
+})
