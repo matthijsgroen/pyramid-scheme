@@ -269,7 +269,13 @@ export const PyramidExpedition: FC<{
               )}
             </div>
             {(revealSolvedBoard || boardless) && !showingInterior && !startNextLevel && (
-              <div className="absolute inset-x-0 bottom-4 z-20 mb-safe-bottom flex justify-center">
+              <div
+                className={clsx(
+                  "absolute inset-x-0 bottom-4 z-20 mb-safe-bottom flex justify-center transition-opacity duration-300 motion-reduce:transition-none",
+                  speaking && "pointer-events-none opacity-0"
+                )}
+                inert={speaking}
+              >
                 <ActionButton label={t("ui.enterSite")} onClick={flow.enterInterior} />
               </div>
             )}
