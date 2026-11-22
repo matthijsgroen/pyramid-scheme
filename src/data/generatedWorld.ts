@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 527964222
+export const worldContentHash = 1918370838
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -15240,8 +15240,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.2,
         seed: 7907893988303842,
         carveFrom: {
-          attempt: 26,
-          rung: { n: 37, startingN: 37, packing: 1, targetDistance: 48, chainWind: 1, chainFloor: 0, recovery: false },
+          attempt: 16,
+          rung: {
+            n: 33,
+            startingN: 33,
+            packing: 0.8,
+            targetDistance: 40,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
         },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d9", pieceIndex: 2 },
         rewards: [{ type: "waterskin" }, { type: "waterskin" }, undefined, undefined, undefined],
@@ -15844,7 +15852,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         corridorStraightness: 0.35,
         packing: 0.2,
         outsideLock: [5],
-        seed: 202908649,
+        seed: 202908646,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art3", pieceIndex: 2 },
         rewards: [{ type: "waterskin" }, { type: "waterskin" }, undefined, undefined, undefined, undefined],
         locks: [
@@ -18705,12 +18713,12 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.16,
         seed: 4081382388249045,
         carveFrom: {
-          attempt: 18,
+          attempt: 3,
           rung: {
-            n: 35,
-            startingN: 35,
-            packing: 0.64,
-            targetDistance: 46,
+            n: 25,
+            startingN: 25,
+            packing: 0.16,
+            targetDistance: 20,
             chainWind: 1,
             chainFloor: 0,
             recovery: false,

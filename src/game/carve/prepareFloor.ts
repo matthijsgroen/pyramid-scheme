@@ -501,9 +501,10 @@ export const prepareFloor = (
     for (const gateKeyId of mechanic.gateKeys) markByGateKey.set(gateKeyId, allocation.marks.get(mechanic.id)!)
 
   // Hidden sections are included in maze generation (tagged hidden:true on cells) but masked by
-  // useAssembledFloor — so they are carved, but they are not asked to host a key.
+  // useAssembledFloor — so they are carved, but they are not asked to host a key. A grown host is the floor's own
+  // difficulty, so on a lock floor it fits in the lock like any same-tier section.
   const sideSections: SideSection[] = owesAKeyHost(config.sideSections.filter(s => !s.hidden))
-    ? [...config.sideSections, GROWN_KEY_HOST]
+    ? [...config.sideSections, { ...GROWN_KEY_HOST, difficulty: config.difficulty }]
     : config.sideSections
   const { gatedIdxs: gatedFloorKeyIdxs, ungatedIdxs } = keyHostIdxs(sideSections)
 
