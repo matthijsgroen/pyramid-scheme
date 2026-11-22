@@ -54,10 +54,11 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room
     () => ({ glyphs, scales, maxValue, cancelling: puzzle.cancelling }),
     [glyphs, scales, maxValue, puzzle.cancelling]
   )
-  // What this board lets the player do, which the tier decides: cancelling is off where taking
-  // things off both pans would do the puzzle's own arithmetic (balance-scale.md: cancelling is off at
-  // starter).
-  const moves = { cancelling: puzzle.cancelling !== false, swapping: techniqueCap === "swap" }
+  // What this board lets the player do. Cancelling is off where taking things off both pans would do
+  // the puzzle's own arithmetic (balance-scale.md: off at starter). Swapping only ever makes a board
+  // easier, so it is offered wherever cancelling is; only master and wizard boards demand it.
+  const cancelling = puzzle.cancelling !== false
+  const moves = { cancelling, swapping: cancelling }
 
   // Derived on every change: whether there is a hint at all is what shows the button. What the player is
   // shown is the one from the moment they asked, held until a move changes a weight or a note.

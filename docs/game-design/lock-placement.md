@@ -193,13 +193,15 @@ fork-switch `lightbeamSwitch`, one-way `zipline`, flame `torch`, weights `stoneP
 
 A lock is laid first and the floor's content is seated on it. The main path's own puzzles stand on the lock's
 route. An **open side section** (no gate, not hidden, no sub-sections, ending in a chest or shop, no lever, not named
-by a one-way, not a junction's way) is offered **a corridor of the lock of its own**: its puzzles and end chest stand
+by a one-way, not a junction's way, at the floor's own difficulty) is offered **a corridor of the lock of its own**: its puzzles and end chest stand
 on that corridor in walk order, puzzles first and the chest last, with the corridor's doors and drops between them
 where the lay puts them. The lay lengthens each corridor for the rooms it carries. A **trapped** (sealed) side section
 is offered a corridor too, because a trap costs only hearts and the camp always heals; its trap room keeps the
 isolation `sealed` asks for, and the only ways into it are the lay's own passages. Gated, keyed and hidden sections,
 sections with sub-sections and a junction's ways hang as branches off laid ground, because a key or a detector inside a lock would
-leave it not provably solvable. The section hosting the key a floor-key gate waits on is spread over laid ground no
+leave it not provably solvable. A side section of another difficulty than the floor's hangs as a branch too, at every
+tier: it is a passage of its own, and on a lock corridor its rooms can be stops on the main way, where the player
+never reads it as one. The section hosting the key a floor-key gate waits on is spread over laid ground no
 door shuts.
 
 Only a corridor inside the lock carries a side path: both its end regions are lock regions, so one touching the

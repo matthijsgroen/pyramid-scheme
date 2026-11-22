@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Junior and expert balance puzzles let you swap a sign for what a row says it is worth.
+
 ### Fixed
 
 - A side passage built at another tier is drawn in that tier's stone, chest included.
 - A gate in a doorway no longer has an arch drawn over it.
 - The expedition text no longer overlaps the board in a cave or while the phone keyboard is open.
+- A side passage of another difficulty gets a passage of its own instead of lying on the main way.
+- A gate in a corridor stands on the floor instead of hanging below it.
 
 ## 0.48.2 - 2026-11-22
 
