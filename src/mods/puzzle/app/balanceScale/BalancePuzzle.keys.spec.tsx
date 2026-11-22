@@ -31,7 +31,7 @@ const puzzle: BalancePuzzleData = {
     { left: [beetle], right: [feather, weight(1)] },
   ],
   maxValue: 5,
-  cancelling: false,
+  cancelling: true,
   solution: { "🪶": 3, "🪲": 4 },
   techniqueCap: "swap",
 }
@@ -113,5 +113,20 @@ describe("BalancePuzzle by keys", () => {
     act(() => taps.rows()[1].click())
     expect(keyed).toEqual(taps.notes())
     expect(keyed).toHaveLength(1)
+  })
+})
+
+describe("BalancePuzzle swapping", () => {
+  const rulesOf = (board: BalancePuzzleData) => {
+    const { container } = render(<BalancePuzzle puzzle={board} onSolved={() => {}} onCancel={() => {}} />)
+    return container.textContent ?? ""
+  }
+
+  it("offers the swap on a junior-capped board where cancelling is on", () => {
+    expect(rulesOf({ ...puzzle, cancelling: true, techniqueCap: "difference" })).toContain("balance.rules.swap")
+  })
+
+  it("offers no swap on a starter board, where cancelling is off", () => {
+    expect(rulesOf({ ...puzzle, cancelling: false, techniqueCap: "equalShares" })).not.toContain("balance.rules.swap")
   })
 })

@@ -193,7 +193,10 @@ introduces actually comes up, rather than turning up in a third of the draws.
 
 "Cancelling off" is not only a generation setting: the pieces on a starter board
 are not interactive, because offering the move there would do the puzzle's
-arithmetic (§4.1). Two bullets of rules at starter, five at wizard.
+arithmetic (§4.1). Swapping is offered wherever cancelling is (junior up), since
+it only ever makes a board easier; the table's cap and `minSwaps` are what a
+board _demands_, so only master and wizard boards cannot be solved without it.
+Two bullets of rules at starter, five at wizard.
 
 Measured over 200 boards a tier — pieces on the board at the start, and moves to
 finish it:
@@ -276,7 +279,7 @@ Beyond the shared screen bar:
 - **The rules list only the moves this board affords**, and grows with it: two
   bullets plus one for taking things off both pans at starter, up to five at
   wizard. It is read off the board itself — more than one row, a piece with its
-  match opposite, a swap-capped board — not off the tier, so what the page says
+  match opposite, whether cancelling is on — not off the tier, so what the page says
   you can do and what it lets you do cannot drift apart.
 - **A note is a row under the scales**, drawn in the same glyphs and stones with
   an `=` instead of a beam: it is a relation the player worked out, not a scale

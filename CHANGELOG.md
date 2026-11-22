@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Junior and expert balance puzzles let you swap a sign for what a row says it is worth.
+
 ### Fixed
 
 - A gate in a doorway no longer has an arch drawn over it.
