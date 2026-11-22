@@ -502,6 +502,24 @@ export const nodeSpritesFor = (
     })
   }
   let approach: Map<string, readonly [number, number]> | null = null
+  // The question the wall band itself asks (`buildTileRegions`), so a gate hangs in masonry only where masonry is drawn —
+  // asked of the floor fully revealed, because where a wall stands is structure: a gate does not move when fog lifts.
+  let revealed: FloorGrid | null = null
+  const hasFaceAt = (r: number, c: number): boolean => {
+    revealed ??= {
+      ...grid,
+      cells: grid.cells.map(row =>
+        row.map(cell => (cell.type !== "empty" && cell.state === "fogged" ? { ...cell, state: "visible" } : cell))
+      ),
+    }
+    const lit = revealed
+    return hasWallFace(
+      (fr, fc) => cellFloorAt(lit, claims, undefined, fr, fc),
+      (fr, fc, dir) => isPassable(lit, claims, fr, fc, dir),
+      r,
+      c
+    )
+  }
   /** The leaf of one gate, hung in the passage it shuts. A shut gate is a room; an OPEN one a lever or
    * switch holds open is a corridor that remembers it (`CorridorCell.openGate`) — both draw through here,
    * so the open leaf stands exactly where the shut one did. */
@@ -549,18 +567,22 @@ export const nodeSpritesFor = (
     // way you do at a locked gate, and the cell he is standing on is the gate's own.
     // THE SEAM IN THE MAP'S OWN ARITHMETIC. `cellLeft`/`cellTop` put the gap BEFORE each cell, so the
     // one AFTER cell c starts at `cellLeft(c) + CELL` and is `SIDE_W` wide, and the band after row r
-    // starts at `cellTop(r) + CELL` and is `WALL_H` tall. Both far cases were written as if the gap
-    // came before: the gate stood a whole `SIDE_W` west of the seam it belonged in, and rested on the
-    // TOP edge of the band below it rather than the bottom, hanging 28 units clear of its own sill.
+    // starts at `cellTop(r) + CELL` and is `WALL_H` tall.
     const seamCx = dc > 0 ? cellLeft(c) + CELL + SIDE_W / 2 : dc < 0 ? cellLeft(c) - SIDE_W / 2 : cellLeft(c) + CELL / 2
-    // IN the band, not under it and not on top of it. A horizontal seam is `WALL_H` of wall seen face
-    // on: feet on its lower edge hang the whole grille below the opening, in the room rather than in
-    // the doorway, and feet on its upper edge lift it clear of the floor it is supposed to bar. Half
-    // a band down from the top puts it in the middle of the masonry, which is where a gate hangs.
-    // A seam between COLUMNS has no such band — it is a side wall seen edge-on — so there the floor
-    // line is the floor line.
-    const seamBase = dr > 0 ? cellTop(r) + CELL + WALL_H / 2 : dr < 0 ? cellTop(r) - WALL_H / 2 : cellTop(r) + CELL
-    const base = seamBase
+    // IN THE BAND WHERE A BAND IS PAINTED. A doorway in a back wall is an opening in `WALL_H` of wall
+    // seen face on, the faces either side of it painted by `hasWallFace`: half a band down puts the
+    // grille in the middle of that masonry, which is where a gate hangs. A seam with no face beside it —
+    // the gap between two corridor cells, paved, or dark when the far side is fogged — has no masonry
+    // to hang in, so the gate stands on its own cell's floor line, never down in the gap.
+    // A seam between COLUMNS has no such band either — it is a side wall seen edge-on.
+    const seamRow = dr > 0 ? r + 1 : r
+    const banded = dr !== 0 && (hasFaceAt(seamRow, c - 1) || hasFaceAt(seamRow, c + 1))
+    const base =
+      dr > 0
+        ? cellTop(r) + CELL + (banded ? WALL_H / 2 : 0)
+        : dr < 0
+          ? cellTop(r) - (banded ? WALL_H / 2 : 0)
+          : cellTop(r) + CELL
     const left = seamCx - CELL / 2
     out.push({
       // The gate's cell AND the one beyond it, because the clip is what keeps furniture inside its
