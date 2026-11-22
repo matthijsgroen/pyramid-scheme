@@ -502,14 +502,24 @@ export const nodeSpritesFor = (
     })
   }
   let approach: Map<string, readonly [number, number]> | null = null
-  // The question the wall band itself asks (`buildTileRegions`), so a gate hangs in masonry only where masonry is drawn.
-  const hasFaceAt = (r: number, c: number): boolean =>
-    hasWallFace(
-      (fr, fc) => cellFloorAt(grid, claims, undefined, fr, fc),
-      (fr, fc, dir) => isPassable(grid, claims, fr, fc, dir),
+  // The question the wall band itself asks (`buildTileRegions`), so a gate hangs in masonry only where masonry is drawn —
+  // asked of the floor fully revealed, because where a wall stands is structure: a gate does not move when fog lifts.
+  let revealed: FloorGrid | null = null
+  const hasFaceAt = (r: number, c: number): boolean => {
+    revealed ??= {
+      ...grid,
+      cells: grid.cells.map(row =>
+        row.map(cell => (cell.type !== "empty" && cell.state === "fogged" ? { ...cell, state: "visible" } : cell))
+      ),
+    }
+    const lit = revealed
+    return hasWallFace(
+      (fr, fc) => cellFloorAt(lit, claims, undefined, fr, fc),
+      (fr, fc, dir) => isPassable(lit, claims, fr, fc, dir),
       r,
       c
     )
+  }
   /** The leaf of one gate, hung in the passage it shuts. A shut gate is a room; an OPEN one a lever or
    * switch holds open is a corridor that remembers it (`CorridorCell.openGate`) — both draw through here,
    * so the open leaf stands exactly where the shut one did. */

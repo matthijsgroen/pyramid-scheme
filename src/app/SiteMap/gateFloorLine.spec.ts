@@ -54,4 +54,17 @@ describe("a gate's feet", () => {
     )
     expect(feetOf(grid, "wall:1,1")).toBe(cellTop(1) + CELL + WALL_H / 2)
   })
+
+  it("stay where they are when the cells beside the opening are still fogged", () => {
+    const fogged = (cell: GridCell) => ({ ...cell, state: "fogged" }) as GridCell
+    const grid = floorOf(
+      [
+        [empty, corridor(["s"]), empty],
+        [empty, gate, empty],
+        [fogged(corridor(["e"])), corridor(["n", "w", "e"]), fogged(corridor(["w"]))],
+      ],
+      [0, 1]
+    )
+    expect(feetOf(grid, "wall:1,1")).toBe(cellTop(1) + CELL + WALL_H / 2)
+  })
 })
