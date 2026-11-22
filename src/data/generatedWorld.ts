@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 743939600
+export const worldContentHash = 1918370838
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -4680,20 +4680,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "gardenCourt", min: 0, max: 1, central: 1 },
         ],
         packing: 0.2,
-        outsideLock: [4, 5],
-        seed: 3205065412912520,
-        carveFrom: {
-          attempt: 2,
-          rung: {
-            n: 21,
-            startingN: 21,
-            packing: 0.2,
-            targetDistance: 12,
-            chainWind: 1,
-            chainFloor: 0,
-            recovery: false,
-          },
-        },
+        outsideLock: [5],
+        seed: 1902847374,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d2", pieceIndex: 1 },
         rewards: [
           { type: "campPart", structure: "tripod", part: "tripodPoles" },
@@ -5848,7 +5836,6 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         encountersByIndex: { 0: "eclipse", 1: "futoshiki", 2: "sumplete", 3: "constellation" },
         chambers: 2,
         packing: 0.2,
-        outsideLock: [5],
         seed: 458394299,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art7", pieceIndex: 2 },
         rewards: [
@@ -8958,7 +8945,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         encountersByIndex: { 0: "canisters", 1: "constellation", 2: "star-battle", 3: "eclipse" },
         chambers: 2,
         packing: 0.2,
-        outsideLock: [4, 5, 6],
+        outsideLock: [5, 6],
         seed: 625093930,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art12", pieceIndex: 3 },
         rewards: [undefined, undefined, undefined, undefined],

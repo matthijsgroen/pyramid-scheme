@@ -501,9 +501,10 @@ export const prepareFloor = (
     for (const gateKeyId of mechanic.gateKeys) markByGateKey.set(gateKeyId, allocation.marks.get(mechanic.id)!)
 
   // Hidden sections are included in maze generation (tagged hidden:true on cells) but masked by
-  // useAssembledFloor — so they are carved, but they are not asked to host a key.
+  // useAssembledFloor — so they are carved, but they are not asked to host a key. A grown host is the floor's own
+  // difficulty, so on a lock floor it fits in the lock like any same-tier section.
   const sideSections: SideSection[] = owesAKeyHost(config.sideSections.filter(s => !s.hidden))
-    ? [...config.sideSections, GROWN_KEY_HOST]
+    ? [...config.sideSections, { ...GROWN_KEY_HOST, difficulty: config.difficulty }]
     : config.sideSections
   const { gatedIdxs: gatedFloorKeyIdxs, ungatedIdxs } = keyHostIdxs(sideSections)
 
@@ -583,9 +584,11 @@ export const prepareFloor = (
   const junctionNodes = plan ? forkDemands.length : 0
   const appetiteOfRegion = new Map((regionLayout?.regions ?? []).map(region => [region.name, region.appetite]))
   // A SIDE SECTION FITS IN A LOCK when nothing about it needs a door or a branch: no gate of its own, not hidden,
-  // nothing hung off it, a chest or shop at its end, no lever in it and no one-way naming it. A sealed
-  // section fits, because its cost is not one the lock's walk depends on. A gated, keyed or hidden section stays a
-  // branch off laid ground, because a key or a detector inside a lock would leave it not provably solvable.
+  // nothing hung off it, a chest or shop at its end, no lever in it, no one-way naming it, and the floor's own
+  // difficulty. A sealed section fits, because its cost is not one the lock's walk depends on. A gated, keyed or
+  // hidden section stays a branch off laid ground, because a key or a detector inside a lock would leave it not
+  // provably solvable. A section of another difficulty stays a branch too: it is a passage of its own, which the
+  // player reads as one only where its rooms are not stops on the lock's way.
   const oneWayNames = new Set((config.oneWays ?? []).flatMap(way => [way.from, way.to]))
   const fitsInLock = (section: SideSection, i: number): boolean =>
     plan !== undefined &&
@@ -593,6 +596,7 @@ export const prepareFloor = (
     !section.hidden &&
     !section.sideSections?.length &&
     section.end === "treasure" &&
+    section.difficulty === config.difficulty &&
     leverRooms(leverAtPositional, `s${i}`) === 0 &&
     !oneWayNames.has(addresses.of.get(`s${i}`) ?? `s${i}`)
   const isContentSection = (section: SideSection, i: number): boolean => fitsInLock(section, i) && !section.sealed

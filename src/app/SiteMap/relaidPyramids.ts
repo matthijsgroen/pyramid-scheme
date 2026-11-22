@@ -1,18 +1,23 @@
 import type { StoredJourneyStateV3 } from "@/app/state/useJourneys"
 
-/** A shipped pyramid whose floor a release re-laid by placing a lock on it, named as a save names its level, with the
+/** A shipped pyramid whose floor a release re-laid, named as a save names its level, with the
  * RELAID_FLOORS_VERSION that re-laid it. */
 export type RelaidPyramid = { journeyId: string; levelNr: number; since: number }
 
 /** Which re-laying of shipped pyramids a save has been through. 1: the doubleBack on the Valley of the Kings' last
- * pyramid and the stoneGate on Djoser's. A later re-lay adds its pyramids to RELAID_PYRAMIDS with `since` set to the
- * bumped version, and leaves the earlier entries as they are. */
-export const RELAID_FLOORS_VERSION = 1
+ * pyramid and the stoneGate on Djoser's. 2: the junior pyramids whose side passage of another difficulty hangs as a
+ * branch of its own off the lock instead of standing on one of its corridors. A later re-lay adds its pyramids to
+ * RELAID_PYRAMIDS with `since` set to the bumped version, and leaves the earlier entries as they are. */
+export const RELAID_FLOORS_VERSION = 2
 
 /** Every re-laid pyramid, each with the version that re-laid it. */
 export const RELAID_PYRAMIDS: readonly RelaidPyramid[] = [
   { journeyId: "expert_1", levelNr: 4, since: 1 },
   { journeyId: "expert_4", levelNr: 5, since: 1 },
+  { journeyId: "junior_1", levelNr: 2, since: 2 },
+  { journeyId: "junior_2", levelNr: 2, since: 2 },
+  { journeyId: "junior_3", levelNr: 2, since: 2 },
+  { journeyId: "junior_4", levelNr: 3, since: 2 },
 ]
 
 /** The levels of a save's journey re-laid after the version it is stamped with: a position it remembers there names
