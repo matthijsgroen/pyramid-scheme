@@ -3,6 +3,10 @@
 Merged work nobody has played yet. Each entry says where to go and what to look for; strike it when it has been
 played, and open an issue or a task for anything that plays wrong.
 
+## Room exits
+
+- **Walking into a room (PR #526), `junior_1` pyramid 1, the bakery room.** Entering by the centre or a doorway, is every way out shown at once, with its corridor up to the first corner, and does a room still stay hidden until you reach its door from outside?
+
 ## Junior, before its release
 
 - **Henut's tomb, floor 1 (develop mode, Jump: Henut's wall; PR #382).** Her scene in her vanity room, then her wall: does it ask for Hathor, and does setting it right play `tomb.juniorFixed`?
