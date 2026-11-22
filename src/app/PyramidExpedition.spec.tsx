@@ -253,3 +253,45 @@ describe("PyramidExpedition — the journey card", () => {
     expect((await cardFor(true)).className).toContain("opacity-0")
   })
 })
+
+describe("PyramidExpedition — the way in during a conversation", () => {
+  beforeEach(async () => {
+    await clearGameData()
+  })
+
+  const boardless = (): CombinedJourneyState => ({
+    ...makeActiveJourney(1),
+    completionCount: 0,
+    interiorLevelNr: null,
+    journey: {
+      ...journeyData,
+      siteConfigs: allJourneys.find(j => (j.siteConfigs?.length ?? 0) > 0)!.siteConfigs,
+      levels: [{ exterior: "caveMouth", board: false }],
+      name: "cave",
+      description: "",
+      lengthLabel: "short",
+    } as TranslatedJourney,
+  })
+
+  const wayInFor = async (speaking: boolean) => {
+    const { container } = render(
+      <FezContext.Provider value={{ showConversation: () => {}, speaking }}>
+        <PyramidExpedition activeJourney={boardless()} runNr={1} />
+      </FezContext.Provider>
+    )
+    await settle()
+    return container.querySelector<HTMLElement>("div.z-20.mb-safe-bottom")!
+  }
+
+  it("stands ready while nobody speaks", async () => {
+    const wayIn = await wayInFor(false)
+    expect(wayIn.className).not.toContain("opacity-0")
+    expect(wayIn.hasAttribute("inert")).toBe(false)
+  })
+
+  it("fades out and takes no input while a conversation plays", async () => {
+    const wayIn = await wayInFor(true)
+    expect(wayIn.className).toContain("opacity-0")
+    expect(wayIn.hasAttribute("inert")).toBe(true)
+  })
+})
