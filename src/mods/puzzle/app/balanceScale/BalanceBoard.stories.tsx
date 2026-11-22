@@ -51,7 +51,7 @@ const staticArgs = (puzzle: ReturnType<typeof board>, place?: string) => ({
   onPickWeight: noop,
   onTapPiece: noop,
   onTapRow: noop,
-  moves: { cancelling: puzzle.cancelling !== false, swapping: puzzle.techniqueCap === "swap" },
+  moves: { cancelling: puzzle.cancelling !== false, swapping: puzzle.cancelling !== false },
   onRemoveNote: noop,
 })
 
@@ -90,7 +90,7 @@ export const Played: Story = {
           litRefs={hint?.refs}
           pending={state.pending}
           swapSources={sources.map(source => source.ref)}
-          moves={{ cancelling: wizard.cancelling !== false, swapping: wizard.techniqueCap === "swap" }}
+          moves={{ cancelling: wizard.cancelling !== false, swapping: wizard.cancelling !== false }}
           onSelectGlyph={glyph => setState(prev => selectGlyph(prev, glyph))}
           onPickWeight={value => setState(prev => setWeight(prev, wizard.glyphs, value))}
           onTapPiece={(ref, pan, index) => setState(prev => tapPiece(prev, wizard, ref, pan, index))}
