@@ -228,7 +228,9 @@ export const buildTileRegions = (
         // hidden; only its mouth shows, below.
         const around = ringAround(r, c)
         const lit = litTouching(...around)
-        if (lit) groupsFor(tierAt(...around)).wallMass[lit].push([x, y, CELL, CELL])
+        // Bare rock is the floor's own, not a section's: it is the backdrop the whole map stands on, so a
+        // passage of another tier does not ring itself in squares of a different brown.
+        if (lit) groupsFor(fallbackTier).wallMass[lit].push([x, y, CELL, CELL])
       }
 
       // ── the north gap: floor when the way is open, otherwise the face you look at ──
