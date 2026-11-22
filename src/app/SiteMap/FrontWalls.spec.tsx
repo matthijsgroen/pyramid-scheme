@@ -256,6 +256,41 @@ describe("an arch in a wall standing in front of floor", () => {
     expect(container.querySelector("[data-arch]")).toBeNull()
   })
 
+  it.each([
+    ["a gate", "gate", { family: "gate-face" }],
+    ["a way out a switch shut", "wall", {}],
+  ])("stands no arch where %s hangs its leaf in the doorway's side, beside the jamb", (_, kind, leaf) => {
+    // A chamber at (1, 2) whose doorway is the band between (2, 2) and (3, 2). The gate at (3, 2), just
+    // outside it, seals the pocket west of it, so its leaf hangs in the seam the arch's west jamb stands in.
+    const empty: GridCell = { type: "empty" }
+    const line = (cell: GridCell, west: GridCell = empty): GridCell[] => [empty, west, cell, empty, empty]
+    const grid = {
+      ...gridOf([
+        line(empty),
+        line({ type: "room", roomType: "fork", dirs: new Set<Direction>(["s"]), state: "reachable" }),
+        line(corridor(["n", "s"])),
+        line(
+          {
+            type: "room",
+            roomType: "encounter",
+            dirs: new Set<Direction>(["w", "n", "s"]),
+            state: "reachable",
+            tags: ["gate"],
+            requiredKeyId: "made-up",
+            ...leaf,
+          },
+          corridor(["e"])
+        ),
+        line(corridor(["n"])),
+      ]),
+      entrancePos: [4, 2] as const,
+    }
+    const { container } = render(<SiteMapView grid={grid} explorerPos={[4, 2]} revealAllCells />)
+
+    expect(container.querySelector(`[data-node-sprite="${kind}:3,2"]`)).not.toBeNull()
+    expect(container.querySelector("[data-arch]")).toBeNull()
+  })
+
   it("fades with that wall", () => {
     const solid = render(<SiteMapView grid={archBehindAWall()} explorerPos={[2, 2]} revealAllCells />)
     expect(Number(archOf(solid.container).style.opacity)).toBe(1)

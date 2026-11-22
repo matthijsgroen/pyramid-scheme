@@ -569,9 +569,8 @@ export const nodeSpritesFor = (
       // The same two cells fade it: they are the only ones ever behind a gate, exactly as a doorway
       // fades for the two its arch spans.
       fadeAt: [`${r},${c}`, `${r + dr},${c + dc}`],
-      // A WAY A SWITCH SHUT IS NOT A GATE HUNG IN A DOORWAY BUT A WALL, and a wall is painted with
-      // the rest of the stone rather than with the leaves that go on last: the arch over the opening
-      // covers it, the way it covers everything else standing on the floor.
+      // A WAY A SWITCH SHUT IS A WALL, and a wall is painted with the rest of the stone rather than
+      // with the leaves that go on last. In a doorway it is still that doorway's door: no arch stands over it.
       key: `${wall ? "wall" : "gate"}:${r},${c}`,
       url,
       x: left,
@@ -1742,13 +1741,16 @@ export const SiteMapView = ({
       ),
     [grid, claims, tier, mechanismStates, currentFloor, isTraveling, settledExplorerPos, weight, mechanismStyle]
   )
-  // A GATE HUNG IN A DOORWAY IS ITS DOOR: the leaf stands in the band an arch would, so that doorway stands no arch.
+  // A GATE HUNG IN A DOORWAY IS ITS DOOR, and so is a shut way out's leaf: that doorway stands no arch. A leaf across
+  // the way stands in the band the arch would; one along it stands in a seam between columns, where a jamb stands for
+  // the doorway on either side of it, above or below the leaf's own row.
   const doorways = useMemo(() => {
     const gated = new Set(
       nodeSprites.flatMap(({ key, footprint }) => {
-        if (!key.startsWith("gate:") || footprint.length !== 2) return []
+        if (!/^(gate|wall):/.test(key) || footprint.length !== 2) return []
         const [[r1, c1], [r2, c2]] = footprint.map(cell => cell.split(",").map(Number))
-        return c1 === c2 && r1 !== r2 ? [`${Math.max(r1, r2)},${c1}`] : []
+        if (c1 === c2) return [`${Math.max(r1, r2)},${c1}`]
+        return [r1, r1 + 1].flatMap(row => [c1, c2].map(col => `${row},${col}`))
       })
     )
     return doorwaysFor(grid, claims, ownedKeys).filter(({ row, col }) => !gated.has(`${row},${col}`))
