@@ -174,10 +174,14 @@ export const PyramidExpedition: FC<{
         >
           <div
             className={clsx(
-              // The enter button is pinned bottom-centre. On a screen narrower than this card's own
-              // max-width there is no free corner beside it, so the card sits a button's height higher
+              "pointer-events-none absolute left-4 mr-4 hidden max-w-sm rounded-lg bg-black/10 p-4 transition-opacity duration-300 motion-reduce:transition-none md:left-10 pointer-coarse:group-has-[input:focus]:opacity-0 mdh:block",
+              // In a cave the pyramid stands on the floor, so the card takes the empty rock above it.
+              // Elsewhere the enter button is pinned bottom-centre. On a screen narrower than this card's
+              // own max-width there is no free corner beside it, so the card sits a button's height higher
               // until there is room to share the row.
-              "pointer-events-none absolute bottom-20 left-4 mr-4 mb-safe-bottom hidden max-w-sm rounded-lg bg-black/10 p-4 transition-opacity duration-300 motion-reduce:transition-none md:bottom-10 md:left-10 pointer-coarse:group-has-[input:focus]:opacity-0 mdh:block",
+              levelSetup?.exterior === "cavern"
+                ? "top-20 mt-safe-top md:top-24"
+                : "bottom-20 mb-safe-bottom md:bottom-10",
               // A conversation takes the screen; the card would sit under it. On touch, an open keyboard
               // pans the board down onto the card.
               speaking && "opacity-0",
