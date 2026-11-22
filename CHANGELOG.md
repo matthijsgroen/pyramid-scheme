@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- Walking into a room shows every way out of it straight away.
+
 ## 0.48.1 - 2026-11-22
 
 ### Fixed

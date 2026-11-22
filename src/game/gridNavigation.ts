@@ -1,5 +1,5 @@
 import type { FloorGrid, GridCell, Direction, CellState, TombKeyReward, CorridorCell, ObstacleKind } from "./siteTypes"
-import { roomPlaceOf } from "./roomShape"
+import { prefabRoomAt, prefabRoomCells, roomDoors, roomPlaceOf } from "./roomShape"
 
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 const opposite: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
@@ -136,6 +136,26 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
   type QItem = { r: number; c: number; fromDir: Direction | null }
   const visited = new Set<string>([`${row},${col}`])
   const queue: QItem[] = []
+  // A designed room is seen whole the moment any of its floor is: every cell of it, and each of its doors looked
+  // past from inside, so standing anywhere in a room shows every way out of it.
+  const lookedRooms = new Set<string>()
+  const doorsLookedPast = new Set<string>()
+  const lookRoom = (r: number, c: number) => {
+    const node = prefabRoomCells(grid).get(`${r},${c}`)
+    if (node === undefined || lookedRooms.has(node)) return
+    lookedRooms.add(node)
+    const [nr, nc] = node.split(",").map(Number)
+    const { top, left, rows, cols } = prefabRoomAt(grid, nr, nc)!.rect
+    for (let rr = top; rr < top + rows; rr++)
+      for (let cc = left; cc < left + cols; cc++) queue.push({ r: rr, c: cc, fromDir: "n" })
+    for (const { at, side } of roomDoors(grid, nr, nc)) {
+      const key = `${at[0]},${at[1]}`
+      doorsLookedPast.add(key)
+      if (key !== `${row},${col}`) visited.delete(key)
+      queue.push({ r: at[0], c: at[1], fromDir: side })
+    }
+  }
+  lookRoom(row, col)
 
   // Seed queue with all dirs from completed cell
   const cellDirs = cell.type === "room" || cell.type === "corridor" ? cell.dirs : new Set<Direction>()
@@ -152,13 +172,15 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
 
     const neighbor = newCells[r]?.[c]
     if (!neighbor || neighbor.type === "empty") continue
+    lookRoom(r, c)
 
     if (neighbor.type === "corridor") {
       // Straight-through: corridor continues in the same direction we arrived from, no branches.
       // Anything else (corner, T-junction, dead end) is a blind spot the player must click to reveal.
       // A straight names the way back as well as the way onward.
       // A designed room's door in use is where a way meets the room, and its node stands for the room: both are
-      // stops. The room's own floor is seen through, every way, as one stop's ground.
+      // stops. The room's own floor is seen through, every way, as one stop's ground, and a door seen from it stays
+      // a stop the look carries on past.
       const place = roomPlaceOf(grid, r, c)
       const isStraight =
         fromDir !== null &&
@@ -166,11 +188,10 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
         place !== "node" &&
         (place === "inner" ||
           (neighbor.dirs.size === 2 && neighbor.dirs.has(fromDir) && neighbor.dirs.has(opposite[fromDir])))
-      if (isStraight) {
-        if (neighbor.state === "fogged") {
-          newCells[r][c] = { ...neighbor, state: "visible" }
-        }
-        const oppDir = opposite[fromDir]
+      const looksOut = isStraight || (place === "door" && fromDir !== null && doorsLookedPast.has(key))
+      if (isStraight && neighbor.state === "fogged") newCells[r][c] = { ...neighbor, state: "visible" }
+      if (looksOut) {
+        const oppDir = opposite[fromDir!]
         for (const d of neighbor.dirs) {
           if (d === oppDir) continue
           const [dr, dc] = MOVES[d]
@@ -180,12 +201,9 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
             queue.push({ r: nr, c: nc, fromDir: d })
           }
         }
-      } else {
-        // Corner/junction: mark reachable so player can click to look around it
-        if (neighbor.state === "fogged") {
-          newCells[r][c] = { ...neighbor, state: "reachable" }
-        }
       }
+      // Corner/junction, or a stop: mark reachable so player can click to look around it
+      if (!isStraight && neighbor.state === "fogged") newCells[r][c] = { ...neighbor, state: "reachable" }
     } else if (neighbor.type === "room") {
       // A room comes out of the fog so the player can see it, and the walk stops there: reachability
       // past it only happens once it is completed, which "don't traverse through rooms" below

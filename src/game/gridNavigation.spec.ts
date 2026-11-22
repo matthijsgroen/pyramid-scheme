@@ -610,3 +610,79 @@ describe("renderAscii", () => {
     expect(renderAscii(gridOf([[chamber]])).trim()).toBe("C")
   })
 })
+
+// A designed room one row deep, cols 3–5, its stop at 1,4 between the two halves of its floor. Its west door at 1,2
+// leads to a straight cell and a corner, its south door at 2,3 the same, and its east door at 1,6 to two straights
+// and a corner. Past each corner the fog stays.
+const roomFloor = (): FloorGrid => {
+  const cells: GridCell[][] = Array.from({ length: 5 }, () =>
+    Array.from({ length: 11 }, (): GridCell => ({ type: "empty" }))
+  )
+  const lay = (r: number, c: number, ...dirs: Direction[]) => {
+    cells[r][c] = { type: "corridor", dirs: new Set(dirs), state: "fogged" }
+  }
+  lay(2, 0, "n")
+  lay(1, 0, "e", "s")
+  lay(1, 1, "w", "e")
+  lay(1, 2, "w", "e")
+  lay(1, 3, "w", "e", "s")
+  lay(1, 5, "w", "e")
+  lay(1, 6, "w", "e")
+  lay(1, 7, "w", "e")
+  lay(1, 8, "w", "e")
+  lay(1, 9, "w", "s")
+  lay(2, 9, "n")
+  lay(2, 3, "n", "s")
+  lay(3, 3, "n", "s")
+  lay(4, 3, "n", "e")
+  lay(4, 4, "w")
+  cells[1][4] = {
+    type: "corridor",
+    dirs: new Set<Direction>(["w", "e"]),
+    state: "fogged",
+    prefabRoom: {
+      name: "hall",
+      layout: 0,
+      mirrored: false,
+      rect: { top: 1, left: 3, rows: 1, cols: 3 },
+      stop: [1, 4],
+      objects: [],
+      blocked: [],
+      doors: [
+        [1, 2],
+        [2, 3],
+        [1, 6],
+      ],
+    },
+  }
+  return { siteId: "test", rows: 5, cols: 11, entrancePos: [1, 9], exitPos: [2, 0], staircases: {}, cells }
+}
+
+const statesAt = (grid: FloorGrid, ...at: [number, number][]) => at.map(([r, c]) => stateOf(grid.cells[r][c]))
+
+describe("seeing a designed room", () => {
+  it("arriving in a room reveals the corridor beyond each of its doors", () => {
+    const after = completeCell(roomFloor(), 1, 4)
+    expect(statesAt(after, [1, 2], [1, 1], [1, 0], [2, 0])).toEqual(["reachable", "visible", "reachable", "fogged"])
+    expect(statesAt(after, [2, 3], [3, 3], [4, 3], [4, 4])).toEqual(["reachable", "visible", "reachable", "fogged"])
+    expect(statesAt(after, [1, 6], [1, 7], [1, 8], [1, 9])).toEqual(["reachable", "visible", "visible", "reachable"])
+  })
+
+  it("standing in a room's doorway shows every way out of it, the ones behind its stop too", () => {
+    const after = completeCell(roomFloor(), 1, 6)
+    expect(statesAt(after, [1, 5], [1, 4], [1, 3])).toEqual(["visible", "reachable", "visible"])
+    expect(statesAt(after, [1, 2], [1, 1], [1, 0])).toEqual(["reachable", "visible", "reachable"])
+    expect(statesAt(after, [2, 3], [3, 3], [4, 3])).toEqual(["reachable", "visible", "reachable"])
+  })
+
+  it("walking up to a room stops the look at its door", () => {
+    const after = completeCell(roomFloor(), 1, 9)
+    expect(statesAt(after, [1, 8], [1, 7], [1, 6], [1, 5], [1, 4])).toEqual([
+      "visible",
+      "visible",
+      "reachable",
+      "fogged",
+      "fogged",
+    ])
+  })
+})
