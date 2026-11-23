@@ -1,0 +1,11 @@
+// designed by: Claude
+// expert. The way out wants two tiles in order: the shrine's, then the quarry's. The
+// shrine stays shut until a stone rests on the plate in the quarry, and the only stone lies there too, so the
+// first visit to the quarry spoils the run: set the stone, reset at the door, then walk the tiles in order.
+in -- yard
+yard -[P]- out
+yard -- quarry
+yard -[h]- shrine
+h plate @quarry
+heap plate @quarry stone
+P sequence shrine quarry reset yard-out

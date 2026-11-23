@@ -1,0 +1,14 @@
+// designed by: Claude
+// expert. The way out leaves the star well and wants two prizes. The zipline drops you into the well, whose board
+// opens one way at a time: east to the first prize, or on to the way out. The first prize opens the well's door back
+// to the court and the court's vault, which holds the second; then turn the board to the way out.
+in -- court
+court -- gallery
+gallery >> well
+court -[K]- vault
+court -[K]- well
+well -[Y]- east
+well -[Y]- -[K+L]- out
+Y fork @well
+K activator @east
+L activator @vault

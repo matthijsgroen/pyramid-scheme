@@ -349,16 +349,13 @@ export const expertRules: Rule[] = [
   journey("expert_2").pyramid(2, lockOnMainFloor("relay")),
   journey("expert_2").pyramid(3, lockOnMainFloor("festivalProcession")),
   journey("expert_2").pyramid(4, lockOnMainFloor("sandHalls")),
-  // expert_3 site 1 stands in for counterweight, which cannot be built yet.
-  journey("expert_3").pyramid(1, lessonOnMainFloor("leverSwapsDoors")),
-  // expert_3 site 2 stands in for observatory, which does not lay.
-  journey("expert_3").pyramid(2, lockOnMainFloor("dropHome")),
+  journey("expert_3").pyramid(1, lockOnMainFloor("emptyHanded")),
+  journey("expert_3").pyramid(2, lockOnMainFloor("starWell")),
   journey("expert_3").pyramid(3, lockOnMainFloor("highWater")),
   // doubleBack lays on few seeds; at the default packing the journey inspector's default seed carves it on no attempt.
   journey("expert_3").pyramid(4, lockOnMainFloor("lockChamber")),
   journey("expert_3").pyramid(5, lockOnMainFloor("doubleBack", { packing: 0.15 })),
-  // expert_4 site 1 stands in for twoStones, which cannot be built yet.
-  journey("expert_4").pyramid(1, lessonOnMainFloor("stoneOnAPlate")),
+  journey("expert_4").pyramid(1, lockOnMainFloor("stoneSteps")),
   journey("expert_4").pyramid(2, lessonOnMainFloor("throughTheWall")),
   journey("expert_4").pyramid(3, lockOnMainFloor("scaffold")),
   journey("expert_4").pyramid(4, lockOnMainFloor("buildersLift")),

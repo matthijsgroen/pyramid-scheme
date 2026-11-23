@@ -21,7 +21,7 @@ Columns:
   one exists: the slot is still to design, the proposed lock is not buildable yet, or it does not carve (the reason
   follows). A stand-in may repeat a lock placed elsewhere; the designer replaces it. "no" is a floor with no lock.
 
-Placed: 34 of 34 junior and expert (2026-10-16): 31 with their chosen lock, 3 stand-ins. Master: 1
+Placed: 34 of 34 junior and expert (2026-11-23), every one with its chosen lock and no stand-ins. Master: 1
 (2026-10-17), the Book of the Dead's last site.
 
 ### Junior
@@ -84,23 +84,23 @@ Placed: 34 of 34 junior and expert (2026-10-16): 31 with their chosen lock, 3 st
 
 **expert_3 — Nile Delta Expedition** (overgrown, growing from pyramid 2 to 5)
 
-| Site | Main floors | Wing floors | Authored                                    | Chosen lock     | Placed                                                           |
-| ---- | ----------- | ----------- | ------------------------------------------- | --------------- | ---------------------------------------------------------------- |
-| 1    | 1           | 0           |                                             | leverSwapsDoors | ✓ stand-in (counterweight is not buildable yet)                  |
-| 2    | 1           | 0           | overgrown 0.2                               | dropHome        | ✓ stand-in (observatory does not lay: its board needs five ways) |
-| 3    | 1           | 0           | overgrown 0.4                               | highWater       | ✓                                                                |
-| 4    | 1           | 1           | overgrown 0.65, wizard ward wing            | lockChamber     | ✓                                                                |
-| 5    | 1           | 1           | overgrown 1, master ward wing, patron Sobek | doubleBack      | ✓                                                                |
+| Site | Main floors | Wing floors | Authored                                    | Chosen lock | Placed |
+| ---- | ----------- | ----------- | ------------------------------------------- | ----------- | ------ |
+| 1    | 1           | 0           |                                             | emptyHanded | ✓      |
+| 2    | 1           | 0           | overgrown 0.2                               | starWell    | ✓      |
+| 3    | 1           | 0           | overgrown 0.4                               | highWater   | ✓      |
+| 4    | 1           | 1           | overgrown 0.65, wizard ward wing            | lockChamber | ✓      |
+| 5    | 1           | 1           | overgrown 1, master ward wing, patron Sobek | doubleBack  | ✓      |
 
 **expert_4 — Pyramid of Djoser**
 
-| Site | Main floors | Wing floors | Authored                                               | Chosen lock    | Placed                                      |
-| ---- | ----------- | ----------- | ------------------------------------------------------ | -------------- | ------------------------------------------- |
-| 1    | 1           | 0           |                                                        | stoneOnAPlate  | ✓ stand-in (twoStones is not buildable yet) |
-| 2    | 1           | 0           | two floor-key colours, broad packing                   | throughTheWall | ✓                                           |
-| 3    | 1           | 0           |                                                        | scaffold       | ✓                                           |
-| 4    | 1           | 1           | two floor-key colours, broad packing, master ward wing | buildersLift   | ✓                                           |
-| 5    | 1           | 1           | wizard ward wing                                       | stoneGate      | ✓                                           |
+| Site | Main floors | Wing floors | Authored                                               | Chosen lock    | Placed |
+| ---- | ----------- | ----------- | ------------------------------------------------------ | -------------- | ------ |
+| 1    | 1           | 0           |                                                        | stoneSteps     | ✓      |
+| 2    | 1           | 0           | two floor-key colours, broad packing                   | throughTheWall | ✓      |
+| 3    | 1           | 0           |                                                        | scaffold       | ✓      |
+| 4    | 1           | 1           | two floor-key colours, broad packing, master ward wing | buildersLift   | ✓      |
+| 5    | 1           | 1           | wizard ward wing                                       | stoneGate      | ✓      |
 
 ### Master
 
@@ -138,13 +138,11 @@ meets: levers and doors only.
 
 They stand on authored floors through `lockOnFloor(name)` (below).
 
-Duplicates among the stand-ins, until they are replaced: leverSwapsDoors (junior_2 site 2 and expert_3 site 1),
-stoneOnAPlate (junior_2 site 3 and expert_4 site 1), dropHome (junior_3 site 3 and expert_3 site 2).
-
-**Open:** observatory (expert_3 site 2) does not lay on any floor: its three-way board stands in `in`, a region the
-route runs through, so the board's node would need five ways (three arms, the way in, the way on) and a lattice node
-has four. It needs the board off the route (a carve change: the carve seats a junction on a route step) or a reshape
-by the designer. counterweight and twoStones are not buildable.
+The three expert slots that held stand-ins hold the designer's pick from `docs/review/expert/stand-in-proposals.md`
+(2026-11-23): emptyHanded (expert_3 site 1), starWell (expert_3 site 2), stoneSteps (expert_4 site 1). The locks
+first proposed there stay in the catalogue, unplaced: counterweight and twoStones warn that a control is reached
+before its door is seen, and observatory does not lay (its three-way board stands in `in`, on the route, and would
+need five ways).
 
 ### Where the curriculum and the world spec disagree
 
@@ -299,12 +297,12 @@ stoneGate closes expert_4 (kept); doubleBack is late, closing expert_3 (kept); t
 | e2.2 | relay              | cellar               | leans on torch, doorWaitsForTwo                     |
 | e2.3 | festivalProcession | twoLamps             |                                                     |
 | e2.4 | sandHalls          | dropHome             |                                                     |
-| e3.1 | counterweight      | leverSwapsDoors      | leans on stoneOnAPlate; not yet buildable           |
-| e3.2 | observatory        | dropHome             |                                                     |
+| e3.1 | emptyHanded        | leverSwapsDoors      | leans on stoneOnAPlate, dropDown                    |
+| e3.2 | starWell           | dropHome             | leans on board, dropDown                            |
 | e3.3 | highWater          | cellar               |                                                     |
 | e3.4 | lockChamber        | overlook             |                                                     |
 | e3.5 | doubleBack         | doubleBack           | kept                                                |
-| e4.1 | twoStones          | stoneOnAPlate        | leans on stoneOnAPlate; not yet buildable           |
+| e4.1 | stoneSteps         | stoneOnAPlate        | leans on stoneOnAPlate, tilesInOrder                |
 | e4.2 | throughTheWall     | twoLamps             |                                                     |
 | e4.3 | scaffold           | cellar               |                                                     |
 | e4.4 | buildersLift       | overlook             |                                                     |
@@ -376,6 +374,9 @@ but are still a proposal for the engine (`lock-curriculum.md`, "Stones").
 | tide               | junior                                      | lever, torch, water/sand barrier                                                       | solvable                                                   |
 | stoneGate          | expert capstone (Djoser 5), stones          | torch, door-waits-for-two, stones & plates, narrow passage                             | solvable                                                   |
 | weighingOfTheHeart | master (Book of the Dead 5), stones, by Tom | lever, door-waits-for-two, stones & plates, stone pipe, narrow passage, sequence tiles | solvable; gate court-west does nothing (kept by design)    |
+| emptyHanded        | expert (Nile Delta 1), stones               | lever, drop, stones & plates                                                           | solvable                                                   |
+| starWell           | expert (Nile Delta 2)                       | board, torch, drop, door-waits-for-two                                                 | solvable                                                   |
+| stoneSteps         | expert (Djoser 1), stones                   | stones & plates, sequence tiles                                                        | solvable                                                   |
 | caveLevers         | junior (starter tomb cave)                  | lever                                                                                  | solvable                                                   |
 | pitStair           | junior (starter tomb cavern 2)              | lever, drop                                                                            | solvable                                                   |
 | throwItBack        | expert (starter tomb capstone)              | lever, drop                                                                            | solvable                                                   |
