@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1918370838
+export const worldContentHash = 1715805178
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -12766,12 +12766,12 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.16,
         seed: 5207779554184530,
         carveFrom: {
-          attempt: 1,
+          attempt: 8,
           rung: {
-            n: 23,
-            startingN: 23,
-            packing: 0.16,
-            targetDistance: 16,
+            n: 27,
+            startingN: 27,
+            packing: 0.32,
+            targetDistance: 23,
             chainWind: 1,
             chainFloor: 0,
             recovery: false,
@@ -12789,42 +12789,50 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         locks: [
           {
             lock: {
-              name: "hourglass",
+              name: "sandHalls",
               regions: {
                 in: { takes: "free" },
                 hall: { takes: "free" },
-                west: { takes: "free" },
-                westShrine: { takes: "free" },
-                east: { takes: "free" },
-                eastShrine: { takes: "free" },
-                glass: { takes: "free" },
                 out: { takes: "free" },
+                west: { takes: "free" },
+                east: { takes: "free" },
+                glass: { takes: "free" },
               },
               connections: [
                 ["in", "hall"],
+                { between: ["hall", "out"], barriers: ["hall-out"] },
                 ["hall", "west"],
-                ["west", "westShrine"],
                 ["hall", "east"],
-                ["east", "eastShrine"],
-                ["hall", "glass"],
-                { between: ["west", "out"], barriers: ["west-out"] },
+                { between: ["hall", "glass"], barriers: ["hall-glass"] },
               ],
               gates: {
-                "west-out": { from: "west", to: "out", owners: ["T1", "T2"] },
+                "hall-out": { from: "hall", to: "out", owners: ["p"] },
+                "hall-glass": { from: "hall", to: "glass", owners: ["unladen"] },
                 "west:barred": { region: "west", owners: ["S"] },
                 "east:barred": { region: "east", owners: ["S"] },
               },
               mechanics: {
                 S: { control: "toggle", in: "glass", starts: "a", opens: { a: ["west:barred"], b: ["east:barred"] } },
-                T1: { control: "flame", in: "westShrine", starts: "off", opens: { off: [], on: ["west-out"] } },
-                T2: { control: "flame", in: "eastShrine", starts: "off", opens: { off: [], on: ["west-out"] } },
+              },
+              weights: {
+                plates: {
+                  pile: { in: "west", stone: true, opens: { weighted: [], empty: [] } },
+                  p: { in: "east", stone: false, opens: { weighted: ["hall-out"], empty: [] } },
+                },
+                pipes: { P: { ends: ["west", "east"] } },
               },
               in: "in",
               out: "out",
             },
           },
         ],
-        realisations: { toggle: "handle", flame: "torch", "region-barrier": "sand" },
+        realisations: {
+          toggle: "handle",
+          weights: "stonePlate",
+          pipe: "stonePipe",
+          unladen: "narrowPassage",
+          "region-barrier": "sand",
+        },
       },
       {
         pathPuzzles: 2,

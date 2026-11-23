@@ -177,7 +177,7 @@ activity: "dressingRoom", room: "henutDressing" }`. Kijk ook of de reading-muur 
     junior_1 pyr 2, dus dat klopt. Maar de wisselvork op junior_2 pyr 2 is zelf een bord-in-kruising en komt dan
     vóór zijn les. Dat breekt R5, tenzij de wisselvork mee verhuist.
   - (b) Bind in junior_2 `region-barrier` aan **`sand`** (`SAND_META` bestaat): opgewaaid zand in de woestijnvallei.
-    Het nadeel is dat zand later minder nieuw voelt (hourglass bij expert, wizards zandpyramide). Ook heet de les
+    Het nadeel is dat zand later minder nieuw voelt (sandHalls bij expert, wizards zandpyramide). Ook heet de les
     `waterMoves`.
   - (c) Laat het zo. De naam van het slot ziet de speler niet. Wat hij wel ziet, is water in een droge vallei.
 

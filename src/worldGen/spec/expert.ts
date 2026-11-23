@@ -348,7 +348,7 @@ export const expertRules: Rule[] = [
   journey("expert_2").pyramid(1, lockOnMainFloor("clockwork")),
   journey("expert_2").pyramid(2, lockOnMainFloor("relay")),
   journey("expert_2").pyramid(3, lockOnMainFloor("festivalProcession")),
-  journey("expert_2").pyramid(4, lockOnMainFloor("hourglass")),
+  journey("expert_2").pyramid(4, lockOnMainFloor("sandHalls")),
   // expert_3 site 1 stands in for counterweight, which cannot be built yet.
   journey("expert_3").pyramid(1, lessonOnMainFloor("leverSwapsDoors")),
   // expert_3 site 2 stands in for observatory, which does not lay.

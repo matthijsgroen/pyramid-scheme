@@ -80,7 +80,7 @@ Placed: 34 of 34 junior and expert (2026-10-16): 31 with their chosen lock, 3 st
 | 1    | 1           | 0           |                  | clockwork          | ✓      |
 | 2    | 1           | 0           |                  | relay              | ✓      |
 | 3    | 1           | 1           | master ward wing | festivalProcession | ✓      |
-| 4    | 1           | 1           | wizard ward wing | hourglass          | ✓      |
+| 4    | 1           | 1           | wizard ward wing | sandHalls          | ✓      |
 
 **expert_3 — Nile Delta Expedition** (overgrown, growing from pyramid 2 to 5)
 
@@ -298,7 +298,7 @@ stoneGate closes expert_4 (kept); doubleBack is late, closing expert_3 (kept); t
 | e2.1 | clockwork          | doorWaitsForTwo      | leans on board, doorWaitsForTwo                     |
 | e2.2 | relay              | cellar               | leans on torch, doorWaitsForTwo                     |
 | e2.3 | festivalProcession | twoLamps             |                                                     |
-| e2.4 | hourglass          | dropHome             |                                                     |
+| e2.4 | sandHalls          | dropHome             |                                                     |
 | e3.1 | counterweight      | leverSwapsDoors      | leans on stoneOnAPlate; not yet buildable           |
 | e3.2 | observatory        | dropHome             |                                                     |
 | e3.3 | highWater          | cellar               |                                                     |

@@ -4,11 +4,11 @@ Work the expert-prep session could not do while the junior carve was not yet fro
 change in `src/worldGen/`. Check `src/data/juniorCarve.json` on main before starting.
 
 - [ ] Walk: Piramide van Djoser (expert_4) level 4, `buildersLift`, side paths in the lock's corridors.
-- [ ] **hourglass reshape** (designer: every lock unique; hourglass and highWater were near-twins, both one lever
+- [x] **hourglass reshape**, now `sandHalls` (designer: every lock unique; hourglass and highWater were near-twins, both one lever
       and two opposite halls with the exit wanting something from each). Swap `src/game/locks/expert/hourglass.lock`
       for the version below (`yarn lock hourglass`: 5 actions, every piece bears load), set its realisations in
       `src/worldGen/spec/locks/onFloor.ts` to `{ toggle: "handle", weights: "stonePlate", pipe: "stonePipe",
-    "region-barrier": "sand" }`, update its row in `docs/game-design/lock-curriculum.md` (it leaves the torch row,
+"region-barrier": "sand" }`, update its row in `docs/game-design/lock-curriculum.md` (it leaves the torch row,
       joins the stones and pipe rows), and re-bake: it stands on expert_2 pyramid 4.
 
 ```

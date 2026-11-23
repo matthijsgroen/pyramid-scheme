@@ -21,7 +21,7 @@ yours to playtest and reshape. Site details: `docs/game-design/lock-placement.md
 | Site            | Lock               | Trick                                                                                                  |
 | --------------- | ------------------ | ------------------------------------------------------------------------------------------------------ |
 | expert_2 site 3 | festivalProcession | the first procession door, four shrines; one lever opens one side of the hall at a time                |
-| expert_2 site 4 | hourglass          | sand: one lever buries one hall and clears the other; a lit torch burns on under it                    |
+| expert_2 site 4 | sandHalls          | sand buries the stone's hall; post the stone through the pipe first, then turn the lever               |
 | expert_3 site 3 | highWater          | the key's cellar is dry only while the torch's hall floods: key first, torch second                    |
 | expert_3 site 4 | lockChamber        | three basins, two winches: walk to the key and back like a boat through a canal lock                   |
 | expert_4 site 2 | throughTheWall     | the stone pipe's lesson: post the stone through the wall, squeeze after it                             |
