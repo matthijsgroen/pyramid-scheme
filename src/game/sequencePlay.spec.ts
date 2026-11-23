@@ -63,7 +63,9 @@ describe("the writes a walk makes to a sequence", () => {
     const ofStep = (step: number) => allTiles(grid).filter(({ cell }) => stepOf(cell) === step)
     expect(ofStep(0).length).toBeGreaterThan(1)
     for (const { at } of ofStep(0))
-      expect(walkPresses(lit(grid), 0, [[0, 0], at], new Map())).toEqual([{ address: home(), state: progressState(1) }])
+      expect(walkPresses(lit(grid), 0, [[0, 0], at], new Map())).toEqual([
+        { address: home(), state: progressState(1), at },
+      ])
     for (const first of ofStep(0))
       for (const second of ofStep(1))
         expect(walkPresses(lit(grid), 0, [[0, 0], first.at, second.at], new Map()).at(-1)?.state).toBe(progressState(2))
@@ -73,7 +75,9 @@ describe("the writes a walk makes to a sequence", () => {
     const [a, b] = tiles(grid).map(t => t.at)
     expect(walkPresses(lit(grid), 0, [a], new Map())).toEqual([])
     // Had the first tile been worked, the second would have advanced the run rather than spoiled it.
-    expect(walkPresses(lit(grid), 0, [a, b], new Map())).toEqual([{ address: home(), state: spoiledState(0, 1) }])
+    expect(walkPresses(lit(grid), 0, [a, b], new Map())).toEqual([
+      { address: home(), state: spoiledState(0, 1), at: b },
+    ])
   })
 
   it("a tile still in fog registers when the route walks over it", () => {
@@ -87,15 +91,15 @@ describe("the writes a walk makes to a sequence", () => {
       ),
     }
     expect(walkPresses(fogged, 0, [[0, 0], a.at, b.at], new Map())).toEqual([
-      { address: home(), state: progressState(1) },
-      { address: home(), state: progressState(2) },
+      { address: home(), state: progressState(1), at: a.at },
+      { address: home(), state: progressState(2), at: b.at },
     ])
   })
 
   it("a tile walked out of order spoils the run and the tiles after it write nothing more", () => {
     const [, b, c] = tiles(grid).map(t => t.at)
     const writes = walkPresses(lit(grid), 0, [[0, 0], c, b], new Map())
-    expect(writes).toEqual([{ address: home(), state: spoiledState(0, 2) }])
+    expect(writes).toEqual([{ address: home(), state: spoiledState(0, 2), at: c }])
   })
 
   it("a tile already walked in order writes nothing", () => {
