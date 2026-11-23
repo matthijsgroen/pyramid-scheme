@@ -1,6 +1,6 @@
 import { Fragment, useMemo } from "react"
 import type { Tileset } from "@/game/siteTypes"
-import { CELL, FACE_H, FACE_PATTERN_Y, ROW_PITCH, SIDE_W, WALL_H } from "./mapScale"
+import { CELL, FACE_H, FACE_PATTERN_Y, ROW_PITCH, SILL, WALL_H } from "./mapScale"
 import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
 import { tileUrl } from "./tileAssets"
 import { LightPoolDefs } from "./ExplorerDot"
@@ -55,7 +55,7 @@ export const TileLayers = ({
   tier: Tileset
   /** The site's id: a worn edge wanders the same way every time the floor is drawn. */
   seed: string
-  /** "x,y" of every gap an archway stands in, and the arch's own tier. An arch's middle is transparent, so
+  /** "x,y" of the sill under every archway, and the arch's own tier. An arch's middle is transparent, so
    * the sill shows THROUGH it — the step the jambs stand on, which is what stops a doorway hovering in a
    * gap with its reveal running straight into floor. The one thing the two disagreed about was stone: a
    * sill takes the tier being ENTERED and an arch the tier of the band it pierces, so at a ward gate the
@@ -133,19 +133,19 @@ export const TileLayers = ({
               )}
               {sill && (
                 <>
-                  {/* A sill fills the GAP it is laid in, and there are two shapes of gap. Between two rows
-                      it is a cell wide and a wall band deep, which is how the art is drawn. Between two
-                      columns it is the same step turned ninety degrees into a side wall's thickness — one
-                      pattern stretched over both is how a step ended up lying on its side. */}
-                  <pattern id={`sill-h-${t}`} width={CELL} height={WALL_H} patternUnits="userSpaceOnUse">
-                    <image href={sill} width={CELL} height={WALL_H} preserveAspectRatio="none" />
+                  {/* A sill is a strip `SILL` deep along the line where the tiers meet, and there are two
+                      ways that line runs. Between two rows it is a cell wide, which is how the art is drawn.
+                      Between two columns it is the same step turned ninety degrees — one pattern stretched
+                      over both is how a step ended up lying on its side. */}
+                  <pattern id={`sill-h-${t}`} width={CELL} height={SILL} patternUnits="userSpaceOnUse">
+                    <image href={sill} width={CELL} height={SILL} preserveAspectRatio="none" />
                   </pattern>
-                  <pattern id={`sill-v-${t}`} width={SIDE_W} height={CELL} patternUnits="userSpaceOnUse">
+                  <pattern id={`sill-v-${t}`} width={SILL} height={CELL} patternUnits="userSpaceOnUse">
                     <image
                       href={sill}
                       width={CELL}
-                      height={SIDE_W}
-                      transform={`translate(${SIDE_W},0) rotate(90)`}
+                      height={SILL}
+                      transform={`translate(${SILL},0) rotate(90)`}
                       preserveAspectRatio="none"
                     />
                   </pattern>

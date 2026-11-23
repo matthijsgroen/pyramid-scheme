@@ -32,6 +32,7 @@ import {
   ARCH_W,
   FACE_H,
   SIDE_W,
+  SILL,
   WALL_H,
   cellCenter,
   cellLeft,
@@ -2187,7 +2188,7 @@ export const SiteMapView = ({
   )
   const archedGaps = useMemo(
     () =>
-      new Map(doorways.map(({ row, col, tier: archTier }) => [`${cellLeft(col)},${cellTop(row) - WALL_H}`, archTier])),
+      new Map(doorways.map(({ row, col, tier: archTier }) => [`${cellLeft(col)},${cellTop(row) - SILL}`, archTier])),
     [doorways]
   )
   // One rule for what a tap does, asked per cell below — see `clickTargets.ts`. UNRESOLVED: two

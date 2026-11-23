@@ -3,7 +3,7 @@ import type { CellState, Difficulty, FloorGrid, GridCell, RoomCell } from "@/gam
 import { allFloorRects, buildRoomClaims, tileRegionsFor } from "./roomClaims"
 import { ALL_STATES, buildTileRegions, faceShadowRects, frontRuns, grownFaceRects, rectsToPath } from "./tileRegions"
 import type { FloorAt, OpenBetween, Rect, StateGroups, TileRegions } from "./tileRegions"
-import { CELL, FACE_GROW, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
+import { CELL, FACE_GROW, SIDE_W, SILL, WALL_H, cellLeft, cellTop } from "./mapScale"
 
 // Most cases here are about which rectangle is floor and which is wall, where connectivity is beside
 // the point: say everything adjacent is connected.
@@ -83,6 +83,29 @@ describe("buildTileRegions — the gap between two cells", () => {
 
     expect(has(allFloor(regions), northGap(1, 0))).toBe(true)
     expect(has(allWall(regions), northGap(1, 0))).toBe(false)
+  })
+
+  it("runs the floor on across a gap where the tier changes, with a thin sill of the entered tier at the line", () => {
+    // Starter above, junior below and to the right: an arch's opening or a corridor's step.
+    const regions = buildTileRegions(
+      2,
+      2,
+      gridOf({ "0,0": "reachable", "1,0": "reachable", "0,1": "reachable" }, [], [], {
+        "1,0": "junior",
+        "0,1": "junior",
+      }),
+      allPassable,
+      "starter"
+    )
+    const [nx, ny] = northGap(1, 0)
+    const [wx, wy] = westGap(0, 1)
+
+    expect(has(of(regions, "starter").floorCorridor.reachable, northGap(1, 0))).toBe(true)
+    expect(has(of(regions, "starter").floorCorridor.reachable, westGap(0, 1))).toBe(true)
+    expect(of(regions, "junior").threshold).toHaveLength(2)
+    expect(has(of(regions, "junior").threshold, [nx, ny + WALL_H - SILL, CELL, SILL])).toBe(true)
+    expect(has(of(regions, "junior").threshold, [wx + SIDE_W - SILL, wy, SILL, CELL])).toBe(true)
+    expect(of(regions, "starter").threshold).toEqual([])
   })
 
   it("walls the gap between two drawn cells with no way through", () => {

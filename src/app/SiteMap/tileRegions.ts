@@ -8,6 +8,7 @@ import {
   PROP_H,
   ROW_PITCH,
   SIDE_W,
+  SILL,
   WALL_H,
   cellLeft,
   cellTop,
@@ -238,15 +239,16 @@ export const buildTileRegions = (
       // ── the north gap: floor when the way is open, otherwise the face you look at ──
       const northGap: Rect = [x, y - WALL_H, CELL, WALL_H]
       if (here && north && openBetween(r - 1, c, "s")) {
-        const groups = groupsFor(tierAt([r, c], [r - 1, c]))
-        floorGroup(groups, here, north)[brightest(here.state, north.state)!].push(northGap)
-        if (here.tier !== north.tier) groupsFor(here.tier).threshold.push(northGap)
+        // THE FLOOR RUNS ON ACROSS THE GAP and the tier changes at its far edge, under a sill laid along
+        // that line: the step into the other tier's floor, not a slab filling the whole opening.
+        floorGroup(groupsFor(north.tier), here, north)[brightest(here.state, north.state)!].push(northGap)
+        if (here.tier !== north.tier) groupsFor(here.tier).threshold.push([x, y - SILL, CELL, SILL])
         // AN ARCH STANDS IN A FULL-HEIGHT WALL. The arch is drawn at its own height, lower than the face
         // rising either side of it, so its gap carries a face with no height of its own: drawn grown, that
         // is the wall above the arch, in the run's own stone and light, and it fades with the run.
         if (arched(r, c))
           faces.push({
-            groups,
+            groups: groupsFor(here.tier),
             state: brightest(here.state, north.state)!,
             rect: [x, y - WALL_H, CELL, 0],
             overFloor: true,
@@ -271,9 +273,8 @@ export const buildTileRegions = (
       // ── the west gap: floor when the way is open, otherwise a side wall seen edge-on ──
       const westGap: Rect = [x - SIDE_W, y, SIDE_W, CELL]
       if (here && west && openBetween(r, c - 1, "e")) {
-        const groups = groupsFor(tierAt([r, c], [r, c - 1]))
-        floorGroup(groups, here, west)[brightest(here.state, west.state)!].push(westGap)
-        if (here.tier !== west.tier) groupsFor(here.tier).threshold.push(westGap)
+        floorGroup(groupsFor(west.tier), here, west)[brightest(here.state, west.state)!].push(westGap)
+        if (here.tier !== west.tier) groupsFor(here.tier).threshold.push([x - SILL, y, SILL, CELL])
       } else if (isMouth([r, c - 1], [r, c], "e")) {
         // Same mouth, sideways.
       } else {
