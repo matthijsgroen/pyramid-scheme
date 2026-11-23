@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.48.3 - 2026-11-23
+
 ### Changed
 
 - Junior and expert balance puzzles let you swap a sign for what a row says it is worth.
