@@ -22,19 +22,22 @@ yours to playtest and reshape. Site details: `docs/game-design/lock-placement.md
 | --------------- | ------------------ | ------------------------------------------------------------------------------------------------------ |
 | expert_2 site 3 | festivalProcession | the first procession door, four shrines; one lever opens one side of the hall at a time                |
 | expert_2 site 4 | sandHalls          | sand buries the stone's hall; post the stone through the pipe first, then turn the lever               |
+| expert_3 site 1 | emptyHanded        | the lever shuts the quarry behind you; the ziplines take no stone, so carry it out first               |
+| expert_3 site 2 | starWell           | dropped into the board's room: east to the key, back for the vault, then the board to the way out      |
 | expert_3 site 3 | highWater          | the key's cellar is dry only while the torch's hall floods: key first, torch second                    |
 | expert_3 site 4 | lockChamber        | three basins, two winches: walk to the key and back like a boat through a canal lock                   |
+| expert_4 site 1 | stoneSteps         | the first tile's door is held by the stone at the second tile: spoil, reset, walk in order             |
 | expert_4 site 2 | throughTheWall     | the stone pipe's lesson: post the stone through the wall, squeeze after it                             |
 | expert_4 site 3 | scaffold           | the quarry's stone out first; lift the prop first and the quarry shuts on it                           |
 | expert_4 site 4 | buildersLift       | the stone down the pipe, you down the hatch; spend the hatch's prop only once the stone below holds it |
 
-Still stand-ins: expert_3 site 1 (counterweight, not buildable), expert_3 site 2 (observatory, does not lay) and
-expert_4 site 1 (twoStones, not buildable).
+No stand-ins left: you chose emptyHanded, starWell and stoneSteps from `docs/review/expert/stand-in-proposals.md`
+(2026-11-23). counterweight, observatory and twoStones stay in the catalogue, unplaced.
 
 ## Reshapes
 
-- **observatory** (expert_3 site 2): does not lay. Its three-way board stands in a region the route runs through,
-  so the board's node would need five ways. Put the board off the route.
+- **observatory** (unplaced): does not lay. Its three-way board stands in a region the route runs through, so the
+  board's node would need five ways.
 - **leverSwapsDoors** (junior_2 site 2): `yarn lock` says gate `hall-left` never stops anyone, so the swap is not
   needed to finish.
 - **masonsRamp** (master, Claude's): solvable with the stone pipe, six stone moves; its drop `chute>workshop` is now an
@@ -66,7 +69,7 @@ Playtest it in the Lock editor with Carve and play, on a lock with a three-step 
 - The corner squeeze is still the old two-leg slide: keep or redo?
 - A lit torch in fog looks like an unlit one apart from its light pool: art change wanted?
 
-## Not buildable yet (Claude's side)
+## Unplaced locks
 
-counterweight (expert_3 site 1) and twoStones (expert_4 site 1) need mechanics that are not built; their floors hold
-stand-ins. Ask Claude to build them when wanted.
+counterweight and twoStones (Claude's) build and solve, but `yarn lock` warns that a control is reached before its
+door is seen. They hold no slot.

@@ -1,5 +1,28 @@
 # Expert: voorstellen voor de drie stand-ins
 
+**Keuze (2026-11-23):** expert_3 site 1 = **emptyHanded**, expert_3 site 2 = **starWell**, expert_4 site 1 =
+**stoneSteps**. Ze staan nu in `src/game/locks/expert/` en in de wereld. De andere drie en de map `proposals/` zijn
+weg; hun tekst staat hieronder alleen nog als verslag.
+
+starWell is bij het plaatsen omgebouwd. De bake weigerde de eerste versie: een bord moet in een regio op de route
+staan, en de put lag ernaast. Nu loopt de route door de put naar de uitgang. Het bord heeft twee wegen (oost en de
+weg naar buiten), de sleutel uit het oosten opent de deur terug naar het hof en de kluis met de tweede prijs.
+4 acties: in ▸ court ▸ gallery ▸ ⤓well ▸ Y:well-east ▸ east ▸ K ▸ well ▸ court ▸ vault ▸ L ▸ court ▸ well ▸
+Y:well-out ▸ out.
+
+```
+in -- court
+court -- gallery
+gallery >> well
+court -[K]- vault
+court -[K]- well
+well -[Y]- east
+well -[Y]- -[K+L]- out
+Y fork @well
+K activator @east
+L activator @vault
+```
+
 Drie expert-plekken houden nog een stand-in (`src/worldGen/spec/expert.ts`, `lock-placement.md`):
 
 | plek             | staat er nu                 | bedoeld was                               |

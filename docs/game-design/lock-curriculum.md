@@ -53,18 +53,18 @@ lock, not a sampler.
 
 ## What each lock leans on
 
-| mechanic                                      | taught by                            | locks that need it                                                                                        |
-| --------------------------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------- |
-| board picks the way (fork-switch)             | `boardPicksTheWay`                   | dropHome, twoLamps, doubleBack, lamplighter, observatory, clockwork                                       |
-| lever (toggle, can go back)                   | `leverOpensADoor`, `leverSwapsDoors` | all but plates                                                                                            |
-| torch (lit by the player, put out by a flood) | `torch`                              | relay, stoneGate, highWater                                                                               |
-| key or prize (activator, once)                | — (a floor key, met in the world)    | cellar, keyring, observatory, sluice, tide, highWater, lockChamber                                        |
-| one-way drop                                  | `dropDown`                           | beforeYouJump, dropHome, cellar, doubleBack, overlook, seesaw, lamplighter, observatory, relay, clockwork |
-| a door that waits for several                 | `doorWaitsForTwo`                    | beforeYouJump, twoLamps, seesaw, lamplighter, observatory, relay, clockwork                               |
-| water or sand (region gate)                   | `waterMoves`                         | sluice, tide, sandHalls (sand), highWater, lockChamber                                                    |
-| tiles in order (sequence)                     | `tilesInOrder`                       | plates, festivalProcession (the first procession door)                                                    |
-| stones on plates, and where a stone cannot go | `stoneOnAPlate`                      | twoStones, masonsRamp, counterweight, throughTheWall, scaffold, buildersLift, stoneGate, sandHalls        |
-| stone pipe, and the narrow passage            | `throughTheWall`                     | buildersLift (pipe), masonsRamp, stoneGate (narrow passage), sandHalls (pipe, narrow passage)             |
+| mechanic                                      | taught by                            | locks that need it                                                                                                               |
+| --------------------------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| board picks the way (fork-switch)             | `boardPicksTheWay`                   | dropHome, twoLamps, doubleBack, lamplighter, observatory, clockwork, starWell                                                    |
+| lever (toggle, can go back)                   | `leverOpensADoor`, `leverSwapsDoors` | all but plates                                                                                                                   |
+| torch (lit by the player, put out by a flood) | `torch`                              | relay, stoneGate, highWater                                                                                                      |
+| key or prize (activator, once)                | — (a floor key, met in the world)    | cellar, keyring, observatory, sluice, tide, highWater, lockChamber, starWell                                                     |
+| one-way drop                                  | `dropDown`                           | beforeYouJump, dropHome, cellar, doubleBack, overlook, seesaw, lamplighter, observatory, relay, clockwork, emptyHanded, starWell |
+| a door that waits for several                 | `doorWaitsForTwo`                    | beforeYouJump, twoLamps, seesaw, lamplighter, observatory, relay, clockwork, starWell                                            |
+| water or sand (region gate)                   | `waterMoves`                         | sluice, tide, sandHalls (sand), highWater, lockChamber                                                                           |
+| tiles in order (sequence)                     | `tilesInOrder`                       | plates, festivalProcession (the first procession door), stoneSteps                                                               |
+| stones on plates, and where a stone cannot go | `stoneOnAPlate`                      | twoStones, masonsRamp, counterweight, throughTheWall, scaffold, buildersLift, stoneGate, sandHalls, emptyHanded, stoneSteps      |
+| stone pipe, and the narrow passage            | `throughTheWall`                     | buildersLift (pipe), masonsRamp, stoneGate (narrow passage), sandHalls (pipe, narrow passage)                                    |
 
 ## The lessons
 
@@ -96,13 +96,13 @@ lock, not a sampler.
 | keyring            | expert                   | a key chain behind an airlock                                                                                                                               |
 | relay              | expert                   | a chain of airlocks; the drop home opens on the last torch                                                                                                  |
 | clockwork          | expert                   | the board must point two ways, and the lever behind one of them shuts it                                                                                    |
-| observatory        | expert                   | a three-way board, two prizes, one shortcut                                                                                                                 |
+| observatory        | unplaced                 | a three-way board, two prizes, one shortcut                                                                                                                 |
 | tide               | junior                   | carry the key home against the water                                                                                                                        |
 | sluice             | junior                   | drain the hall for the gold, then the vault for the way out                                                                                                 |
 | plates             | expert                   | four tiles across three rooms; the door resets them                                                                                                         |
-| twoStones          | expert, once buildable   | one stone holds the vault while you fetch the second, then presses the exit: a stone spent twice                                                            |
+| twoStones          | unplaced                 | one stone holds the vault while you fetch the second, then presses the exit: a stone spent twice                                                            |
 | masonsRamp         | master, once buildable   | one stone holds the chute door for the other; you squeeze back up the narrow passage, where no stone fits                                                   |
-| counterweight      | expert, once buildable   | the zipline takes you down empty-handed; weigh the lift down from below, then bring the other stone by lift                                                 |
+| counterweight      | unplaced                 | the zipline takes you down empty-handed; weigh the lift down from below, then bring the other stone by lift                                                 |
 | festivalProcession | expert                   | the first procession door: four shrines in the board's order, a lever opening one side of the hall at a time                                                |
 | sandHalls          | expert                   | the lever is past a passage no stone goes through, and its sand buries the stone's hall: post the stone through the pipe first, then turn                   |
 | highWater          | expert                   | the key's cellar is dry only while the torch's hall floods; fetch the key first, or the flood puts the torch out                                            |
@@ -110,6 +110,9 @@ lock, not a sampler.
 | scaffold           | expert                   | a stone holds the quarry open; bring the quarry's stone out first, then spend the prop                                                                      |
 | buildersLift       | expert                   | the pipe and the hatch, then scaffold's prop: set the stone below before spending the stone that props the hatch                                            |
 | stoneGate          | expert capstone (Djoser) | lifting the stone off the altar opens the back way and shuts the way in; park a stone on a shelf to fit through the narrow passage; both stones spent twice |
+| emptyHanded        | expert                   | the lever shuts the quarry behind you and the ziplines take no stone: carry the stone out before you throw it                                               |
+| starWell           | expert                   | dropped into the board's room: east to the key, which opens the way back and the vault; then turn the board to the way out                                  |
+| stoneSteps         | expert                   | the first tile's door is held by the stone at the second tile: fetching it spoils the run, so reset and walk again                                          |
 
 ## Where they go
 
@@ -134,7 +137,7 @@ Site counts are the shipped world's (junior 16, expert 18, master 19).
 | expert_4 (5)    | doorWaitsForTwo · twoLamps · cellar · overlook · **stoneGate**  |
 
 Every lock in a journey leans only on lessons that journey or junior has taught. In Djoser (expert_4) the stone comes
-first (stoneOnAPlate, site 1), then throughTheWall teaches the pipe and the narrow passage (site 2) before scaffold
+first (stoneSteps, site 1, a stone beside tiles in order), then throughTheWall teaches the pipe and the narrow passage (site 2) before scaffold
 (site 3), buildersLift (site 4, the pipe and a drop under scaffold's prop) and stoneGate, the capstone. festivalProcession (expert_2
 site 3) is the first procession door. doubleBack closes expert_3. The site tables above are the older layers; the
 placed locks are in `lock-placement.md`.

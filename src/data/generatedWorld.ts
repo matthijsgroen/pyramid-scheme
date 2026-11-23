@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1715805178
+export const worldContentHash = 342128970
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -13189,33 +13189,47 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         locks: [
           {
             lock: {
-              name: "leverSwapsDoors",
+              name: "emptyHanded",
               regions: {
                 in: { takes: "free" },
-                hall: { takes: "free" },
-                left: { takes: "free" },
+                yard: { takes: "free" },
                 out: { takes: "free" },
-                side: { takes: "free" },
+                quarry: { takes: "free" },
+                store: { takes: "free" },
               },
               connections: [
-                ["in", "hall"],
-                { between: ["hall", "left"], barriers: ["hall-left"] },
-                { between: ["hall", "out"], barriers: ["hall-out"] },
-                ["hall", "side"],
+                ["in", "yard"],
+                { between: ["yard", "out"], barriers: ["yard-out"] },
+                { between: ["yard", "quarry"], barriers: ["yard-quarry"] },
+                { between: ["yard", "store"], barriers: ["yard-store"] },
+                { between: ["quarry", "store"], barriers: ["quarry>store"] },
+                { between: ["store", "quarry"], barriers: ["store>quarry"] },
               ],
               gates: {
-                "hall-left": { from: "hall", to: "left", owners: ["H"] },
-                "hall-out": { from: "hall", to: "out", owners: ["H"] },
+                "yard-out": { from: "yard", to: "out", owners: ["p"] },
+                "yard-quarry": { from: "yard", to: "quarry", owners: ["A"] },
+                "yard-store": { from: "yard", to: "store", owners: ["A"] },
+              },
+              oneWays: {
+                "quarry>store": { from: "quarry", to: "store" },
+                "store>quarry": { from: "store", to: "quarry" },
               },
               mechanics: {
-                H: { control: "toggle", in: "side", starts: "a", opens: { a: ["hall-left"], b: ["hall-out"] } },
+                A: { control: "toggle", in: "quarry", starts: "a", opens: { a: ["yard-quarry"], b: ["yard-store"] } },
+              },
+              weights: {
+                plates: {
+                  p: { in: "store", stone: false, opens: { weighted: ["yard-out"], empty: [] } },
+                  rest: { in: "yard", stone: false, opens: { weighted: [], empty: [] } },
+                  heap: { in: "quarry", stone: true, opens: { weighted: [], empty: [] } },
+                },
               },
               in: "in",
               out: "out",
             },
           },
         ],
-        realisations: { toggle: "handle" },
+        realisations: { toggle: "handle", weights: "stonePlate", "one-way": "zipline" },
       },
     ],
     [
@@ -13451,10 +13465,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           5: "eclipse",
         },
         chambers: 3,
-        packing: 0.26,
-        sidePacking: 0.1,
-        outsideLock: [4],
-        seed: 3982655424,
+        packing: 0.1,
+        seed: 7816500863991680,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d9", pieceIndex: 1 },
         rewards: [
           { type: "waterskin" },
@@ -13467,42 +13479,49 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         locks: [
           {
             lock: {
-              name: "dropHome",
+              name: "starWell",
               regions: {
                 in: { takes: "free" },
-                hall: { takes: "free" },
-                leverRoom: { takes: "free" },
+                court: { takes: "free" },
+                gallery: { takes: "free" },
+                well: { takes: "free" },
                 vault: { takes: "free" },
+                east: { takes: "free" },
                 out: { takes: "free" },
               },
               connections: [
-                { between: ["in", "hall"], barriers: ["in-hall"] },
-                { between: ["hall", "leverRoom"], barriers: ["hall-leverRoom"] },
-                { between: ["in", "vault"], barriers: ["in-vault"] },
-                { between: ["in", "out"], barriers: ["in-out"] },
-                { between: ["leverRoom", "in"], barriers: ["leverRoom>in"] },
-                { between: ["out", "leverRoom"], barriers: ["out>leverRoom"] },
+                ["in", "court"],
+                ["court", "gallery"],
+                { between: ["gallery", "well"], barriers: ["gallery>well"] },
+                { between: ["court", "vault"], barriers: ["court-vault"] },
+                { between: ["court", "well"], barriers: ["court-well"] },
+                { between: ["well", "east"], barriers: ["well-east"] },
+                { between: ["well", "out"], barriers: ["well-out", "well-out#2"] },
               ],
               gates: {
-                "in-hall": { from: "in", to: "hall", owners: ["Y"] },
-                "hall-leverRoom": { from: "hall", to: "leverRoom", owners: ["H"] },
-                "in-vault": { from: "in", to: "vault", owners: ["Y"] },
-                "in-out": { from: "in", to: "out", owners: ["H"] },
+                "court-vault": { from: "court", to: "vault", owners: ["K"] },
+                "court-well": { from: "court", to: "well", owners: ["K"] },
+                "well-east": { from: "well", to: "east", owners: ["Y"] },
+                "well-out": { from: "well", to: "out", owners: ["Y"] },
+                "well-out#2": { from: "well", to: "out", owners: ["K", "L"] },
               },
-              oneWays: {
-                "leverRoom>in": { from: "leverRoom", to: "in" },
-                "out>leverRoom": { from: "out", to: "leverRoom" },
-              },
+              oneWays: { "gallery>well": { from: "gallery", to: "well" } },
               mechanics: {
-                Y: { control: "fork-switch", in: "in" },
-                H: { control: "toggle", in: "leverRoom", starts: "a", opens: { a: ["hall-leverRoom"], b: ["in-out"] } },
+                Y: { control: "fork-switch", in: "well" },
+                K: {
+                  control: "activator",
+                  in: "east",
+                  starts: "off",
+                  opens: { off: [], on: ["court-vault", "court-well", "well-out#2"] },
+                },
+                L: { control: "activator", in: "vault", starts: "off", opens: { off: [], on: ["well-out#2"] } },
               },
               in: "in",
               out: "out",
             },
           },
         ],
-        realisations: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
+        realisations: { "fork-switch": "lightbeamSwitch", activator: "torch", "one-way": "zipline" },
       },
     ],
     [
@@ -14945,44 +14964,43 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         encountersByIndex: { 0: "sumplete", 1: "eclipse", 2: "futoshiki", 3: "hidato" },
         chambers: 3,
         packing: 0.1,
-        seed: 7907893988303841,
-        carveFrom: {
-          attempt: 10,
-          rung: {
-            n: 21,
-            startingN: 21,
-            packing: 0.2,
-            targetDistance: 14,
-            chainWind: 1,
-            chainFloor: 0,
-            recovery: false,
-          },
-        },
+        outsideLock: [5],
+        seed: 202908658,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p12", pieceIndex: 1 },
         rewards: [{ type: "waterskin" }, { type: "waterskin" }, undefined, undefined],
         locks: [
           {
             lock: {
-              name: "stoneOnAPlate",
+              name: "stoneSteps",
               regions: {
                 in: { takes: "free" },
                 yard: { takes: "free" },
                 out: { takes: "free" },
-                side: { takes: "free" },
-                shelf: { takes: "free" },
+                quarry: { takes: "free" },
+                shrine: { takes: "free" },
               },
               connections: [
                 ["in", "yard"],
                 { between: ["yard", "out"], barriers: ["yard-out"] },
-                ["yard", "side"],
-                ["side", "shelf"],
+                ["yard", "quarry"],
+                { between: ["yard", "shrine"], barriers: ["yard-shrine"] },
               ],
-              gates: { "yard-out": { from: "yard", to: "out", owners: ["p"] } },
-              mechanics: {},
+              gates: {
+                "yard-out": { from: "yard", to: "out", owners: ["P"] },
+                "yard-shrine": { from: "yard", to: "shrine", owners: ["h"] },
+              },
+              mechanics: {
+                P: {
+                  control: "sequence",
+                  steps: [{ in: "shrine" }, { in: "quarry" }],
+                  resetAt: "yard-out",
+                  opens: { done: ["yard-out"] },
+                },
+              },
               weights: {
                 plates: {
-                  p: { in: "side", stone: false, opens: { weighted: ["yard-out"], empty: [] } },
-                  ledge: { in: "shelf", stone: true, opens: { weighted: [], empty: [] } },
+                  h: { in: "quarry", stone: false, opens: { weighted: ["yard-shrine"], empty: [] } },
+                  heap: { in: "quarry", stone: true, opens: { weighted: [], empty: [] } },
                 },
               },
               in: "in",
@@ -14990,7 +15008,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             },
           },
         ],
-        realisations: { weights: "stonePlate" },
+        realisations: { sequence: "pressure-plate", weights: "stonePlate" },
       },
     ],
     [
