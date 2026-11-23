@@ -81,7 +81,7 @@ it ships; tick it off there.
 - [ ] A waterskin heals one heart while hurt, two with pack-mule (§5, phase 1).
 - [ ] Walk: Piramide van Djoser (expert_4) level 4, `buildersLift`, side paths in the lock's corridors (§5, phase 4b).
 - [x] Art: `expert/wall-face`, `expert/threshold` (PR #449).
-- [ ] Art: `door/ward-expert`.
+- [x] Art: `door/ward-expert` (#449, approved 2026-11-23).
 - [ ] The last expert bake done (the lock reshape merged and baked), then expert's carve recorded:
       `yarn expert-freeze:record`, commit `src/data/expertCarve.json`; `yarn expert-freeze` passes, not skipped
       (as junior's, handover-junior-release.md, E1).
