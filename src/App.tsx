@@ -13,6 +13,7 @@ import { useHomecoming } from "@/app/homecomingRegistry"
 import { NewVersionNotice } from "@/app/NewVersionNotice"
 import { useInputRoot } from "@/app/input/useInputRoot"
 import { useAudioSettings } from "@/app/audio/audioSettings"
+import "@/app/audio/coreSounds"
 
 function App({ newVersion = false }: { newVersion?: boolean }) {
   const [inGame, setInGame] = useState(false)

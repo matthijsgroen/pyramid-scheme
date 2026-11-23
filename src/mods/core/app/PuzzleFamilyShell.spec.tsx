@@ -10,6 +10,8 @@ import { listenForPageLayers } from "@/app/input/pageLayers"
 import { layerOnMount } from "@/ui/atoms/dialogFocus"
 
 vi.mock("react-i18next", () => ({ useTranslation: () => ({ t: (key: string) => key }) }))
+const { playSound } = vi.hoisted(() => ({ playSound: vi.fn() }))
+vi.mock("@/app/audio/audio", () => ({ playSound }))
 
 const renderShell = (solved: boolean, onSolved: () => void = () => {}) =>
   render(
@@ -20,6 +22,18 @@ const renderShell = (solved: boolean, onSolved: () => void = () => {}) =>
 
 describe("PuzzleFamilyShell", () => {
   afterEach(cleanup)
+
+  it("solving the board plays puzzle.solved once", () => {
+    playSound.mockClear()
+    const { rerender } = renderShell(false)
+    expect(playSound).not.toHaveBeenCalled()
+    rerender(
+      <PuzzleFamilyShell onSolved={() => {}} onCancel={() => {}} solved onReset={() => {}} hint="do this">
+        {() => <button>cell</button>}
+      </PuzzleFamilyShell>
+    )
+    expect(playSound.mock.calls).toEqual([["puzzle.solved"]])
+  })
 
   it("leaves the board playable while it is unsolved", () => {
     renderShell(false)

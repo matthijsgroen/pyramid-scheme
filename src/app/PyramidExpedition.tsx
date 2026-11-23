@@ -1,3 +1,4 @@
+import { useLevelSounds } from "@/app/PyramidExpedition/useLevelSounds"
 import { type FC, type ReactNode, use, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Level } from "@/app/PyramidLevel/Level"
@@ -112,6 +113,7 @@ export const PyramidExpedition: FC<{
   })
 
   const expeditionCompleted = activeJourney.levelNr > journey.levelCount
+  useLevelSounds(activeJourney.levelNr, journey.levelCount)
 
   // A site whose exterior this journey has already solved shows the answer instead of asking for it
   // again: the pyramid is the way in, and a revisit is about the interior. Only ever a site with a

@@ -1,3 +1,5 @@
+import { playSound } from "@/app/audio/audio"
+import { CORE_SOUNDS } from "@/app/audio/coreSounds"
 import { use, useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import clsx from "clsx"
 import { useTranslation } from "react-i18next"
@@ -181,6 +183,7 @@ export const PuzzleFamilyShell = ({
   // itself takes it away before it has been looked at. So the dim is light enough to read the board through and
   // the player says when they are done with it.
   const handleSolved = useCallback(() => {
+    playSound(CORE_SOUNDS.puzzleSolved)
     setFinishing(true)
     setTookMs(elapsedMs())
     scheduleSolve(800, () => setSolvedBanner(true))
