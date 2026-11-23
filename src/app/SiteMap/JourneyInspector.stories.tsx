@@ -306,6 +306,12 @@ const JourneyInspector = ({
       return
     }
     const cell = getCell(grid, row, col)
+    // A stop in a corridor, a room's door among them, is written down by standing on it, as in play.
+    if (cell?.type === "corridor" && cell.state === "reachable") {
+      setSolvedEdges(prev => [...prev, encodeEdge(currentFloor, row, col)])
+      setExplorerPos([row, col])
+      return
+    }
     // A RUN ARROW AIMS AT THE FAR END of a corridor, and that room is "visible" rather than "reachable"
     // until the player is beside it — so a gate of reachable-only dropped three arrows in four and left
     // the inspector walking in one direction. The game itself walks the corridor to get there.

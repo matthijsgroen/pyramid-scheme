@@ -1,4 +1,13 @@
-import type { FloorGrid, GridCell, Direction, CellState, TombKeyReward, CorridorCell, ObstacleKind } from "./siteTypes"
+import type {
+  FloorGrid,
+  GridCell,
+  Direction,
+  CellState,
+  TombKeyReward,
+  CorridorCell,
+  ObstacleKind,
+  RoomCell,
+} from "./siteTypes"
 import { prefabRoomAt, prefabRoomCells, roomDoors, roomPlaceOf } from "./roomShape"
 
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
@@ -113,6 +122,27 @@ const revealObstacles = (cells: GridCell[][], grid: FloorGrid): void => {
   }
 }
 
+/** A mechanism is worked, never finished: a lever, a torch, a plate, a pipe's hole, a sequence tile, a narrow passage. */
+const isMechanism = (cell: RoomCell): boolean =>
+  cell.mechanism !== undefined ||
+  cell.plate !== undefined ||
+  cell.pipeHole !== undefined ||
+  cell.sequenceTile !== undefined ||
+  cell.passage !== undefined
+
+/**
+ * A ROOM'S ANCHOR HOLDS IT SHUT while what stands there is an encounter not yet done: a board unsolved, a scene
+ * unheard, a wall unread, a chest unopened. Done is the cell's own `completed`, the one state every encounter writes
+ * when it is finished. Until then the room is one stop: walked into by the door the player came through, and left the
+ * same way, its other doors and what lies past them still in the dark. A mechanism holds nothing shut.
+ */
+export const anchorHoldsRoomShut = (cell: GridCell | undefined): boolean =>
+  cell?.type === "room" &&
+  cell.roomType === "encounter" &&
+  cell.family !== undefined &&
+  cell.state !== "completed" &&
+  !isMechanism(cell)
+
 export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGrid => {
   // 1. Shallow-copy cells (immutable update)
   const newCells: GridCell[][] = grid.cells.map(r => [...r])
@@ -137,9 +167,12 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
   const visited = new Set<string>([`${row},${col}`])
   const queue: QItem[] = []
   // A designed room is seen whole the moment any of its floor is: every cell of it, and each of its doors looked
-  // past from inside, so standing anywhere in a room shows every way out of it.
+  // past from inside, so standing anywhere in a room shows every way out of it — unless its anchor holds it shut
+  // (`anchorHoldsRoomShut`), where the only way out shown is the door it was looked from.
   const lookedRooms = new Set<string>()
   const doorsLookedPast = new Set<string>()
+  // `door|node`: a door of a room its anchor holds shut, other than the one looked from, never seen from inside it.
+  const shutDoors = new Set<string>()
   const lookRoom = (r: number, c: number) => {
     const node = prefabRoomCells(grid).get(`${r},${c}`)
     if (node === undefined || lookedRooms.has(node)) return
@@ -148,8 +181,13 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
     const { top, left, rows, cols } = prefabRoomAt(grid, nr, nc)!.rect
     for (let rr = top; rr < top + rows; rr++)
       for (let cc = left; cc < left + cols; cc++) queue.push({ r: rr, c: cc, fromDir: "n" })
+    const shut = anchorHoldsRoomShut(newCells[nr][nc])
     for (const { at, side } of roomDoors(grid, nr, nc)) {
       const key = `${at[0]},${at[1]}`
+      if (shut) {
+        if (key !== `${row},${col}`) shutDoors.add(`${key}|${node}`)
+        continue
+      }
       doorsLookedPast.add(key)
       if (key !== `${row},${col}`) visited.delete(key)
       queue.push({ r: at[0], c: at[1], fromDir: side })
@@ -168,6 +206,10 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
     const { r, c, fromDir } = queue.shift()!
     const key = `${r},${c}`
     if (visited.has(key)) continue
+    if (fromDir !== null && shutDoors.size > 0) {
+      const from = prefabRoomCells(grid).get(`${r - MOVES[fromDir][0]},${c - MOVES[fromDir][1]}`)
+      if (from !== undefined && shutDoors.has(`${key}|${from}`)) continue
+    }
     visited.add(key)
 
     const neighbor = newCells[r]?.[c]

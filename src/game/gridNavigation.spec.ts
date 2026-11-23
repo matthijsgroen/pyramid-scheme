@@ -10,7 +10,7 @@ import {
   walkableFrom,
 } from "./gridNavigation"
 import { assembleFloor, ONE_WAY_RUN_CELLS, oneWayRunCells } from "./siteAssembler"
-import type { Direction, FloorConfig, FloorGrid, GridCell } from "./siteTypes"
+import type { Direction, FloorConfig, FloorGrid, GridCell, MechanismRecord, RoomCell } from "./siteTypes"
 
 // Simple 1×3 grid: [entrance room -e- corridor -e- exit room]
 const makeLinearGrid = (): FloorGrid => ({
@@ -684,5 +684,82 @@ describe("seeing a designed room", () => {
       "fogged",
       "fogged",
     ])
+  })
+})
+
+// A shrine of 3×3 at rows 1–3, cols 2–4, its anchor at 2,3 holding `anchor`, with a door west at 2,1, east at 2,5 and
+// south at 4,3, each leading on to a dead end.
+const shrineFloor = (anchor: Partial<RoomCell>): FloorGrid => {
+  const cells: GridCell[][] = Array.from({ length: 6 }, () =>
+    Array.from({ length: 7 }, (): GridCell => ({ type: "empty" }))
+  )
+  const doors: [number, number][] = [
+    [2, 1],
+    [2, 5],
+    [4, 3],
+  ]
+  const isFloor = (r: number, c: number) =>
+    (r >= 1 && r <= 3 && c >= 2 && c <= 4) || doors.some(([dr, dc]) => dr === r && dc === c)
+  for (let r = 1; r <= 3; r++)
+    for (let c = 2; c <= 4; c++) {
+      const dirs = new Set<Direction>()
+      for (const d of ["n", "s", "e", "w"] as const) if (isFloor(r + MOVE[d][0], c + MOVE[d][1])) dirs.add(d)
+      cells[r][c] = { type: "corridor", dirs, state: "fogged" }
+    }
+  cells[2][3] = {
+    type: "room",
+    roomType: "encounter",
+    family: "puzzle",
+    dirs: new Set<Direction>(["n", "s", "e", "w"]),
+    state: "fogged",
+    ...anchor,
+    prefabRoom: {
+      name: "shrine",
+      layout: 0,
+      mirrored: false,
+      rect: { top: 1, left: 2, rows: 3, cols: 3 },
+      stop: [3, 3],
+      objects: [],
+      blocked: [],
+      doors,
+    },
+  }
+  cells[2][1] = { type: "corridor", dirs: new Set<Direction>(["w", "e"]), state: "fogged" }
+  cells[2][0] = { type: "corridor", dirs: new Set<Direction>(["e"]), state: "fogged" }
+  cells[2][5] = { type: "corridor", dirs: new Set<Direction>(["w", "e"]), state: "fogged" }
+  cells[2][6] = { type: "corridor", dirs: new Set<Direction>(["w"]), state: "fogged" }
+  cells[4][3] = { type: "corridor", dirs: new Set<Direction>(["n", "s"]), state: "fogged" }
+  cells[5][3] = { type: "corridor", dirs: new Set<Direction>(["n"]), state: "fogged" }
+  return { siteId: "test", rows: 6, cols: 7, entrancePos: [5, 3], exitPos: [2, 0], staircases: {}, cells }
+}
+
+const LEVER: MechanismRecord = { states: ["left", "right"], initial: "left", returnsToInitial: true, positions: [] }
+
+describe("a room whose anchor holds an unfinished encounter", () => {
+  it("entered by one door, leads to its stop and to no other door until the encounter is done", () => {
+    const entered = completeCell(shrineFloor({}), 4, 3)
+    const walkable = walkableFrom(entered, [4, 3])
+    expect(walkable.has("2,3")).toBe(true)
+    expect(["2,1", "2,5", "2,0", "2,6"].filter(at => walkable.has(at))).toEqual([])
+    expect(statesAt(entered, [2, 1], [2, 5])).toEqual(["fogged", "fogged"])
+  })
+
+  it("opens every door once the encounter on its anchor is done", () => {
+    const solved = completeCell(completeCell(shrineFloor({}), 4, 3), 2, 3)
+    const walkable = walkableFrom(solved, [2, 3])
+    expect(["2,1", "2,5", "4,3"].filter(at => !walkable.has(at))).toEqual([])
+  })
+
+  it("stands open whatever door it is entered by when a mechanism stands on its anchor", () => {
+    const entered = completeCell(shrineFloor({ family: "lever", mechanism: LEVER }), 4, 3)
+    const walkable = walkableFrom(entered, [4, 3])
+    expect(["2,1", "2,5", "2,3"].filter(at => !walkable.has(at))).toEqual([])
+  })
+
+  it("lets a player already past it walk back to the door they came in by, and no further", () => {
+    const past = completeCell(completeCell(shrineFloor({}), 4, 3), 2, 5)
+    const walkable = walkableFrom(past, [2, 6])
+    expect(walkable.has("4,3")).toBe(true)
+    expect(walkable.has("2,1")).toBe(false)
   })
 })
