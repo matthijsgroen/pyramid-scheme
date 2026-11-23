@@ -2,7 +2,7 @@
 import { act, render, fireEvent, screen } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { SiteMapView, approachCells, cornerRockRun, cornerRocksFor, nodeSpritesFor, wallItemsFor } from "./SiteMapView"
-import { allFloorRects, buildRoomClaims, tileRegionsFor } from "./roomClaims"
+import { allFloorRects, buildRoomClaims, cellStone, tileRegionsFor } from "./roomClaims"
 import { grassMatsFor } from "./floorScatter"
 import { footprintPath } from "./tileRegions"
 import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset } from "./nodeArt"
@@ -222,6 +222,53 @@ describe("a node's furniture and the clip it is cut to", () => {
     }
     const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
     expect(urlOf(spriteMatching(container, "chestProp")[0])).toContain("junior")
+  })
+
+  describe("a chest follows the stone it stands on", () => {
+    const gate: GridCell = {
+      type: "room",
+      roomType: "encounter",
+      tags: ["gate"],
+      dirs: new Set<Direction>(["w", "e"]),
+      state: "reachable",
+    }
+    const wardFloor = (chestAt: "entrance" | "far", over: Partial<RoomCell>): FloorGrid => {
+      const chest = { ...treasureCell(chestAt === "entrance" ? ["e"] : ["w"]), ...over } as GridCell
+      const plain = straightCorridor("completed", chestAt === "entrance" ? ["w"] : ["e"])
+      return {
+        ...makeGrid(chestAt === "entrance" ? [[chest, gate, plain]] : [[plain, gate, chest]]),
+        difficulty: "junior",
+      }
+    }
+    const chestUrl = (grid: FloorGrid) => {
+      const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
+      return urlOf(spriteMatching(container, "chestProp")[0])
+    }
+
+    it("is the section's own tier on the entrance side of a ward when the cell names no tileset", () => {
+      const grid = wardFloor("entrance", { difficulty: "starter" })
+      expect(cellStone(grid, grid.cells[0][0] as RoomCell, 0, 0)).toBe("starter")
+      expect(chestUrl(grid)).toContain("starter/chestProp")
+    })
+
+    it("keeps the floor's stone for a ward gate on the entrance side", () => {
+      const grid = wardFloor("entrance", { difficulty: "starter" })
+      expect(cellStone(grid, { ...gate, difficulty: "starter" } as RoomCell, 0, 1)).toBe("junior")
+    })
+
+    it("is the floor's rank in a cell of the floor's own tier", () => {
+      expect(chestUrl(wardFloor("entrance", { difficulty: "junior" }))).toContain("junior/chestProp")
+    })
+
+    it("is the cell's own tileset on the entrance side when the DSL names one", () => {
+      const grid = wardFloor("entrance", { difficulty: "expert", tileset: "starter" })
+      expect(cellStone(grid, grid.cells[0][0] as RoomCell, 0, 0)).toBe("starter")
+      expect(chestUrl(grid)).toContain("starter/chestProp")
+    })
+
+    it("is the section's own beyond the ward", () => {
+      expect(chestUrl(wardFloor("far", { difficulty: "starter" }))).toContain("starter/chestProp")
+    })
   })
 
   describe("a ward key's chest", () => {
@@ -1438,14 +1485,27 @@ describe("archways", () => {
     expect(arches).toHaveLength(1)
     // The stone of the band it stands in, which here is the tier being entered.
     expect(urlOf(arches[0])).toContain("junior")
-    // The stone is one SVG again (TileLayers), so a sill is a path filled from its tier's pattern.
-    const sills = Array.from(container.querySelectorAll<SVGPathElement>("path")).filter(el =>
-      (el.getAttribute("fill") ?? "").includes("sill")
-    )
+    const sills = container.querySelectorAll("[data-sill]")
     expect(sills).toHaveLength(1)
     // The arch's stone, not the entered tier's — one opening, one material.
-    // A gap between two rows takes the horizontal pattern; the vertical one is the same step turned.
-    expect(sills[0].getAttribute("fill")).toContain("sill-h-junior")
+    expect(sills[0].querySelector("path")!.getAttribute("fill")).toBe(tierPalette.junior.wallTop)
+  })
+
+  it("lays a sill over every tier's floor, so the floor running on across the gap never covers it", () => {
+    const seam = makeGrid([
+      [empty, corridor("completed", false), empty],
+      [empty, corridor("completed", false), empty],
+      [empty, { ...chamber("completed"), difficulty: "junior" } as GridCell, empty],
+    ])
+    const { container } = render(<SiteMapView grid={seam} />)
+    const sill = container.querySelector("[data-sill]")!
+    const floors = Array.from(container.querySelectorAll<SVGPathElement>("path")).filter(el =>
+      (el.getAttribute("fill") ?? "").startsWith("url(#floor-")
+    )
+
+    expect(floors.length).toBeGreaterThan(0)
+    for (const floor of floors)
+      expect(floor.compareDocumentPosition(sill) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it("draws no arch into the fog", () => {

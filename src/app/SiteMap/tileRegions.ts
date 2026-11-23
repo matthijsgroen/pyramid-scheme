@@ -8,6 +8,7 @@ import {
   PROP_H,
   ROW_PITCH,
   SIDE_W,
+  SILL,
   WALL_H,
   cellLeft,
   cellTop,
@@ -228,21 +229,26 @@ export const buildTileRegions = (
         // hidden; only its mouth shows, below.
         const around = ringAround(r, c)
         const lit = litTouching(...around)
-        if (lit) groupsFor(tierAt(...around)).wallMass[lit].push([x, y, CELL, CELL])
+        // Rock is the floor's own, not a section's: it is the backdrop the whole map stands on, so a
+        // passage of another tier does not ring itself in a different brown. Every mass rect below follows
+        // the same rule, the seams beside a passage and the jambs of its doorways included; a section
+        // shows its tier in its floor and its faces.
+        if (lit) groupsFor(fallbackTier).wallMass[lit].push([x, y, CELL, CELL])
       }
 
       // ── the north gap: floor when the way is open, otherwise the face you look at ──
       const northGap: Rect = [x, y - WALL_H, CELL, WALL_H]
       if (here && north && openBetween(r - 1, c, "s")) {
-        const groups = groupsFor(tierAt([r, c], [r - 1, c]))
-        floorGroup(groups, here, north)[brightest(here.state, north.state)!].push(northGap)
-        if (here.tier !== north.tier) groupsFor(here.tier).threshold.push(northGap)
+        // THE FLOOR RUNS ON ACROSS THE GAP and the tier changes at its far edge, under a sill laid along
+        // that line: the step into the other tier's floor, not a slab filling the whole opening.
+        floorGroup(groupsFor(north.tier), here, north)[brightest(here.state, north.state)!].push(northGap)
+        if (here.tier !== north.tier) groupsFor(here.tier).threshold.push([x, y - SILL, CELL, SILL])
         // AN ARCH STANDS IN A FULL-HEIGHT WALL. The arch is drawn at its own height, lower than the face
         // rising either side of it, so its gap carries a face with no height of its own: drawn grown, that
         // is the wall above the arch, in the run's own stone and light, and it fades with the run.
         if (arched(r, c))
           faces.push({
-            groups,
+            groups: groupsFor(here.tier),
             state: brightest(here.state, north.state)!,
             rect: [x, y - WALL_H, CELL, 0],
             overFloor: true,
@@ -260,30 +266,21 @@ export const buildTileRegions = (
       } else {
         // The seam between this square and the one above it: drawn whenever BOTH are, so a run of rock
         // reads as rock rather than as bricks with the mortar missing.
-        const around = [
-          [r - 1, c],
-          [r, c],
-        ] as const
         const lit = brightest(drawnState(r, c), drawnState(r - 1, c))
-        if (lit) groupsFor(tierAt(...around, [r - 1, c - 1], [r, c - 1])).wallMass[lit].push(northGap)
+        if (lit) groupsFor(fallbackTier).wallMass[lit].push(northGap)
       }
 
       // ── the west gap: floor when the way is open, otherwise a side wall seen edge-on ──
       const westGap: Rect = [x - SIDE_W, y, SIDE_W, CELL]
       if (here && west && openBetween(r, c - 1, "e")) {
-        const groups = groupsFor(tierAt([r, c], [r, c - 1]))
-        floorGroup(groups, here, west)[brightest(here.state, west.state)!].push(westGap)
-        if (here.tier !== west.tier) groupsFor(here.tier).threshold.push(westGap)
+        floorGroup(groupsFor(west.tier), here, west)[brightest(here.state, west.state)!].push(westGap)
+        if (here.tier !== west.tier) groupsFor(here.tier).threshold.push([x - SILL, y, SILL, CELL])
       } else if (isMouth([r, c - 1], [r, c], "e")) {
         // Same mouth, sideways.
       } else {
         // The same seam turned sideways — see the north gap above.
-        const around = [
-          [r, c],
-          [r, c - 1],
-        ] as const
         const lit = brightest(drawnState(r, c), drawnState(r, c - 1))
-        if (lit) groupsFor(tierAt(...around, [r - 1, c], [r - 1, c - 1])).wallMass[lit].push(westGap)
+        if (lit) groupsFor(fallbackTier).wallMass[lit].push(westGap)
       }
 
       // ── the corner where four cells meet ──
@@ -322,14 +319,16 @@ export const buildTileRegions = (
       // The corner asks the same question the four squares around it do: a pinhole of background where
       // four drawn squares meet is the most visible seam of the three, because it has stone on all sides.
       const cornerLit = brightest(...cornerCells.map(([cr, cc]) => drawnState(cr, cc)))
-      const cornerGroups = groupsFor(tierAt(...cornerCells))
+      const cornerGroups = groupsFor(
+        cornerCells.some(([cr, cc]) => floorOf(cr, cc)) ? tierAt(...cornerCells) : fallbackTier
+      )
       if (insideOneSpace) {
         floorGroup(cornerGroups, here, north, west, northWest)[
           brightest(here.state, north.state, west.state, northWest.state)!
         ].push(corner)
       } else if (cornerLit) {
         if (continuesFaceRun) faces.push({ groups: cornerGroups, state: cornerLit, rect: corner, overFloor: false })
-        else cornerGroups.wallMass[cornerLit].push(corner)
+        else groupsFor(fallbackTier).wallMass[cornerLit].push(corner)
       }
     }
   }

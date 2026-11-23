@@ -1,7 +1,7 @@
 import { Fragment, useMemo } from "react"
 import type { Tileset } from "@/game/siteTypes"
-import { CELL, FACE_H, FACE_PATTERN_Y, ROW_PITCH, SIDE_W, WALL_H } from "./mapScale"
-import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
+import { CELL, FACE_H, FACE_PATTERN_Y, ROW_PITCH, SILL, WALL_H } from "./mapScale"
+import { corridorShade, stateWash, tierPalette, type TierPalette } from "./tileMaterials"
 import { tileUrl } from "./tileAssets"
 import { LightPoolDefs } from "./ExplorerDot"
 import {
@@ -55,7 +55,7 @@ export const TileLayers = ({
   tier: Tileset
   /** The site's id: a worn edge wanders the same way every time the floor is drawn. */
   seed: string
-  /** "x,y" of every gap an archway stands in, and the arch's own tier. An arch's middle is transparent, so
+  /** "x,y" of the sill under every archway, and the arch's own tier. An arch's middle is transparent, so
    * the sill shows THROUGH it — the step the jambs stand on, which is what stops a doorway hovering in a
    * gap with its reveal running straight into floor. The one thing the two disagreed about was stone: a
    * sill takes the tier being ENTERED and an arch the tier of the band it pierces, so at a ward gate the
@@ -107,7 +107,6 @@ export const TileLayers = ({
         {tiers.map(t => {
           const floor = tileUrl(t, "floor")
           const face = tileUrl(t, "wall-face")
-          const sill = tileUrl(t, "threshold")
           return (
             <Fragment key={t}>
               {floor && (
@@ -131,26 +130,6 @@ export const TileLayers = ({
                   <image href={face} width={mega} height={FACE_H} preserveAspectRatio="none" />
                 </pattern>
               )}
-              {sill && (
-                <>
-                  {/* A sill fills the GAP it is laid in, and there are two shapes of gap. Between two rows
-                      it is a cell wide and a wall band deep, which is how the art is drawn. Between two
-                      columns it is the same step turned ninety degrees into a side wall's thickness — one
-                      pattern stretched over both is how a step ended up lying on its side. */}
-                  <pattern id={`sill-h-${t}`} width={CELL} height={WALL_H} patternUnits="userSpaceOnUse">
-                    <image href={sill} width={CELL} height={WALL_H} preserveAspectRatio="none" />
-                  </pattern>
-                  <pattern id={`sill-v-${t}`} width={SIDE_W} height={CELL} patternUnits="userSpaceOnUse">
-                    <image
-                      href={sill}
-                      width={CELL}
-                      height={SIDE_W}
-                      transform={`translate(${SIDE_W},0) rotate(90)`}
-                      preserveAspectRatio="none"
-                    />
-                  </pattern>
-                </>
-              )}
             </Fragment>
           )
         })}
@@ -172,9 +151,6 @@ export const TileLayers = ({
           const palette = tierPalette[t]
           const groups = regions.get(t)!
           const floorFill = tileUrl(t, "floor") ? `url(#floor-${t})` : palette.slab
-          const hasSill = !!tileUrl(t, "threshold")
-          // A gap between two ROWS is a cell wide; one between two columns is a side wall's thickness.
-          const sillFill = ([, , w]: Rect) => (hasSill ? `url(#sill-${w === CELL ? "h" : "v"}-${t})` : palette.wallTop)
           return (
             <g key={t}>
               {ALL_STATES.map(state => {
@@ -187,10 +163,6 @@ export const TileLayers = ({
                 const shadows = rectsToPath(
                   faceShadowRects([...groups.wallFace[state], ...groups.frontFace[state]], FACE_SHADOW)
                 )
-                // One sill per boundary, not one per cell state: it is masonry, not lighting. A sill under
-                // an arch is drawn with the ARCH's tier rather than this one, so it is handled below.
-                const thresholds = groups.threshold.filter(([x, y]) => !archedGaps?.has(`${x},${y}`))
-                const arched = archedSills.get(t) ?? []
                 // A worn corner is a hole in the floor fill, and the wash has to darken what shows through
                 // it like the stone around it — so the square floor goes under the wash as well.
                 const wornWash = wornEdges(t)
@@ -206,15 +178,6 @@ export const TileLayers = ({
                         <path d={corridor} fill={corridorShade.fill} opacity={corridorShade.opacity} />
                       </>
                     )}
-                    {/* Laid over the floor of the gap it crosses, so a change of material reads as a
-                        step between two places rather than a line where the art changes. */}
-                    {/* One path per sill: each takes the pattern for the shape of gap it lies in. The sill
-                        an arch stands in is drawn here too, in the ARCH's stone rather than the entered
-                        tier's, which is why it is filed under this tier at all. */}
-                    {state === "reachable" &&
-                      [...thresholds, ...arched].map(rect => (
-                        <path key={rect.join(",")} d={rectsToPath([rect])} fill={sillFill(rect)} opacity={0.9} />
-                      ))}
                     {shadows && <path data-face-shadow="" d={shadows} fill={palette.outline} opacity={0.45} />}
                     {/* The state wash darkens FLOOR only. Stone is masonry, not lighting: a wall or a stretch of
                         rock borrows its state from whichever floor it touches, so a wash on it would cut one
@@ -225,6 +188,17 @@ export const TileLayers = ({
               })}
             </g>
           )
+        })}
+        {/* THE SILLS, over every tier's ground: a gap's floor belongs to the tier you come from, and a
+            tier painted later would otherwise lay its floor over another's sill. One per boundary, not
+            one per cell state: it is masonry, not lighting. A sill under an arch is drawn in the ARCH's
+            stone, so an opening is one material. */}
+        {tiers.map(t => {
+          const rects = [
+            ...regions.get(t)!.threshold.filter(([x, y]) => !archedGaps?.has(`${x},${y}`)),
+            ...(archedSills.get(t) ?? []),
+          ]
+          return rects.length > 0 && <SillSteps key={t} rects={rects} palette={tierPalette[t]} />
         })}
         {tiers.map(t => {
           const palette = tierPalette[t]
@@ -267,5 +241,28 @@ export const TileLayers = ({
         })}
       </g>
     </>
+  )
+}
+
+/**
+ * A sill as a STEP in the entered tier's stone, built from its palette rather than squashed art: a pale
+ * tread with a dark edge on each long side, so a strip a few pixels deep still reads as a stone edge
+ * against both floors. The edge on the entered side is the riser and the heavier of the two.
+ */
+const SillSteps = ({ rects, palette }: { rects: readonly Rect[]; palette: TierPalette }) => {
+  const riser = SILL / 3
+  const lip = SILL / 8
+  // A row seam's sill runs across (the entered floor is below it); a column seam's runs down (entered to the right).
+  const across = (r: Rect) => r[2] > r[3]
+  const risers = rects.map(([x, y, w, h]): Rect =>
+    across([x, y, w, h]) ? [x, y + h - riser, w, riser] : [x + w - riser, y, riser, h]
+  )
+  const lips = rects.map(([x, y, w, h]): Rect => (across([x, y, w, h]) ? [x, y, w, lip] : [x, y, lip, h]))
+  return (
+    <g data-sill="">
+      <path d={rectsToPath(rects)} fill={palette.wallTop} />
+      <path d={rectsToPath(risers)} fill={palette.outline} opacity={0.6} />
+      <path d={rectsToPath(lips)} fill={palette.outline} opacity={0.5} />
+    </g>
   )
 }

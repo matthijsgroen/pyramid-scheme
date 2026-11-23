@@ -73,11 +73,9 @@ describe("a floor is built of the tiers its sections were authored at", () => {
     }
   })
 
-  // A GATED SECTION DOES NOT BEGIN AT ITS GATE. World-gen authors the whole branch at the pocket's tier,
-  // gate included, and the gate can sit well down it — so the corridor leading TO the gate was built of
-  // the pocket's stone and drawn in it. The map then said starter, expert, starter gate, expert: three
-  // changes of material to convey one. 693 cells across 59 floors read that way, up to 30 on one floor.
-  it("keeps the corridor leading to a ward in the pyramid's own stone", () => {
+  // A section is dressed in the tier it was authored at; only the gate itself, where the sill is laid,
+  // wears the floor's stone. Walking toward a ward, every cell reached is drawn in its own authored tier.
+  it("draws the cells leading to a ward in the tier they were authored at", () => {
     const grid = revealAll(starterFloorOne())
     const claims = buildRoomClaims(grid)
     const floorTier = grid.difficulty ?? "starter"
@@ -85,7 +83,6 @@ describe("a floor is built of the tiers its sections were authored at", () => {
       const cell = grid.cells[r]?.[c]
       return cell?.type === "room" && (cell.tags?.includes("gate") ?? false)
     }
-    // Walk the floor without ever crossing a ward; nothing reached that way may wear another rank.
     const [er, ec] = grid.entrancePos
     const seen = new Set([`${er},${ec}`])
     const queue: Array<[number, number]> = [[er, ec]]
@@ -106,11 +103,13 @@ describe("a floor is built of the tiers its sections were authored at", () => {
     expect(seen.size).toBeGreaterThan(1)
     for (const key of seen) {
       const [r, c] = key.split(",").map(Number)
-      if (grid.cells[r]?.[c]?.type === "empty") continue
+      const cell = grid.cells[r]?.[c]
+      if (!cell || cell.type === "empty" || claims.claimedBy.has(key)) continue
       const at = cellFloorAt(grid, claims, undefined, r, c)
       const drawn = typeof at === "string" ? at : at.tier
       if (drawn === "stone" || drawn === "unlit") continue
-      expect(drawn, `${key} is drawn ${drawn} on the way to a ward`).toBe(floorTier)
+      const expected = gateAt(r, c) ? floorTier : (cell.tileset ?? grid.tileset ?? cell.difficulty ?? floorTier)
+      expect(drawn, `${key} is drawn ${drawn} on the way to a ward`).toBe(expected)
     }
   })
 

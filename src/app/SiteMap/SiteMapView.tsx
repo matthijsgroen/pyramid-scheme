@@ -32,6 +32,7 @@ import {
   ARCH_W,
   FACE_H,
   SIDE_W,
+  SILL,
   WALL_H,
   cellCenter,
   cellLeft,
@@ -104,6 +105,7 @@ import {
   allFloorRects,
   buildRoomClaims,
   cellFloorAt,
+  cellStone,
   cellTileset,
   floorTier,
   isPassable,
@@ -626,8 +628,11 @@ export const nodeSpritesFor = (
             ? (tileUrl(tier, rewardArt.tile) ?? tileOrPlaceholder(tier, rewardArt.stand))
             : // A taken chest stands open; a reward that names a chest of its own (a ward key's) draws that one.
               chestTileUrl(
-                tier,
-                cell.difficulty ?? grid.difficulty ?? "starter",
+                cellStone(grid, cell, r, c),
+                // A cave or sphinx has no chest ranks of its own: those keep the section's difficulty.
+                ["cave", "sphinx"].includes(cellStone(grid, cell, r, c))
+                  ? (cell.difficulty ?? grid.difficulty ?? "starter")
+                  : cellStone(grid, cell, r, c),
                 rewardArt?.kind === "chest" ? rewardArt.tile : CHEST_TILE,
                 taken
               )
@@ -2183,7 +2188,7 @@ export const SiteMapView = ({
   )
   const archedGaps = useMemo(
     () =>
-      new Map(doorways.map(({ row, col, tier: archTier }) => [`${cellLeft(col)},${cellTop(row) - WALL_H}`, archTier])),
+      new Map(doorways.map(({ row, col, tier: archTier }) => [`${cellLeft(col)},${cellTop(row) - SILL}`, archTier])),
     [doorways]
   )
   // One rule for what a tap does, asked per cell below — see `clickTargets.ts`. UNRESOLVED: two

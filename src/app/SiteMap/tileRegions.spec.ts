@@ -3,7 +3,7 @@ import type { CellState, Difficulty, FloorGrid, GridCell, RoomCell } from "@/gam
 import { allFloorRects, buildRoomClaims, tileRegionsFor } from "./roomClaims"
 import { ALL_STATES, buildTileRegions, faceShadowRects, frontRuns, grownFaceRects, rectsToPath } from "./tileRegions"
 import type { FloorAt, OpenBetween, Rect, StateGroups, TileRegions } from "./tileRegions"
-import { CELL, FACE_GROW, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
+import { CELL, FACE_GROW, SIDE_W, SILL, WALL_H, cellLeft, cellTop } from "./mapScale"
 
 // Most cases here are about which rectangle is floor and which is wall, where connectivity is beside
 // the point: say everything adjacent is connected.
@@ -83,6 +83,29 @@ describe("buildTileRegions — the gap between two cells", () => {
 
     expect(has(allFloor(regions), northGap(1, 0))).toBe(true)
     expect(has(allWall(regions), northGap(1, 0))).toBe(false)
+  })
+
+  it("runs the floor on across a gap where the tier changes, with a thin sill of the entered tier at the line", () => {
+    // Starter above, junior below and to the right: an arch's opening or a corridor's step.
+    const regions = buildTileRegions(
+      2,
+      2,
+      gridOf({ "0,0": "reachable", "1,0": "reachable", "0,1": "reachable" }, [], [], {
+        "1,0": "junior",
+        "0,1": "junior",
+      }),
+      allPassable,
+      "starter"
+    )
+    const [nx, ny] = northGap(1, 0)
+    const [wx, wy] = westGap(0, 1)
+
+    expect(has(of(regions, "starter").floorCorridor.reachable, northGap(1, 0))).toBe(true)
+    expect(has(of(regions, "starter").floorCorridor.reachable, westGap(0, 1))).toBe(true)
+    expect(of(regions, "junior").threshold).toHaveLength(2)
+    expect(has(of(regions, "junior").threshold, [nx, ny + WALL_H - SILL, CELL, SILL])).toBe(true)
+    expect(has(of(regions, "junior").threshold, [wx + SIDE_W - SILL, wy, SILL, CELL])).toBe(true)
+    expect(of(regions, "starter").threshold).toEqual([])
   })
 
   it("walls the gap between two drawn cells with no way through", () => {
@@ -260,6 +283,30 @@ describe("buildTileRegions — the seams between squares of rock", () => {
     ] as const)
       expect(has(mass, square(r, c))).toBe(true)
     expect(has(mass, corner(2, 2))).toBe(true)
+  })
+
+  it("draws every piece of rock around a passage of another tier in the floor's own rock, the seams beside it too", () => {
+    // A junior corridor running down a starter floor: the squares, the side seams and the jamb corners
+    // beside it are all mass, and none of it is junior.
+    const regions = buildTileRegions(
+      3,
+      3,
+      gridOf({ "0,1": "reachable", "1,1": "reachable", "2,1": "reachable" }, [], [], {
+        "0,1": "junior",
+        "1,1": "junior",
+        "2,1": "junior",
+      }),
+      (_r, c, dir) => c === 1 && dir === "s",
+      "starter"
+    )
+    const starterMass = inAnyState(of(regions, "starter").wallMass)
+
+    expect(inAnyState(of(regions, "junior").wallMass)).toEqual([])
+    expect(has(starterMass, westGap(1, 1))).toBe(true)
+    expect(has(starterMass, westGap(1, 2))).toBe(true)
+    expect(has(starterMass, corner(1, 1))).toBe(true)
+    expect(has(starterMass, corner(1, 2))).toBe(true)
+    expect(has(of(regions, "junior").floorCorridor.reachable, northGap(1, 1))).toBe(true)
   })
 
   it("still leaves a mouth black, which is how the map says a way carries on", () => {
