@@ -1,0 +1,12 @@
+// designed by: Claude
+// expert, proposal for expert_4 site 1. The way out wants the torch in the vault lit and a stone on the dais
+// plate, and there is one stone. It props the vault open while you light the torch, then goes on to the dais.
+in -- yard
+yard -[T+p]- out
+yard -- porch
+porch -- dais
+yard -[v]- vault
+T torch @vault
+v plate @porch
+p plate @dais
+ledge plate @porch stone

@@ -1,0 +1,15 @@
+// designed by: Claude
+// expert, proposal for expert_3 site 1. The way out stands at the foot of the stairs and wants a stone up in the
+// loft and one in the cistern below. Both stones lie in the loft, the zipline down takes no stone, and the lever by
+// the water opens either the stairs or the cistern: carry the stone down the stairs, then throw the lever back.
+in -- hall
+hall -- loft
+hall >> well
+well -[S]- hall
+well -[S:a]- cistern
+well -[p+q]- out
+S toggle @well
+p plate @loft
+q plate @cistern
+heap plate @loft stone
+shelf plate @loft stone

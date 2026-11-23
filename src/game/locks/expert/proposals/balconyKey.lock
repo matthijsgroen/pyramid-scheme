@@ -1,0 +1,11 @@
+// designed by: Claude
+// expert, proposal for expert_3 site 2. The way out wants the east prize, and the board's east way also waits for
+// a key. The key lies below the north balcony: drop into the crypt, whose key opens its own door back up.
+in -[Y]- north
+in -[Y]- -[K]- east
+in -[L]- out
+north >> crypt
+crypt -[K]- north
+Y fork @in
+K activator @crypt
+L activator @east
