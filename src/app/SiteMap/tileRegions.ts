@@ -228,9 +228,10 @@ export const buildTileRegions = (
         // hidden; only its mouth shows, below.
         const around = ringAround(r, c)
         const lit = litTouching(...around)
-        // Bare rock is the floor's own, not a section's: it is the backdrop the whole map stands on, so a
-        // passage of another tier does not ring itself in squares of a different brown. The seams and
-        // corners between squares of bare rock below follow the same rule.
+        // Rock is the floor's own, not a section's: it is the backdrop the whole map stands on, so a
+        // passage of another tier does not ring itself in a different brown. Every mass rect below follows
+        // the same rule, the seams beside a passage and the jambs of its doorways included; a section
+        // shows its tier in its floor and its faces.
         if (lit) groupsFor(fallbackTier).wallMass[lit].push([x, y, CELL, CELL])
       }
 
@@ -263,15 +264,8 @@ export const buildTileRegions = (
       } else {
         // The seam between this square and the one above it: drawn whenever BOTH are, so a run of rock
         // reads as rock rather than as bricks with the mortar missing.
-        const around = [
-          [r - 1, c],
-          [r, c],
-        ] as const
         const lit = brightest(drawnState(r, c), drawnState(r - 1, c))
-        if (lit)
-          groupsFor(here || north ? tierAt(...around, [r - 1, c - 1], [r, c - 1]) : fallbackTier).wallMass[lit].push(
-            northGap
-          )
+        if (lit) groupsFor(fallbackTier).wallMass[lit].push(northGap)
       }
 
       // ── the west gap: floor when the way is open, otherwise a side wall seen edge-on ──
@@ -284,15 +278,8 @@ export const buildTileRegions = (
         // Same mouth, sideways.
       } else {
         // The same seam turned sideways — see the north gap above.
-        const around = [
-          [r, c],
-          [r, c - 1],
-        ] as const
         const lit = brightest(drawnState(r, c), drawnState(r, c - 1))
-        if (lit)
-          groupsFor(here || west ? tierAt(...around, [r - 1, c], [r - 1, c - 1]) : fallbackTier).wallMass[lit].push(
-            westGap
-          )
+        if (lit) groupsFor(fallbackTier).wallMass[lit].push(westGap)
       }
 
       // ── the corner where four cells meet ──
@@ -340,7 +327,7 @@ export const buildTileRegions = (
         ].push(corner)
       } else if (cornerLit) {
         if (continuesFaceRun) faces.push({ groups: cornerGroups, state: cornerLit, rect: corner, overFloor: false })
-        else cornerGroups.wallMass[cornerLit].push(corner)
+        else groupsFor(fallbackTier).wallMass[cornerLit].push(corner)
       }
     }
   }

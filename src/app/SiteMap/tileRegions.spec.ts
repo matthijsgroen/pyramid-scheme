@@ -262,6 +262,30 @@ describe("buildTileRegions — the seams between squares of rock", () => {
     expect(has(mass, corner(2, 2))).toBe(true)
   })
 
+  it("draws every piece of rock around a passage of another tier in the floor's own rock, the seams beside it too", () => {
+    // A junior corridor running down a starter floor: the squares, the side seams and the jamb corners
+    // beside it are all mass, and none of it is junior.
+    const regions = buildTileRegions(
+      3,
+      3,
+      gridOf({ "0,1": "reachable", "1,1": "reachable", "2,1": "reachable" }, [], [], {
+        "0,1": "junior",
+        "1,1": "junior",
+        "2,1": "junior",
+      }),
+      (_r, c, dir) => c === 1 && dir === "s",
+      "starter"
+    )
+    const starterMass = inAnyState(of(regions, "starter").wallMass)
+
+    expect(inAnyState(of(regions, "junior").wallMass)).toEqual([])
+    expect(has(starterMass, westGap(1, 1))).toBe(true)
+    expect(has(starterMass, westGap(1, 2))).toBe(true)
+    expect(has(starterMass, corner(1, 1))).toBe(true)
+    expect(has(starterMass, corner(1, 2))).toBe(true)
+    expect(has(of(regions, "junior").floorCorridor.reachable, northGap(1, 1))).toBe(true)
+  })
+
   it("still leaves a mouth black, which is how the map says a way carries on", () => {
     // The one gap that is meant to stay undrawn: an open way between explored floor and an unlit passage.
     const regions = buildTileRegions(2, 1, gridOf({ "1,0": "reachable" }, [], ["0,0"]), allPassable, "starter")
