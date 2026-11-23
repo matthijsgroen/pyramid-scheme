@@ -45,4 +45,10 @@ describe("settleSaveEpoch", () => {
     expect(await settleSaveEpoch()).toBe(false)
     expect(save).toEqual({ tutorialsEnabled: false, saveEpoch: SAVE_EPOCH })
   })
+
+  it("keeps the music and sound effects switches when it throws an older save away", async () => {
+    save = { journeys: [{ journeyId: "a" }], soundEffects: false, music: true }
+    expect(await settleSaveEpoch()).toBe(true)
+    expect(save).toEqual({ soundEffects: false, music: true, saveEpoch: SAVE_EPOCH })
+  })
 })

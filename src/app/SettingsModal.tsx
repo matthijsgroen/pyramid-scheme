@@ -9,6 +9,8 @@ import { focusOnMount, trapTab } from "@/ui/atoms/dialogFocus"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DevTools } from "@/app/dev/devToolsBuild"
 import { SaveCardTransfer } from "@/app/saveCard/SaveCardTransfer"
+import { useMusicSetting, useSoundEffectsSetting } from "@/app/audio/audioSettings"
+import { SettingsSwitch } from "@/ui/molecules/SettingsSwitch"
 
 type SettingsModalProps = {
   isOpen: boolean
@@ -22,11 +24,15 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGa
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [showSaveCard, setShowSaveCard] = useState(false)
   const [tutorialsEnabled, setTutorialsEnabled] = useGameStorage<boolean>("tutorialsEnabled", true)
+  const [soundEffects, setSoundEffects] = useSoundEffectsSetting()
+  const [music, setMusic] = useMusicSetting()
   const { isDevelopMode } = use(DevelopContext)
   const handleClearGameData = async () => {
     await clearGameData()
-    // Preserve the tutorials preference across a data wipe.
+    // Preserve the tutorials and sound preferences across a data wipe.
     await setTutorialsEnabled(tutorialsEnabled)
+    await setSoundEffects(soundEffects)
+    await setMusic(music)
     window.location.reload()
   }
 
@@ -100,6 +106,9 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGa
             />
             <span className="text-sm font-medium text-gray-700">{t("ui.disableTutorials")}</span>
           </label>
+
+          <SettingsSwitch label={t("ui.soundEffects")} checked={soundEffects} onChange={setSoundEffects} />
+          <SettingsSwitch label={t("ui.music")} checked={music} onChange={setMusic} />
 
           {/* Move the save to another device */}
           <div className="space-y-2">
