@@ -123,8 +123,10 @@ jobs:
         run: yarn build # `tsc -b` first, so this is the type check too
       - name: Starter floors carve as recorded
         run: yarn starter-freeze
-      - name: Junior floors carve as recorded (skipped until recorded)
+      - name: Junior floors carve as recorded
         run: yarn junior-freeze
+      - name: Expert floors carve as recorded (skipped until recorded)
+        run: yarn expert-freeze
       - name: Check the ratcheted guards
         run: yarn betterer
 

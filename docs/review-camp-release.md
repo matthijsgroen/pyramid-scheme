@@ -80,7 +80,12 @@ it ships; tick it off there.
 - [ ] Traps: hearts full on the coming-home screen after trap damage (§5, phase 1).
 - [ ] A waterskin heals one heart while hurt, two with pack-mule (§5, phase 1).
 - [ ] Walk: Piramide van Djoser (expert_4) level 4, `buildersLift`, side paths in the lock's corridors (§5, phase 4b).
-- [ ] Art: `expert/wall-face`, `expert/threshold`; `door/ward-expert`.
+- [x] Art: `expert/wall-face`, `expert/threshold` (PR #449).
+- [ ] Art: `door/ward-expert`.
+- [ ] The last expert bake done (the lock reshape merged and baked), then expert's carve recorded:
+      `yarn expert-freeze:record`, commit `src/data/expertCarve.json`; `yarn expert-freeze` passes, not skipped
+      (as junior's, handover-junior-release.md, E1).
+- [ ] A junior save carries over untouched: `yarn junior-freeze` green, the explorer where they stood.
 
 ### Master
 

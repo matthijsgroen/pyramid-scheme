@@ -284,7 +284,7 @@ boardPicksTheWay or tilesInOrder, which have no hall stub.
 | j4.4 | lamplighter      | torch                 | leans on board, torch, doorWaitsForTwo                       |
 | j4.5 | tide             | leverSwapsDoors       | leans on waterMoves                                          |
 
-### Expert (18 floors, 11 existing locks, 7 to design)
+### Expert (18 floors, 11 existing locks, 7 written by Claude since)
 
 stoneGate closes expert_4 (kept); doubleBack is late, closing expert_3 (kept); twoLamps stays on expert_1 site 3
 (kept). relay and doubleBack take three actions, below the expert 4-6, but the designer put them in expert.
