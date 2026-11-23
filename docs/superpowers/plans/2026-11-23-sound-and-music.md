@@ -70,7 +70,7 @@ src/app/PyramidExpedition/useLevelSounds.ts
 src/app/whatsNew/parseChangelog.ts, WhatsNewPanel.tsx
 src/app/credits/audioCredits.ts, CreditsPanel.tsx
 src/ui/molecules/ReleaseNotes.tsx (+ stories), CreditsList.tsx (+ stories), SettingsSwitch.tsx (+ stories)
-src/assets/audio/music-egyptian-dawn.mp3 + music-egyptian-dawn.credit.json   (PR C)
+src/assets/audio/music-egyptian-dawn.m4a + music-egyptian-dawn.credit.json   (PR C)
 ```
 
 ---
@@ -435,7 +435,7 @@ The runtime reads it from data the site map already holds. The floor's `locks` (
 
 **Files:**
 
-- Create: `src/assets/audio/music-egyptian-dawn.mp3` (provided by the user from Pixabay; see the designer questions), `src/assets/audio/music-egyptian-dawn.credit.json`
+- Create: `src/assets/audio/music-egyptian-dawn.m4a` (the Pixabay track re-encoded to 64 kbps AAC; copy it from `music-egyptian-dawn-64k.m4a` in the session scratchpad, `music/`), `src/assets/audio/music-egyptian-dawn.credit.json`
 - Modify: `vite.config.ts`. Add `"**/music-*.{mp3,aac,m4a,ogg}"` to `globIgnores` (:154). `globPatterns` (:120) already precaches every mp3 and aac. Add a `runtimeCaching` entry for `/\/music-[^/]+\.(mp3|aac|m4a|ogg)$/` with `CacheFirst`, `cacheName: "music"`, `expiration: { maxEntries: 2 }`, `cacheableResponse: { statuses: [200] }` and `rangeRequests: true`, so the `<audio>` element's Range requests are served from the cached full file.
 
 **Interfaces:**
@@ -453,7 +453,7 @@ The runtime reads it from data the site map already holds. The floor's `locks` (
 - [ ] **Step 2:** Run `yarn test src/app/credits`. Expected: PASS, with the credit listed.
 - [ ] **Step 3:** Change `vite.config.ts` as listed.
 - [ ] **Step 4: Verify** with `yarn build`:
-  - `ls dist/assets/music-egyptian-dawn-*.mp3` finds the file.
+  - `ls dist/assets/music-egyptian-dawn-*.m4a` finds the file.
   - `grep -c "music-egyptian-dawn" dist/sw.js` prints `0`, so it is not in the precache manifest.
   - `grep -c "\"music\"" dist/sw.js` prints at least `1`, so the runtime route exists.
 - [ ] **Step 5: Commit:** `feat: background music track, cached at runtime only`
@@ -471,7 +471,7 @@ The runtime reads it from data the site map already holds. The floor's `locks` (
 - Produces: `createAudioService` deps gain `music?: { url: string; createElement: (url: string) => MediaElementLike; warmCache?: (url: string) => void }` and `onHidden?: (cb: (hidden: boolean) => void) => () => void`.
   - `MediaElementLike = Pick<HTMLAudioElement, "play" | "pause" | "loop" | "src" | "preload">`
   - `MUSIC_GAIN = 0.35`, `DUCKED_GAIN = 0.08`, `DUCK_FADE_S = 0.8` (exported constants)
-  - The music URL comes from `import musicUrl from "@/assets/audio/music-egyptian-dawn.mp3?url"`.
+  - The music URL comes from `import musicUrl from "@/assets/audio/music-egyptian-dawn.m4a?url"`.
 
 - [ ] **Step 1: Write the failing tests:**
   - `it("with music off, no music element is made and nothing is fetched")`: the element factory and `warmCache` are each called 0 times.

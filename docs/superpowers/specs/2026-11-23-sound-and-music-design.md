@@ -134,6 +134,10 @@ Trigger points are in the appendix; the builder confirms each line before hookin
   that. The precache globs (`vite.config.ts:120`) must exclude it explicitly.
 - **Defaults:** sound effects on, music off, for new and existing players alike. This is a new setting, so
   no save migration is needed; the default applies when the key is absent.
+- **Music file:** AAC at 64 kbps in an `.m4a` file (2.4 MB), as BlockSort ships its music in AAC.
+- **Ducking:** every encounter ducks the music, the shop and the exterior pyramid board included.
+- **Lock solved:** a door into the lock's way-out region opens; it fires once per lock.
+- **Scale:** D Hijaz from D4, approved by ear.
 
 ## Scope and order (Claude's call)
 
