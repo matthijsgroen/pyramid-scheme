@@ -183,7 +183,7 @@ is searched again looking ahead to each region's drops, and the floor walk never
 region the route runs through, so its node would need five ways; it needs the board off the route (carve change) or
 the designer's reshape, and its floor keeps dropHome as a stand-in; counterweight (expert_3 site 1) and twoStones (expert_4 site 1) are not
 buildable, so their floors keep a stand-in too, each repeating a lock placed elsewhere. The 7 expert slots that waited
-for new locks hold Claude's (2026-10-16): festivalProcession, hourglass, highWater, lockChamber, throughTheWall,
+for new locks hold Claude's (2026-10-16): festivalProcession, sandHalls, highWater, lockChamber, throughTheWall,
 scaffold and buildersLift. Every lesson shows its shut door before its control
 (`lock-curriculum.md`, "A lesson shows the problem first"; `yarn lock` refuses a lesson that does not,
 `doorsSeenLate` in `src/game/lockChecks.ts`). Switch boards are dealt like room boards now (`boardIndex.ts`), so

@@ -1,0 +1,16 @@
+// designed by: Claude
+// expert. Sand halls: one lever buries one hall in sand and clears the other. The stone lies in the west hall,
+// its plate in the east, and the lever stands behind a passage no stone is carried through: post the stone
+// through the pipe under the glass, then turn it.
+
+in -- hall
+hall -[p]- out
+hall -- west
+hall -- east
+hall -[unladen]- glass
+west -[S:a]
+east -[S:b]
+S toggle @glass
+pile plate @west stone
+p plate @east
+P pipe @west @east
