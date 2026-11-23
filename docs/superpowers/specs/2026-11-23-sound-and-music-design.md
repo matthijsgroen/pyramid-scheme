@@ -103,7 +103,7 @@ Trigger points are in the appendix; the builder confirms each line before hookin
 ## "What's new" screen
 
 - Reached from Settings. It shows the last N released versions from CHANGELOG.md (builder's call: 3), with
-  their Changed and Fixed lines.
+  their Added, Changed, Fixed and Removed lines.
 - It is read from the changelog at build time, so there is no separate copy to maintain.
 - Entries are English, as written in the changelog. Translating them is out of scope for now.
 
@@ -151,9 +151,10 @@ service is split across files.
 ## Appendix: trigger points (code inventory 2026-11-23; verify before hooking)
 
 - Pyramid stones fly in `src/app/PyramidLevel/PyramidDisplay.tsx:132`; next-level zoom `src/app/PyramidExpedition.tsx:211-235`
-- Level complete `src/app/PyramidLevel/LevelCompletedOverlay.tsx:8`; journey complete `src/app/PyramidExpedition/ExpeditionCompletionOverlay.tsx:56`
+- Level complete: `levelNr` rising (`completeLevel` in `src/app/state/useJourneys.ts`); journey complete: `levelNr > levelCount`
+  at `src/app/PyramidExpedition.tsx:114`, which also holds on reload, so fire on the change only
 - Walk steps `src/app/SiteMap/ExplorerDot.tsx:251`, delay `src/app/SiteMap/useSiteNavigation.ts:170`
-- Sequence tile `useSiteNavigation.ts:306` (`readSequence`)
+- Sequence tile: `walkPresses` in `walkTo`, `useSiteNavigation.ts:253` (state format in `src/game/sequence.ts`)
 - Lever `useSiteNavigation.ts:317-321`, `:492`
 - Stone / plate / pipe `useSiteNavigation.ts:399-406`
 - Corridor opens: reveal wave `src/app/SiteMap/SiteMapView.tsx:1729`, `:2642`
@@ -167,5 +168,6 @@ service is split across files.
 - Heal: waterskin `src/mods/trap/app/rewardContribution.ts:8`; rest `useTrapProgress.ts:70`
 - Buy / sell `src/mods/shop/app/fezShop/plugin.tsx:67`, `:98`
 - Camp `src/ui/atoms/CampScene.tsx`
-- Tomb tile `src/mods/hieroglyph/app/TombPuzzle.tsx:92`; lock panel `src/ui/molecules/TombLockPanel.tsx:17`; tableau `TombPuzzle.tsx:58`
+- Tomb tile `src/mods/hieroglyph/app/TombPuzzle.tsx:92`; lock panel `src/ui/molecules/TombLockPanel.tsx:17`; tableau: the right code in
+  `handleLockSubmit` (`TombPuzzle.tsx`)
 - Settings checkbox pattern `src/app/SettingsModal.tsx` (~96); precache globs `vite.config.ts:120`
