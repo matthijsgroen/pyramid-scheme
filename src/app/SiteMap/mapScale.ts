@@ -57,7 +57,7 @@ export const SIDE_W = CELL / 4 // 14 — the thickness of a side wall, seen edge
 
 /** The depth of a sill: the step laid along the line where one tier's floor meets another's, a strip
  * at the entered side of the gap rather than the whole gap. */
-export const SILL = WALL_H / 4 // 7
+export const SILL = 9 // about a third of a wall band: five to seven pixels at the map's usual zoom
 
 /**
  * How much of a face is its own TOP SURFACE rather than the wall you look at.

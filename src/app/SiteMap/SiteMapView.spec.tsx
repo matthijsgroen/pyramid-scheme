@@ -1485,14 +1485,27 @@ describe("archways", () => {
     expect(arches).toHaveLength(1)
     // The stone of the band it stands in, which here is the tier being entered.
     expect(urlOf(arches[0])).toContain("junior")
-    // The stone is one SVG again (TileLayers), so a sill is a path filled from its tier's pattern.
-    const sills = Array.from(container.querySelectorAll<SVGPathElement>("path")).filter(el =>
-      (el.getAttribute("fill") ?? "").includes("sill")
-    )
+    const sills = container.querySelectorAll("[data-sill]")
     expect(sills).toHaveLength(1)
     // The arch's stone, not the entered tier's — one opening, one material.
-    // A gap between two rows takes the horizontal pattern; the vertical one is the same step turned.
-    expect(sills[0].getAttribute("fill")).toContain("sill-h-junior")
+    expect(sills[0].querySelector("path")!.getAttribute("fill")).toBe(tierPalette.junior.wallTop)
+  })
+
+  it("lays a sill over every tier's floor, so the floor running on across the gap never covers it", () => {
+    const seam = makeGrid([
+      [empty, corridor("completed", false), empty],
+      [empty, corridor("completed", false), empty],
+      [empty, { ...chamber("completed"), difficulty: "junior" } as GridCell, empty],
+    ])
+    const { container } = render(<SiteMapView grid={seam} />)
+    const sill = container.querySelector("[data-sill]")!
+    const floors = Array.from(container.querySelectorAll<SVGPathElement>("path")).filter(el =>
+      (el.getAttribute("fill") ?? "").startsWith("url(#floor-")
+    )
+
+    expect(floors.length).toBeGreaterThan(0)
+    for (const floor of floors)
+      expect(floor.compareDocumentPosition(sill) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it("draws no arch into the fog", () => {
