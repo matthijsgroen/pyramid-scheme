@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Musical tones for solved puzzles, sequence tiles, opened locks, finds and finished levels; switch them off in Settings.
+
 ### Fixed
 
 - A puzzle or story in a room can no longer be walked past.

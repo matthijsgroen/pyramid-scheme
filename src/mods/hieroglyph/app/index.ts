@@ -11,6 +11,10 @@ import { registerCompassTarget, registerCompassTargetLabel } from "@/app/SiteMap
 import { registerHeldKeysProvider } from "@/app/SiteMap/keyProviders"
 import { registerJourneyCardSlot } from "@/app/pages/journeyCardSlots"
 import { isModEnabled } from "@/mods/registeredMods"
+import { registerSound } from "@/app/audio/soundRegistry"
+import { motif } from "@/app/audio/tones"
+import { rewardSound } from "@/app/audio/coreSounds"
+import { TABLEAU_COMPLETE_SOUND } from "./sounds"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
 import { useHieroglyphCompassScanner } from "./compassScanner"
 import { CompassPanel } from "./CompassPanel"
@@ -33,6 +37,8 @@ import { GIVEN_REQUIRED, HIEROGLYPH_REQUIRED } from "../game/hieroglyphData"
 // - the compass detector scanner: finds uncollected fragment locations for a target hieroglyph.
 if (isModEnabled("hieroglyph")) {
   registerHieroglyphRewardDisplay()
+  registerSound(rewardSound("hieroglyphFragment"), motif([4, 7]))
+  registerSound(TABLEAU_COMPLETE_SOUND, motif([0, 2, 4, 7, 11], 0.12))
   registerRewardSchema("hieroglyphFragment", hieroglyphFragmentSchema)
   registerRewardContribution(() => {
     const hg = useHieroglyphProgress()

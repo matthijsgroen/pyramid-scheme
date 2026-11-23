@@ -10,6 +10,9 @@ import { registerEarnedPerks } from "@/app/SiteMap/perkContributions"
 import { registerCollectionSection } from "@/app/pages/collectionSectionRegistry"
 import { registerJourneyContribution } from "@/app/pages/journeyContributions"
 import { isModEnabled } from "@/mods/registeredMods"
+import { registerSound } from "@/app/audio/soundRegistry"
+import { motif } from "@/app/audio/tones"
+import { rewardSound } from "@/app/audio/coreSounds"
 import { TREASURE_PERKS } from "../game/treasurePerks"
 import { treasureDisplayByKeyId } from "../game/treasures"
 import { useTombTreasureProgress } from "./useTombTreasureProgress"
@@ -30,6 +33,9 @@ import { piecesRequiredFor, TOMB_PIECES_REQUIRED } from "../game/piecesRequired"
 // core names neither `mapPiece` nor `tombKey` nor any perk. Self-gated on the mod being enabled.
 if (isModEnabled("tomb-treasure")) {
   registerTombTreasureRewardDisplay()
+  registerSound(rewardSound("mapPiece"), motif([2, 4, 7]))
+  // A tomb key is the treasure: the biggest find gets the biggest motif.
+  registerSound(rewardSound("tombKey"), motif([0, 2, 4, 5, 7, 9, 11, 14], 0.1))
   registerRewardSchema("mapPiece", mapPieceSchema)
   registerRewardSchema("tombKey", tombKeySchema)
   registerRewardContribution(() => {
