@@ -1,0 +1,171 @@
+# Sound, music, credits and "what's new"
+
+## Intent
+
+The game is silent today: no audio, no haptics, no sound setting. Sound should mark the moments that matter
+and leave thinking time quiet. There are two layers of effects plus one music track:
+
+- **Real sounds** for what physically happens in the world: stone, levers, sand, coins.
+- **Musical sounds** for success, made as tones in the browser.
+- **Background music** for the map and the camp, played softer during a puzzle.
+
+The game is free and open source, and every audio file lives in the public repo. So licences matter, and the
+settings gain a credits screen. They also gain a "what's new" screen showing the latest changelog entries.
+
+## Goals
+
+- Every moment in the table below sounds as listed, and nothing else makes noise.
+- Two independent switches in Settings: **Music** and **Sound effects**.
+- The game behaves identically with both switched off: no audio loaded, no errors.
+- The credits screen lists every audio file with its author, source and licence.
+- A "what's new" screen shows the last few CHANGELOG entries.
+
+## Non-goals
+
+- No sound for cell taps, UI buttons, modals, dialogue lines, stairs, the exit, or being blocked.
+- No voice acting.
+- No per-sound volume sliders; the two switches are enough.
+- No haptics for now.
+
+## Anti-goals (a failure even if it works)
+
+- Noise during thinking: a puzzle board that clicks on every tap, or music at full volume over a puzzle.
+- A footstep on every step of a long walk. Only the first step of a walk sounds, softly.
+- A first download that grows by megabytes because of music the player never turned on.
+- An audio file in the repo whose licence forbids redistribution from a public repo.
+
+## The moments
+
+R = real (a recorded file), M = musical (synthesised tone or chord), – = silent.
+
+| Area   | Moment                                                            | Kind | Notes                                          |
+| ------ | ----------------------------------------------------------------- | ---- | ---------------------------------------------- |
+| Map    | pyramid opens (stones fly in; zoom to the next level)             | R    | heavy stone sliding                            |
+| Map    | level complete, journey complete                                  | M    | journey gets the bigger phrase                 |
+| Site   | first step of a walk                                              | R    | soft footstep; later steps silent              |
+| Site   | lever or handle thrown                                            | R    |                                                |
+| Site   | stone lifted, stone set down, pressure plate                      | R    |                                                |
+| Site   | sequence tile stepped on correctly                                | M    | next note of a rising scale, one note per tile |
+| Site   | sequence tile wrong                                               | M    | its own "off" tone; the scale starts over      |
+| Site   | corridor opens behind a gate (reveal wave)                        | R    | stone grinding                                 |
+| Site   | **last door of a lock opens**                                     | M    | needs a new event; see below                   |
+| Site   | zipline, squeeze                                                  | R    | whoosh, scrape                                 |
+| Site   | sand or water barrier recedes                                     | R    |                                                |
+| Site   | chest opens                                                       | R    |                                                |
+| Site   | loot: money                                                       | R    | coins                                          |
+| Site   | loot: fragment, mosaic or map piece, treasure                     | M    | short motif                                    |
+| Puzzle | solved                                                            | M    |                                                |
+| Puzzle | family flavour: canister pour, balance settle, sudoku scroll furl | R    |                                                |
+| Trap   | trap fires, heart lost                                            | R    | dull thud                                      |
+| Trap   | heal (waterskin, rest)                                            | M    |                                                |
+| Shop   | buy, sell                                                         | R    | coins                                          |
+| Camp   | campfire crackle                                                  | R    | loop, while the camp is on screen              |
+| Tomb   | tile placed                                                       | R    |                                                |
+| Tomb   | lock panel slides open                                            | R    |                                                |
+| Tomb   | tableau complete                                                  | M    |                                                |
+
+Trigger points are in the appendix; the builder confirms each line before hooking it.
+
+### Missing events
+
+- **Lock solved:** no event exists today for "the last door of this lock is open". The builder adds one,
+  derived from mechanism state and lock topology. It fires once per lock, on the transition, and never
+  again when the player reloads the floor.
+- **Ward gate or key used:** no discrete event exists either. It is not in this table, so no work is needed.
+
+## Music
+
+- Track: "Egyptian Dawn (Full version)" by kaazoom on Pixabay, 4:53, Pixabay Content License.
+- Plays on the site map, the journey map and the camp, and loops.
+- During a puzzle or trap encounter it ducks to a lower volume (builder picks the level and fade) and comes
+  back when the encounter closes.
+- It loads only when Music is on, never in the precache of the first download, and it streams.
+
+## Controls and platform
+
+- Settings gets two checkboxes, Music and Sound effects, following the "tutorials" checkbox pattern
+  (`useGameStorage`).
+- Browsers allow audio only after a user gesture. The audio context starts on the first tap. A moment that
+  happens before that stays silent and is never queued.
+- Musical sounds are synthesised with the Web Audio API: no files, and always in tune.
+- Real sounds are short compressed files (format is the builder's call), lazy-loaded the first time effects
+  are on.
+- Audio is a mod-agnostic core service. Mods call it by sound name, in line with docs/mods/TARGET.md, and a
+  disabled mod's sounds simply never play.
+
+## Credits screen
+
+- Reached from Settings. It lists each audio asset with its title, author, source URL and licence.
+- The list is data next to the audio files, one entry per file, so adding a sound adds its credit. A test
+  checks that every audio file has a credit entry.
+- Room is left for other credits later; this spec does not decide their content.
+
+## "What's new" screen
+
+- Reached from Settings. It shows the last N released versions from CHANGELOG.md (builder's call: 3), with
+  their Changed and Fixed lines.
+- It is read from the changelog at build time, so there is no separate copy to maintain.
+- Entries are English, as written in the changelog. Translating them is out of scope for now.
+
+## Decided by the designer
+
+- The real/musical split per moment, as in the table.
+- The sequence tile as a rising scale with its own wrong tone.
+- The music track, softer during puzzles.
+- Sound candidates are proposed by Claude, and the designer picks.
+- Credits and "what's new" both live under Settings.
+
+## Claude's calls (check these)
+
+- Footsteps only on the first step of a walk.
+- Two switches, no sliders.
+- Musical sounds synthesised, not files.
+- The music lazy-loads, then is cached for offline play.
+- The credits list is checked by a test.
+- "What's new" shows the last 3 versions, built from CHANGELOG.md.
+
+## Decided after review (designer, 2026-11-23)
+
+- **Files and licences live in the repo.** Every audio file, the music included, is committed. A licence
+  file stands next to each one, naming its title, author, source URL and licence, as in BlockSort. The
+  credits screen reads the same data.
+- **Offline:** effects go into the precache, so they play offline from the first visit. The music is not
+  precached: it loads the first time Music is turned on, then is cached at runtime so it plays offline after
+  that. The precache globs (`vite.config.ts:120`) must exclude it explicitly.
+- **Defaults:** sound effects on, music off, for new and existing players alike. This is a new setting, so
+  no save migration is needed; the default applies when the key is absent.
+
+## Scope and order (Claude's call)
+
+- Audio is runtime only: no carve, bake or save data changes, so the freeze guards are untouched. It ships for
+  every tier at once; moments on unreleased tiers simply play when players get there.
+- The lock-solved event is computed at runtime from mechanism state; it writes nothing to frozen data.
+- Slices: (1) sound service + Settings switches + synthesised musical sounds + credits + what's new;
+  (2) music; (3) real sounds, after the designer has picked them. No placeholder files ship.
+
+## Left to the builder
+
+The file format, the volume levels and the duck fade, the synth timbres, the event wiring, and how the sound
+service is split across files.
+
+## Appendix: trigger points (code inventory 2026-11-23; verify before hooking)
+
+- Pyramid stones fly in `src/app/PyramidLevel/PyramidDisplay.tsx:132`; next-level zoom `src/app/PyramidExpedition.tsx:211-235`
+- Level complete `src/app/PyramidLevel/LevelCompletedOverlay.tsx:8`; journey complete `src/app/PyramidExpedition/ExpeditionCompletionOverlay.tsx:56`
+- Walk steps `src/app/SiteMap/ExplorerDot.tsx:251`, delay `src/app/SiteMap/useSiteNavigation.ts:170`
+- Sequence tile `useSiteNavigation.ts:306` (`readSequence`)
+- Lever `useSiteNavigation.ts:317-321`, `:492`
+- Stone / plate / pipe `useSiteNavigation.ts:399-406`
+- Corridor opens: reveal wave `src/app/SiteMap/SiteMapView.tsx:1729`, `:2642`
+- Zipline / squeeze `useSiteNavigation.ts:184` (`takeSpan`), `src/app/SiteMap/useCrossing.ts`
+- Barrier recedes `src/app/SiteMap/useRegionBarrierCovers.ts:34-36`
+- Chest `src/mods/core/app/treasureChest/plugin.tsx:24`
+- Loot `src/app/SiteMap/useRewardOffer.ts:35`; reward types `src/mods/*/app/rewardDisplay.ts*`
+- Puzzle solved `src/mods/core/app/PuzzleFamilyShell.tsx:183`
+- Canister pour `CanistersBoard.tsx:142`; balance settle `BalanceBoard.tsx:192`; sudoku furl `SudokuScrolls.tsx:62`
+- Trap damage `src/mods/trap/app/TrapFamilyShell.tsx:52-53`; crocodile `crocodile/CrocodilePit.tsx:165`
+- Heal: waterskin `src/mods/trap/app/rewardContribution.ts:8`; rest `useTrapProgress.ts:70`
+- Buy / sell `src/mods/shop/app/fezShop/plugin.tsx:67`, `:98`
+- Camp `src/ui/atoms/CampScene.tsx`
+- Tomb tile `src/mods/hieroglyph/app/TombPuzzle.tsx:92`; lock panel `src/ui/molecules/TombLockPanel.tsx:17`; tableau `TombPuzzle.tsx:58`
+- Settings checkbox pattern `src/app/SettingsModal.tsx` (~96); precache globs `vite.config.ts:120`
