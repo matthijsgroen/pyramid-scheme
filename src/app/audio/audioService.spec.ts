@@ -80,6 +80,15 @@ describe("createAudioService", () => {
     expect(createContext).toHaveBeenCalledTimes(1)
   })
 
+  it("a suspended context plays nothing, and nothing plays later on resume", () => {
+    const { service, fake } = setup()
+    service.unlock()
+    fake.setState("suspended")
+    service.play("test.two")
+    service.unlock()
+    expect(fake.oscillators).toHaveLength(0)
+  })
+
   it("resumes a context the system suspended on the next tap", () => {
     const { service, fake } = setup()
     service.unlock()

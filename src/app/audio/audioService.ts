@@ -60,7 +60,8 @@ export const createAudioService = ({
       if (context && context.state !== "running") void context.resume().catch(() => {})
     },
     play: (name, options = {}) => {
-      if (!context || !effects) return
+      // A suspended or interrupted context would hold the tones and fire them all at once on resume.
+      if (!context || !effects || context.state !== "running") return
       const def = lookup(name)
       if (!def) return
       const at = context.currentTime + (options.delay ?? 0)
