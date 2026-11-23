@@ -1,5 +1,5 @@
 import { registerSound } from "./soundRegistry"
-import { JOURNEY_COMPLETE, LEVEL_COMPLETE, scaleFrequency, SOLVED, WRONG_TONE } from "./tones"
+import { JOURNEY_COMPLETE, LEVEL_COMPLETE, LOCK_SOLVED, scaleFrequency, SOLVED, WRONG_TONE } from "./tones"
 
 export const CORE_SOUNDS = {
   puzzleSolved: "puzzle.solved",
@@ -20,3 +20,4 @@ registerSound(CORE_SOUNDS.sequenceStep, ({ note = 0 }) => [
   { frequency: scaleFrequency(note), start: 0, duration: 0.35, gain: 0.18, wave: "triangle" },
 ])
 registerSound(CORE_SOUNDS.sequenceWrong, WRONG_TONE)
+registerSound(CORE_SOUNDS.lockSolved, LOCK_SOLVED)

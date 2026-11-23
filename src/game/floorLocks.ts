@@ -100,7 +100,7 @@ const contradictions = (config: FloorConfig): string[] => [
   ...((config.forks ?? []).some(fork => "in" in fork) ? ["forks"] : []),
 ]
 
-const instanceName = (placed: PlacedLock): string => placed.as ?? placed.lock.name
+export const instanceName = (placed: PlacedLock): string => placed.as ?? placed.lock.name
 
 type Seat = { instance: string; host: string; from: string; to: string }
 
