@@ -242,7 +242,7 @@
     },
     "entrance": {
       "title": "Мозаик",
-      "label": "Мозаик {{found}}/{{total}}"
+      "toPlace": "Мозаик · {{count}} за поставување"
     },
     "haul": {
       "pieces_one": "{{count}} парче мозаик",

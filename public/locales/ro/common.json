@@ -246,7 +246,7 @@
     },
     "entrance": {
       "title": "Mozaic",
-      "label": "Mozaic {{found}}/{{total}}"
+      "toPlace": "Mozaic · {{count}} de așezat"
     },
     "haul": {
       "pieces_one": "{{count}} bucată de mozaic",

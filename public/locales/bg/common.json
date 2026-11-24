@@ -242,7 +242,7 @@
     },
     "entrance": {
       "title": "Мозайка",
-      "label": "Мозайка {{found}}/{{total}}"
+      "toPlace": "Мозайка · {{count}} за поставяне"
     },
     "haul": {
       "pieces_one": "{{count}} парче от мозайка",

@@ -242,7 +242,7 @@
     },
     "entrance": {
       "title": "Mozaiku",
-      "label": "Mozaiku {{found}}/{{total}}"
+      "toPlace": "Mozaiku · {{count}} për t'u vendosur"
     },
     "haul": {
       "pieces_one": "{{count}} copë mozaiku",

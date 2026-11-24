@@ -246,7 +246,7 @@
     },
     "entrance": {
       "title": "Mosaico",
-      "label": "Mosaico {{found}}/{{total}}"
+      "toPlace": "Mosaico · {{count}} da posizionare"
     },
     "haul": {
       "pieces_one": "{{count}} tessera del mosaico",

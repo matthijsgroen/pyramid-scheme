@@ -242,7 +242,7 @@
     },
     "entrance": {
       "title": "Mosaiik",
-      "label": "Mosaiik {{found}}/{{total}}"
+      "toPlace": "Mosaiik · {{count}} paigutada"
     },
     "haul": {
       "pieces_one": "{{count}} mosaiigitükk",

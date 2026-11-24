@@ -246,7 +246,7 @@
     },
     "entrance": {
       "title": "Mosaic",
-      "label": "Mosaic {{found}}/{{total}}"
+      "toPlace": "Mosaic · {{count}} per col·locar"
     },
     "haul": {
       "pieces_one": "{{count}} tros de mosaic",

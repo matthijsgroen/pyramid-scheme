@@ -242,7 +242,7 @@
     },
     "entrance": {
       "title": "Ψηφιδωτό",
-      "label": "Ψηφιδωτό {{found}}/{{total}}"
+      "toPlace": "Ψηφιδωτό · {{count}} προς τοποθέτηση"
     },
     "haul": {
       "pieces_one": "{{count}} κομμάτι ψηφιδωτού",

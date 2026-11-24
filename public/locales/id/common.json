@@ -238,7 +238,7 @@
     },
     "entrance": {
       "title": "Mosaik",
-      "label": "Mosaik {{found}}/{{total}}"
+      "toPlace": "Mosaik · {{count}} belum dipasang"
     },
     "haul": {
       "pieces_other": "{{count}} potongan mosaik",

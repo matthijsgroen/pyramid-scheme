@@ -242,7 +242,7 @@
     },
     "entrance": {
       "title": "Mosaikoa",
-      "label": "Mosaikoa {{found}}/{{total}}"
+      "toPlace": "Mosaikoa · {{count}} jartzeko"
     },
     "haul": {
       "pieces_one": "Mosaiko-zati bat",

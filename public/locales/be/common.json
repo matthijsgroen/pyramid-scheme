@@ -250,7 +250,7 @@
     },
     "entrance": {
       "title": "Мазаіка",
-      "label": "Мазаіка {{found}}/{{total}}"
+      "toPlace": "Мазаіка · {{count}} да размяшчэння"
     },
     "haul": {
       "pieces_one": "{{count}} кавалачак мазаікі",

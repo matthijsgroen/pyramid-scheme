@@ -250,7 +250,7 @@
     },
     "entrance": {
       "title": "Mozaika",
-      "label": "Mozaika {{found}}/{{total}}"
+      "toPlace": "Mozaika · {{count}} laukia"
     },
     "haul": {
       "pieces_one": "{{count}} mozaikos gabalėlis",

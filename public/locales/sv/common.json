@@ -242,7 +242,7 @@
     },
     "entrance": {
       "title": "Mosaik",
-      "label": "Mosaik {{found}}/{{total}}"
+      "toPlace": "Mosaik · {{count}} väntar"
     },
     "haul": {
       "pieces_one": "{{count}} mosaikbit",

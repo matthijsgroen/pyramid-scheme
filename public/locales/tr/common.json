@@ -242,7 +242,7 @@
     },
     "entrance": {
       "title": "Mozaik",
-      "label": "Mozaik {{found}}/{{total}}"
+      "toPlace": "Mozaik · {{count}} yerleştirilecek"
     },
     "haul": {
       "pieces_one": "{{count}} mozaik parçası",

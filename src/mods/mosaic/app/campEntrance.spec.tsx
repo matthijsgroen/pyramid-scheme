@@ -2,12 +2,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { act, cleanup, renderHook } from "@testing-library/react"
 import { clearGameData, writeGameData } from "@/support/useGameStorage"
-import { MOSAIC_TOTAL } from "../game/mosaicCurrency"
 
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
-    t: (key: string, opts?: { found?: number; total?: number }) =>
-      opts?.found === undefined ? key : `${key}:${opts.found}/${opts.total}`,
+    t: (key: string, opts?: { count?: number }) => (opts?.count === undefined ? key : `${key}:${opts.count}`),
   }),
 }))
 
@@ -20,13 +18,25 @@ beforeEach(async () => {
 afterEach(cleanup)
 
 describe("the mosaic entrance", () => {
-  it("reads found over total from the ledger", async () => {
-    await writeGameData({
-      "pyramid-scheme-progression-v4": { ledger: { mosaicPiece_starter: 1, mosaicPiece_junior: 1 } },
-    })
+  const labelFor = async (ledger: Record<string, number>, placed: Record<string, number>) => {
+    await writeGameData({ "pyramid-scheme-progression-v4": { ledger }, "pyramid-scheme-mod-mosaic": placed })
     const { result } = renderHook(() => useMosaicEntranceLabel())
     await act(async () => {})
-    expect(result.current.label).toBe(`mosaic.entrance.label:2/${MOSAIC_TOTAL}`)
+    return result.current.label
+  }
+
+  it("is the bare name when nothing waits to be placed", async () => {
+    expect(await labelFor({ mosaicPiece_starter: 2 }, { starter: 2 })).toBe("mosaic.entrance.title")
+  })
+
+  it("counts owned pieces not yet placed", async () => {
+    expect(await labelFor({ mosaicPiece_starter: 3 }, { starter: 1 })).toBe("mosaic.entrance.toPlace:2")
+  })
+
+  it("sums pieces to place over the registers", async () => {
+    expect(await labelFor({ mosaicPiece_starter: 3, mosaicPiece_junior: 2 }, { starter: 1 })).toBe(
+      "mosaic.entrance.toPlace:4"
+    )
   })
 })
 

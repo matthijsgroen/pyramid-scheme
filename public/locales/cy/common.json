@@ -258,7 +258,7 @@
     },
     "entrance": {
       "title": "Mosaig",
-      "label": "Mosaig {{found}}/{{total}}"
+      "toPlace": "Mosaig · {{count}} i'w gosod"
     },
     "haul": {
       "pieces_zero": "{{count}} o ddarnau mosaig",

@@ -242,7 +242,7 @@
     },
     "entrance": {
       "title": "Mósaík",
-      "label": "Mósaík {{found}}/{{total}}"
+      "toPlace": "Mósaík · {{count}} ósett"
     },
     "haul": {
       "pieces_one": "{{count}} mósaíkbiti",

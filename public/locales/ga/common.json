@@ -254,7 +254,7 @@
     },
     "entrance": {
       "title": "Mósáic",
-      "label": "Mósáic {{found}}/{{total}}"
+      "toPlace": "Mósáic · {{count}} le cur"
     },
     "haul": {
       "pieces_one": "{{count}} phíosa mósáice",

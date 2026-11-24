@@ -246,7 +246,7 @@
     },
     "entrance": {
       "title": "Mozaik",
-      "label": "Mozaik {{found}}/{{total}}"
+      "toPlace": "Mozaik · {{count}} za postavljanje"
     },
     "haul": {
       "pieces_one": "{{count}} komad mozaika",

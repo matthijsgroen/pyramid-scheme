@@ -191,7 +191,7 @@ describe("reading a travel card", () => {
 
     await readCardFile()
 
-    expect((await screen.findByRole("status")).textContent).toBe(message)
+    await waitFor(() => expect(screen.getByRole("status").textContent).toBe(message))
     expect(confirm).toHaveBeenCalledTimes(0)
     expect(mocks.writeGameData).toHaveBeenCalledTimes(0)
   })

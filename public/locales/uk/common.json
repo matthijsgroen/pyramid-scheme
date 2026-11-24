@@ -250,7 +250,7 @@
     },
     "entrance": {
       "title": "Мозаїка",
-      "label": "Мозаїка {{found}}/{{total}}"
+      "toPlace": "Мозаїка · {{count}} до розміщення"
     },
     "haul": {
       "pieces_one": "{{count}} шматочок мозаїки",

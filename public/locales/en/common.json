@@ -245,7 +245,7 @@
     },
     "entrance": {
       "title": "Mosaic",
-      "label": "Mosaic {{found}}/{{total}}"
+      "toPlace": "Mosaic · {{count}} to place"
     },
     "haul": {
       "pieces_one": "{{count}} mosaic piece",

@@ -250,7 +250,7 @@
     },
     "entrance": {
       "title": "Mozaika",
-      "label": "Mozaika {{found}}/{{total}}"
+      "toPlace": "Mozaika · {{count}} na uloženie"
     },
     "haul": {
       "pieces_one": "{{count}} kúsok mozaiky",

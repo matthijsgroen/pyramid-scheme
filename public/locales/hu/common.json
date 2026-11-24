@@ -242,7 +242,7 @@
     },
     "entrance": {
       "title": "Mozaik",
-      "label": "Mozaik {{found}}/{{total}}"
+      "toPlace": "Mozaik · {{count}} elhelyezésre vár"
     },
     "haul": {
       "pieces_one": "{{count}} mozaikdarab",

@@ -242,7 +242,7 @@
     },
     "entrance": {
       "title": "Mosaiikki",
-      "label": "Mosaiikki {{found}}/{{total}}"
+      "toPlace": "Mosaiikki · {{count}} sijoitettavana"
     },
     "haul": {
       "pieces_one": "{{count}} mosaiikkipala",

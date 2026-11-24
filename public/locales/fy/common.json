@@ -242,7 +242,7 @@
     },
     "entrance": {
       "title": "Mozayyk",
-      "label": "Mozayyk {{found}}/{{total}}"
+      "toPlace": "Mozayyk · {{count}} te pleatsen"
     },
     "haul": {
       "pieces_one": "{{count}} mozayykstikje",

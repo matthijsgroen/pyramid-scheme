@@ -254,7 +254,7 @@
     },
     "entrance": {
       "title": "Mużajk",
-      "label": "Mużajk {{found}}/{{total}}"
+      "toPlace": "Mużajk · {{count}} għat-tqegħid"
     },
     "haul": {
       "pieces_one": "{{count}} biċċa tal-mużajk",

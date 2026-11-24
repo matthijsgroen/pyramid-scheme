@@ -246,7 +246,7 @@
     },
     "entrance": {
       "title": "Mozaīka",
-      "label": "Mozaīka {{found}}/{{total}}"
+      "toPlace": "Mozaīka · {{count}} gaida"
     },
     "haul": {
       "pieces_zero": "{{count}} mozaīkas gabaliņi",
