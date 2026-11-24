@@ -8,9 +8,6 @@ import { registerHomeHook } from "@/app/home/homeHooks"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { isModEnabled } from "@/mods/registeredMods"
-import { registerSound } from "@/app/audio/soundRegistry"
-import { motif } from "@/app/audio/tones"
-import { rewardSound } from "@/app/audio/coreSounds"
 import { useProgression } from "@/app/state/useProgression"
 import { MOSAIC_TIERS, mosaicBucket } from "../game/mosaicCurrency"
 import { useMosaicEntranceLabel } from "./campEntrance"
@@ -37,7 +34,6 @@ if (isModEnabled("mosaic")) {
   registerHaulLines(useMosaicHaulLines)
   registerHomeHook(useMosaicHomeReminder)
   registerMosaicRewardDisplay()
-  registerSound(rewardSound("mosaicPiece"), motif([2, 4, 7]))
   // A mosaic piece carries the register it belongs to, so a find fills the panel for the
   // difficulty it was found on.
   const mosaicPieceSchema = z.object({ type: z.literal("mosaicPiece"), tier: z.enum(MOSAIC_TIERS) })

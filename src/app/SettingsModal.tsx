@@ -9,7 +9,8 @@ import { focusOnMount, trapTab } from "@/ui/atoms/dialogFocus"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DevTools } from "@/app/dev/devToolsBuild"
 import { SaveCardTransfer } from "@/app/saveCard/SaveCardTransfer"
-import { useMusicSetting, useSoundEffectsSetting } from "@/app/audio/audioSettings"
+import { MUSIC_TRACK_URL, useMusicSetting, useSoundEffectsSetting } from "@/app/audio/audioSettings"
+import { hasSounds } from "@/app/audio/soundRegistry"
 import { SettingsSwitch } from "@/ui/molecules/SettingsSwitch"
 
 type SettingsModalProps = {
@@ -107,8 +108,11 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGa
             <span className="text-sm font-medium text-gray-700">{t("ui.disableTutorials")}</span>
           </label>
 
-          <SettingsSwitch label={t("ui.soundEffects")} checked={soundEffects} onChange={setSoundEffects} />
-          <SettingsSwitch label={t("ui.music")} checked={music} onChange={setMusic} />
+          {/* A switch shows only once there is something for it to silence. */}
+          {hasSounds() && (
+            <SettingsSwitch label={t("ui.soundEffects")} checked={soundEffects} onChange={setSoundEffects} />
+          )}
+          {MUSIC_TRACK_URL && <SettingsSwitch label={t("ui.music")} checked={music} onChange={setMusic} />}
 
           {/* Move the save to another device */}
           <div className="space-y-2">

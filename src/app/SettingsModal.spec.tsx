@@ -24,6 +24,12 @@ const setterFor = (key: string) => {
   if (!setters.has(key)) setters.set(key, vi.fn())
   return setters.get(key)!
 }
+const sounds = vi.hoisted(() => ({ registered: false }))
+vi.mock("@/app/audio/soundRegistry", async importOriginal => ({
+  ...(await importOriginal<typeof import("@/app/audio/soundRegistry")>()),
+  hasSounds: () => sounds.registered,
+}))
+
 vi.mock("@/support/useGameStorage", () => ({
   useGameStorage: (key: string, initialValue: unknown) => [initialValue, setterFor(key), true],
   clearGameData: vi.fn(async () => {}),
@@ -149,14 +155,24 @@ describe("SettingsModal as a dialog", () => {
 
 describe("the sound switches", () => {
   const switchNamed = (name: string) => screen.getByLabelText<HTMLInputElement>(name)
+  afterEach(() => {
+    sounds.registered = false
+  })
 
-  it("shows Sound effects checked and Music unchecked for a save without them", () => {
+  it("shows no sound switch while no sound is registered and no music track exists", () => {
+    render(<SettingsModal isOpen onClose={() => {}} startGame={() => {}} />)
+    expect(screen.queryByLabelText("ui.soundEffects")).toBeNull()
+    expect(screen.queryByLabelText("ui.music")).toBeNull()
+  })
+
+  it("shows Sound effects checked for a save without it once a sound is registered", () => {
+    sounds.registered = true
     render(<SettingsModal isOpen onClose={() => {}} startGame={() => {}} />)
     expect(switchNamed("ui.soundEffects").checked).toBe(true)
-    expect(switchNamed("ui.music").checked).toBe(false)
   })
 
   it("writes sound effects off when its switch is cleared", () => {
+    sounds.registered = true
     render(<SettingsModal isOpen onClose={() => {}} startGame={() => {}} />)
     fireEvent.click(switchNamed("ui.soundEffects"))
     expect(setterFor("soundEffects")).toHaveBeenCalledWith(false)

@@ -7,9 +7,6 @@ import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { registerPerkContribution, type Perk } from "@/app/SiteMap/perkContributions"
 import { isModEnabled } from "@/mods/registeredMods"
-import { registerSound } from "@/app/audio/soundRegistry"
-import { motif } from "@/app/audio/tones"
-import { HEAL_SOUND } from "./sounds"
 import { RestPanel } from "./RestPanel"
 import { useTrapHaulLines } from "./haulLines"
 import { TrapHud } from "./TrapHud"
@@ -35,7 +32,6 @@ const TRAP_PERKS = new Set(["max-health", "armor", "trap-insight", "pack-mule"])
 // See docs/mods/app-plugins-design.md.
 if (isModEnabled("trap")) {
   registerHudWidget({ id: "trap", order: 0, Component: TrapHud })
-  registerSound(HEAL_SOUND, motif([5, 7, 9], 0.09))
   registerTrapRewardDisplay()
   registerRewardSchema("waterskin", waterskinRewardSchema)
   registerRewardContribution(useTrapRewardContribution)

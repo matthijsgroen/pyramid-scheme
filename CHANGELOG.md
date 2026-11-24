@@ -7,10 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### Added
-
-- Musical tones for solved puzzles, sequence tiles, opened locks, finds and finished levels; switch them off in Settings.
-
 ### Changed
 
 - The camp mosaic shows how many pieces are waiting to be placed.
