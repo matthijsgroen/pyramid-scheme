@@ -241,8 +241,7 @@
       "wizard": "A toll és a szív"
     },
     "entrance": {
-      "title": "Mozaik",
-      "label": "Mozaik {{found}}/{{total}}"
+      "title": "Mozaik"
     },
     "haul": {
       "pieces_one": "{{count}} mozaikdarab",

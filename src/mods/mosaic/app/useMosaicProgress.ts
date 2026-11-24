@@ -1,5 +1,7 @@
+import { useProgression } from "@/app/state/useProgression"
 import { useModState } from "@/app/state/useModState"
-import type { MosaicTier } from "../game/mosaicCurrency"
+import { MOSAIC_TIERS, mosaicBucket, type MosaicTier } from "../game/mosaicCurrency"
+import { carriedPieces, type TierCounts } from "../game/placementQueue"
 
 type PlacedByTier = Partial<Record<MosaicTier, number>>
 
@@ -16,5 +18,17 @@ export const useMosaicProgress = () => {
     loaded,
     placedCount: (tier: MosaicTier) => placed[tier] ?? 0,
     placeOne: (tier: MosaicTier) => setPlaced(prev => ({ ...prev, [tier]: (prev[tier] ?? 0) + 1 })),
+  }
+}
+
+// Owned pieces the player still carries, summed over the registers.
+export const usePiecesToPlace = () => {
+  const { ledger, loaded: ledgerLoaded } = useProgression()
+  const { placedCount, loaded: placedLoaded } = useMosaicProgress()
+  const owned = Object.fromEntries(MOSAIC_TIERS.map(t => [t, ledger.get(mosaicBucket(t))])) as TierCounts
+  const placed = Object.fromEntries(MOSAIC_TIERS.map(t => [t, placedCount(t)])) as TierCounts
+  return {
+    toPlace: carriedPieces(owned, placed).reduce((sum, c) => sum + c.count, 0),
+    loaded: ledgerLoaded && placedLoaded,
   }
 }

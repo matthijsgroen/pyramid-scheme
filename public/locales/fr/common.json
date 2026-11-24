@@ -245,8 +245,7 @@
       "wizard": "La plume et le cœur"
     },
     "entrance": {
-      "title": "Mosaïque",
-      "label": "Mosaïque {{found}}/{{total}}"
+      "title": "Mosaïque"
     },
     "haul": {
       "pieces_one": "{{count}} morceau de mosaïque",

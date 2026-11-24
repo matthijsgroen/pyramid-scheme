@@ -243,7 +243,7 @@
     },
     "entrance": {
       "title": "Mozaïek",
-      "label": "Mozaïek {{found}}/{{total}}"
+      "toPlace": "Mozaïek · {{count}} te plaatsen"
     },
     "haul": {
       "pieces_one": "{{count}} mozaïekstukje",

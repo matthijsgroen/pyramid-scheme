@@ -241,8 +241,7 @@
       "wizard": "Το φτερό και η καρδιά"
     },
     "entrance": {
-      "title": "Ψηφιδωτό",
-      "label": "Ψηφιδωτό {{found}}/{{total}}"
+      "title": "Ψηφιδωτό"
     },
     "haul": {
       "pieces_one": "{{count}} κομμάτι ψηφιδωτού",
