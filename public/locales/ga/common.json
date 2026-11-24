@@ -83,6 +83,9 @@
     "clearGameData": "Glan sonraí an chluiche",
     "confirmClearGameData": "Scriosfaidh sé seo do dhul chun cinn ar fad, gach rud atá agat agus gach pirimid a d’fhiosraigh tú. Ní féidir é seo a chur ar ceal.",
     "disableTutorials": "Múch na ceachtanna",
+    "soundEffects": "Éifeachtaí fuaime",
+    "music": "Ceol",
+    "credits": "Admhálacha",
     "treasureTomb": "Áit an Stóir",
     "requiresMapPieces": "Teastaíonn píosaí léarscáile",
     "mapPieces": "Píosaí Léarscáile",
@@ -2193,6 +2196,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Athscríobhann an líníocht an téacs: bogann gach nóta tráchta go dtí an barr"
+  },
+  "credits": {
+    "sounds": "Fuaimeanna agus ceol",
+    "none": "Níl aon fhuaim admhaithe go fóill.",
+    "source": "Foinse",
+    "licence": "Ceadúnas"
   },
   "saveCard": {
     "title": "Cárta taistil",

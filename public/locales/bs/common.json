@@ -83,6 +83,9 @@
     "clearGameData": "Obriši podatke igre",
     "confirmClearGameData": "Ovo zauvijek briše sav napredak, predmete i istražene piramide. To se ne može vratiti.",
     "disableTutorials": "Isključi upute",
+    "soundEffects": "Zvučni efekti",
+    "music": "Muzika",
+    "credits": "Zasluge",
     "treasureTomb": "Mjesto blaga",
     "requiresMapPieces": "Trebaju komadi mape",
     "mapPieces": "Komadi mape",
@@ -1920,6 +1923,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Crtanje prepisuje tekst: svaki komentar ide na vrh"
+  },
+  "credits": {
+    "sounds": "Zvukovi i muzika",
+    "none": "Još nema navedenih zvukova.",
+    "source": "Izvor",
+    "licence": "Licenca"
   },
   "saveCard": {
     "title": "Putna kartica",

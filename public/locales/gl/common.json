@@ -83,6 +83,9 @@
     "clearGameData": "Borrar os datos do xogo",
     "confirmClearGameData": "Isto borra para sempre todo o progreso, os obxectos e as pirámides exploradas. Non se pode desfacer.",
     "disableTutorials": "Desactivar as axudas",
+    "soundEffects": "Efectos de son",
+    "music": "Música",
+    "credits": "Créditos",
     "treasureTomb": "Lugar do tesouro",
     "requiresMapPieces": "Fan falta anacos de mapa",
     "mapPieces": "Anacos de mapa",
@@ -1822,6 +1825,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Debuxar reescribe o texto: todos os comentarios van ao principio"
+  },
+  "credits": {
+    "sounds": "Sons e música",
+    "none": "Aínda non hai sons acreditados.",
+    "source": "Fonte",
+    "licence": "Licenza"
   },
   "saveCard": {
     "title": "Tarxeta de viaxe",

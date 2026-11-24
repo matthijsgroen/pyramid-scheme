@@ -83,6 +83,9 @@
     "clearGameData": "Smazat herní data",
     "confirmClearGameData": "Tímhle navždy smažeš celý postup, všechny předměty a prozkoumané pyramidy. Nejde to vrátit.",
     "disableTutorials": "Vypnout návody",
+    "soundEffects": "Zvukové efekty",
+    "music": "Hudba",
+    "credits": "Autoři",
     "treasureTomb": "Místo s pokladem",
     "requiresMapPieces": "Potřebuješ kousky mapy",
     "mapPieces": "Kousky mapy",
@@ -2039,6 +2042,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Kreslení přepíše text: všechny komentáře se přesunou nahoru"
+  },
+  "credits": {
+    "sounds": "Zvuky a hudba",
+    "none": "Zatím nejsou uvedeny žádné zvuky.",
+    "source": "Zdroj",
+    "licence": "Licence"
   },
   "saveCard": {
     "title": "Cestovní karta",

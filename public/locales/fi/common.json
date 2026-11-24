@@ -83,6 +83,9 @@
     "clearGameData": "Poista pelitiedot",
     "confirmClearGameData": "Tämä poistaa pysyvästi kaiken edistymisen, esineet ja tutkitut pyramidit. Tätä ei voi perua.",
     "disableTutorials": "Poista opastukset käytöstä",
+    "soundEffects": "Äänitehosteet",
+    "music": "Musiikki",
+    "credits": "Tekijät",
     "treasureTomb": "Aarteen paikka",
     "requiresMapPieces": "Tarvitset karttapaloja",
     "mapPieces": "Karttapalat",
@@ -1787,6 +1790,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Piirtäminen kirjoittaa tekstin uudelleen: jokainen kommentti siirtyy ylös"
+  },
+  "credits": {
+    "sounds": "Äänet ja musiikki",
+    "none": "Ääniä ei ole vielä mainittu.",
+    "source": "Lähde",
+    "licence": "Lisenssi"
   },
   "saveCard": {
     "title": "Matkakortti",

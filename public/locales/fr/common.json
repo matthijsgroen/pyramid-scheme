@@ -83,6 +83,9 @@
     "clearGameData": "Effacer les données du jeu",
     "confirmClearGameData": "Ça efface pour toujours toute ta progression, tes objets et les pyramides explorées. On ne peut pas revenir en arrière.",
     "disableTutorials": "Désactiver les explications",
+    "soundEffects": "Effets sonores",
+    "music": "Musique",
+    "credits": "Crédits",
     "treasureTomb": "Lieu du trésor",
     "requiresMapPieces": "Il faut des morceaux de carte",
     "mapPieces": "Morceaux de carte",
@@ -1948,6 +1951,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Dessiner réécrit le texte : tous les commentaires vont en haut"
+  },
+  "credits": {
+    "sounds": "Sons et musique",
+    "none": "Aucun son n'est encore crédité.",
+    "source": "Source",
+    "licence": "Licence"
   },
   "saveCard": {
     "title": "Carte de voyage",

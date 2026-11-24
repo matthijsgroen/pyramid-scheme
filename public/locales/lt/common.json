@@ -83,6 +83,9 @@
     "clearGameData": "Ištrinti žaidimo duomenis",
     "confirmClearGameData": "Tai visam laikui ištrins visą pažangą, daiktus ir ištyrinėtas piramides. To nebus galima atšaukti.",
     "disableTutorials": "Išjungti patarimus",
+    "soundEffects": "Garso efektai",
+    "music": "Muzika",
+    "credits": "Kūrėjai",
     "treasureTomb": "Lobio vieta",
     "requiresMapPieces": "Reikia žemėlapio gabalėlių",
     "mapPieces": "Žemėlapio gabalėliai",
@@ -2060,6 +2063,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Brėžiant tekstas perrašomas: visi komentarai perkeliami į viršų"
+  },
+  "credits": {
+    "sounds": "Garsai ir muzika",
+    "none": "Kol kas garsų nėra nurodyta.",
+    "source": "Šaltinis",
+    "licence": "Licencija"
   },
   "saveCard": {
     "title": "Kelionės kortelė",

@@ -83,6 +83,9 @@
     "clearGameData": "Ħassar id-data tal-logħba",
     "confirmClearGameData": "Dan iħassar għal dejjem il-progress kollu, l-oġġetti u l-piramidi li esplorajt. Ma tistax terġa' lura.",
     "disableTutorials": "Itfi t-tutorials",
+    "soundEffects": "Effetti tal-ħoss",
+    "music": "Mużika",
+    "credits": "Krediti",
     "treasureTomb": "Post tat-Teżor",
     "requiresMapPieces": "Trid biċċiet tal-mappa",
     "mapPieces": "Biċċiet tal-Mappa",
@@ -2193,6 +2196,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "It-tpinġija terġa' tikteb it-test: kull kumment imur fuq nett"
+  },
+  "credits": {
+    "sounds": "Ħsejjes u mużika",
+    "none": "Għadu ma hemm l-ebda ħoss ikkreditat.",
+    "source": "Sors",
+    "licence": "Liċenzja"
   },
   "saveCard": {
     "title": "Karta tal-vjaġġ",

@@ -83,6 +83,9 @@
     "clearGameData": "Apagar os dados do jogo",
     "confirmClearGameData": "Isto apaga para sempre todo o progresso, os objetos e as pirâmides exploradas. Não dá para voltar atrás.",
     "disableTutorials": "Desligar as explicações",
+    "soundEffects": "Efeitos sonoros",
+    "music": "Música",
+    "credits": "Créditos",
     "treasureTomb": "Lugar do tesouro",
     "requiresMapPieces": "Precisas de pedaços do mapa",
     "mapPieces": "Pedaços do mapa",
@@ -1941,6 +1944,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Desenhar reescreve o texto: todos os comentários vão para o topo"
+  },
+  "credits": {
+    "sounds": "Sons e música",
+    "none": "Ainda não há sons creditados.",
+    "source": "Fonte",
+    "licence": "Licença"
   },
   "saveCard": {
     "title": "Cartão de viagem",

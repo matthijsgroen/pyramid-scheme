@@ -83,6 +83,9 @@
     "clearGameData": "Обриши податке игре",
     "confirmClearGameData": "Ово заувек брише сав напредак, предмете и истражене пирамиде. Не може да се врати.",
     "disableTutorials": "Искључи упутства",
+    "soundEffects": "Zvučni efekti",
+    "music": "Muzika",
+    "credits": "Zasluge",
     "treasureTomb": "Место са благом",
     "requiresMapPieces": "Потребни су комади мапе",
     "mapPieces": "Комади мапе",
@@ -1913,6 +1916,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Цртање поново пише текст: сваки коментар иде на врх"
+  },
+  "credits": {
+    "sounds": "Zvuci i muzika",
+    "none": "Još nema navedenih zvukova.",
+    "source": "Izvor",
+    "licence": "Licenca"
   },
   "saveCard": {
     "title": "Путна картица",

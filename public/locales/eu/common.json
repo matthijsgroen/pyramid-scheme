@@ -83,6 +83,9 @@
     "clearGameData": "Ezabatu jokoaren datuak",
     "confirmClearGameData": "Honek betiko ezabatzen ditu aurrerapen guztia, gauza guztiak eta arakatutako piramideak. Ezin da desegin.",
     "disableTutorials": "Desgaitu tutorialak",
+    "soundEffects": "Soinu-efektuak",
+    "music": "Musika",
+    "credits": "Kredituak",
     "treasureTomb": "Altxorraren lekua",
     "requiresMapPieces": "Mapa-zatiak behar dira",
     "mapPieces": "Mapa-zatiak",
@@ -1808,6 +1811,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Marrazteak testua berridazten du: iruzkin guztiak goira mugitzen dira"
+  },
+  "credits": {
+    "sounds": "Soinuak eta musika",
+    "none": "Oraindik ez dago soinurik aipatuta.",
+    "source": "Iturria",
+    "licence": "Lizentzia"
   },
   "saveCard": {
     "title": "Bidaia-txartela",

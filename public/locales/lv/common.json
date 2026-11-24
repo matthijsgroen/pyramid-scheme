@@ -83,6 +83,9 @@
     "clearGameData": "Dzēst spēles datus",
     "confirmClearGameData": "Tas uz visiem laikiem izdzēsīs visu progresu, mantas un izpētītās piramīdas. To vairs nevarēs atgriezt.",
     "disableTutorials": "Izslēgt pamācības",
+    "soundEffects": "Skaņas efekti",
+    "music": "Mūzika",
+    "credits": "Autori",
     "treasureTomb": "Dārgumu vieta",
     "requiresMapPieces": "Vajag kartes gabaliņus",
     "mapPieces": "Kartes gabaliņi",
@@ -1920,6 +1923,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Zīmēšana pārraksta tekstu: visi komentāri pārvietojas uz augšu"
+  },
+  "credits": {
+    "sounds": "Skaņas un mūzika",
+    "none": "Vēl nav norādītu skaņu.",
+    "source": "Avots",
+    "licence": "Licence"
   },
   "saveCard": {
     "title": "Ceļojuma kartīte",

@@ -83,6 +83,9 @@
     "clearGameData": "Usuń dane gry",
     "confirmClearGameData": "To na zawsze usunie wszystkie postępy, przedmioty i odkryte piramidy. Nie da się tego cofnąć.",
     "disableTutorials": "Wyłącz samouczki",
+    "soundEffects": "Efekty dźwiękowe",
+    "music": "Muzyka",
+    "credits": "Twórcy",
     "treasureTomb": "Miejsce skarbu",
     "requiresMapPieces": "Potrzebne kawałki mapy",
     "mapPieces": "Kawałki mapy",
@@ -2046,6 +2049,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Rysowanie przepisuje tekst: każdy komentarz trafia na górę"
+  },
+  "credits": {
+    "sounds": "Dźwięki i muzyka",
+    "none": "Nie podano jeszcze żadnych dźwięków.",
+    "source": "Źródło",
+    "licence": "Licencja"
   },
   "saveCard": {
     "title": "Karta podróżna",

@@ -83,6 +83,9 @@
     "clearGameData": "Cancella i dati di gioco",
     "confirmClearGameData": "Così cancelli per sempre tutti i progressi, gli oggetti e le piramidi esplorate. Non si può tornare indietro.",
     "disableTutorials": "Disattiva i tutorial",
+    "soundEffects": "Effetti sonori",
+    "music": "Musica",
+    "credits": "Crediti",
     "treasureTomb": "Luogo del tesoro",
     "requiresMapPieces": "Servono dei pezzi di mappa",
     "mapPieces": "Pezzi di mappa",
@@ -1948,6 +1951,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Disegnare riscrive il testo: tutti i commenti finiscono in cima"
+  },
+  "credits": {
+    "sounds": "Suoni e musica",
+    "none": "Non ci sono ancora suoni citati.",
+    "source": "Fonte",
+    "licence": "Licenza"
   },
   "saveCard": {
     "title": "Carta di viaggio",

@@ -83,6 +83,9 @@
     "clearGameData": "Fshi të dhënat e lojës",
     "confirmClearGameData": "Kjo fshin përgjithmonë gjithçka: përparimin, sendet dhe piramidat që ke eksploruar. Nuk kthehet më.",
     "disableTutorials": "Çaktivizo mësimet",
+    "soundEffects": "Efekte zanore",
+    "music": "Muzika",
+    "credits": "Kredite",
     "treasureTomb": "Vendi i thesarit",
     "requiresMapPieces": "Duhen copa harte",
     "mapPieces": "Copat e hartës",
@@ -1794,6 +1797,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Vizatimi e rishkruan tekstin: çdo koment shkon në krye"
+  },
+  "credits": {
+    "sounds": "Tinguj dhe muzikë",
+    "none": "Ende nuk ka tinguj të përmendur.",
+    "source": "Burimi",
+    "licence": "Licenca"
   },
   "saveCard": {
     "title": "Kartë udhëtimi",

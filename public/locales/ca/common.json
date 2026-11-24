@@ -83,6 +83,9 @@
     "clearGameData": "Esborra les dades del joc",
     "confirmClearGameData": "Això esborra per sempre tot el que has fet, els objectes i les piràmides explorades. No es pot desfer.",
     "disableTutorials": "Desactiva les explicacions",
+    "soundEffects": "Efectes de so",
+    "music": "Música",
+    "credits": "Crèdits",
     "treasureTomb": "Lloc del tresor",
     "requiresMapPieces": "Calen trossos de mapa",
     "mapPieces": "Trossos de mapa",
@@ -1948,6 +1951,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Dibuixar reescriu el text: tots els comentaris es mouen a dalt de tot"
+  },
+  "credits": {
+    "sounds": "Sons i música",
+    "none": "Encara no hi ha sons acreditats.",
+    "source": "Font",
+    "licence": "Llicència"
   },
   "saveCard": {
     "title": "Targeta de viatge",

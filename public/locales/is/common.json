@@ -83,6 +83,9 @@
     "clearGameData": "Eyða leikgögnum",
     "confirmClearGameData": "Þetta eyðir öllu fyrir fullt og allt: framvindu, hlutum og könnuðum pýramídum. Það er ekki hægt að taka það til baka.",
     "disableTutorials": "Slökkva á kennslu",
+    "soundEffects": "Hljóðbrellur",
+    "music": "Tónlist",
+    "credits": "Þakkir",
     "treasureTomb": "Fjársjóðsstaður",
     "requiresMapPieces": "Þarf kortabúta",
     "mapPieces": "Kortabútar",
@@ -1787,6 +1790,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Teikning endurskrifar textann: allar athugasemdir færast efst"
+  },
+  "credits": {
+    "sounds": "Hljóð og tónlist",
+    "none": "Engin hljóð hafa verið tilgreind enn.",
+    "source": "Heimild",
+    "licence": "Leyfi"
   },
   "saveCard": {
     "title": "Ferðakort",

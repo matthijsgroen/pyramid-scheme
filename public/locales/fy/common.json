@@ -83,6 +83,9 @@
     "clearGameData": "Spulgegevens wiskje",
     "confirmClearGameData": "Dit smyt foar altyd alle fuortgong, dingen en ferkende piramiden fuort. Dit kin net ûngedien makke wurde.",
     "disableTutorials": "Útlis útsette",
+    "soundEffects": "Lûdseffekten",
+    "music": "Muzyk",
+    "credits": "Makkers",
     "treasureTomb": "Skatplak",
     "requiresMapPieces": "Kaartstikken nedich",
     "mapPieces": "Kaartstikken",
@@ -1815,6 +1818,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Tekenjen skriuwt de tekst opnij: elk kommentaar giet nei boppen"
+  },
+  "credits": {
+    "sounds": "Lûden en muzyk",
+    "none": "Der binne noch gjin lûden neamd.",
+    "source": "Boarne",
+    "licence": "Lisinsje"
   },
   "saveCard": {
     "title": "Reiskaart",

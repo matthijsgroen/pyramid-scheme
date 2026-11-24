@@ -83,6 +83,9 @@
     "clearGameData": "Slett spilldata",
     "confirmClearGameData": "Dette sletter alt du har klart, alle ting og alle pyramider du har utforsket, for alltid. Det kan ikke angres.",
     "disableTutorials": "Slå av opplæringen",
+    "soundEffects": "Lydeffekter",
+    "music": "Musikk",
+    "credits": "Medvirkende",
     "treasureTomb": "Skattested",
     "requiresMapPieces": "Krever kartbiter",
     "mapPieces": "Kartbiter",
@@ -1787,6 +1790,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Når du tegner, skrives teksten om: alle kommentarer flyttes til toppen"
+  },
+  "credits": {
+    "sounds": "Lyder og musikk",
+    "none": "Ingen lyder er kreditert ennå.",
+    "source": "Kilde",
+    "licence": "Lisens"
   },
   "saveCard": {
     "title": "Reisekort",

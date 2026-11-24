@@ -83,6 +83,9 @@
     "clearGameData": "Slet spildata",
     "confirmClearGameData": "Det sletter alt, hvad du har klaret, alle dine ting og alle de pyramider, du har udforsket. Det kan ikke fortrydes.",
     "disableTutorials": "Slå vejledning fra",
+    "soundEffects": "Lydeffekter",
+    "music": "Musik",
+    "credits": "Medvirkende",
     "treasureTomb": "Skattested",
     "requiresMapPieces": "Kræver kortstykker",
     "mapPieces": "Kortstykker",
@@ -1801,6 +1804,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Når du tegner, bliver teksten skrevet om: alle kommentarer flyttes til toppen"
+  },
+  "credits": {
+    "sounds": "Lyde og musik",
+    "none": "Der er endnu ingen lyde at kreditere.",
+    "source": "Kilde",
+    "licence": "Licens"
   },
   "saveCard": {
     "title": "Rejsekort",

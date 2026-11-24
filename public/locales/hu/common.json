@@ -83,6 +83,9 @@
     "clearGameData": "Játékadatok törlése",
     "confirmClearGameData": "Ez örökre törli az összes haladást, tárgyat és felfedezett piramist. Nem lehet visszacsinálni.",
     "disableTutorials": "Segítő magyarázatok kikapcsolása",
+    "soundEffects": "Hangeffektek",
+    "music": "Zene",
+    "credits": "Közreműködők",
     "treasureTomb": "Kincses hely",
     "requiresMapPieces": "Térképdarabok kellenek hozzá",
     "mapPieces": "Térképdarabok",
@@ -1794,6 +1797,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "A rajzolás átírja a szöveget: minden megjegyzés a tetejére kerül"
+  },
+  "credits": {
+    "sounds": "Hangok és zene",
+    "none": "Még nincs feltüntetett hang.",
+    "source": "Forrás",
+    "licence": "Licenc"
   },
   "saveCard": {
     "title": "Útikártya",

@@ -83,6 +83,9 @@
     "clearGameData": "Dileu data'r gêm",
     "confirmClearGameData": "Bydd hyn yn dileu popeth am byth: dy gynnydd, dy bethau a'r pyramidiau rwyt ti wedi'u harchwilio. Does dim ffordd i'w cael nhw 'nôl.",
     "disableTutorials": "Diffodd y gwersi",
+    "soundEffects": "Effeithiau sain",
+    "music": "Cerddoriaeth",
+    "credits": "Cydnabyddiaethau",
     "treasureTomb": "Lle'r trysor",
     "requiresMapPieces": "Angen darnau o fap",
     "mapPieces": "Darnau o fap",
@@ -2291,6 +2294,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Mae tynnu llun yn ailysgrifennu'r testun: mae pob sylw'n symud i'r top"
+  },
+  "credits": {
+    "sounds": "Seiniau a cherddoriaeth",
+    "none": "Does dim synau wedi'u cydnabod eto.",
+    "source": "Ffynhonnell",
+    "licence": "Trwydded"
   },
   "saveCard": {
     "title": "Cerdyn teithio",

@@ -83,6 +83,9 @@
     "clearGameData": "Hapus data permainan",
     "confirmClearGameData": "Ini menghapus semua progres, barang, dan piramida yang sudah dijelajahi untuk selamanya. Tidak bisa dibatalkan.",
     "disableTutorials": "Matikan petunjuk awal",
+    "soundEffects": "Efek suara",
+    "music": "Musik",
+    "credits": "Kredit",
     "treasureTomb": "Lokasi Harta",
     "requiresMapPieces": "Butuh potongan peta",
     "mapPieces": "Potongan Peta",
@@ -1682,6 +1685,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Menggambar menulis ulang teksnya: semua komentar pindah ke atas"
+  },
+  "credits": {
+    "sounds": "Suara dan musik",
+    "none": "Belum ada suara yang dikreditkan.",
+    "source": "Sumber",
+    "licence": "Lisensi"
   },
   "saveCard": {
     "title": "Kartu perjalanan",

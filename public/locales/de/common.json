@@ -83,6 +83,9 @@
     "clearGameData": "Spieldaten löschen",
     "confirmClearGameData": "Das löscht für immer deinen ganzen Fortschritt, alle Gegenstände und alle erkundeten Pyramiden. Das kann man nicht rückgängig machen.",
     "disableTutorials": "Anleitungen ausschalten",
+    "soundEffects": "Soundeffekte",
+    "music": "Musik",
+    "credits": "Mitwirkende",
     "treasureTomb": "Schatzort",
     "requiresMapPieces": "Braucht Kartenstücke",
     "mapPieces": "Kartenstücke",
@@ -1822,6 +1825,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Zeichnen schreibt den Text neu: Alle Kommentare wandern nach oben"
+  },
+  "credits": {
+    "sounds": "Klänge und Musik",
+    "none": "Noch keine Klänge aufgeführt.",
+    "source": "Quelle",
+    "licence": "Lizenz"
   },
   "saveCard": {
     "title": "Reisekarte",

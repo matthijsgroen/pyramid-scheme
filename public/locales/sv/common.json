@@ -83,6 +83,9 @@
     "clearGameData": "Radera speldata",
     "confirmClearGameData": "Det här raderar allt du har klarat, alla saker och alla utforskade pyramider för alltid. Det går inte att ångra.",
     "disableTutorials": "Stäng av hjälptexter",
+    "soundEffects": "Ljudeffekter",
+    "music": "Musik",
+    "credits": "Medverkande",
     "treasureTomb": "Skattens plats",
     "requiresMapPieces": "Kräver kartbitar",
     "mapPieces": "Kartbitar",
@@ -1794,6 +1797,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "När du ritar skrivs texten om: alla kommentarer flyttas högst upp"
+  },
+  "credits": {
+    "sounds": "Ljud och musik",
+    "none": "Inga ljud har krediterats ännu.",
+    "source": "Källa",
+    "licence": "Licens"
   },
   "saveCard": {
     "title": "Resekort",

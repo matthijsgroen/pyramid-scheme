@@ -83,6 +83,9 @@
     "clearGameData": "Kustuta mänguandmed",
     "confirmClearGameData": "See kustutab jäädavalt kogu edenemise, esemed ja uuritud püramiidid. Seda ei saa tagasi võtta.",
     "disableTutorials": "Lülita õpetused välja",
+    "soundEffects": "Heliefektid",
+    "music": "Muusika",
+    "credits": "Autorid",
     "treasureTomb": "Aarde asukoht",
     "requiresMapPieces": "Vaja on kaarditükke",
     "mapPieces": "Kaarditükid",
@@ -1787,6 +1790,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Joonistamine kirjutab teksti ümber: iga kommentaar liigub üles"
+  },
+  "credits": {
+    "sounds": "Helid ja muusika",
+    "none": "Helisid pole veel nimetatud.",
+    "source": "Allikas",
+    "licence": "Litsents"
   },
   "saveCard": {
     "title": "Reisikaart",

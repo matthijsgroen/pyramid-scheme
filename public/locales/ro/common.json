@@ -83,6 +83,9 @@
     "clearGameData": "Șterge datele jocului",
     "confirmClearGameData": "Asta șterge pentru totdeauna tot progresul, obiectele și piramidele explorate. Nu se mai poate anula.",
     "disableTutorials": "Oprește explicațiile",
+    "soundEffects": "Efecte sonore",
+    "music": "Muzică",
+    "credits": "Credite",
     "treasureTomb": "Locul comorii",
     "requiresMapPieces": "Ai nevoie de bucăți de hartă",
     "mapPieces": "Bucăți de hartă",
@@ -1920,6 +1923,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Desenul rescrie textul: toate comentariile se mută sus"
+  },
+  "credits": {
+    "sounds": "Sunete și muzică",
+    "none": "Încă nu există sunete menționate.",
+    "source": "Sursă",
+    "licence": "Licență"
   },
   "saveCard": {
     "title": "Card de călătorie",

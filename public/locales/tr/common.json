@@ -83,6 +83,9 @@
     "clearGameData": "Oyun verilerini sil",
     "confirmClearGameData": "Bu, bütün ilerlemeyi, eşyaları ve keşfedilen piramitleri tamamen siler. Geri alınamaz.",
     "disableTutorials": "Öğreticileri kapat",
+    "soundEffects": "Ses efektleri",
+    "music": "Müzik",
+    "credits": "Emeği geçenler",
     "treasureTomb": "Hazine Yeri",
     "requiresMapPieces": "Harita parçaları gerekiyor",
     "mapPieces": "Harita Parçaları",
@@ -1787,6 +1790,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Çizim metni yeniden yazar: bütün yorumlar en üste taşınır"
+  },
+  "credits": {
+    "sounds": "Sesler ve müzik",
+    "none": "Henüz anılan bir ses yok.",
+    "source": "Kaynak",
+    "licence": "Lisans"
   },
   "saveCard": {
     "title": "Yol kartı",

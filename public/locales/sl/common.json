@@ -83,6 +83,9 @@
     "clearGameData": "Izbriši podatke igre",
     "confirmClearGameData": "S tem za vedno izbrišeš ves napredek, vse predmete in raziskane piramide. Tega ni mogoče razveljaviti.",
     "disableTutorials": "Izklopi navodila",
+    "soundEffects": "Zvočni učinki",
+    "music": "Glasba",
+    "credits": "Zasluge",
     "treasureTomb": "Kraj zaklada",
     "requiresMapPieces": "Potrebuješ koščke zemljevida",
     "mapPieces": "Koščki zemljevida",
@@ -2039,6 +2042,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Risanje prepiše besedilo: vsi komentarji se premaknejo na vrh"
+  },
+  "credits": {
+    "sounds": "Zvoki in glasba",
+    "none": "Še ni navedenih zvokov.",
+    "source": "Vir",
+    "licence": "Licenca"
   },
   "saveCard": {
     "title": "Popotna kartica",

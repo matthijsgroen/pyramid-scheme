@@ -83,6 +83,9 @@
     "clearGameData": "Zmazať herné údaje",
     "confirmClearGameData": "Toto navždy zmaže celý postup, všetky predmety a preskúmané pyramídy. Už sa to nedá vrátiť.",
     "disableTutorials": "Vypnúť návody",
+    "soundEffects": "Zvukové efekty",
+    "music": "Hudba",
+    "credits": "Autori",
     "treasureTomb": "Miesto s pokladom",
     "requiresMapPieces": "Treba kúsky mapy",
     "mapPieces": "Kúsky mapy",
@@ -2039,6 +2042,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Kreslenie prepíše text: všetky komentáre sa presunú navrch"
+  },
+  "credits": {
+    "sounds": "Zvuky a hudba",
+    "none": "Zatiaľ nie sú uvedené žiadne zvuky.",
+    "source": "Zdroj",
+    "licence": "Licencia"
   },
   "saveCard": {
     "title": "Cestovná karta",
