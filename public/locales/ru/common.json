@@ -249,8 +249,7 @@
       "wizard": "Перо и сердце"
     },
     "entrance": {
-      "title": "Мозаика",
-      "label": "Мозаика {{found}}/{{total}}"
+      "title": "Мозаика"
     },
     "haul": {
       "pieces_one": "{{count}} кусочек мозаики",

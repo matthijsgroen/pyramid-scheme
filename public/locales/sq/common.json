@@ -241,8 +241,7 @@
       "wizard": "Pendla dhe zemra"
     },
     "entrance": {
-      "title": "Mozaiku",
-      "label": "Mozaiku {{found}}/{{total}}"
+      "title": "Mozaiku"
     },
     "haul": {
       "pieces_one": "{{count}} copë mozaiku",

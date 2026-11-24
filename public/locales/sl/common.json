@@ -249,8 +249,7 @@
       "wizard": "Pero in srce"
     },
     "entrance": {
-      "title": "Mozaik",
-      "label": "Mozaik {{found}}/{{total}}"
+      "title": "Mozaik"
     },
     "haul": {
       "pieces_one": "{{count}} košček mozaika",

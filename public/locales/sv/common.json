@@ -241,8 +241,7 @@
       "wizard": "Fjädern och hjärtat"
     },
     "entrance": {
-      "title": "Mosaik",
-      "label": "Mosaik {{found}}/{{total}}"
+      "title": "Mosaik"
     },
     "haul": {
       "pieces_one": "{{count}} mosaikbit",

@@ -249,8 +249,7 @@
       "wizard": "Pero a srdce"
     },
     "entrance": {
-      "title": "Mozaika",
-      "label": "Mozaika {{found}}/{{total}}"
+      "title": "Mozaika"
     },
     "haul": {
       "pieces_one": "{{count}} kousek mozaiky",
