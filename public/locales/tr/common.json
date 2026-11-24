@@ -241,7 +241,8 @@
       "wizard": "Tüy ve Kalp"
     },
     "entrance": {
-      "title": "Mozaik"
+      "title": "Mozaik",
+      "toPlace": "Mozaik · {{count}} yerleştirilecek"
     },
     "haul": {
       "pieces_one": "{{count}} mozaik parçası",

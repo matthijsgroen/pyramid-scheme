@@ -253,7 +253,8 @@
       "wizard": "An Cleite agus an Croí"
     },
     "entrance": {
-      "title": "Mósáic"
+      "title": "Mósáic",
+      "toPlace": "Mósáic · {{count}} le cur"
     },
     "haul": {
       "pieces_one": "{{count}} phíosa mósáice",

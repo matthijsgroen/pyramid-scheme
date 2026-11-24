@@ -245,7 +245,8 @@
       "wizard": "A Pena e o Coração"
     },
     "entrance": {
-      "title": "Mosaico"
+      "title": "Mosaico",
+      "toPlace": "Mosaico · {{count}} para posicionar"
     },
     "haul": {
       "pieces_one": "{{count}} peça de mosaico",
