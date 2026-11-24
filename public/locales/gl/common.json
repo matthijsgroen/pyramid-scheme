@@ -241,7 +241,8 @@
       "wizard": "A pluma e o corazón"
     },
     "entrance": {
-      "title": "Mosaico"
+      "title": "Mosaico",
+      "toPlace": "Mosaico · {{count}} por colocar"
     },
     "haul": {
       "pieces_one": "{{count}} peza de mosaico",

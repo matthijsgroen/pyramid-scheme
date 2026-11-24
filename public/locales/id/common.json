@@ -237,7 +237,8 @@
       "wizard": "Bulu dan Jantung"
     },
     "entrance": {
-      "title": "Mosaik"
+      "title": "Mosaik",
+      "toPlace": "Mosaik · {{count}} belum dipasang"
     },
     "haul": {
       "pieces_other": "{{count}} potongan mosaik",

@@ -241,7 +241,8 @@
       "wizard": "Die Feder und das Herz"
     },
     "entrance": {
-      "title": "Mosaik"
+      "title": "Mosaik",
+      "toPlace": "Mosaik · {{count}} zu platzieren"
     },
     "haul": {
       "pieces_one": "{{count}} Mosaikstück",

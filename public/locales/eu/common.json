@@ -241,7 +241,8 @@
       "wizard": "Luma eta bihotza"
     },
     "entrance": {
-      "title": "Mosaikoa"
+      "title": "Mosaikoa",
+      "toPlace": "Mosaikoa · {{count}} jartzeko"
     },
     "haul": {
       "pieces_one": "Mosaiko-zati bat",

@@ -245,7 +245,8 @@
       "wizard": "Pana și inima"
     },
     "entrance": {
-      "title": "Mozaic"
+      "title": "Mozaic",
+      "toPlace": "Mozaic · {{count}} de așezat"
     },
     "haul": {
       "pieces_one": "{{count}} bucată de mozaic",

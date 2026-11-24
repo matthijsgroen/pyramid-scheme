@@ -245,7 +245,8 @@
       "wizard": "Pero i srce"
     },
     "entrance": {
-      "title": "Mozaik"
+      "title": "Mozaik",
+      "toPlace": "Mozaik · {{count}} za postavljanje"
     },
     "haul": {
       "pieces_one": "{{count}} komad mozaika",

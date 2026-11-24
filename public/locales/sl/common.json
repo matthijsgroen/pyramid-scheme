@@ -249,7 +249,8 @@
       "wizard": "Pero in srce"
     },
     "entrance": {
-      "title": "Mozaik"
+      "title": "Mozaik",
+      "toPlace": "Mozaik · {{count}} za postavitev"
     },
     "haul": {
       "pieces_one": "{{count}} košček mozaika",

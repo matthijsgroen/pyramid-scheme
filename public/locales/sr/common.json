@@ -245,7 +245,8 @@
       "wizard": "Перо и срце"
     },
     "entrance": {
-      "title": "Мозаик"
+      "title": "Мозаик",
+      "toPlace": "Мозаик · {{count}} за постављање"
     },
     "haul": {
       "pieces_one": "{{count}} комадић мозаика",

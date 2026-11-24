@@ -245,7 +245,8 @@
       "wizard": "Spalva un sirds"
     },
     "entrance": {
-      "title": "Mozaīka"
+      "title": "Mozaīka",
+      "toPlace": "Mozaīka · {{count}} gaida"
     },
     "haul": {
       "pieces_zero": "{{count}} mozaīkas gabaliņi",
