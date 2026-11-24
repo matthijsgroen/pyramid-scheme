@@ -1,4 +1,5 @@
 import { useLevelSounds } from "@/app/PyramidExpedition/useLevelSounds"
+import { useDuckMusic } from "@/app/audio/useDuckMusic"
 import { type FC, type ReactNode, use, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Level } from "@/app/PyramidLevel/Level"
@@ -120,6 +121,8 @@ export const PyramidExpedition: FC<{
   // persistent interior — its board is generated from a seed that never moves, so the numbers on it
   // are the same ones the player worked out the first time.
   const revealSolvedBoard = hasInterior && activeJourney.completionCount > 0 && !expeditionCompleted
+  // The exterior board is a puzzle, so the music drops while it is being solved.
+  useDuckMusic(!showingInterior && !boardSolved && !expeditionCompleted && !boardless && !revealSolvedBoard)
 
   // Check if a new pyramid journey is unlocked (first time completing this journey)
   const nextPyramidJourneyId =

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Background music (Egyptian Dawn by kaazoom), off by default; switch it on in Settings.
+
 ### Changed
 
 - The camp mosaic shows how many pieces are waiting to be placed.

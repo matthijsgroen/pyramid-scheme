@@ -1,4 +1,5 @@
 import { useLockSolvedSound } from "./useLockSolvedSound"
+import { useDuckMusic } from "@/app/audio/useDuckMusic"
 import { use, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
@@ -227,6 +228,8 @@ export const SiteMapScreen = ({
   // Escape asks before leaving: a stray key must not throw the player out of a site. The Back button leaves at once.
   const [confirmingLeave, setConfirmingLeave] = useState(false)
   // Keys reach the map only while nothing is open over it.
+  // Every encounter is thinking time, the shop included.
+  useDuckMusic(encounter.isOpen)
   const mapOnTop = !encounter.isOpen && !rewardOffer.pending && !exit.leaving && !fez.speaking && !confirmingLeave
 
   if (!grid) {
