@@ -159,10 +159,20 @@ describe("the sound switches", () => {
     sounds.registered = false
   })
 
-  it("shows no sound switch while no sound is registered and no music track exists", () => {
+  it("shows no Sound effects switch while no sound is registered", () => {
     render(<SettingsModal isOpen onClose={() => {}} startGame={() => {}} />)
     expect(screen.queryByLabelText("ui.soundEffects")).toBeNull()
-    expect(screen.queryByLabelText("ui.music")).toBeNull()
+  })
+
+  it("shows Music unchecked for a save without it", () => {
+    render(<SettingsModal isOpen onClose={() => {}} startGame={() => {}} />)
+    expect(switchNamed("ui.music").checked).toBe(false)
+  })
+
+  it("writes music on when its switch is checked", () => {
+    render(<SettingsModal isOpen onClose={() => {}} startGame={() => {}} />)
+    fireEvent.click(switchNamed("ui.music"))
+    expect(setterFor("music")).toHaveBeenCalledWith(true)
   })
 
   it("shows Sound effects checked for a save without it once a sound is registered", () => {

@@ -6,6 +6,8 @@ import type { AudioContextLike } from "./audioService"
 export const fakeAudioContext = () => {
   const sources: { buffer: string; playbackRate: number; gain: number; startAt: number }[] = []
   const masterGains: number[] = []
+  // The gain the music element is routed into, once there is one: its level and every ramp target asked of it.
+  const music: { gain?: { value: number; ramps: number[] } } = {}
   let state: AudioContextState = "suspended"
   let resumes = 0
   let decodes = 0
@@ -27,7 +29,18 @@ export const fakeAudioContext = () => {
       return new TextDecoder().decode(bytes)
     },
     createGain: () => {
-      const gain = { value: 1 }
+      const gain = {
+        value: 1,
+        ramps: [] as number[],
+        setValueAtTime(value: number) {
+          gain.value = value
+        },
+        cancelScheduledValues() {},
+        linearRampToValueAtTime(value: number) {
+          gain.ramps.push(value)
+          gain.value = value
+        },
+      }
       const made = {
         ...node(),
         gain,
@@ -38,6 +51,13 @@ export const fakeAudioContext = () => {
       }
       return made
     },
+    createMediaElementSource: () => ({
+      ...node(),
+      connect: (target: { gain: { value: number; ramps: number[] } }) => {
+        music.gain = target.gain
+        return target
+      },
+    }),
     createBufferSource: () => {
       let level = { gain: { value: 1 } }
       const source = {
@@ -63,6 +83,7 @@ export const fakeAudioContext = () => {
     context: context as AudioContextLike,
     sources,
     masterGains,
+    music,
     get resumes() {
       return resumes
     },
@@ -94,4 +115,25 @@ export const fakeLoader = () => {
       for (let i = 0; i < 5; i++) await Promise.resolve()
     },
   }
+}
+
+/** An audio element that plays nothing and counts what it was told. */
+export const fakeMediaElement = (url: string) => {
+  const element = {
+    src: url,
+    loop: false,
+    preload: "" as HTMLMediaElement["preload"],
+    paused: true,
+    plays: 0,
+    pauses: 0,
+    play: async () => {
+      element.plays += 1
+      element.paused = false
+    },
+    pause: () => {
+      element.pauses += 1
+      element.paused = true
+    },
+  }
+  return element
 }
