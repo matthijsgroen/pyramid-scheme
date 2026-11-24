@@ -77,6 +77,12 @@ src/assets/audio/music-egyptian-dawn.m4a + music-egyptian-dawn.credit.json   (PR
 
 ## PR A — sound service and musical sounds (slice 1, part 1)
 
+> **Reworked (designer, 2026-11-24):** synthesised tones were rejected. Tasks 1–6 ship as sample playback
+> instead: `registerSound(name, { url, gain?, playbackRate? })`, each file fetched and decoded on its first play
+> after unlock and cached, every effect through one low master gain (`EFFECTS_GAIN`). Tasks 3–6 keep their
+> trigger wiring and sound names but register no tones; the sequence tile pitches one sample along D Hijaz by
+> `playbackRate`. No files ship, so nothing is registered and both switches stay hidden.
+
 ### Task 1: Audio service, registry and fake context
 
 **Files:**

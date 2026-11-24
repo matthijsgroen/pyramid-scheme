@@ -6,7 +6,7 @@ The game is silent today: no audio, no haptics, no sound setting. Sound should m
 and leave thinking time quiet. There are two layers of effects plus one music track:
 
 - **Real sounds** for what physically happens in the world: stone, levers, sand, coins.
-- **Musical sounds** for success, made as tones in the browser.
+- **Quiet recorded sounds** for success, where the table marks them.
 - **Background music** for the map and the camp, played softer during a puzzle.
 
 The game is free and open source, and every audio file lives in the public repo. So licences matter, and the
@@ -36,33 +36,33 @@ settings gain a credits screen. They also gain a "what's new" screen showing the
 
 ## The moments
 
-R = real (a recorded file), M = musical (synthesised tone or chord), – = silent.
+R = a recorded sample, "R, pitched" = one sample played at a different pitch per step, – = silent.
 
-| Area   | Moment                                                            | Kind | Notes                                          |
-| ------ | ----------------------------------------------------------------- | ---- | ---------------------------------------------- |
-| Map    | pyramid opens (stones fly in; zoom to the next level)             | R    | heavy stone sliding                            |
-| Map    | level complete, journey complete                                  | M    | journey gets the bigger phrase                 |
-| Site   | first step of a walk                                              | R    | soft footstep; later steps silent              |
-| Site   | lever or handle thrown                                            | R    |                                                |
-| Site   | stone lifted, stone set down, pressure plate                      | R    |                                                |
-| Site   | sequence tile stepped on correctly                                | M    | next note of a rising scale, one note per tile |
-| Site   | sequence tile wrong                                               | M    | its own "off" tone; the scale starts over      |
-| Site   | corridor opens behind a gate (reveal wave)                        | R    | stone grinding                                 |
-| Site   | **last door of a lock opens**                                     | M    | needs a new event; see below                   |
-| Site   | zipline, squeeze                                                  | R    | whoosh, scrape                                 |
-| Site   | sand or water barrier recedes                                     | R    |                                                |
-| Site   | chest opens                                                       | R    |                                                |
-| Site   | loot: money                                                       | R    | coins                                          |
-| Site   | loot: fragment, mosaic or map piece, treasure                     | M    | short motif                                    |
-| Puzzle | solved                                                            | M    |                                                |
-| Puzzle | family flavour: canister pour, balance settle, sudoku scroll furl | R    |                                                |
-| Trap   | trap fires, heart lost                                            | R    | dull thud                                      |
-| Trap   | heal (waterskin, rest)                                            | M    |                                                |
-| Shop   | buy, sell                                                         | R    | coins                                          |
-| Camp   | campfire crackle                                                  | R    | loop, while the camp is on screen              |
-| Tomb   | tile placed                                                       | R    |                                                |
-| Tomb   | lock panel slides open                                            | R    |                                                |
-| Tomb   | tableau complete                                                  | M    |                                                |
+| Area   | Moment                                                            | Kind       | Notes                                                        |
+| ------ | ----------------------------------------------------------------- | ---------- | ------------------------------------------------------------ |
+| Map    | pyramid opens (stones fly in; zoom to the next level)             | R          | heavy stone sliding                                          |
+| Map    | level complete, journey complete                                  | R          | journey gets the bigger sound                                |
+| Site   | first step of a walk                                              | R          | soft footstep; later steps silent                            |
+| Site   | lever or handle thrown                                            | R          |                                                              |
+| Site   | stone lifted, stone set down, pressure plate                      | R          |                                                              |
+| Site   | sequence tile stepped on correctly                                | R, pitched | one quiet sample, pitched to the next note of a rising scale |
+| Site   | sequence tile wrong                                               | R          | its own sample; the scale starts over                        |
+| Site   | corridor opens behind a gate (reveal wave)                        | R          | stone grinding                                               |
+| Site   | **last door of a lock opens**                                     | R          | needs a new event; see below                                 |
+| Site   | zipline, squeeze                                                  | R          | whoosh, scrape                                               |
+| Site   | sand or water barrier recedes                                     | R          |                                                              |
+| Site   | chest opens                                                       | R          |                                                              |
+| Site   | loot: money                                                       | R          | coins                                                        |
+| Site   | loot: fragment, mosaic or map piece, treasure                     | R          | short sample, bigger for a bigger find                       |
+| Puzzle | solved                                                            | R          |                                                              |
+| Puzzle | family flavour: canister pour, balance settle, sudoku scroll furl | R          |                                                              |
+| Trap   | trap fires, heart lost                                            | R          | dull thud                                                    |
+| Trap   | heal (waterskin, rest)                                            | R          |                                                              |
+| Shop   | buy, sell                                                         | R          | coins                                                        |
+| Camp   | campfire crackle                                                  | R          | loop, while the camp is on screen                            |
+| Tomb   | tile placed                                                       | R          |                                                              |
+| Tomb   | lock panel slides open                                            | R          |                                                              |
+| Tomb   | tableau complete                                                  | R          |                                                              |
 
 Trigger points are in the appendix; the builder confirms each line before hooking it.
 
@@ -87,9 +87,8 @@ Trigger points are in the appendix; the builder confirms each line before hookin
   (`useGameStorage`).
 - Browsers allow audio only after a user gesture. The audio context starts on the first tap. A moment that
   happens before that stays silent and is never queued.
-- Musical sounds are synthesised with the Web Audio API: no files, and always in tune.
-- Real sounds are short compressed files (format is the builder's call), lazy-loaded the first time effects
-  are on.
+- Every sound is a short compressed file (format is the builder's call), fetched and decoded on its first
+  play after the first tap, then cached. All effects pass through one low master gain.
 - Audio is a mod-agnostic core service. Mods call it by sound name, in line with docs/mods/TARGET.md, and a
   disabled mod's sounds simply never play.
 
@@ -109,8 +108,8 @@ Trigger points are in the appendix; the builder confirms each line before hookin
 
 ## Decided by the designer
 
-- The real/musical split per moment, as in the table.
-- The sequence tile as a rising scale with its own wrong tone.
+- Which moments sound, as in the table.
+- The sequence tile as a rising scale with its own wrong sound.
 - The music track, softer during puzzles.
 - Sound candidates are proposed by Claude, and the designer picks.
 - Credits and "what's new" both live under Settings.
@@ -119,7 +118,6 @@ Trigger points are in the appendix; the builder confirms each line before hookin
 
 - Footsteps only on the first step of a walk.
 - Two switches, no sliders.
-- Musical sounds synthesised, not files.
 - The music lazy-loads, then is cached for offline play.
 - The credits list is checked by a test.
 - "What's new" shows the last 3 versions, built from CHANGELOG.md.
@@ -138,18 +136,21 @@ Trigger points are in the appendix; the builder confirms each line before hookin
 - **Ducking:** every encounter ducks the music, the shop and the exterior pyramid board included.
 - **Lock solved:** a door into the lock's way-out region opens; it fires once per lock.
 - **Scale:** D Hijaz from D4, approved by ear.
+- Synthesised tones were tried and rejected (too emphatic, they hurt the ambience). Every moment uses a
+  recorded sample or stays silent. The sequence tile pitches one quiet sample along the D Hijaz scale.
 
 ## Scope and order (Claude's call)
 
 - Audio is runtime only: no carve, bake or save data changes, so the freeze guards are untouched. It ships for
   every tier at once; moments on unreleased tiers simply play when players get there.
 - The lock-solved event is computed at runtime from mechanism state; it writes nothing to frozen data.
-- Slices: (1) sound service + Settings switches + synthesised musical sounds + credits + what's new;
-  (2) music; (3) real sounds, after the designer has picked them. No placeholder files ship.
+- Slices: (1) sound service with sample playback + Settings switches + the trigger points + credits + what's
+  new; (2) music; (3) the sound files, after the designer has picked them. No placeholder files ship, and a
+  switch stays hidden until something exists for it to silence.
 
 ## Left to the builder
 
-The file format, the volume levels and the duck fade, the synth timbres, the event wiring, and how the sound
+The file format, the volume levels and the duck fade, the event wiring, and how the sound
 service is split across files.
 
 ## Appendix: trigger points (code inventory 2026-11-23; verify before hooking)
