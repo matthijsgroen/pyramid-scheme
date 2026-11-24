@@ -191,3 +191,12 @@ describe("the sound switches", () => {
     vi.restoreAllMocks()
   })
 })
+
+describe("the credits", () => {
+  it("opens the credits list from its button", () => {
+    render(<SettingsModal isOpen onClose={() => {}} startGame={() => {}} />)
+    expect(screen.queryByText("credits.sounds")).toBeNull()
+    fireEvent.click(screen.getByRole("button", { name: "ui.credits" }))
+    expect(screen.getByText("credits.sounds")).toBeTruthy()
+  })
+})
