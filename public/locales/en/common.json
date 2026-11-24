@@ -84,6 +84,8 @@
     "clearGameData": "Clear game data",
     "confirmClearGameData": "This permanently deletes all progress, items, and explored pyramids. This cannot be undone.",
     "disableTutorials": "Disable tutorials",
+    "soundEffects": "Sound effects",
+    "music": "Music",
     "treasureTomb": "Treasure Location",
     "requiresMapPieces": "Requires map pieces",
     "mapPieces": "Map Pieces",

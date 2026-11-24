@@ -18,9 +18,21 @@ vi.mock("react-i18next", () => ({
   }),
 }))
 
+// Every key reads its own default, as a save that never stored it does; each key has its own setter.
+const setters = new Map<string, ReturnType<typeof vi.fn>>()
+const setterFor = (key: string) => {
+  if (!setters.has(key)) setters.set(key, vi.fn())
+  return setters.get(key)!
+}
+const sounds = vi.hoisted(() => ({ registered: false }))
+vi.mock("@/app/audio/soundRegistry", async importOriginal => ({
+  ...(await importOriginal<typeof import("@/app/audio/soundRegistry")>()),
+  hasSounds: () => sounds.registered,
+}))
+
 vi.mock("@/support/useGameStorage", () => ({
-  useGameStorage: () => [true, vi.fn(), true],
-  clearGameData: vi.fn(),
+  useGameStorage: (key: string, initialValue: unknown) => [initialValue, setterFor(key), true],
+  clearGameData: vi.fn(async () => {}),
 }))
 
 // Heavy dev tools stand in as markers: what is pinned is which ones the dialog shows, not how they work.
@@ -50,6 +62,7 @@ afterEach(() => {
   cleanup()
   language = "en"
   changeLanguage.mockClear()
+  setters.clear()
 })
 
 // Characterisation, not regression: these also pass against the version that mirrored the language
@@ -137,5 +150,44 @@ describe("SettingsModal as a dialog", () => {
     expect(await screen.findByTestId("puzzle-lab")).toBeTruthy()
     rerender(withDevelop(false, true))
     expect(screen.queryByTestId("puzzle-lab")).toBeNull()
+  })
+})
+
+describe("the sound switches", () => {
+  const switchNamed = (name: string) => screen.getByLabelText<HTMLInputElement>(name)
+  afterEach(() => {
+    sounds.registered = false
+  })
+
+  it("shows no sound switch while no sound is registered and no music track exists", () => {
+    render(<SettingsModal isOpen onClose={() => {}} startGame={() => {}} />)
+    expect(screen.queryByLabelText("ui.soundEffects")).toBeNull()
+    expect(screen.queryByLabelText("ui.music")).toBeNull()
+  })
+
+  it("shows Sound effects checked for a save without it once a sound is registered", () => {
+    sounds.registered = true
+    render(<SettingsModal isOpen onClose={() => {}} startGame={() => {}} />)
+    expect(switchNamed("ui.soundEffects").checked).toBe(true)
+  })
+
+  it("writes sound effects off when its switch is cleared", () => {
+    sounds.registered = true
+    render(<SettingsModal isOpen onClose={() => {}} startGame={() => {}} />)
+    fireEvent.click(switchNamed("ui.soundEffects"))
+    expect(setterFor("soundEffects")).toHaveBeenCalledWith(false)
+  })
+
+  it("keeps both switches when game data is cleared", async () => {
+    const reload = vi.fn()
+    vi.spyOn(window, "location", "get").mockReturnValue({ ...window.location, reload })
+    render(<SettingsModal isOpen onClose={() => {}} startGame={() => {}} />)
+    fireEvent.click(screen.getByRole("button", { name: "ui.clearGameData" }))
+    const confirm = screen.getAllByRole("button", { name: "ui.clearGameData" }).at(-1)!
+    fireEvent.click(confirm)
+    await vi.waitFor(() => expect(reload).toHaveBeenCalled())
+    expect(setterFor("soundEffects")).toHaveBeenCalledWith(true)
+    expect(setterFor("music")).toHaveBeenCalledWith(false)
+    vi.restoreAllMocks()
   })
 })

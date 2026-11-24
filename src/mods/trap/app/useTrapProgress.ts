@@ -5,6 +5,8 @@ import { useMergedEarnedPerks } from "@/app/SiteMap/perkContributions"
 import { perkStacks } from "@/game/perkTotals"
 import { trapDamage, isTrapAttemptSafe } from "@/mods/trap/game/trapHealth"
 import { waterskinHeal } from "@/mods/trap/game/waterskin"
+import { playSound } from "@/app/audio/audio"
+import { HEAL_SOUND } from "./sounds"
 
 // Trap-owned runtime state: health + the trap-owned perks. Health is trap-only (traps are the sole
 // source of damage; a waterskin and coming home heal), so it lives in the trap mod's own persisted
@@ -67,13 +69,18 @@ export const useTrapProgress = (): TrapProgressAPI => {
       trapInsightStacks,
       isTrapAttemptSafe: () => isTrapAttemptSafe(currentHealth),
       takeTrapDamage: () => setState(prev => ({ ...prev, health: Math.max(0, prev.health - trapDamage(armorStacks)) })),
-      restoreHealth: () => setState(prev => ({ ...prev, health: maxHealth, mended: prev.health < maxHealth })),
+      restoreHealth: () => {
+        if (currentHealth < maxHealth) playSound(HEAL_SOUND)
+        return setState(prev => ({ ...prev, health: maxHealth, mended: prev.health < maxHealth }))
+      },
       // Drunk on pickup: pack-mule makes it heal two hearts; at full health it heals nothing.
-      drinkWaterskin: () =>
-        setState(prev => ({
+      drinkWaterskin: () => {
+        if (currentHealth < maxHealth) playSound(HEAL_SOUND)
+        return setState(prev => ({
           ...prev,
           health: waterskinHeal(Math.min(prev.health, maxHealth), maxHealth, packMuleLevel),
-        })),
+        }))
+      },
     }
   }, [state, setState, loaded, maxHealth, armorStacks, trapInsightStacks, packMuleLevel])
 }

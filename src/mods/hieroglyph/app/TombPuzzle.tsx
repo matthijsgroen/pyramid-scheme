@@ -21,6 +21,8 @@ import { FezContext } from "@/app/fez/context"
 import { createPositionOverview } from "@/mods/hieroglyph/game/filledPositions"
 import { mulberry32, shuffle } from "@/game/random"
 import { hashString } from "@/support/hashString"
+import { playSound } from "@/app/audio/audio"
+import { TABLEAU_COMPLETE_SOUND } from "./sounds"
 export const TombPuzzle: FC<{
   tableau: TableauLevel
   calculation: RewardCalculation
@@ -133,6 +135,7 @@ export const TombPuzzle: FC<{
     if (lockCode === calculation.mainFormula.result.toString()) {
       setLockState("open")
       setIsProcessingCompletion(true)
+      playSound(TABLEAU_COMPLETE_SOUND)
 
       // Hieroglyphs are reusable keys — solving a tableau consumes nothing.
       lockTimerRef.current = setTimeout(() => {

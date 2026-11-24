@@ -1,3 +1,4 @@
+import { playWalkCues } from "./sequenceSounds"
 import { useCallback, useMemo, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { cellAddress } from "./cellIdentity"
@@ -254,6 +255,7 @@ export const useSiteNavigation = ({
         // One write for the whole walk, so the douse reads every tile it worked. One douse at the end of the walk
         // equals one after each tile: a sequence opens a gate only at `done`, which stays fired.
         if (presses.length > 0) journeys.setMechanismStates(new Map(presses.map(press => [press.address, press.state])))
+        playWalkCues(presses, walkDelay)
         // A hiding sequence's steps unlock their bars on the door's board whatever the crossing did to the run.
         const walked = walkedSteps(grid, currentFloor, path, before)
         if (walked.length > 0) journeys.recordWalkedSteps(walked)
