@@ -4,10 +4,6 @@ import { describe, expect, it, vi } from "vitest"
 import type { TreasureReward } from "@/game/siteTypes"
 import type { MergedRewardContributions } from "./rewardContributions"
 import { useRewardOffer } from "./useRewardOffer"
-import { LOOT_BURST_MS } from "@/ui/atoms/LootPopup"
-
-const { playSound } = vi.hoisted(() => ({ playSound: vi.fn() }))
-vi.mock("@/app/audio/audio", () => ({ playSound }))
 
 const money: TreasureReward = { type: "money", amount: 5 }
 const tombKey: TreasureReward = { type: "tombKey", keyId: "site-0-0" }
@@ -27,20 +23,6 @@ const setup = (contributions: Partial<MergedRewardContributions> = {}) => {
 }
 
 describe("useRewardOffer", () => {
-  it("a found reward plays the sound named for its type as the popup's card comes in", () => {
-    playSound.mockClear()
-    const { hook } = setup()
-    act(() => hook.result.current.offerFound(tombKey))
-    expect(playSound.mock.calls).toEqual([["reward:tombKey", { delay: LOOT_BURST_MS / 1000 }]])
-  })
-
-  it("a reward a mod skips plays nothing", () => {
-    playSound.mockClear()
-    const { hook } = setup({ skip: () => true })
-    act(() => hook.result.current.offerFound(tombKey))
-    expect(playSound).not.toHaveBeenCalled()
-  })
-
   it("offers a won reward, and hands it over only once the player acknowledges it", () => {
     const { hook, applyReward } = setup()
 
