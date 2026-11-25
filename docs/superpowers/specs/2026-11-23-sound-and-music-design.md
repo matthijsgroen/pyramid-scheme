@@ -38,31 +38,31 @@ settings gain a credits screen. They also gain a "what's new" screen showing the
 
 R = a recorded sample, "R, pitched" = one sample played at a different pitch per step, – = silent.
 
-| Area   | Moment                                                            | Kind       | Notes                                                         |
-| ------ | ----------------------------------------------------------------- | ---------- | ------------------------------------------------------------- |
-| Map    | pyramid opens (stones fly in; zoom to the next level)             | R          | heavy stone sliding                                           |
-| Map    | level complete, journey complete                                  | R          | an oud note for a level, a long ney tone for a journey        |
-| Site   | first step of a walk                                              | R          | soft footstep; later steps silent                             |
-| Site   | lever or handle thrown                                            | R          |                                                               |
-| Site   | stone lifted, stone set down, pressure plate                      | R          |                                                               |
-| Site   | sequence tile stepped on correctly                                | R, pitched | one quiet sample, pitched to the next note of a rising scale  |
-| Site   | sequence tile wrong                                               | R          | its own sample; the scale starts over                         |
-| Site   | corridor opens behind a gate (reveal wave)                        | R          | stone grinding                                                |
-| Site   | **last door of a lock opens**                                     | R          | a stone door settling; see below                              |
-| Site   | zipline, squeeze                                                  | R          | whoosh, scrape                                                |
-| Site   | sand or water barrier recedes                                     | R          |                                                               |
-| Site   | chest opens                                                       | R          |                                                               |
-| Site   | loot: money                                                       | R          | coins                                                         |
-| Site   | loot: fragment, mosaic or map piece, treasure                     | R          | a rising harp glissando; a treasure rings finger cymbals      |
-| Puzzle | solved                                                            | R          | the level-complete chord, softer: it rings through the finish |
-| Puzzle | family flavour: canister pour, balance settle, sudoku scroll furl | R          |                                                               |
-| Trap   | trap fires, heart lost                                            | R          | dull thud                                                     |
-| Trap   | heal (waterskin, rest)                                            | R          | a sip of water                                                |
-| Shop   | buy, sell                                                         | R          | coins                                                         |
-| Camp   | campfire crackle                                                  | R          | loop, while the camp is on screen                             |
-| Tomb   | tile placed                                                       | R          |                                                               |
-| Tomb   | lock panel slides open                                            | R          | a stone door sliding                                          |
-| Tomb   | tableau complete                                                  | –          |                                                               |
+| Area   | Moment                                                            | Kind       | Notes                                                               |
+| ------ | ----------------------------------------------------------------- | ---------- | ------------------------------------------------------------------- |
+| Map    | pyramid opens (stones fly in; zoom to the next level)             | R          | heavy stone sliding                                                 |
+| Map    | level complete, journey complete                                  | R          | an oud note for a level, a long ney tone for a journey              |
+| Site   | first step of a walk                                              | R          | soft footstep; later steps silent                                   |
+| Site   | lever or handle thrown                                            | R          |                                                                     |
+| Site   | stone lifted, stone set down, pressure plate                      | R          |                                                                     |
+| Site   | sequence tile stepped on correctly                                | R, pitched | one quiet sample, pitched to the next note of a rising scale        |
+| Site   | sequence tile wrong                                               | R          | its own sample; the scale starts over                               |
+| Site   | corridor opens behind a gate (reveal wave)                        | R          | stone grinding                                                      |
+| Site   | **last door of a lock opens**                                     | R          | a stone door settling; see below                                    |
+| Site   | zipline, squeeze                                                  | R          | whoosh, scrape                                                      |
+| Site   | sand or water barrier recedes                                     | R          |                                                                     |
+| Site   | chest opens                                                       | R          |                                                                     |
+| Site   | loot: money                                                       | R          | coins                                                               |
+| Site   | loot: fragment, mosaic or map piece, treasure                     | R          | a rising harp glissando; a treasure rings finger cymbals            |
+| Puzzle | solved                                                            | R          | a short plucked run rising to a ringing note, timed with the finish |
+| Puzzle | family flavour: canister pour, balance settle, sudoku scroll furl | R          |                                                                     |
+| Trap   | trap fires, heart lost                                            | R          | dull thud                                                           |
+| Trap   | heal (waterskin, rest)                                            | R          | a sip of water                                                      |
+| Shop   | buy, sell                                                         | R          | coins                                                               |
+| Camp   | campfire crackle                                                  | R          | loop, while the camp is on screen                                   |
+| Tomb   | tile placed                                                       | R          |                                                                     |
+| Tomb   | lock panel slides open                                            | R          | a stone door sliding                                                |
+| Tomb   | tableau complete                                                  | –          |                                                                     |
 
 Trigger points are in the appendix; the builder confirms each line before hooking it.
 
@@ -78,7 +78,7 @@ Trigger points are in the appendix; the builder confirms each line before hookin
 - Track: "Egyptian Dawn (Full version)" by kaazoom on Pixabay, 4:53, Pixabay Content License.
 - Plays on the site map, the journey map and the camp, and loops.
 - It plays well under the effects: footsteps must stay audible over it.
-- During a puzzle or trap encounter it ducks until almost inaudible, and comes back when the encounter closes:
+- During a puzzle or trap encounter it ducks to under half, fading slowly so the change goes unnoticed, and comes back when the encounter closes:
   a tune distracts from a board.
 - It loads only when Music is on, never in the precache of the first download, and it streams.
 

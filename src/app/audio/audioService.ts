@@ -39,10 +39,10 @@ export type AudioService = {
 /** Every effect passes through one master gain, kept low so effects sit under the ambience. */
 export const EFFECTS_GAIN = 0.35
 /** The music plays low: loud audio is intrusive. */
-export const MUSIC_GAIN = 0.12
-/** While an encounter is open the music drops to this share of its level, almost gone: a tune distracts from a board. */
-export const DUCK_LEVEL = 0.1
-export const DUCK_FADE_S = 0.6
+export const MUSIC_GAIN = 0.08
+/** While an encounter is open the music drops to this share of its level, under half: a tune distracts from a board, a big jump distracts more. */
+export const DUCK_LEVEL = 0.45
+export const DUCK_FADE_S = 1.5
 
 // Safari reports only the base latency, and neither counts a Bluetooth link.
 const latencyOf = (ctx: AudioContextLike | undefined): number | undefined => {

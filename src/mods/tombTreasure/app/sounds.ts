@@ -6,6 +6,6 @@ import { isModEnabled } from "@/mods/registeredMods"
 
 // A treasure is the biggest find there is, so it rings above the pluck of a map piece.
 if (isModEnabled("tomb-treasure")) {
-  registerSound(rewardSound("mapPiece"), { url: rewardUrl, gain: 0.5 })
+  registerSound(rewardSound("mapPiece"), { url: rewardUrl, gain: 1 })
   registerSound(rewardSound("tombKey"), { url: treasureUrl, gain: 0.9 })
 }
