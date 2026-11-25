@@ -22,7 +22,8 @@ import { createPositionOverview } from "@/mods/hieroglyph/game/filledPositions"
 import { mulberry32, shuffle } from "@/game/random"
 import { hashString } from "@/support/hashString"
 import { playSound } from "@/app/audio/audio"
-import { TABLEAU_COMPLETE_SOUND, TILE_PLACED_SOUND } from "./sounds"
+import { usePlayOnRise } from "@/app/audio/usePlayOnRise"
+import { LOCK_PANEL_SOUND, TILE_PLACED_SOUND } from "./sounds"
 export const TombPuzzle: FC<{
   tableau: TableauLevel
   calculation: RewardCalculation
@@ -62,6 +63,8 @@ export const TombPuzzle: FC<{
     () => isTableauPuzzleCompleted(state, calculation.symbolCounts),
     [calculation.symbolCounts, state]
   )
+  // The lock panel slides down out of the door once the last tile is placed.
+  usePlayOnRise(isPuzzleCompleted, LOCK_PANEL_SOUND)
 
   // A tableau's hieroglyphs are a COMPLETION precondition, not an entry gate — you can walk in
   // before collecting them all. If any required hieroglyph is still incomplete, Fez nudges you to
@@ -140,7 +143,6 @@ export const TombPuzzle: FC<{
     if (lockCode === calculation.mainFormula.result.toString()) {
       setLockState("open")
       setIsProcessingCompletion(true)
-      playSound(TABLEAU_COMPLETE_SOUND)
 
       // Hieroglyphs are reusable keys — solving a tableau consumes nothing.
       lockTimerRef.current = setTimeout(() => {
