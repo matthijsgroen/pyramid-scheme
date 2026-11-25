@@ -14,6 +14,16 @@ export type AudioContextLike = Pick<
 
 export type MediaElementLike = Pick<HTMLAudioElement, "play" | "pause" | "paused" | "loop" | "src" | "preload">
 
+export type AudioDiagnosis = {
+  context: string
+  music: "off" | "playing" | "paused"
+  /** What the browser reports the output adds before sound is heard, in ms, when it says. */
+  latencyMs?: number
+  played: number
+  /** Effects asked for but not heard, by why. */
+  dropped: Record<"noContext" | "notRunning" | "decoding", number>
+}
+
 export type AudioService = {
   play: (name: string, options?: SoundOptions) => void
   /** Plays the sound over and over until the returned stop is called; it waits for the first tap and its decode. */
@@ -22,6 +32,8 @@ export type AudioService = {
   setEffects: (on: boolean) => void
   setMusic: (on: boolean) => void
   duck: () => () => void // returns release
+  /** What the service is doing right now, for the develop-mode readout. */
+  diagnose: () => AudioDiagnosis
 }
 
 /** Every effect passes through one master gain, kept low so effects sit under the ambience. */
@@ -31,6 +43,13 @@ export const MUSIC_GAIN = 0.12
 /** While an encounter is open the music drops to this share of its level, almost gone: a tune distracts from a board. */
 export const DUCK_LEVEL = 0.1
 export const DUCK_FADE_S = 0.6
+
+// Safari reports only the base latency, and neither counts a Bluetooth link.
+const latencyOf = (ctx: AudioContextLike | undefined): number | undefined => {
+  const reported = ctx as Partial<Pick<AudioContext, "outputLatency" | "baseLatency">> | undefined
+  const seconds = reported?.outputLatency ?? reported?.baseLatency
+  return seconds === undefined ? undefined : Math.round(seconds * 1000)
+}
 
 const fetchBytes = async (url: string): Promise<ArrayBuffer> => (await fetch(url)).arrayBuffer()
 
@@ -65,6 +84,8 @@ export const createAudioService = ({
   let element: MediaElementLike | undefined
   let musicGain: GainNode | undefined
   let warmed = false
+  let played = 0
+  const dropped: AudioDiagnosis["dropped"] = { noContext: 0, notRunning: 0, decoding: 0 }
   const buffers = new Map<string, AudioBuffer>()
   const loading = new Set<string>()
   // Every loop asked for, with the source playing it while it is audible.
@@ -184,15 +205,25 @@ export const createAudioService = ({
       syncLoops()
     },
     play: (name, options = {}) => {
-      // A suspended or interrupted context would hold the sound and fire it late on resume.
-      if (!context || !master || !effects || context.state !== "running") return
+      if (!effects) return
       const sample = lookup(name)
       if (!sample) return
+      if (!context || !master) {
+        dropped.noContext += 1
+        return
+      }
+      // A suspended or interrupted context would hold the sound and fire it late on resume.
+      if (context.state !== "running") {
+        dropped.notRunning += 1
+        return
+      }
       const buffer = buffers.get(sample.url)
       if (!buffer) {
+        dropped.decoding += 1
         if (!loading.has(sample.url)) fetchSample(context, sample.url)
         return
       }
+      played += 1
       const source = sourceFor(context, master, buffer, sample, options.playbackRate ?? sample.playbackRate ?? 1)
       source.start(context.currentTime + (options.delay ?? 0))
     },
@@ -217,6 +248,13 @@ export const createAudioService = ({
       if (context && music && context.state !== "running") void context.resume().catch(() => {})
       syncMusic()
     },
+    diagnose: () => ({
+      context: context ? context.state : "none",
+      latencyMs: latencyOf(context),
+      music: !element ? "off" : element.paused ? "paused" : "playing",
+      played,
+      dropped: { ...dropped },
+    }),
     duck: () => {
       ducks += 1
       rampMusic()

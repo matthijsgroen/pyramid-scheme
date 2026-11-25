@@ -13,6 +13,7 @@ const fakeService = () => {
     setEffects: vi.fn(),
     setMusic: vi.fn(),
     duck: vi.fn(() => release),
+    diagnose: vi.fn(),
   }
   return { service, release }
 }

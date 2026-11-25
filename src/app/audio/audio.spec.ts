@@ -10,6 +10,7 @@ const fakeService = (): AudioService => ({
   setEffects: vi.fn(),
   setMusic: vi.fn(),
   duck: vi.fn(() => () => {}),
+  diagnose: vi.fn(),
 })
 
 describe("resumeAudioOnGesture", () => {

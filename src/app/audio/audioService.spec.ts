@@ -153,6 +153,20 @@ describe("createAudioService", () => {
     expect(fake.sources).toHaveLength(0)
   })
 
+  it("counts each effect it played and each it dropped, by why", async () => {
+    const { service, fake } = await warmed()
+    service.play("test.chime")
+    fake.setState("suspended")
+    service.play("test.chime")
+    service.play("test.knock")
+    expect(service.diagnose()).toMatchObject({
+      context: "suspended",
+      music: "off",
+      played: 1,
+      dropped: { noContext: 0, notRunning: 2, decoding: 1 },
+    })
+  })
+
   it("resumes a context the system suspended on the next tap", () => {
     const { service, fake } = setup()
     service.unlock()
