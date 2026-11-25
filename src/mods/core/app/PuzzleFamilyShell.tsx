@@ -1,3 +1,5 @@
+import { playSound } from "@/app/audio/audio"
+import { CORE_SOUNDS } from "@/app/audio/coreSounds"
 import { use, useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import clsx from "clsx"
 import { useTranslation } from "react-i18next"
@@ -122,6 +124,9 @@ const pillCls =
   "flex h-11 flex-1 items-center justify-center gap-1 rounded-full px-3 text-sm font-medium transition-colors"
 const spent = "bg-stone-800/50 text-stone-600"
 
+/** How long a solved board finishes before its banner; the solve sound is chosen to carry this long. */
+const SOLVE_MS = 800
+
 const shared = (action: SharedAction, label: string): ControlStep => ({
   keys: [ACTION_GLYPHS[action].keys],
   pad: [ACTION_GLYPHS[action].pad],
@@ -180,10 +185,12 @@ export const PuzzleFamilyShell = ({
   // The banner waits for a tap rather than a timer: the solved board is the reward, and a puzzle that closes
   // itself takes it away before it has been looked at. So the dim is light enough to read the board through and
   // the player says when they are done with it.
+  // The solve sound starts with the finish and is still ringing when the banner lands, SOLVE_MS later.
   const handleSolved = useCallback(() => {
+    playSound(CORE_SOUNDS.puzzleSolved)
     setFinishing(true)
     setTookMs(elapsedMs())
-    scheduleSolve(800, () => setSolvedBanner(true))
+    scheduleSolve(SOLVE_MS, () => setSolvedBanner(true))
   }, [scheduleSolve, elapsedMs])
 
   useEffect(() => {

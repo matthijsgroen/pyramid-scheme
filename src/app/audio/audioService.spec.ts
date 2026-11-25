@@ -57,6 +57,23 @@ describe("createAudioService", () => {
     expect(fake.sources).toHaveLength(0)
   })
 
+  it("decodes every registered sample on the first tap, so a sound's first play is heard", async () => {
+    const fake = fakeAudioContext()
+    const loader = fakeLoader()
+    const service = createAudioService({
+      createContext: () => fake.context,
+      lookup: name => SAMPLES[name],
+      load: loader.load,
+      anySound: () => true,
+      samples: () => [SAMPLES["test.chime"], SAMPLES["test.knock"], SAMPLES["test.chime"]],
+    })
+    service.unlock()
+    await loader.settle()
+    expect(loader.calls).toEqual(["chime.ogg", "knock.ogg"])
+    service.play("test.knock")
+    expect(fake.sources).toHaveLength(1)
+  })
+
   it("a play while the sample still decodes is dropped, not queued", async () => {
     const { service, fake, loader } = setup()
     service.unlock()

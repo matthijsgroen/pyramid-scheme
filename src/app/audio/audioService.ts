@@ -1,4 +1,4 @@
-import { hasSounds, type SoundOptions, type SoundSample, soundNamed } from "./soundRegistry"
+import { hasSounds, registeredSamples, type SoundOptions, type SoundSample, soundNamed } from "./soundRegistry"
 
 export type AudioContextLike = Pick<
   AudioContext,
@@ -27,9 +27,9 @@ export type AudioService = {
 /** Every effect passes through one master gain, kept low so effects sit under the ambience. */
 export const EFFECTS_GAIN = 0.35
 /** The music plays low: loud audio is intrusive. */
-export const MUSIC_GAIN = 0.4
-/** While an encounter is open the music drops to this share of its level, calm rather than gone. */
-export const DUCK_LEVEL = 0.3
+export const MUSIC_GAIN = 0.12
+/** While an encounter is open the music drops to this share of its level, almost gone: a tune distracts from a board. */
+export const DUCK_LEVEL = 0.1
 export const DUCK_FADE_S = 0.6
 
 const fetchBytes = async (url: string): Promise<ArrayBuffer> => (await fetch(url)).arrayBuffer()
@@ -39,6 +39,7 @@ export const createAudioService = ({
   lookup = soundNamed,
   load = fetchBytes,
   anySound = hasSounds,
+  samples = registeredSamples,
   music: track,
   onHidden,
 }: {
@@ -47,6 +48,8 @@ export const createAudioService = ({
   load?: (url: string) => Promise<ArrayBuffer>
   /** Whether any effect could play at all: with none registered, effects alone never make a context. */
   anySound?: () => boolean
+  /** Every sample to fetch and decode as soon as the context exists, so no first play is lost to its decode. */
+  samples?: () => SoundSample[]
   music?: { url: string; createElement: (url: string) => MediaElementLike; warmCache?: (url: string) => void }
   /** Tells the service when the page is hidden or shown; returns its cleanup. */
   onHidden?: (callback: (hidden: boolean) => void) => () => void
@@ -67,7 +70,7 @@ export const createAudioService = ({
   // Every loop asked for, with the source playing it while it is audible.
   const loops = new Map<symbol, { name: string; source?: AudioBufferSourceNode }>()
 
-  // A sample is fetched and decoded on its first play; that play, and any while it decodes, stay silent.
+  // Every registered sample is fetched and decoded when the context is made; one still decoding stays silent.
   const fetchSample = (ctx: AudioContextLike, url: string) => {
     loading.add(url)
     load(url)
@@ -124,6 +127,7 @@ export const createAudioService = ({
         master = context.createGain()
         master.gain.value = EFFECTS_GAIN
         master.connect(context.destination)
+        for (const url of new Set(samples().map(sample => sample.url))) fetchSample(context, url)
       }
     } catch {
       context = undefined

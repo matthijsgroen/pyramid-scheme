@@ -10,8 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Background music (Egyptian Dawn by kaazoom), off by default; switch it on in Settings.
-- Quiet recorded sound effects for levers, stones, chests, coins, traps and the campfire.
-- Soft sounds for level and journey completion, finds, healing and opening locks.
+- Quiet sounds for levers, stones, chests, coins, traps, the campfire, finds, healing, opened locks and solved puzzles.
+- Settings open from inside an expedition.
 
 ### Changed
 
