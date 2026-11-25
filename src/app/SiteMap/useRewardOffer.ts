@@ -2,6 +2,7 @@ import { useCallback, useState } from "react"
 import type { KeyColor, TreasureReward } from "@/game/siteTypes"
 import { playSound } from "@/app/audio/audio"
 import { rewardSound } from "@/app/audio/coreSounds"
+import { LOOT_BURST_MS } from "@/ui/atoms/LootPopup"
 import type { MergedRewardContributions } from "./rewardContributions"
 
 export type PendingReward = {
@@ -37,7 +38,8 @@ export const useRewardOffer = ({ rewardContributions, applyReward, onTaken }: Re
   const offerFound = useCallback(
     (reward: TreasureReward, keyColors?: readonly KeyColor[]) => {
       if (rewardContributions.skip(reward)) return
-      playSound(rewardSound(reward.type))
+      // Heard as the card comes in, not over the burst before it.
+      playSound(rewardSound(reward.type), { delay: LOOT_BURST_MS / 1000 })
       setPending({
         reward,
         keyColors,

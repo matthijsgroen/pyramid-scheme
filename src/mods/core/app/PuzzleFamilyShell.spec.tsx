@@ -35,6 +35,27 @@ describe("PuzzleFamilyShell", () => {
     expect(playSound.mock.calls).toEqual([["puzzle.solved"]])
   })
 
+  it("plays puzzle.solved as the board starts its own finish, and not again at solved", () => {
+    playSound.mockClear()
+    const shell = (finished: boolean, solved: boolean) => (
+      <PuzzleFamilyShell
+        onSolved={() => {}}
+        onCancel={() => {}}
+        finished={finished}
+        solved={solved}
+        onReset={() => {}}
+        hint="do this"
+      >
+        {() => <button>cell</button>}
+      </PuzzleFamilyShell>
+    )
+    const { rerender } = render(shell(false, false))
+    rerender(shell(true, false))
+    expect(playSound.mock.calls).toEqual([["puzzle.solved"]])
+    rerender(shell(true, true))
+    expect(playSound.mock.calls).toEqual([["puzzle.solved"]])
+  })
+
   it("leaves the board playable while it is unsolved", () => {
     renderShell(false)
     expect(screen.getByText("cell").closest("[inert]")).toBeNull()

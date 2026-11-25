@@ -1,4 +1,4 @@
-import { playSound } from "@/app/audio/audio"
+import { usePlayOnRise } from "@/app/audio/usePlayOnRise"
 import { CORE_SOUNDS } from "@/app/audio/coreSounds"
 import { use, useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import clsx from "clsx"
@@ -185,9 +185,7 @@ export const PuzzleFamilyShell = ({
   // The banner waits for a tap rather than a timer: the solved board is the reward, and a puzzle that closes
   // itself takes it away before it has been looked at. So the dim is light enough to read the board through and
   // the player says when they are done with it.
-  // The solve sound starts with the finish and is still ringing when the banner lands, SOLVE_MS later.
   const handleSolved = useCallback(() => {
-    playSound(CORE_SOUNDS.puzzleSolved)
     setFinishing(true)
     setTookMs(elapsedMs())
     scheduleSolve(SOLVE_MS, () => setSolvedBanner(true))
@@ -196,6 +194,9 @@ export const PuzzleFamilyShell = ({
   useEffect(() => {
     if (solved) handleSolved()
   }, [solved, handleSolved])
+  // The solve sound starts with the board's own finish (a piece driving out), not after it, and still rings when the
+  // banner lands. A family without a finish of its own starts it at "solved".
+  usePlayOnRise(!!finished || finishing, CORE_SOUNDS.puzzleSolved)
 
   // A board that fills the screen pushes the hint under the fold, where pressing the button looks
   // like it did nothing. Scrolled to on reveal only — not on every recomputed hint — so the view
