@@ -5,6 +5,7 @@ import type { AudioService } from "./audioService"
 
 const fakeService = (): AudioService => ({
   play: vi.fn(),
+  loop: vi.fn(() => () => {}),
   unlock: vi.fn(),
   setEffects: vi.fn(),
   setMusic: vi.fn(),

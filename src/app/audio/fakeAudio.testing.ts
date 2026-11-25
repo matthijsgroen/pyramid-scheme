@@ -6,6 +6,9 @@ import type { AudioContextLike } from "./audioService"
 export const fakeAudioContext = () => {
   const sources: { buffer: string; playbackRate: number; gain: number; startAt: number }[] = []
   const masterGains: number[] = []
+  // Looping sources, by the label of what they play: each start, and each stop.
+  const loopStarts: string[] = []
+  const loopStops: string[] = []
   // The gain the music element is routed into, once there is one: its level and every ramp target asked of it.
   const music: { gain?: { value: number; ramps: number[] } } = {}
   let state: AudioContextState = "suspended"
@@ -63,17 +66,22 @@ export const fakeAudioContext = () => {
       const source = {
         buffer: undefined as unknown,
         playbackRate: { value: 1 },
+        loop: false,
         connect: (target: { gain: { value: number } }) => {
           level = target
           return target
         },
-        start: (startAt: number) =>
-          sources.push({
-            buffer: String(source.buffer),
-            playbackRate: source.playbackRate.value,
-            gain: level.gain.value,
-            startAt,
-          }),
+        start: (startAt: number) => {
+          if (source.loop) loopStarts.push(String(source.buffer))
+          else
+            sources.push({
+              buffer: String(source.buffer),
+              playbackRate: source.playbackRate.value,
+              gain: level.gain.value,
+              startAt,
+            })
+        },
+        stop: () => loopStops.push(String(source.buffer)),
       }
       return source
     },
@@ -83,6 +91,8 @@ export const fakeAudioContext = () => {
     context: context as AudioContextLike,
     sources,
     masterGains,
+    loopStarts,
+    loopStops,
     music,
     get resumes() {
       return resumes

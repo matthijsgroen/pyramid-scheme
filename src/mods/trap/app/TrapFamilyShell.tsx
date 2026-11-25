@@ -3,6 +3,8 @@ import type { FamilyContext } from "@/app/families/familyRegistry"
 import { TRAP_TIME_LIMITS_SECONDS, TRAP_TIME_EXTENSION_PER_INSIGHT_STACK } from "@/mods/trap/game/trapConfig"
 import { TrapWarningScreen } from "@/mods/trap/app/TrapWarningScreen"
 import { useTrapProgress } from "./useTrapProgress"
+import { playSound } from "@/app/audio/audio"
+import { TRAP_FIRES_SOUND } from "./sounds"
 import type { SolveOutcome } from "@/app/reactions/reactionContributions"
 
 // Generic across any trap family — the warning/attempt/turn-around lifecycle has
@@ -50,6 +52,7 @@ export const TrapFamilyShell = <T,>({ question, ctx, onSolved, onCancel, Challen
         // not. Half the bar, so the perks that raise the ceiling raise the bar with it.
         onPass={() => onSolved({ close: trap.currentHealth <= trap.maxHealth / 2 })}
         onFail={() => {
+          playSound(TRAP_FIRES_SOUND)
           trap.takeTrapDamage()
           onCancel()
         }}

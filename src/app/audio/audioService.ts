@@ -16,6 +16,8 @@ export type MediaElementLike = Pick<HTMLAudioElement, "play" | "pause" | "paused
 
 export type AudioService = {
   play: (name: string, options?: SoundOptions) => void
+  /** Plays the sound over and over until the returned stop is called; it waits for the first tap and its decode. */
+  loop: (name: string) => () => void
   unlock: () => void // call inside a user gesture
   setEffects: (on: boolean) => void
   setMusic: (on: boolean) => void
@@ -62,6 +64,8 @@ export const createAudioService = ({
   let warmed = false
   const buffers = new Map<string, AudioBuffer>()
   const loading = new Set<string>()
+  // Every loop asked for, with the source playing it while it is audible.
+  const loops = new Map<symbol, { name: string; source?: AudioBufferSourceNode }>()
 
   // A sample is fetched and decoded on its first play; that play, and any while it decodes, stay silent.
   const fetchSample = (ctx: AudioContextLike, url: string) => {
@@ -70,7 +74,44 @@ export const createAudioService = ({
       .then(bytes => ctx.decodeAudioData(bytes))
       .then(buffer => buffers.set(url, buffer))
       .catch(() => {})
-      .finally(() => loading.delete(url))
+      .finally(() => {
+        loading.delete(url)
+        syncLoops()
+      })
+  }
+
+  const sourceFor = (ctx: AudioContextLike, out: GainNode, buffer: AudioBuffer, sample: SoundSample, rate: number) => {
+    const source = ctx.createBufferSource()
+    source.buffer = buffer
+    source.playbackRate.value = rate
+    const level = ctx.createGain()
+    level.gain.value = sample.gain ?? 1
+    source.connect(level)
+    level.connect(out)
+    return source
+  }
+
+  // A loop sounds while effects are on and the page is shown. Unlike a one-shot it may start on a context that is
+  // still resuming: it is ambience, so beginning a moment late is fine.
+  function syncLoops() {
+    for (const playing of loops.values()) {
+      if (!context || !master || !effects || hidden) {
+        playing.source?.stop()
+        playing.source = undefined
+        continue
+      }
+      const sample = playing.source ? undefined : lookup(playing.name)
+      if (!sample) continue
+      const buffer = buffers.get(sample.url)
+      if (!buffer) {
+        if (!loading.has(sample.url)) fetchSample(context, sample.url)
+        continue
+      }
+      const source = sourceFor(context, master, buffer, sample, sample.playbackRate ?? 1)
+      source.loop = true
+      source.start(context.currentTime)
+      playing.source = source
+    }
   }
 
   const ensureContext = () => {
@@ -127,6 +168,7 @@ export const createAudioService = ({
   onHidden?.(isHidden => {
     hidden = isHidden
     syncMusic()
+    syncLoops()
   })
 
   return {
@@ -135,6 +177,7 @@ export const createAudioService = ({
       ensureContext()
       if (context && context.state !== "running") void context.resume().catch(() => {})
       syncMusic()
+      syncLoops()
     },
     play: (name, options = {}) => {
       // A suspended or interrupted context would hold the sound and fire it late on resume.
@@ -146,17 +189,22 @@ export const createAudioService = ({
         if (!loading.has(sample.url)) fetchSample(context, sample.url)
         return
       }
-      const source = context.createBufferSource()
-      source.buffer = buffer
-      source.playbackRate.value = options.playbackRate ?? sample.playbackRate ?? 1
-      const level = context.createGain()
-      level.gain.value = sample.gain ?? 1
-      source.connect(level)
-      level.connect(master)
+      const source = sourceFor(context, master, buffer, sample, options.playbackRate ?? sample.playbackRate ?? 1)
       source.start(context.currentTime + (options.delay ?? 0))
+    },
+    loop: name => {
+      const key = Symbol(name)
+      loops.set(key, { name })
+      syncLoops()
+      return () => {
+        loops.get(key)?.source?.stop()
+        loops.delete(key)
+      }
     },
     setEffects: on => {
       effects = on
+      ensureContext()
+      syncLoops()
     },
     // Switched on in Settings, which is itself a tap, so the context can start here once a tap has happened.
     setMusic: on => {

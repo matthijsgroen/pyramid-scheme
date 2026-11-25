@@ -8,6 +8,7 @@ const fakeService = () => {
   const release = vi.fn()
   const service: AudioService = {
     play: vi.fn(),
+    loop: vi.fn(() => () => {}),
     unlock: vi.fn(),
     setEffects: vi.fn(),
     setMusic: vi.fn(),

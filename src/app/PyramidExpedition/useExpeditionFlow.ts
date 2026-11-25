@@ -1,4 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react"
+import { playSound } from "@/app/audio/audio"
+import { CORE_SOUNDS } from "@/app/audio/coreSounds"
+
+/** When the entrance stone starts to slide once the board is solved (index.css `--animate-stone-entrance`). */
+const STONE_SLIDE_DELAY_S = 1
 
 type ExpeditionFlowArgs = {
   journeyId: string
@@ -92,6 +97,7 @@ export const useExpeditionFlow = ({
     if (startNextLevel || showingInterior) return
     setLevelCompleted(true)
     setBoardSolved(true)
+    playSound(CORE_SOUNDS.pyramidOpens, { delay: STONE_SLIDE_DELAY_S })
   }, [startNextLevel, showingInterior])
 
   const enterInterior = useCallback(() => {

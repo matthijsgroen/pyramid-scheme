@@ -12,6 +12,7 @@ const { useAudioSettings } = await import("./audioSettings")
 
 const fakeService = (): AudioService => ({
   play: vi.fn(),
+  loop: vi.fn(() => () => {}),
   unlock: vi.fn(),
   setEffects: vi.fn(),
   setMusic: vi.fn(),

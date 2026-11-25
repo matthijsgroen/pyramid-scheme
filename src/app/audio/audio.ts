@@ -1,3 +1,4 @@
+import "./registerCoreSounds"
 import { type AudioContextLike, type AudioService, createAudioService } from "./audioService"
 import { MUSIC_TRACK_URL } from "./musicTrack"
 import type { SoundOptions } from "./soundRegistry"
@@ -27,6 +28,9 @@ export const audio: AudioService = createAudioService({
 })
 
 export const playSound = (name: string, options?: SoundOptions): void => audio.play(name, options)
+
+/** Loops `name` until the returned stop is called. */
+export const loopSound = (name: string): (() => void) => audio.loop(name)
 
 const GESTURES = ["pointerdown", "keydown"] as const
 

@@ -117,7 +117,7 @@ export default defineConfig({
           // rush-hour market sprites, so a tableau plays against a blank wall without it.
           // Of the locales only English is precached: it is the fallback every language leans on. The other
           // 41 were half the precache, and a player reads one of them.
-          globPatterns: ["**/*.{js,css,html,svg,png,webp,ico,mp3,aac,ttf,otf,woff2}", "locales/en/*.json"],
+          globPatterns: ["**/*.{js,css,html,svg,png,webp,ico,mp3,aac,m4a,ttf,otf,woff2}", "locales/en/*.json"],
           // i18next asks for `common.json?v=<version>`; without this the precached English never matches.
           ignoreURLParametersMatching: [/^utm_/, /^fbclid$/, /^v$/],
           // The language a player picks is cached the first time it loads, so it keeps working offline.

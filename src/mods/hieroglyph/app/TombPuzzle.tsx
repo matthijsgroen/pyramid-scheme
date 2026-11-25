@@ -22,7 +22,7 @@ import { createPositionOverview } from "@/mods/hieroglyph/game/filledPositions"
 import { mulberry32, shuffle } from "@/game/random"
 import { hashString } from "@/support/hashString"
 import { playSound } from "@/app/audio/audio"
-import { TABLEAU_COMPLETE_SOUND } from "./sounds"
+import { TABLEAU_COMPLETE_SOUND, TILE_PLACED_SOUND } from "./sounds"
 export const TombPuzzle: FC<{
   tableau: TableauLevel
   calculation: RewardCalculation
@@ -94,6 +94,11 @@ export const TombPuzzle: FC<{
   const handleTileClick = (symbolId: string, position: string) => {
     // Don't allow removal if puzzle is completed
     if (filledPositions[position] > 0 && isPuzzleCompleted) return
+    const places =
+      !(filledPositions[position] > 0) &&
+      owns(symbolId) &&
+      (symbolCounts[symbolId] || 0) < (calculation.symbolCounts[symbolId] || 0)
+    if (places) playSound(TILE_PLACED_SOUND)
     setState(prev => toggleTableauTile(prev, symbolId, position, calculation.symbolCounts, owns(symbolId)))
   }
 
