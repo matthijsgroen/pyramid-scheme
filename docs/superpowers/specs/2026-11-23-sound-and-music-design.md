@@ -53,7 +53,7 @@ R = a recorded sample, "R, pitched" = one sample played at a different pitch per
 | Site   | sand or water barrier recedes                                     | R          |                                                               |
 | Site   | chest opens                                                       | R          |                                                               |
 | Site   | loot: money                                                       | R          | coins                                                         |
-| Site   | loot: fragment, mosaic or map piece, treasure                     | R          | an oud pluck; a treasure rings finger cymbals                 |
+| Site   | loot: fragment, mosaic or map piece, treasure                     | R          | a rising harp glissando; a treasure rings finger cymbals      |
 | Puzzle | solved                                                            | R          | the level-complete chord, softer: it rings through the finish |
 | Puzzle | family flavour: canister pour, balance settle, sudoku scroll furl | R          |                                                               |
 | Trap   | trap fires, heart lost                                            | R          | dull thud                                                     |
