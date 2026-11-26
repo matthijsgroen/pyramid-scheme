@@ -249,8 +249,7 @@
       "wizard": "Plunksna ir širdis"
     },
     "entrance": {
-      "title": "Mozaika",
-      "toPlace": "Mozaika · {{count}} laukia"
+      "title": "Mozaika"
     },
     "haul": {
       "pieces_one": "{{count}} mozaikos gabalėlis",

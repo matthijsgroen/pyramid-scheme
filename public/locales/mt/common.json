@@ -253,8 +253,7 @@
       "wizard": "Ir-Rixa u l-Qalb"
     },
     "entrance": {
-      "title": "Mużajk",
-      "toPlace": "Mużajk · {{count}} għat-tqegħid"
+      "title": "Mużajk"
     },
     "haul": {
       "pieces_one": "{{count}} biċċa tal-mużajk",

@@ -241,8 +241,7 @@
       "wizard": "Sulka ja sydän"
     },
     "entrance": {
-      "title": "Mosaiikki",
-      "toPlace": "Mosaiikki · {{count}} sijoitettavana"
+      "title": "Mosaiikki"
     },
     "haul": {
       "pieces_one": "{{count}} mosaiikkipala",

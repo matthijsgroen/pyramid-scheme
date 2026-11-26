@@ -241,8 +241,7 @@
       "wizard": "Fjädern och hjärtat"
     },
     "entrance": {
-      "title": "Mosaik",
-      "toPlace": "Mosaik · {{count}} väntar"
+      "title": "Mosaik"
     },
     "haul": {
       "pieces_one": "{{count}} mosaikbit",

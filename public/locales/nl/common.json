@@ -244,8 +244,7 @@
       "wizard": "De Veer en het Hart"
     },
     "entrance": {
-      "title": "Mozaïek",
-      "toPlace": "Mozaïek · {{count}} te plaatsen"
+      "title": "Mozaïek"
     },
     "haul": {
       "pieces_one": "{{count}} mozaïekstukje",

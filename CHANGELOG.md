@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The camp mosaic shows how many pieces are waiting to be placed.
+- The camp mosaic shows how many pieces are waiting to be placed in a badge, like the chest.
 
 ## 0.48.4 - 2026-11-23
 
