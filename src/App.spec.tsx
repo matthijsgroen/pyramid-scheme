@@ -28,8 +28,17 @@ vi.mock("@/app/Base", () => ({
   ),
 }))
 vi.mock("@/app/PyramidExpedition", () => ({
-  PyramidExpedition: ({ onJourneyComplete, onClose }: { onJourneyComplete: () => void; onClose: () => void }) => (
+  PyramidExpedition: ({
+    onJourneyComplete,
+    onClose,
+    onSettings,
+  }: {
+    onJourneyComplete: () => void
+    onClose: () => void
+    onSettings: () => void
+  }) => (
     <div>
+      <button onClick={onSettings}>gear</button>
       <button onClick={onJourneyComplete}>finish</button>
       <button onClick={onClose}>leave</button>
     </div>
@@ -72,7 +81,7 @@ describe(App, () => {
   it("opens Settings from an expedition without leaving it", () => {
     render(<App />)
     fireEvent.click(screen.getByText("set off"))
-    fireEvent.click(screen.getByRole("button", { name: "ui.settings" }))
+    fireEvent.click(screen.getByText("gear"))
     expect(screen.getByRole("dialog")).toBeTruthy()
     expect(screen.getByText("leave")).toBeTruthy()
   })

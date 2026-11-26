@@ -43,7 +43,8 @@ export const PyramidExpedition: FC<{
   onLevelComplete?: () => void
   onJourneyComplete?: () => void
   onClose?: () => void
-}> = ({ activeJourney, onLevelComplete: onNextLevel, onJourneyComplete, onClose }) => {
+  onSettings?: () => void
+}> = ({ activeJourney, onLevelComplete: onNextLevel, onJourneyComplete, onClose, onSettings }) => {
   const isTomb = activeJourney.journey.exterior === "tomb"
   // Both site types render through this one flow; a tomb is a journey of levelCount sites (the
   // starter tomb has two, cave then cavern), each with its own multi-floor interior.
@@ -319,6 +320,7 @@ export const PyramidExpedition: FC<{
             seed={activeJourney.randomSeed + activeJourney.levelNr}
             onSiteComplete={flow.interiorComplete}
             onCancel={flow.leaveInterior}
+            onSettings={onSettings}
           />
         </div>
       )}
