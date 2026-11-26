@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - The camp mosaic shows how many pieces are waiting to be placed.
+- A built camp structure that stands on one not built yet says what it waits for.
 
 ## 0.48.4 - 2026-11-23
 

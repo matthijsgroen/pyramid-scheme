@@ -155,7 +155,7 @@ const lastWhere = <T>(items: readonly T[], test: (item: T) => boolean) => [...it
 /**
  * The steps of a spot that are there in the chapter, in step order, each with whether it shows: a base step
  * while no later base step is there, a growth stage while no further stage of its object is, a layer step
- * while its hosts all show.
+ * while its hosts all show. A layer that is there but held back by a host that does not show names that host.
  */
 export const spotSteps = (spot: CampSpot, chapter: Difficulty, found: readonly string[]) => {
   const have = new Set(found)
@@ -184,7 +184,25 @@ export const spotSteps = (spot: CampSpot, chapter: Difficulty, found: readonly s
     const front = drawOrder.findIndex(s => s.pieces.some(p => p.id === step.layer?.behind))
     drawOrder.splice(front < 0 ? drawOrder.length : front, 0, step)
   }
-  return drawOrder.map(step => ({ step, shown: shows(step, new Set()) }))
+  // The host not found yet, under the layer or under its hosts, that holds it back: never a host a later base
+  // replaced, which will not show again, nor a later growth stage.
+  const missingHost = (step: CampStep, seen: ReadonlySet<CampStep>): string | undefined => {
+    if (seen.has(step)) return undefined
+    const next = new Set(seen).add(step)
+    for (const host of hostsOf(step)) {
+      const replaced = isBase(host) && base !== undefined && spot.steps.indexOf(base) > spot.steps.indexOf(host)
+      if (replaced) continue
+      const missing = !present.includes(host) ? host.pieces[0]?.id : host.layer ? missingHost(host, next) : undefined
+      if (missing) return missing
+    }
+    return undefined
+  }
+  const waitsOn = (step: CampStep) => (step.layer && furthest(step) ? missingHost(step, new Set()) : undefined)
+  return drawOrder.map(step => {
+    const shown = shows(step, new Set())
+    const host = shown ? undefined : waitsOn(step)
+    return { step, shown, ...(host && { waitsOn: host }) }
+  })
 }
 
 const toRadians = (degrees: number) => (degrees * Math.PI) / 180
