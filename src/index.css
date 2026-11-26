@@ -22,6 +22,8 @@
 html,
 body {
   @apply bg-black overflow-hidden text-white overscroll-none;
+  /* No pinch zoom: the viewport asks for none, which iOS ignores, and zooming the camp out crashed iOS Safari. */
+  touch-action: pan-x pan-y;
   font-family: "Hieroglyphs", var(--default-font-family, ui-sans-serif, system-ui, sans-serif);
 }
 

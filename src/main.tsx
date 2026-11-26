@@ -10,6 +10,8 @@ import { settleSaveEpoch } from "@/app/saveEpoch"
 import { reloadOnStaleChunk } from "@/app/reloadOnStaleChunk"
 
 reloadOnStaleChunk()
+// Safari's own pinch event, for the versions that ignore touch-action: zooming the camp out crashed iOS Safari.
+document.addEventListener("gesturestart", event => event.preventDefault())
 
 // Before the first render: every hook reads the save on mount, and must read the settled one.
 void settleSaveEpoch().then(newVersion =>
