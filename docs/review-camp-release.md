@@ -80,6 +80,11 @@ it ships; tick it off there.
 - [ ] Traps: hearts full on the coming-home screen after trap damage (§5, phase 1).
 - [ ] A waterskin heals one heart while hurt, two with pack-mule (§5, phase 1).
 - [ ] Walk: Piramide van Djoser (expert_4) level 4, `buildersLift`, side paths in the lock's corridors (§5, phase 4b).
+- [ ] Activities: expert's seven (purification, offering, sanctuary, House of Life, star-watching, sacred lake, oracle hall) in `activities.ts` and `themed-rooms.md`, before the last bake.
+- [ ] Props: the new expert kinds scaffolded and painted; the first multi-cell props (sacred lake, barque shrine).
+- [ ] Rooms: expert's designed rooms in `src/game/rooms/expert/`, named per floor in `src/worldGen/spec/expert.ts`.
+- [ ] Art: water and sand textures painted (`playtest-backlog.md`; sandHalls uses sand).
+- [ ] Story: which beats the expert release needs (as junior's, `handover-junior-release.md`).
 - [x] Art: `expert/wall-face`, `expert/threshold` (PR #449).
 - [x] Art: `door/ward-expert` (#449, approved 2026-11-23).
 - [ ] The last expert bake done (the lock reshape merged and baked), then expert's carve recorded:
