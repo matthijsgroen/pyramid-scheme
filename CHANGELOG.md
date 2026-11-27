@@ -23,7 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Pinch-zooming the camp on iPhone no longer crashes the browser.
-- Sound comes back after a phone call on iPhone at the next tap.
 
 ## 0.48.4 - 2026-11-23
 
