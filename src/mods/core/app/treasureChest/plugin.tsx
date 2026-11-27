@@ -6,6 +6,8 @@ import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry
 import { getRewardHandler } from "@/app/SiteMap/rewardHandlerRegistry"
 import { ART_IMAGE_RENDERING, CHEST_TILE, chestScreenUrl } from "@/app/SiteMap/tileAssets"
 import { TREASURE_CHEST_META } from "@/mods/core/game/treasureChest/meta"
+import { playSound } from "@/app/audio/audio"
+import { CHEST_OPENS_SOUND } from "../sounds"
 
 // A treasure chest is an encounter with zero challenge and zero fail cost — clicking it IS
 // solving it. Core's own RewardFlow takes over from there (reveal + grant); this family only
@@ -24,6 +26,7 @@ export const TreasureComponent: FamilyPlugin["Component"] = ({ ctx, onSolved }) 
   const handleOpen = () => {
     if (opened) return
     setOpened(true)
+    playSound(CHEST_OPENS_SOUND)
     // The light behind the chest grows in 500ms; a moment of its glow is seen before RewardFlow takes over.
     setTimeout(onSolved, 1100)
   }

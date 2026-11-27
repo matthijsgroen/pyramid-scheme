@@ -241,8 +241,7 @@
       "wizard": "Sulg ja süda"
     },
     "entrance": {
-      "title": "Mosaiik",
-      "toPlace": "Mosaiik · {{count}} paigutada"
+      "title": "Mosaiik"
     },
     "haul": {
       "pieces_one": "{{count}} mosaiigitükk",

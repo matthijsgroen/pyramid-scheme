@@ -13,6 +13,7 @@ import { useHomecoming } from "@/app/homecomingRegistry"
 import { NewVersionNotice } from "@/app/NewVersionNotice"
 import { useInputRoot } from "@/app/input/useInputRoot"
 import { useAudioSettings } from "@/app/audio/audioSettings"
+import { SettingsModal } from "@/app/SettingsModal"
 
 function App({ newVersion = false }: { newVersion?: boolean }) {
   const [inGame, setInGame] = useState(false)
@@ -20,6 +21,8 @@ function App({ newVersion = false }: { newVersion?: boolean }) {
   const [announcing, setAnnouncing] = useState(newVersion)
   // Set at the two ways home, never stored: a reload at base shows no coming-home screen.
   const [cameHome, setCameHome] = useState(false)
+  // Settings during an expedition, so sound can be changed without leaving it.
+  const [showSettings, setShowSettings] = useState(false)
   useInputRoot()
   useAudioSettings()
   const journeys = useJourneys()
@@ -65,6 +68,14 @@ function App({ newVersion = false }: { newVersion?: boolean }) {
               setCameHome(true)
               setInGame(false)
             }}
+            onSettings={() => setShowSettings(true)}
+          />
+        )}
+        {inGame && (
+          <SettingsModal
+            isOpen={showSettings}
+            onClose={() => setShowSettings(false)}
+            startGame={() => setInGame(true)}
           />
         )}
         {announcing && <NewVersionNotice onDismiss={() => setAnnouncing(false)} />}

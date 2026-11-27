@@ -116,9 +116,10 @@ const FADE_HIDDEN = `${FADE} opacity-0 [&_*]:animate-none!`
 /**
  * The contact shadow and the self-shade sit in the piece's box. Both are plain alpha layers: the shadow is
  * pre-blurred at import, and only transform and opacity are set here, so nothing filters or repaints at runtime.
+ * Neither animates: an animated opacity gets a layer of its own, and every piece drawn over it then gets one too,
+ * which a pinch zoom redraws at its own scale until the phone runs out of memory.
  */
 const SHADOW = "absolute opacity-[var(--camp-strength,0.3)] select-none"
-const FIRELIT = "animate-camp-strength-flicker motion-reduce:animate-none"
 const MASKED =
   "[mask-repeat:no-repeat] [mask-size:100%_100%] [-webkit-mask-repeat:no-repeat] [-webkit-mask-size:100%_100%]"
 /** Sheared about the line the art stands on, set per piece from its measured foot. */
@@ -231,21 +232,11 @@ const LIT_TINT = { fire: "rgb(255 176 92 / 0.12)", moon: "transparent" }
 const AWAY_SHADE = "rgb(0 0 0 / 0.2)"
 
 /** The contact shadow under the piece's base, shifted away from its light. */
-const Shadow = ({
-  shadow,
-  placed,
-  url,
-  delay,
-}: {
-  shadow: PlacedShadow
-  placed: PlacedPiece
-  url: string
-  delay?: string
-}) => {
+const Shadow = ({ shadow, placed, url }: { shadow: PlacedShadow; placed: PlacedPiece; url: string }) => {
   const a = (shadow.angle * Math.PI) / 180
   return (
     <img
-      className={shadow.light ? `camp-shadow ${SHADOW} ${FIRELIT}` : `camp-shadow ${SHADOW}`}
+      className={`camp-shadow ${SHADOW}`}
       src={url}
       alt=""
       draggable={false}
@@ -254,7 +245,6 @@ const Shadow = ({
           ...boxOf(placed),
           transform: `translate(-50%, -100%) translate(${shadow.offset * Math.cos(a)}px, ${shadow.offset * Math.sin(a)}px)`,
           "--camp-strength": shadow.strength,
-          animationDelay: delay,
         } as CSSProperties
       }
     />
@@ -272,20 +262,18 @@ const CastShadow = ({
   url,
   length,
   foot,
-  delay,
 }: {
   shadow: PlacedShadow
   placed: PlacedPiece
   url: string
   length: number
   foot: number
-  delay?: string
 }) => {
   const a = (shadow.angle * Math.PI) / 180
   const mask = `url(${url})`
   return (
     <i
-      className={shadow.light ? `${CAST} ${FIRELIT}` : CAST}
+      className={CAST}
       style={
         {
           ...boxOf(placed),
@@ -294,7 +282,6 @@ const CastShadow = ({
           maskImage: mask,
           WebkitMaskImage: mask,
           "--camp-strength": shadow.strength,
-          animationDelay: delay,
         } as CSSProperties
       }
     />
@@ -305,21 +292,11 @@ const CastShadow = ({
  * Light on the side facing the light, dark on the side away from it, masked by the piece's own art so it
  * covers only the piece. A plain alpha overlay: no filter and no blend mode.
  */
-const SelfShade = ({
-  shadow,
-  placed,
-  url,
-  delay,
-}: {
-  shadow: PlacedShadow
-  placed: PlacedPiece
-  url: string
-  delay?: string
-}) => {
+const SelfShade = ({ shadow, placed, url }: { shadow: PlacedShadow; placed: PlacedPiece; url: string }) => {
   const mask = `url(${url})`
   return (
     <i
-      className={shadow.light ? `camp-shade ${SHADE} ${FIRELIT}` : `camp-shade ${SHADE}`}
+      className={`camp-shade ${SHADE}`}
       style={
         {
           ...boxOf(placed),
@@ -327,7 +304,6 @@ const SelfShade = ({
           maskImage: mask,
           WebkitMaskImage: mask,
           "--camp-strength": shadow.strength / CAMP_SHADOW_PARAMS.strengthMax,
-          animationDelay: delay,
         } as CSSProperties
       }
     />
@@ -342,7 +318,7 @@ const Fade = ({ visible, children }: { visible: boolean; children: ReactNode }) 
   <div className={visible ? `camp-fade ${FADE_SHOWN}` : `camp-fade camp-fade--hidden ${FADE_HIDDEN}`}>{children}</div>
 )
 
-const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number }) => {
+const Piece = ({ placed }: { placed: PlacedPiece }) => {
   const { piece, scale, shadow } = placed
   const art = campArt(piece.art ?? piece.id, placed.layer)
   const style: CSSProperties = boxOf(placed)
@@ -357,7 +333,6 @@ const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number
         </div>
       </Fade>
     )
-  const delay = lightIndex >= 0 ? `${flickerDelays(lightIndex)[1]}s` : undefined
   return (
     <Fade visible={placed.visible}>
       {piece.cast && shadow && (
@@ -367,10 +342,9 @@ const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number
           url={art.url}
           length={piece.cast}
           foot={campFoot(piece.art ?? piece.id) ?? 1}
-          delay={delay}
         />
       )}
-      {art.shadow && shadow && <Shadow shadow={shadow} placed={placed} url={art.shadow} delay={delay} />}
+      {art.shadow && shadow && <Shadow shadow={shadow} placed={placed} url={art.shadow} />}
       <img
         className={art.frameB ? `camp-piece camp-frame--a ${PIECE} ${FRAME_A}` : `camp-piece ${PIECE}`}
         src={art.url}
@@ -387,7 +361,7 @@ const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number
           style={style}
         />
       )}
-      {shadow && <SelfShade shadow={shadow} placed={placed} url={art.url} delay={delay} />}
+      {shadow && <SelfShade shadow={shadow} placed={placed} url={art.url} />}
     </Fade>
   )
 }
@@ -554,7 +528,7 @@ export const CampScene = ({
       </div>
       <div className={LAYER}>
         {pieces.map(placed => (
-          <Piece key={placed.key} placed={placed} lightIndex={glows.findIndex(g => g.key === placed.shadow?.light)} />
+          <Piece key={placed.key} placed={placed} />
         ))}
       </div>
       <div className={LAYER} aria-hidden="true">

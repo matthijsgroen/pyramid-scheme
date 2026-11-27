@@ -5,10 +5,15 @@ import type { TableauLevel } from "@/mods/hieroglyph/game/tableaus"
 import type { RewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
 
 vi.mock("react-i18next", () => ({ useTranslation: () => ({ t: (key: string) => key }) }))
+const progress = vi.hoisted(() => ({ found: 0 }))
 vi.mock("@/mods/hieroglyph/app/useHieroglyphProgress", () => ({
-  useHieroglyphProgress: () => ({ hieroglyphProgress: () => ({ found: 0, required: 1 }) }),
+  useHieroglyphProgress: () => ({ hieroglyphProgress: () => ({ found: progress.found, required: 1 }) }),
 }))
-type LockProps = { onLockChange: (code: string) => void; onLockSubmit: () => void }
+type LockProps = {
+  onLockChange: (code: string) => void
+  onLockSubmit: () => void
+  onTileClick: (symbolId: string, position: string) => void
+}
 const seen = vi.hoisted(() => ({ walls: [] as unknown[], lock: undefined as LockProps | undefined }))
 vi.mock("@/mods/hieroglyph/app/TombPuzzleView", () => ({
   TombPuzzleView: ({ wall, ...props }: { wall: unknown } & LockProps) => {
@@ -18,7 +23,7 @@ vi.mock("@/mods/hieroglyph/app/TombPuzzleView", () => ({
   },
 }))
 const { playSound } = vi.hoisted(() => ({ playSound: vi.fn() }))
-vi.mock("@/app/audio/audio", () => ({ playSound }))
+vi.mock("@/app/audio/audio", () => ({ playSound, audio: { duck: () => () => {} } }))
 
 const { TombPuzzle } = await import("./TombPuzzle")
 const { FezContext } = await import("@/app/fez/context")
@@ -79,30 +84,35 @@ describe("the wall a tableau stands in", () => {
 
 describe("the tableau lock", () => {
   const calculation = {
-    symbolCounts: { ankh: 1 },
+    symbolCounts: { ankh: 2 },
     hintFormulas: [],
     symbolMapping: {},
     mainFormula: { result: 7 },
   } as unknown as RewardCalculation
-  const enter = (code: string) => {
-    act(() => seen.lock!.onLockChange(code))
-    act(() => seen.lock!.onLockSubmit())
-  }
+  const panelSlides = () => playSound.mock.calls.filter(([name]) => name === "hieroglyph.lockPanel").length
 
-  it("the right tableau code plays the tableau sound once; a wrong code plays nothing", () => {
+  it("its panel slides out with a sound once, as the last tile is placed; the right code adds none", () => {
     vi.useFakeTimers()
+    progress.found = 1
     playSound.mockClear()
     render(
       <FezContext value={{ showConversation: vi.fn() }}>
         <TombPuzzle tableau={{ name: "made-up" } as TableauLevel} calculation={calculation} difficulty="junior" />
       </FezContext>
     )
-    enter("3")
-    expect(playSound).not.toHaveBeenCalled()
+    act(() => seen.lock!.onTileClick("ankh", "a"))
+    expect(panelSlides()).toBe(0)
+    act(() => seen.lock!.onTileClick("ankh", "b"))
+    expect(panelSlides()).toBe(1)
+    act(() => seen.lock!.onLockChange("7"))
+    act(() => seen.lock!.onLockSubmit())
     act(() => vi.advanceTimersByTime(2000))
-    enter("7")
-    enter("7")
-    expect(playSound.mock.calls).toEqual([["hieroglyph.tableauComplete"]])
+    expect(playSound.mock.calls.map(([name]) => name)).toEqual([
+      "hieroglyph.tilePlaced",
+      "hieroglyph.tilePlaced",
+      "hieroglyph.lockPanel",
+    ])
     vi.useRealTimers()
+    progress.found = 0
   })
 })

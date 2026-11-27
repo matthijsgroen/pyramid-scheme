@@ -241,8 +241,7 @@
       "wizard": "Fjöðrin og hjartað"
     },
     "entrance": {
-      "title": "Mósaík",
-      "toPlace": "Mósaík · {{count}} ósett"
+      "title": "Mósaík"
     },
     "haul": {
       "pieces_one": "{{count}} mósaíkbiti",

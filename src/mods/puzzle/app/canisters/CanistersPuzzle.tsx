@@ -22,6 +22,8 @@ import { CanistersRules } from "./CanistersRules"
 import { buildCanistersHint } from "./canistersHint"
 import { skinFor } from "./skins"
 import { useCanistersControls } from "./canistersControls"
+import { playSound } from "@/app/audio/audio"
+import { CANISTER_POUR_SOUND } from "../sounds"
 
 type Props = {
   puzzle: CanistersPuzzleData
@@ -46,7 +48,7 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, ro
     7
   )
   const skin = skinFor(role, theme, shape, room)
-  const [state, setState] = usePuzzleState(() => createCanistersState(puzzle), puzzle)
+  const [state, setState] = usePuzzleState(() => createCanistersState(puzzle), puzzle, null)
 
   const solved = isCanistersSolved(puzzle, state)
   const left = movesLeft(puzzle, state)
@@ -129,7 +131,9 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, ro
               // A pour the board refuses (nothing to move, budget spent) only changes what is held, so a
               // hint stays through it.
               const next = pourInto(state, puzzle, to)
-              reportInput(next.volumes === state.volumes ? "look" : "move")
+              const poured = next.volumes !== state.volumes
+              reportInput(poured ? "move" : "look")
+              if (poured) playSound(CANISTER_POUR_SOUND)
               setState(next)
             }}
             onClaim={canister => {

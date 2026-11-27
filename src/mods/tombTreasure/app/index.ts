@@ -1,4 +1,5 @@
 import "./tierFinish"
+import "./sounds" // the pluck of a map piece, the cymbals of a treasure (self-gated)
 import { useModState } from "@/app/state/useModState"
 import { use, useMemo } from "react"
 import { FezContext } from "@/app/fez/context"

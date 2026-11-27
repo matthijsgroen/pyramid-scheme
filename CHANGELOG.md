@@ -7,16 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Background music (Egyptian Dawn by kaazoom), off by default; switch it on in Settings. It fades out during puzzles and traps (quickly for a trap) and returns once a solved board shows your time.
+- A move on a puzzle board makes a soft tap.
+- Lighting a torch makes a sound.
+- Sound comes back after a phone call on iPhone at the next tap.
+- Quiet sounds for levers, stones, chests, coins, traps, the campfire, finds, healing, opened locks and solved puzzles.
+- Settings open from inside an expedition.
+
 ### Changed
 
 - The camp mosaic shows how many pieces are waiting to be placed.
 - A built camp structure that stands on one not built yet says what it waits for.
+- The camp mosaic shows how many pieces are waiting to be placed in a badge, like the chest.
 
 ## 0.48.4 - 2026-11-23
 
 ### Fixed
 
 - A puzzle or story in a room can no longer be walked past.
+- Pinch-zooming the camp on iPhone no longer crashes the browser.
 
 ## 0.48.3 - 2026-11-23
 

@@ -1,4 +1,6 @@
 import { Fragment, useCallback, useEffect, useMemo, useState, type ReactElement, type ReactNode } from "react"
+import { playSound } from "@/app/audio/audio"
+import { CORE_SOUNDS } from "@/app/audio/coreSounds"
 import type {
   CellState,
   DecorationKind,
@@ -202,6 +204,8 @@ const TORCH_FLAME_X = CELL * 0.45
 /** How far behind its floor line the torch's foot stands: the middle of its painted base, so the pool sits
  * round the foot rather than in front of it. */
 const TORCH_FOOT_DEPTH = CELL * 0.1
+
+const playFootstep = () => playSound(CORE_SOUNDS.footstep)
 
 /** Anything standing on the floor, with the line it stands on — a room's own furniture and a node's.
  *
@@ -2712,6 +2716,8 @@ export const SiteMapView = ({
                   standAt={standAt}
                   waypointsOf={waypointsOf}
                   onWaypoint={onWaypoint}
+                  // Only the first step of a walk sounds, softly: the rest of it is quiet.
+                  onSetOff={playFootstep}
                 />
               )}
               {ride &&

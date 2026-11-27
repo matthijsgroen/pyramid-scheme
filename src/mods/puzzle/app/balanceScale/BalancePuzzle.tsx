@@ -24,6 +24,8 @@ import { BalanceRules } from "./BalanceRules"
 import { buildBalanceHint } from "./balanceHint"
 import { skinFor } from "./skins"
 import { useBalanceControls } from "./balanceControls"
+import { usePlayOnRise } from "@/app/audio/usePlayOnRise"
+import { BALANCE_SETTLES_SOUND } from "../sounds"
 
 type Props = {
   puzzle: BalancePuzzleData
@@ -80,6 +82,7 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room
   const finished = isBalanceSolved(glyphs, lines, state.values)
   // One tick per scale, so the beams come level in the order they are read.
   const celebration = useCelebration(finished, scales.length)
+  usePlayOnRise(finished, BALANCE_SETTLES_SOUND)
   const celebrated = new Set(
     Array.from({ length: Math.round(celebration.progress * scales.length) }, (_unused, index) => index)
   )

@@ -117,7 +117,7 @@ export default defineConfig({
           // rush-hour market sprites, so a tableau plays against a blank wall without it.
           // Of the locales only English is precached: it is the fallback every language leans on. The other
           // 41 were half the precache, and a player reads one of them.
-          globPatterns: ["**/*.{js,css,html,svg,png,webp,ico,mp3,aac,ttf,otf,woff2}", "locales/en/*.json"],
+          globPatterns: ["**/*.{js,css,html,svg,png,webp,ico,mp3,aac,m4a,ttf,otf,woff2}", "locales/en/*.json"],
           // i18next asks for `common.json?v=<version>`; without this the precached English never matches.
           ignoreURLParametersMatching: [/^utm_/, /^fbclid$/, /^v$/],
           // The language a player picks is cached the first time it loads, so it keeps working offline.
@@ -143,6 +143,19 @@ export default defineConfig({
                 ],
               },
             },
+            // MUSIC IS NEVER PRECACHED: it is megabytes a player who never turns it on should not download. It is
+            // cached the first time Music plays, and `rangeRequests` serves the audio element's Range requests from
+            // that cached full file, so it plays offline from then on.
+            {
+              urlPattern: /\/music-[^/]+\.(mp3|aac|m4a|ogg)$/,
+              handler: "CacheFirst",
+              options: {
+                cacheName: "music",
+                expiration: { maxEntries: 2 },
+                cacheableResponse: { statuses: [200] },
+                rangeRequests: true,
+              },
+            },
           ],
           // iOS draws its own launch screens and does not go through the service worker for them,
           // so 27 splash PNGs in the precache were 0.6 MB nobody read.
@@ -157,6 +170,7 @@ export default defineConfig({
             "pwa-*.png",
             "maskable-icon-*.png",
             "og-image.png",
+            "**/music-*.{mp3,aac,m4a,ogg}",
           ],
           // The whole game has to be playable offline, so every file is precached however big. The main
           // bundle carries the baked world and is 2.6 MB, which the 2 MB default would reject and fail the build.

@@ -22,21 +22,28 @@ describe("the mosaic entrance", () => {
     await writeGameData({ "pyramid-scheme-progression-v4": { ledger }, "pyramid-scheme-mod-mosaic": placed })
     const { result } = renderHook(() => useMosaicEntranceLabel())
     await act(async () => {})
-    return result.current.label
+    return result.current
   }
 
-  it("is the bare name when nothing waits to be placed", async () => {
-    expect(await labelFor({ mosaicPiece_starter: 2 }, { starter: 2 })).toBe("mosaic.entrance.title")
+  it("carries no badge when nothing waits to be placed", async () => {
+    expect(await labelFor({ mosaicPiece_starter: 2 }, { starter: 2 })).toEqual({
+      label: "mosaic.entrance.title",
+      badge: undefined,
+    })
   })
 
-  it("counts owned pieces not yet placed", async () => {
-    expect(await labelFor({ mosaicPiece_starter: 3 }, { starter: 1 })).toBe("mosaic.entrance.toPlace:2")
+  it("badges the owned pieces not yet placed", async () => {
+    expect(await labelFor({ mosaicPiece_starter: 3 }, { starter: 1 })).toEqual({
+      label: "mosaic.entrance.title",
+      badge: 2,
+    })
   })
 
   it("sums pieces to place over the registers", async () => {
-    expect(await labelFor({ mosaicPiece_starter: 3, mosaicPiece_junior: 2 }, { starter: 1 })).toBe(
-      "mosaic.entrance.toPlace:4"
-    )
+    expect(await labelFor({ mosaicPiece_starter: 3, mosaicPiece_junior: 2 }, { starter: 1 })).toEqual({
+      label: "mosaic.entrance.title",
+      badge: 4,
+    })
   })
 })
 

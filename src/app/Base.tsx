@@ -35,6 +35,8 @@ import { usePress } from "@/app/home/usePress"
 import { useWindowEntrance } from "@/app/home/useWindowEntrance"
 import { WelcomeLanguageChip } from "@/app/home/WelcomeLanguageChip"
 import { CampScene } from "@/ui/atoms/CampScene"
+import { loopSound } from "@/app/audio/audio"
+import { CORE_SOUNDS } from "@/app/audio/coreSounds"
 import { TapHint } from "@/ui/atoms/TapHint"
 import { CampHud } from "@/ui/molecules/CampHud"
 import { ContinueCard } from "@/ui/molecules/ContinueCard"
@@ -74,6 +76,9 @@ export const Base = ({
   const forgetArrival = useCallback(() => setArrived(undefined), [])
   const [setOffHint, setOffTapped] = useTapHint("setOff")
   const [panelPressed, pressPanel] = usePress()
+
+  // The campfire crackles for as long as the camp is on screen.
+  useEffect(() => loopSound(CORE_SOUNDS.campfire), [])
 
   // Fez greets once the player has unpacked, not behind the coming-home screen.
   useEffect(() => {

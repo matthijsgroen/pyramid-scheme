@@ -57,6 +57,23 @@ describe("createAudioService", () => {
     expect(fake.sources).toHaveLength(0)
   })
 
+  it("decodes every registered sample on the first tap, so a sound's first play is heard", async () => {
+    const fake = fakeAudioContext()
+    const loader = fakeLoader()
+    const service = createAudioService({
+      createContext: () => fake.context,
+      lookup: name => SAMPLES[name],
+      load: loader.load,
+      anySound: () => true,
+      samples: () => [SAMPLES["test.chime"], SAMPLES["test.knock"], SAMPLES["test.chime"]],
+    })
+    service.unlock()
+    await loader.settle()
+    expect(loader.calls).toEqual(["chime.ogg", "knock.ogg"])
+    service.play("test.knock")
+    expect(fake.sources).toHaveLength(1)
+  })
+
   it("a play while the sample still decodes is dropped, not queued", async () => {
     const { service, fake, loader } = setup()
     service.unlock()
@@ -134,6 +151,20 @@ describe("createAudioService", () => {
     service.play("test.chime")
     service.unlock()
     expect(fake.sources).toHaveLength(0)
+  })
+
+  it("counts each effect it played and each it dropped, by why", async () => {
+    const { service, fake } = await warmed()
+    service.play("test.chime")
+    fake.setState("suspended")
+    service.play("test.chime")
+    service.play("test.knock")
+    expect(service.diagnose()).toMatchObject({
+      context: "suspended",
+      music: "off",
+      played: 1,
+      dropped: { noContext: 0, notRunning: 2, decoding: 1 },
+    })
   })
 
   it("resumes a context the system suspended on the next tap", () => {

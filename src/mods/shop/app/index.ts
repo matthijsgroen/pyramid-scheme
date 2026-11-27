@@ -24,6 +24,7 @@ import { useModState } from "@/app/state/useModState"
 import { purchaseRewardContribution, usePurchases } from "./usePurchases"
 import { usePurchaseGateNeeds } from "./gateNeeds"
 import "./fezShop/plugin" // the Fez shop encounter family (self-gated)
+import "./sounds" // coins for money found, bought and sold (self-gated)
 
 // shop's app-side registration (side-effect), self-gated on the mod being enabled:
 // - the Collection "junk" section (with shop off it never registers, matching the world-gen side

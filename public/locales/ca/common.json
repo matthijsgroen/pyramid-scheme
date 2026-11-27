@@ -245,8 +245,7 @@
       "wizard": "La ploma i el cor"
     },
     "entrance": {
-      "title": "Mosaic",
-      "toPlace": "Mosaic · {{count}} per col·locar"
+      "title": "Mosaic"
     },
     "haul": {
       "pieces_one": "{{count}} tros de mosaic",

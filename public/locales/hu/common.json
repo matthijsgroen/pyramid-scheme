@@ -241,8 +241,7 @@
       "wizard": "A toll és a szív"
     },
     "entrance": {
-      "title": "Mozaik",
-      "toPlace": "Mozaik · {{count}} elhelyezésre vár"
+      "title": "Mozaik"
     },
     "haul": {
       "pieces_one": "{{count}} mozaikdarab",

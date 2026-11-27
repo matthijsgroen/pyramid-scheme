@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react"
 import type { RegionBarrierCover } from "@/game/regionBarrierCover"
+import { playSound } from "@/app/audio/audio"
+import { barrierSound } from "@/app/audio/coreSounds"
 import { prefersReducedMotion } from "./reducedMotion"
 
 /** How long a cover takes to fade away once its barrier has opened in front of the player. */
@@ -21,15 +23,26 @@ export const useRegionBarrierCovers = (
   const shape = JSON.stringify(covers)
   const [seen, setSeen] = useState<Seen>({ floor, shape, covers })
   const [leaving, setLeaving] = useState<readonly RegionBarrierCover[]>([])
+  // Each opening, by the realisations it opened: heard whether or not the fade is drawn.
+  const [opened, setOpened] = useState<{ count: number; realisations: readonly string[] }>({
+    count: 0,
+    realisations: [],
+  })
 
   if (seen.shape !== shape || seen.floor !== floor) {
     setSeen({ floor, shape, covers })
     if (seen.floor !== floor) setLeaving([])
     else {
       const gone = seen.covers.filter(old => !covers.some(now => now.region === old.region))
+      if (gone.length > 0)
+        setOpened({ count: opened.count + 1, realisations: [...new Set(gone.map(old => old.realisation))] })
       if (gone.length > 0 && !prefersReducedMotion()) setLeaving([...leaving, ...gone])
     }
   }
+
+  useEffect(() => {
+    for (const realisation of opened.realisations) playSound(barrierSound(realisation))
+  }, [opened])
 
   useEffect(() => {
     if (leaving.length === 0) return

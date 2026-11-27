@@ -1,7 +1,5 @@
 import { useCallback, useState } from "react"
 import type { KeyColor, TreasureReward } from "@/game/siteTypes"
-import { playSound } from "@/app/audio/audio"
-import { rewardSound } from "@/app/audio/coreSounds"
 import type { MergedRewardContributions } from "./rewardContributions"
 
 export type PendingReward = {
@@ -37,7 +35,6 @@ export const useRewardOffer = ({ rewardContributions, applyReward, onTaken }: Re
   const offerFound = useCallback(
     (reward: TreasureReward, keyColors?: readonly KeyColor[]) => {
       if (rewardContributions.skip(reward)) return
-      playSound(rewardSound(reward.type))
       setPending({
         reward,
         keyColors,

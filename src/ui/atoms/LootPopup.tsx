@@ -14,6 +14,9 @@ type LootPopupProps = {
   clickToContinueLabel: string
 }
 
+/** How long the popup bursts before its card and content come in. */
+export const LOOT_BURST_MS = 300
+
 export const LootPopup: FC<LootPopupProps> = ({
   isOpen,
   itemName,
@@ -39,11 +42,10 @@ export const LootPopup: FC<LootPopupProps> = ({
     if (isOpen) {
       setAnimationPhase("burst")
 
-      // Burst effect duration
       const burstTimer = setTimeout(() => {
         setAnimationPhase("reveal")
         setShowContent(true)
-      }, 300)
+      }, LOOT_BURST_MS)
 
       // Full reveal duration
       const revealTimer = setTimeout(() => {

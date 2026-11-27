@@ -63,6 +63,8 @@ type Props = {
    * he comes to rest on when that is a room point: once per room waypoint, never per frame. Fires with null when a
    * segment sets out from a corridor point straight after a room point: he has left the room. */
   onWaypoint?: (at: WalkPoint | null, to?: WalkPoint) => void
+  /** Fires once as a walk sets out, never per step, and never for a snap, a mount or a walk cut short by the next. */
+  onSetOff?: () => void
 }
 
 export const ExplorerDot = ({
@@ -76,6 +78,7 @@ export const ExplorerDot = ({
   standAt,
   waypointsOf,
   onWaypoint,
+  onSetOff,
 }: Props) => {
   // The map lays cells out on a stretched pitch so every wall has a place of its own — the dot walks
   // between floor-square centres, wherever those land.
@@ -171,6 +174,7 @@ export const ExplorerDot = ({
 
     animatingRef.current = true
     setWalking(true)
+    onSetOff?.()
     let segIdx = 0
     let segStart = waypoints[0]
     let segEnd = waypoints[1]

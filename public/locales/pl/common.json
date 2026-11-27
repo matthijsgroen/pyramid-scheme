@@ -249,8 +249,7 @@
       "wizard": "Pióro i serce"
     },
     "entrance": {
-      "title": "Mozaika",
-      "toPlace": "Mozaika · {{count}} do ułożenia"
+      "title": "Mozaika"
     },
     "haul": {
       "pieces_one": "{{count}} kawałek mozaiki",

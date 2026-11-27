@@ -10,8 +10,8 @@ import { listenForPageLayers } from "@/app/input/pageLayers"
 import { layerOnMount } from "@/ui/atoms/dialogFocus"
 
 vi.mock("react-i18next", () => ({ useTranslation: () => ({ t: (key: string) => key }) }))
-const { playSound } = vi.hoisted(() => ({ playSound: vi.fn() }))
-vi.mock("@/app/audio/audio", () => ({ playSound }))
+const { playSound, release } = vi.hoisted(() => ({ playSound: vi.fn(), release: vi.fn() }))
+vi.mock("@/app/audio/audio", () => ({ playSound, audio: { duck: () => release } }))
 
 const renderShell = (solved: boolean, onSolved: () => void = () => {}) =>
   render(
@@ -32,6 +32,44 @@ describe("PuzzleFamilyShell", () => {
         {() => <button>cell</button>}
       </PuzzleFamilyShell>
     )
+    expect(playSound.mock.calls).toEqual([["puzzle.solved"]])
+  })
+
+  it("holds the music down until the solved banner shows the time", () => {
+    vi.useFakeTimers()
+    try {
+      release.mockClear()
+      render(
+        <PuzzleFamilyShell onSolved={() => {}} onCancel={() => {}} solved onReset={() => {}} hint="do this">
+          {() => <button>cell</button>}
+        </PuzzleFamilyShell>
+      )
+      expect(release).not.toHaveBeenCalled()
+      act(() => vi.advanceTimersByTime(1000))
+      expect(release).toHaveBeenCalledOnce()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it("plays puzzle.solved as the board starts its own finish, and not again at solved", () => {
+    playSound.mockClear()
+    const shell = (finished: boolean, solved: boolean) => (
+      <PuzzleFamilyShell
+        onSolved={() => {}}
+        onCancel={() => {}}
+        finished={finished}
+        solved={solved}
+        onReset={() => {}}
+        hint="do this"
+      >
+        {() => <button>cell</button>}
+      </PuzzleFamilyShell>
+    )
+    const { rerender } = render(shell(false, false))
+    rerender(shell(true, false))
+    expect(playSound.mock.calls).toEqual([["puzzle.solved"]])
+    rerender(shell(true, true))
     expect(playSound.mock.calls).toEqual([["puzzle.solved"]])
   })
 

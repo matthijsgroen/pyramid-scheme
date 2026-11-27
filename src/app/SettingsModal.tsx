@@ -9,9 +9,11 @@ import { focusOnMount, trapTab } from "@/ui/atoms/dialogFocus"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DevTools } from "@/app/dev/devToolsBuild"
 import { SaveCardTransfer } from "@/app/saveCard/SaveCardTransfer"
-import { MUSIC_TRACK_URL, useMusicSetting, useSoundEffectsSetting } from "@/app/audio/audioSettings"
+import { useMusicSetting, useSoundEffectsSetting } from "@/app/audio/audioSettings"
+import { MUSIC_TRACK_URL } from "@/app/audio/musicTrack"
 import { hasSounds } from "@/app/audio/soundRegistry"
 import { SettingsSwitch } from "@/ui/molecules/SettingsSwitch"
+import { CreditsPanel } from "@/app/credits/CreditsPanel"
 
 type SettingsModalProps = {
   isOpen: boolean
@@ -24,6 +26,7 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGa
   const { t, i18n } = useTranslation("common")
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [showSaveCard, setShowSaveCard] = useState(false)
+  const [showCredits, setShowCredits] = useState(false)
   const [tutorialsEnabled, setTutorialsEnabled] = useGameStorage<boolean>("tutorialsEnabled", true)
   const [soundEffects, setSoundEffects] = useSoundEffectsSetting()
   const [music, setMusic] = useMusicSetting()
@@ -124,6 +127,18 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGa
               {t("saveCard.title")}
             </button>
             {showSaveCard && <SaveCardTransfer />}
+          </div>
+
+          {/* Who made the sounds */}
+          <div className="space-y-2">
+            <button
+              onClick={() => setShowCredits(open => !open)}
+              aria-expanded={showCredits}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 font-medium text-gray-800 transition-colors hover:bg-gray-50"
+            >
+              {t("ui.credits")}
+            </button>
+            {showCredits && <CreditsPanel />}
           </div>
 
           {/* Clear game data */}

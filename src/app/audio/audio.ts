@@ -1,4 +1,6 @@
+import "./registerCoreSounds"
 import { type AudioContextLike, type AudioService, createAudioService } from "./audioService"
+import { MUSIC_TRACK_URL } from "./musicTrack"
 import type { SoundOptions } from "./soundRegistry"
 
 type AudioContextConstructor = new () => AudioContext
@@ -9,14 +11,32 @@ const defaultContext = (): AudioContextLike | undefined => {
   return Context ? new Context() : undefined
 }
 
-export const audio: AudioService = createAudioService({ createContext: defaultContext })
+// Fetching the track once puts the whole file in the service worker's music cache, so it plays offline after.
+const warmCache = (url: string) => void fetch(url).catch(() => {})
+
+const onPageHidden = (callback: (hidden: boolean) => void) => {
+  if (typeof document === "undefined") return () => {}
+  const onChange = () => callback(document.visibilityState === "hidden")
+  document.addEventListener("visibilitychange", onChange)
+  return () => document.removeEventListener("visibilitychange", onChange)
+}
+
+export const audio: AudioService = createAudioService({
+  createContext: defaultContext,
+  ...(MUSIC_TRACK_URL ? { music: { url: MUSIC_TRACK_URL, createElement: url => new Audio(url), warmCache } } : {}),
+  onHidden: onPageHidden,
+})
 
 export const playSound = (name: string, options?: SoundOptions): void => audio.play(name, options)
 
-const GESTURES = ["pointerdown", "keydown"] as const
+/** Loops `name` until the returned stop is called. */
+export const loopSound = (name: string): (() => void) => audio.loop(name)
+
+const GESTURES = ["pointerdown", "touchend", "click", "keydown"] as const
 
 // Browsers allow audio only after a user gesture, so every tap or key press offers the service a
-// chance to start (or, after the system suspended it, resume) its context.
+// chance to start (or, after the system suspended it, resume) its context. On a touch screen iOS counts the
+// end of a touch as the gesture and not its start, so a context a phone call interrupted resumes only there.
 export const resumeAudioOnGesture = (target: EventTarget, service: AudioService = audio): (() => void) => {
   const onGesture = () => service.unlock()
   for (const type of GESTURES) target.addEventListener(type, onGesture, { capture: true })

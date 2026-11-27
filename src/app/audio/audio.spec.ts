@@ -5,10 +5,12 @@ import type { AudioService } from "./audioService"
 
 const fakeService = (): AudioService => ({
   play: vi.fn(),
+  loop: vi.fn(() => () => {}),
   unlock: vi.fn(),
   setEffects: vi.fn(),
   setMusic: vi.fn(),
   duck: vi.fn(() => () => {}),
+  diagnose: vi.fn(),
 })
 
 describe("resumeAudioOnGesture", () => {
@@ -20,10 +22,20 @@ describe("resumeAudioOnGesture", () => {
     cleanup()
   })
 
+  it("the end of a touch unlocks the service too, which is the gesture iOS counts", () => {
+    const service = fakeService()
+    const cleanup = resumeAudioOnGesture(window, service)
+    window.dispatchEvent(new Event("touchend"))
+    expect(service.unlock).toHaveBeenCalledTimes(1)
+    cleanup()
+  })
+
   it("stops listening after cleanup", () => {
     const service = fakeService()
     resumeAudioOnGesture(window, service)()
     window.dispatchEvent(new Event("pointerdown"))
+    window.dispatchEvent(new Event("touchend"))
+    window.dispatchEvent(new Event("click"))
     window.dispatchEvent(new Event("keydown"))
     expect(service.unlock).toHaveBeenCalledTimes(0)
   })
