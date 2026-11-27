@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - A puzzle or story in a room can no longer be walked past.
+- Pinch-zooming the camp on iPhone no longer crashes the browser.
 
 ## 0.48.3 - 2026-11-23
 
