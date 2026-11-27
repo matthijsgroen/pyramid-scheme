@@ -4,6 +4,7 @@ import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { DevPanel } from "@/ui/molecules/DevPanel"
 import { useDevActions } from "@/app/dev/useDevActions"
 import { PuzzleLab } from "@/app/dev/PuzzleLab"
+import { AudioReadout } from "@/app/dev/AudioReadout"
 import { SaveTransfer } from "@/app/dev/SaveTransfer"
 import { START_LOCK, encodeLockHash } from "@/app/dev/lockEditorUrl"
 import { START_ROOM, encodeRoomHash } from "@/app/dev/roomEditorUrl"
@@ -20,6 +21,7 @@ export const DevTools: FC<{ startGame: () => void; onClose: () => void }> = ({ s
   const shopTombJourney = journeyList.find(j => j.id === "junior_treasure_tomb")
   return (
     <div className="mt-6 space-y-4 rounded-lg bg-stone-900 p-3">
+      <AudioReadout />
       {shopTombJourney && (
         <div className="flex justify-center">
           <DeveloperButton

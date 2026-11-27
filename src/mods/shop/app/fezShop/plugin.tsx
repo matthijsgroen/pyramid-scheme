@@ -11,6 +11,8 @@ import { FezShop, type ShopBuyItem } from "@/ui/organisms/FezShop"
 import { rewardText } from "@/app/SiteMap/rewardDisplay"
 import { priceFor } from "@/mods/shop/game/pricing"
 import { buyStockSlot } from "./buyStockSlot"
+import { playSound } from "@/app/audio/audio"
+import { SHOP_COINS_SOUND } from "../sounds"
 import { getSellableById, sellValueForItemId } from "@/data/sellables"
 
 // Fez's shop encounter — browsing/buying, never a solve/fail challenge, so it always
@@ -68,7 +70,7 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
     const item = stock[j]
     if (!item) return
     const price = priceFor(item, tier)
-    buyStockSlot({
+    const bought = buyStockSlot({
       price,
       balance,
       soldOut: soldOut(j),
@@ -76,6 +78,7 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
       spend: () => progression.ledger.spend("money", price),
       claim: () => journeys.markShopSlotPurchased(ctx.address, j),
     })
+    if (bought) playSound(SHOP_COINS_SOUND)
   }
 
   // Every stock slot (fragments/mosaic/map pieces/purchases) renders once, in the shop's one buy list,
@@ -100,6 +103,7 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
     if (value <= 0) return
     inventory.removeItem(id, 1)
     progression.ledger.grant("money", value)
+    playSound(SHOP_COINS_SOUND)
   }
 
   return (

@@ -45,6 +45,7 @@ import { PuzzleRoomContext } from "@/mods/core/app/puzzleState"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
 import { DetectorButton } from "@/ui/atoms/DetectorButton"
 import { BackButton } from "@/ui/atoms/BackButton"
+import { SettingsButton } from "@/ui/atoms/SettingsButton"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
 import { SiteHudBar } from "@/ui/atoms/SiteHudBar"
@@ -66,6 +67,8 @@ type Props = {
   lastLevel: boolean
   onSiteComplete: () => void
   onCancel: () => void
+  /** Opens Settings; the gear shows only while the floor is on top, clear of an encounter's own buttons. */
+  onSettings?: () => void
 }
 
 export const SiteMapScreen = ({
@@ -77,6 +80,7 @@ export const SiteMapScreen = ({
   lastLevel,
   onSiteComplete,
   onCancel,
+  onSettings,
 }: Props) => {
   const { t } = useTranslation(["common", "inventory", "sellables"])
   const journeys = useJourneys()
@@ -236,6 +240,7 @@ export const SiteMapScreen = ({
   return (
     <div className="relative flex h-full flex-col items-center justify-center">
       <BackButton onClick={onCancel} label={t("ui.back")} />
+      {onSettings && !encounter.isOpen && <SettingsButton label={t("ui.settings")} onClick={onSettings} />}
       {currentFloor > 0 && <FloorBadge label={t("ui.floor", { number: currentFloor + 1 })} />}
       <div className="relative h-(--screen-height) w-screen">
         <SiteMapView

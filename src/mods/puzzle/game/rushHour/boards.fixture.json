@@ -2242,9 +2242,7 @@
           "horizontal": false
         }
       ],
-      "walls": [
-        28
-      ]
+      "walls": [28]
     },
     {
       "size": 6,
@@ -2322,9 +2320,7 @@
           "horizontal": true
         }
       ],
-      "walls": [
-        30
-      ]
+      "walls": [30]
     },
     {
       "size": 6,
@@ -2402,9 +2398,7 @@
           "horizontal": false
         }
       ],
-      "walls": [
-        18
-      ]
+      "walls": [18]
     },
     {
       "size": 6,
@@ -2482,9 +2476,7 @@
           "horizontal": true
         }
       ],
-      "walls": [
-        35
-      ]
+      "walls": [35]
     },
     {
       "size": 6,
@@ -2562,9 +2554,7 @@
           "horizontal": false
         }
       ],
-      "walls": [
-        35
-      ]
+      "walls": [35]
     },
     {
       "size": 6,
@@ -2642,9 +2632,7 @@
           "horizontal": true
         }
       ],
-      "walls": [
-        1
-      ]
+      "walls": [1]
     },
     {
       "size": 6,
@@ -2722,9 +2710,7 @@
           "horizontal": false
         }
       ],
-      "walls": [
-        6
-      ]
+      "walls": [6]
     },
     {
       "size": 6,
@@ -2802,9 +2788,7 @@
           "horizontal": true
         }
       ],
-      "walls": [
-        0
-      ]
+      "walls": [0]
     },
     {
       "size": 6,
@@ -2882,9 +2866,7 @@
           "horizontal": true
         }
       ],
-      "walls": [
-        7
-      ]
+      "walls": [7]
     },
     {
       "size": 6,
@@ -2962,9 +2944,7 @@
           "horizontal": true
         }
       ],
-      "walls": [
-        11
-      ]
+      "walls": [11]
     },
     {
       "size": 6,
@@ -3042,9 +3022,7 @@
           "horizontal": true
         }
       ],
-      "walls": [
-        16
-      ]
+      "walls": [16]
     },
     {
       "size": 6,
@@ -3122,9 +3100,7 @@
           "horizontal": false
         }
       ],
-      "walls": [
-        24
-      ]
+      "walls": [24]
     }
   ],
   "wizard": [

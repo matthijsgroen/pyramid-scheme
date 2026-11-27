@@ -21,10 +21,7 @@
             "row": 4,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -32,10 +29,7 @@
             "row": 4,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -57,28 +51,13 @@
             "row": 6,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         }
       ],
-      "initial": [
-        0,
-        1,
-        0,
-        1
-      ],
-      "solution": [
-        0,
-        0,
-        1,
-        0
-      ],
+      "initial": [0, 1, 0, 1],
+      "solution": [0, 0, 1, 0],
       "techniqueCap": "neverReached",
-      "modes": [
-        "sliderHeavy"
-      ]
+      "modes": ["sliderHeavy"]
     },
     {
       "size": 7,
@@ -101,10 +80,7 @@
             "row": 1,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -126,10 +102,7 @@
             "row": 3,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -137,28 +110,13 @@
             "row": 1,
             "col": 4
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         }
       ],
-      "initial": [
-        1,
-        0,
-        0,
-        0
-      ],
-      "solution": [
-        1,
-        1,
-        1,
-        1
-      ],
+      "initial": [1, 0, 0, 0],
+      "solution": [1, 1, 1, 1],
       "techniqueCap": "neverReached",
-      "modes": [
-        "sliderHeavy"
-      ]
+      "modes": ["sliderHeavy"]
     },
     {
       "size": 7,
@@ -203,10 +161,7 @@
             "row": 2,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -214,10 +169,7 @@
             "row": 2,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -225,10 +177,7 @@
             "row": 0,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -236,28 +185,13 @@
             "row": 6,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         }
       ],
-      "initial": [
-        1,
-        0,
-        1,
-        1
-      ],
-      "solution": [
-        0,
-        1,
-        1,
-        0
-      ],
+      "initial": [1, 0, 1, 1],
+      "solution": [0, 1, 1, 0],
       "techniqueCap": "neverReached",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 7,
@@ -309,10 +243,7 @@
             "row": 4,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -320,10 +251,7 @@
             "row": 4,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -331,10 +259,7 @@
             "row": 2,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -355,10 +280,7 @@
             "row": 4,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -366,32 +288,13 @@
             "row": 6,
             "col": 1
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         }
       ],
-      "initial": [
-        0,
-        0,
-        0,
-        1,
-        1,
-        1
-      ],
-      "solution": [
-        1,
-        1,
-        0,
-        0,
-        0,
-        1
-      ],
+      "initial": [0, 0, 0, 1, 1, 1],
+      "solution": [1, 1, 0, 0, 0, 1],
       "techniqueCap": "neverReached",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 7,
@@ -429,10 +332,7 @@
             "row": 4,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -440,10 +340,7 @@
             "row": 6,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -451,10 +348,7 @@
             "row": 6,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -475,10 +369,7 @@
             "row": 1,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -486,32 +377,13 @@
             "row": 6,
             "col": 0
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         }
       ],
-      "initial": [
-        0,
-        0,
-        1,
-        1,
-        0,
-        0
-      ],
-      "solution": [
-        1,
-        1,
-        0,
-        1,
-        1,
-        0
-      ],
+      "initial": [0, 0, 1, 1, 0, 0],
+      "solution": [1, 1, 0, 1, 1, 0],
       "techniqueCap": "neverReached",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 7,
@@ -534,10 +406,7 @@
             "row": 4,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -545,10 +414,7 @@
             "row": 4,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -556,10 +422,7 @@
             "row": 2,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -567,10 +430,7 @@
             "row": 6,
             "col": 3
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -578,10 +438,7 @@
             "row": 2,
             "col": 0
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "slidingWall",
@@ -607,33 +464,15 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 5,
           "to": 1
         }
       ],
-      "initial": [
-        1,
-        0,
-        1,
-        0,
-        1,
-        0
-      ],
-      "solution": [
-        1,
-        1,
-        0,
-        0,
-        0,
-        0
-      ],
+      "initial": [1, 0, 1, 0, 1, 0],
+      "solution": [1, 1, 0, 0, 0, 0],
       "techniqueCap": "neverReached",
-      "modes": [
-        "switchHeavy"
-      ]
+      "modes": ["switchHeavy"]
     },
     {
       "size": 7,
@@ -671,10 +510,7 @@
             "row": 4,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -682,11 +518,7 @@
             "row": 4,
             "col": 0
           },
-          "angles": [
-            2,
-            3,
-            6
-          ]
+          "angles": [2, 3, 6]
         },
         {
           "kind": "turnMirror",
@@ -694,11 +526,7 @@
             "row": 2,
             "col": 0
           },
-          "angles": [
-            2,
-            6,
-            7
-          ]
+          "angles": [2, 6, 7]
         },
         {
           "kind": "turnMirror",
@@ -706,10 +534,7 @@
             "row": 4,
             "col": 4
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -717,30 +542,13 @@
             "row": 6,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         }
       ],
-      "initial": [
-        0,
-        2,
-        1,
-        1,
-        1
-      ],
-      "solution": [
-        1,
-        2,
-        0,
-        0,
-        1
-      ],
+      "initial": [0, 2, 1, 1, 1],
+      "solution": [1, 2, 0, 0, 1],
       "techniqueCap": "neverReached",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 7,
@@ -777,10 +585,7 @@
             "row": 4,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -788,10 +593,7 @@
             "row": 2,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -799,28 +601,13 @@
             "row": 6,
             "col": 6
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         }
       ],
-      "initial": [
-        0,
-        1,
-        1,
-        1
-      ],
-      "solution": [
-        1,
-        0,
-        1,
-        0
-      ],
+      "initial": [0, 1, 1, 1],
+      "solution": [1, 0, 1, 0],
       "techniqueCap": "neverReached",
-      "modes": [
-        "sliderHeavy"
-      ]
+      "modes": ["sliderHeavy"]
     },
     {
       "size": 7,
@@ -857,10 +644,7 @@
             "row": 6,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -868,10 +652,7 @@
             "row": 6,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -879,28 +660,13 @@
             "row": 6,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         }
       ],
-      "initial": [
-        0,
-        0,
-        0,
-        1
-      ],
-      "solution": [
-        1,
-        0,
-        1,
-        0
-      ],
+      "initial": [0, 0, 0, 1],
+      "solution": [1, 0, 1, 0],
       "techniqueCap": "neverReached",
-      "modes": [
-        "sliderHeavy"
-      ]
+      "modes": ["sliderHeavy"]
     },
     {
       "size": 7,
@@ -923,10 +689,7 @@
             "row": 4,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -934,10 +697,7 @@
             "row": 4,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -945,10 +705,7 @@
             "row": 6,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -956,10 +713,7 @@
             "row": 1,
             "col": 3
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "slidingWall",
@@ -985,31 +739,15 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 4,
           "to": 1
         }
       ],
-      "initial": [
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "solution": [
-        0,
-        1,
-        1,
-        1,
-        0
-      ],
+      "initial": [0, 0, 0, 0, 0],
+      "solution": [0, 1, 1, 1, 0],
       "techniqueCap": "neverReached",
-      "modes": [
-        "switchHeavy"
-      ]
+      "modes": ["switchHeavy"]
     },
     {
       "size": 7,
@@ -1047,10 +785,7 @@
             "row": 2,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1058,10 +793,7 @@
             "row": 0,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1069,10 +801,7 @@
             "row": 0,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -1093,10 +822,7 @@
             "row": 6,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1104,32 +830,13 @@
             "row": 0,
             "col": 0
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         }
       ],
-      "initial": [
-        1,
-        1,
-        0,
-        1,
-        1,
-        1
-      ],
-      "solution": [
-        0,
-        0,
-        1,
-        1,
-        1,
-        0
-      ],
+      "initial": [1, 1, 0, 1, 1, 1],
+      "solution": [0, 0, 1, 1, 1, 0],
       "techniqueCap": "neverReached",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 7,
@@ -1182,10 +889,7 @@
             "row": 4,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1193,10 +897,7 @@
             "row": 4,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1204,10 +905,7 @@
             "row": 2,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1215,28 +913,13 @@
             "row": 6,
             "col": 3
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         }
       ],
-      "initial": [
-        0,
-        0,
-        0,
-        1
-      ],
-      "solution": [
-        1,
-        1,
-        0,
-        1
-      ],
+      "initial": [0, 0, 0, 1],
+      "solution": [1, 1, 0, 1],
       "techniqueCap": "neverReached",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     }
   ],
   "junior": [
@@ -1276,10 +959,7 @@
             "row": 5,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -1305,10 +985,7 @@
             "row": 3,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -1334,10 +1011,7 @@
             "row": 1,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1345,10 +1019,7 @@
             "row": 7,
             "col": 2
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -1356,10 +1027,7 @@
             "row": 6,
             "col": 4
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -1367,36 +1035,13 @@
             "row": 5,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         }
       ],
-      "initial": [
-        0,
-        1,
-        1,
-        1,
-        1,
-        0,
-        1,
-        1
-      ],
-      "solution": [
-        0,
-        2,
-        0,
-        2,
-        0,
-        0,
-        1,
-        1
-      ],
+      "initial": [0, 1, 1, 1, 1, 0, 1, 1],
+      "solution": [0, 2, 0, 2, 0, 0, 1, 1],
       "techniqueCap": "neverReached",
-      "modes": [
-        "sliderHeavy"
-      ]
+      "modes": ["sliderHeavy"]
     },
     {
       "size": 8,
@@ -1455,10 +1100,7 @@
             "row": 4,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1466,10 +1108,7 @@
             "row": 4,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1477,10 +1116,7 @@
             "row": 2,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1488,10 +1124,7 @@
             "row": 4,
             "col": 5
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -1499,34 +1132,13 @@
             "row": 6,
             "col": 1
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         }
       ],
-      "initial": [
-        2,
-        0,
-        1,
-        0,
-        0,
-        1,
-        1
-      ],
-      "solution": [
-        0,
-        2,
-        0,
-        1,
-        1,
-        0,
-        0
-      ],
+      "initial": [2, 0, 1, 0, 0, 1, 1],
+      "solution": [0, 2, 0, 1, 1, 0, 0],
       "techniqueCap": "neverReached",
-      "modes": [
-        "sliderHeavy"
-      ]
+      "modes": ["sliderHeavy"]
     },
     {
       "size": 8,
@@ -1567,10 +1179,7 @@
             "row": 5,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1578,10 +1187,7 @@
             "row": 5,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1589,10 +1195,7 @@
             "row": 3,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1600,10 +1203,7 @@
             "row": 3,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1611,10 +1211,7 @@
             "row": 5,
             "col": 0
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -1622,10 +1219,7 @@
             "row": 7,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1633,36 +1227,13 @@
             "row": 6,
             "col": 6
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         }
       ],
-      "initial": [
-        2,
-        0,
-        1,
-        1,
-        1,
-        0,
-        1,
-        0
-      ],
-      "solution": [
-        2,
-        1,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1
-      ],
+      "initial": [2, 0, 1, 1, 1, 0, 1, 0],
+      "solution": [2, 1, 0, 0, 0, 1, 1, 1],
       "techniqueCap": "neverReached",
-      "modes": [
-        "sliderHeavy"
-      ]
+      "modes": ["sliderHeavy"]
     },
     {
       "size": 8,
@@ -1728,10 +1299,7 @@
             "row": 1,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1739,10 +1307,7 @@
             "row": 3,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1750,10 +1315,7 @@
             "row": 3,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1761,10 +1323,7 @@
             "row": 5,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1772,10 +1331,7 @@
             "row": 5,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -1796,10 +1352,7 @@
             "row": 3,
             "col": 7
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -1807,10 +1360,7 @@
             "row": 1,
             "col": 3
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -1818,10 +1368,7 @@
             "row": 5,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1829,40 +1376,13 @@
             "row": 7,
             "col": 1
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         }
       ],
-      "initial": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        1,
-        1,
-        1,
-        0
-      ],
-      "solution": [
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        0,
-        1
-      ],
+      "initial": [1, 1, 1, 1, 1, 0, 1, 1, 1, 0],
+      "solution": [0, 0, 0, 0, 1, 1, 1, 1, 0, 1],
       "techniqueCap": "neverReached",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 8,
@@ -1935,10 +1455,7 @@
             "row": 6,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1946,10 +1463,7 @@
             "row": 4,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1957,10 +1471,7 @@
             "row": 4,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1968,10 +1479,7 @@
             "row": 2,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -1979,10 +1487,7 @@
             "row": 2,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -2003,10 +1508,7 @@
             "row": 4,
             "col": 0
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -2014,10 +1516,7 @@
             "row": 6,
             "col": 4
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -2025,10 +1524,7 @@
             "row": 2,
             "col": 2
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -2036,40 +1532,13 @@
             "row": 0,
             "col": 6
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         }
       ],
-      "initial": [
-        1,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1
-      ],
-      "solution": [
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        0,
-        1,
-        1,
-        0
-      ],
+      "initial": [1, 0, 1, 1, 0, 0, 0, 0, 0, 1],
+      "solution": [0, 0, 0, 0, 1, 1, 0, 1, 1, 0],
       "techniqueCap": "neverReached",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 8,
@@ -2129,10 +1598,7 @@
             "row": 5,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2140,10 +1606,7 @@
             "row": 5,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2151,10 +1614,7 @@
             "row": 3,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2162,10 +1622,7 @@
             "row": 3,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2173,10 +1630,7 @@
             "row": 7,
             "col": 4
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -2184,32 +1638,13 @@
             "row": 3,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         }
       ],
-      "initial": [
-        0,
-        0,
-        1,
-        0,
-        0,
-        0
-      ],
-      "solution": [
-        1,
-        1,
-        0,
-        0,
-        0,
-        1
-      ],
+      "initial": [0, 0, 1, 0, 0, 0],
+      "solution": [1, 1, 0, 0, 0, 1],
       "techniqueCap": "neverReached",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 8,
@@ -2275,10 +1710,7 @@
             "row": 5,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2286,10 +1718,7 @@
             "row": 5,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2297,10 +1726,7 @@
             "row": 3,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2308,10 +1734,7 @@
             "row": 3,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2319,10 +1742,7 @@
             "row": 1,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2330,10 +1750,7 @@
             "row": 1,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2341,10 +1758,7 @@
             "row": 5,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2352,10 +1766,7 @@
             "row": 7,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2363,38 +1774,13 @@
             "row": 1,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         }
       ],
-      "initial": [
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1
-      ],
-      "solution": [
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0,
-        1
-      ],
+      "initial": [0, 0, 1, 0, 0, 0, 1, 1, 1],
+      "solution": [1, 1, 0, 0, 1, 1, 0, 0, 1],
       "techniqueCap": "neverReached",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 8,
@@ -2443,10 +1829,7 @@
             "row": 5,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2454,10 +1837,7 @@
             "row": 3,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2465,10 +1845,7 @@
             "row": 3,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -2494,32 +1871,13 @@
             "row": 7,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         }
       ],
-      "initial": [
-        1,
-        0,
-        0,
-        1,
-        1,
-        1
-      ],
-      "solution": [
-        2,
-        0,
-        1,
-        1,
-        0,
-        1
-      ],
+      "initial": [1, 0, 0, 1, 1, 1],
+      "solution": [2, 0, 1, 1, 0, 1],
       "techniqueCap": "neverReached",
-      "modes": [
-        "sliderHeavy"
-      ]
+      "modes": ["sliderHeavy"]
     },
     {
       "size": 8,
@@ -2578,10 +1936,7 @@
             "row": 3,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2589,10 +1944,7 @@
             "row": 3,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2600,10 +1952,7 @@
             "row": 1,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2611,10 +1960,7 @@
             "row": 3,
             "col": 7
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -2622,10 +1968,7 @@
             "row": 7,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2633,36 +1976,13 @@
             "row": 1,
             "col": 6
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         }
       ],
-      "initial": [
-        2,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1
-      ],
-      "solution": [
-        0,
-        0,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0
-      ],
+      "initial": [2, 0, 0, 0, 1, 1, 1, 1],
+      "solution": [0, 0, 1, 1, 1, 0, 0, 0],
       "techniqueCap": "neverReached",
-      "modes": [
-        "sliderHeavy"
-      ]
+      "modes": ["sliderHeavy"]
     },
     {
       "size": 8,
@@ -2737,10 +2057,7 @@
             "row": 1,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2748,10 +2065,7 @@
             "row": 1,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2759,10 +2073,7 @@
             "row": 3,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2770,10 +2081,7 @@
             "row": 3,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2781,30 +2089,13 @@
             "row": 7,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         }
       ],
-      "initial": [
-        1,
-        0,
-        0,
-        0,
-        0
-      ],
-      "solution": [
-        0,
-        1,
-        1,
-        0,
-        1
-      ],
+      "initial": [1, 0, 0, 0, 0],
+      "solution": [0, 1, 1, 0, 1],
       "techniqueCap": "neverReached",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 8,
@@ -2870,10 +2161,7 @@
             "row": 5,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2881,10 +2169,7 @@
             "row": 3,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2892,10 +2177,7 @@
             "row": 3,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2903,10 +2185,7 @@
             "row": 5,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2914,10 +2193,7 @@
             "row": 5,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -2938,10 +2214,7 @@
             "row": 7,
             "col": 2
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -2949,10 +2222,7 @@
             "row": 3,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2960,10 +2230,7 @@
             "row": 0,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -2971,40 +2238,13 @@
             "row": 7,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         }
       ],
-      "initial": [
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ],
-      "solution": [
-        0,
-        0,
-        1,
-        1,
-        0,
-        1,
-        1,
-        0,
-        1,
-        1
-      ],
+      "initial": [0, 1, 0, 0, 0, 0, 0, 0, 1, 0],
+      "solution": [0, 0, 1, 1, 0, 1, 1, 0, 1, 1],
       "techniqueCap": "neverReached",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 8,
@@ -3035,10 +2275,7 @@
             "row": 5,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3046,10 +2283,7 @@
             "row": 5,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3057,10 +2291,7 @@
             "row": 3,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3068,10 +2299,7 @@
             "row": 3,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3079,10 +2307,7 @@
             "row": 1,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3090,10 +2315,7 @@
             "row": 7,
             "col": 3
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -3101,10 +2323,7 @@
             "row": 3,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3112,10 +2331,7 @@
             "row": 1,
             "col": 5
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "slidingWall",
@@ -3141,39 +2357,15 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 8,
           "to": 1
         }
       ],
-      "initial": [
-        0,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        1,
-        0
-      ],
-      "solution": [
-        0,
-        0,
-        1,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
+      "initial": [0, 1, 1, 0, 0, 1, 1, 1, 0],
+      "solution": [0, 0, 1, 1, 1, 0, 1, 0, 0],
       "techniqueCap": "neverReached",
-      "modes": [
-        "switchHeavy"
-      ]
+      "modes": ["switchHeavy"]
     }
   ],
   "expert": [
@@ -3269,10 +2461,7 @@
             "row": 5,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3280,10 +2469,7 @@
             "row": 7,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3291,10 +2477,7 @@
             "row": 7,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3302,10 +2485,7 @@
             "row": 4,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3313,10 +2493,7 @@
             "row": 4,
             "col": 4
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "slidingWall",
@@ -3337,10 +2514,7 @@
             "row": 7,
             "col": 0
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -3348,10 +2522,7 @@
             "row": 4,
             "col": 8
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -3359,38 +2530,13 @@
             "row": 1,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         }
       ],
-      "initial": [
-        0,
-        1,
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        1
-      ],
-      "solution": [
-        1,
-        1,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0,
-        0
-      ],
+      "initial": [0, 1, 0, 0, 1, 0, 0, 1, 1],
+      "solution": [1, 1, 0, 1, 0, 1, 1, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 9,
@@ -3519,10 +2665,7 @@
             "row": 7,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3530,10 +2673,7 @@
             "row": 4,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3541,10 +2681,7 @@
             "row": 4,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3552,10 +2689,7 @@
             "row": 7,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3563,10 +2697,7 @@
             "row": 7,
             "col": 1
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "slidingWall",
@@ -3587,10 +2718,7 @@
             "row": 4,
             "col": 8
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -3598,36 +2726,13 @@
             "row": 0,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         }
       ],
-      "initial": [
-        1,
-        0,
-        1,
-        1,
-        0,
-        1,
-        1,
-        1
-      ],
-      "solution": [
-        1,
-        1,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0
-      ],
+      "initial": [1, 0, 1, 1, 0, 1, 1, 1],
+      "solution": [1, 1, 0, 0, 1, 0, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 9,
@@ -3665,10 +2770,7 @@
             "row": 3,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -3694,10 +2796,7 @@
             "row": 5,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3705,10 +2804,7 @@
             "row": 7,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3716,10 +2812,7 @@
             "row": 7,
             "col": 2
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -3727,10 +2820,7 @@
             "row": 1,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3738,10 +2828,7 @@
             "row": 3,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3749,36 +2836,13 @@
             "row": 7,
             "col": 7
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         }
       ],
-      "initial": [
-        0,
-        0,
-        0,
-        1,
-        0,
-        1,
-        1,
-        1
-      ],
-      "solution": [
-        1,
-        2,
-        1,
-        0,
-        1,
-        0,
-        1,
-        0
-      ],
+      "initial": [0, 0, 0, 1, 0, 1, 1, 1],
+      "solution": [1, 2, 1, 0, 1, 0, 1, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy"
-      ]
+      "modes": ["sliderHeavy"]
     },
     {
       "size": 9,
@@ -3837,11 +2901,7 @@
             "row": 5,
             "col": 6
           },
-          "angles": [
-            2,
-            5,
-            6
-          ]
+          "angles": [2, 5, 6]
         },
         {
           "kind": "turnMirror",
@@ -3849,10 +2909,7 @@
             "row": 5,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3860,10 +2917,7 @@
             "row": 8,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3871,10 +2925,7 @@
             "row": 8,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -3882,10 +2933,7 @@
             "row": 6,
             "col": 5
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -3893,10 +2941,7 @@
             "row": 5,
             "col": 8
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -3904,10 +2949,7 @@
             "row": 3,
             "col": 4
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -3915,10 +2957,7 @@
             "row": 8,
             "col": 1
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -3926,38 +2965,13 @@
             "row": 6,
             "col": 0
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         }
       ],
-      "initial": [
-        0,
-        1,
-        0,
-        1,
-        0,
-        0,
-        1,
-        0,
-        0
-      ],
-      "solution": [
-        2,
-        0,
-        1,
-        0,
-        0,
-        1,
-        0,
-        1,
-        1
-      ],
+      "initial": [0, 1, 0, 1, 0, 0, 1, 0, 0],
+      "solution": [2, 0, 1, 0, 0, 1, 0, 1, 1],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 9,
@@ -4044,10 +3058,7 @@
             "row": 3,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4055,10 +3066,7 @@
             "row": 6,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4066,10 +3074,7 @@
             "row": 6,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4077,10 +3082,7 @@
             "row": 8,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4088,11 +3090,7 @@
             "row": 8,
             "col": 5
           },
-          "angles": [
-            0,
-            3,
-            6
-          ]
+          "angles": [0, 3, 6]
         },
         {
           "kind": "turnMirror",
@@ -4100,10 +3098,7 @@
             "row": 0,
             "col": 5
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -4111,10 +3106,7 @@
             "row": 6,
             "col": 7
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -4122,10 +3114,7 @@
             "row": 4,
             "col": 2
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -4133,10 +3122,7 @@
             "row": 8,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4144,40 +3130,13 @@
             "row": 8,
             "col": 8
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         }
       ],
-      "initial": [
-        1,
-        1,
-        1,
-        1,
-        2,
-        1,
-        1,
-        0,
-        0,
-        1
-      ],
-      "solution": [
-        0,
-        0,
-        0,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0
-      ],
+      "initial": [1, 1, 1, 1, 2, 1, 1, 0, 0, 1],
+      "solution": [0, 0, 0, 1, 1, 0, 1, 0, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 9,
@@ -4208,10 +3167,7 @@
             "row": 5,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4219,10 +3175,7 @@
             "row": 5,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4230,10 +3183,7 @@
             "row": 2,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4241,10 +3191,7 @@
             "row": 2,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4252,10 +3199,7 @@
             "row": 0,
             "col": 4
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -4263,10 +3207,7 @@
             "row": 5,
             "col": 0
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -4274,10 +3215,7 @@
             "row": 8,
             "col": 7
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -4285,10 +3223,7 @@
             "row": 0,
             "col": 2
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "slidingWall",
@@ -4314,39 +3249,15 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 8,
           "to": 1
         }
       ],
-      "initial": [
-        0,
-        1,
-        0,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0
-      ],
-      "solution": [
-        0,
-        0,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0
-      ],
+      "initial": [0, 1, 0, 1, 1, 1, 0, 0, 0],
+      "solution": [0, 0, 1, 1, 0, 0, 1, 1, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "switchHeavy"
-      ]
+      "modes": ["switchHeavy"]
     },
     {
       "size": 9,
@@ -4377,11 +3288,7 @@
             "row": 3,
             "col": 5
           },
-          "angles": [
-            2,
-            5,
-            6
-          ]
+          "angles": [2, 5, 6]
         },
         {
           "kind": "turnMirror",
@@ -4389,10 +3296,7 @@
             "row": 3,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -4418,11 +3322,7 @@
             "row": 6,
             "col": 0
           },
-          "angles": [
-            2,
-            5,
-            6
-          ]
+          "angles": [2, 5, 6]
         },
         {
           "kind": "slidingMirror",
@@ -4448,10 +3348,7 @@
             "row": 6,
             "col": 8
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -4459,10 +3356,7 @@
             "row": 3,
             "col": 7
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -4470,10 +3364,7 @@
             "row": 0,
             "col": 3
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -4481,10 +3372,7 @@
             "row": 8,
             "col": 0
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -4492,40 +3380,13 @@
             "row": 0,
             "col": 6
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         }
       ],
-      "initial": [
-        2,
-        0,
-        2,
-        2,
-        1,
-        0,
-        1,
-        0,
-        1,
-        1
-      ],
-      "solution": [
-        0,
-        0,
-        0,
-        2,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0
-      ],
+      "initial": [2, 0, 2, 2, 1, 0, 1, 0, 1, 1],
+      "solution": [0, 0, 0, 2, 0, 1, 0, 1, 1, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy"
-      ]
+      "modes": ["sliderHeavy"]
     },
     {
       "size": 9,
@@ -4626,10 +3487,7 @@
             "row": 5,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4637,10 +3495,7 @@
             "row": 5,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4648,10 +3503,7 @@
             "row": 2,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4659,10 +3511,7 @@
             "row": 2,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4670,10 +3519,7 @@
             "row": 4,
             "col": 4
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "slidingWall",
@@ -4694,10 +3540,7 @@
             "row": 5,
             "col": 8
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4705,10 +3548,7 @@
             "row": 7,
             "col": 2
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -4716,10 +3556,7 @@
             "row": 2,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4727,10 +3564,7 @@
             "row": 0,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4738,42 +3572,13 @@
             "row": 4,
             "col": 6
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         }
       ],
-      "initial": [
-        1,
-        0,
-        1,
-        0,
-        1,
-        1,
-        1,
-        1,
-        0,
-        1,
-        0
-      ],
-      "solution": [
-        1,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1
-      ],
+      "initial": [1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0],
+      "solution": [1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 9,
@@ -4895,10 +3700,7 @@
             "row": 2,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4906,11 +3708,7 @@
             "row": 2,
             "col": 5
           },
-          "angles": [
-            1,
-            2,
-            6
-          ]
+          "angles": [1, 2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4918,11 +3716,7 @@
             "row": 0,
             "col": 5
           },
-          "angles": [
-            2,
-            4,
-            6
-          ]
+          "angles": [2, 4, 6]
         },
         {
           "kind": "turnMirror",
@@ -4930,11 +3724,7 @@
             "row": 0,
             "col": 3
           },
-          "angles": [
-            2,
-            3,
-            6
-          ]
+          "angles": [2, 3, 6]
         },
         {
           "kind": "turnMirror",
@@ -4942,10 +3732,7 @@
             "row": 3,
             "col": 3
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -4953,10 +3740,7 @@
             "row": 2,
             "col": 0
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -4964,10 +3748,7 @@
             "row": 0,
             "col": 7
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -4975,10 +3756,7 @@
             "row": 4,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -4986,38 +3764,13 @@
             "row": 4,
             "col": 7
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         }
       ],
-      "initial": [
-        0,
-        0,
-        2,
-        2,
-        0,
-        0,
-        0,
-        0,
-        1
-      ],
-      "solution": [
-        1,
-        1,
-        2,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0
-      ],
+      "initial": [0, 0, 2, 2, 0, 0, 0, 0, 1],
+      "solution": [1, 1, 2, 0, 1, 1, 0, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 9,
@@ -5040,10 +3793,7 @@
             "row": 4,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5051,10 +3801,7 @@
             "row": 1,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5062,10 +3809,7 @@
             "row": 1,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5073,10 +3817,7 @@
             "row": 3,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5084,10 +3825,7 @@
             "row": 3,
             "col": 3
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -5095,10 +3833,7 @@
             "row": 8,
             "col": 2
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -5106,10 +3841,7 @@
             "row": 1,
             "col": 8
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -5117,10 +3849,7 @@
             "row": 0,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -5146,39 +3875,15 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 8,
           "to": 1
         }
       ],
-      "initial": [
-        1,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0,
-        1,
-        0
-      ],
-      "solution": [
-        0,
-        1,
-        0,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0
-      ],
+      "initial": [1, 0, 1, 1, 0, 0, 0, 1, 0],
+      "solution": [0, 1, 0, 1, 1, 1, 1, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "switchHeavy"
-      ]
+      "modes": ["switchHeavy"]
     },
     {
       "size": 9,
@@ -5300,10 +4005,7 @@
             "row": 3,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5311,11 +4013,7 @@
             "row": 3,
             "col": 5
           },
-          "angles": [
-            2,
-            4,
-            6
-          ]
+          "angles": [2, 4, 6]
         },
         {
           "kind": "turnMirror",
@@ -5323,10 +4021,7 @@
             "row": 5,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5334,10 +4029,7 @@
             "row": 5,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5345,11 +4037,7 @@
             "row": 2,
             "col": 7
           },
-          "angles": [
-            0,
-            2,
-            7
-          ]
+          "angles": [0, 2, 7]
         },
         {
           "kind": "turnMirror",
@@ -5357,10 +4045,7 @@
             "row": 3,
             "col": 0
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -5368,10 +4053,7 @@
             "row": 1,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5379,10 +4061,7 @@
             "row": 5,
             "col": 3
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -5390,38 +4069,13 @@
             "row": 7,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         }
       ],
-      "initial": [
-        0,
-        1,
-        0,
-        1,
-        2,
-        0,
-        0,
-        1,
-        0
-      ],
-      "solution": [
-        1,
-        2,
-        1,
-        0,
-        2,
-        1,
-        0,
-        0,
-        1
-      ],
+      "initial": [0, 1, 0, 1, 2, 0, 0, 1, 0],
+      "solution": [1, 2, 1, 0, 2, 1, 0, 0, 1],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "wallHeavy"
-      ]
+      "modes": ["wallHeavy"]
     },
     {
       "size": 9,
@@ -5444,10 +4098,7 @@
             "row": 7,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5455,10 +4106,7 @@
             "row": 4,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5466,10 +4114,7 @@
             "row": 4,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5477,10 +4122,7 @@
             "row": 6,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5488,10 +4130,7 @@
             "row": 6,
             "col": 4
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -5499,10 +4138,7 @@
             "row": 4,
             "col": 8
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -5510,10 +4146,7 @@
             "row": 1,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5521,10 +4154,7 @@
             "row": 6,
             "col": 0
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -5532,10 +4162,7 @@
             "row": 8,
             "col": 4
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "slidingWall",
@@ -5561,41 +4188,15 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 9,
           "to": 1
         }
       ],
-      "initial": [
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
-      "solution": [
-        1,
-        1,
-        0,
-        1,
-        0,
-        0,
-        1,
-        0,
-        1,
-        0
-      ],
+      "initial": [0, 0, 0, 0, 1, 1, 0, 1, 0, 0],
+      "solution": [1, 1, 0, 1, 0, 0, 1, 0, 1, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "switchHeavy"
-      ]
+      "modes": ["switchHeavy"]
     }
   ],
   "master": [
@@ -5628,10 +4229,7 @@
             "row": 6,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5639,10 +4237,7 @@
             "row": 6,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5650,10 +4245,7 @@
             "row": 3,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5661,10 +4253,7 @@
             "row": 3,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5672,10 +4261,7 @@
             "row": 0,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -5701,10 +4287,7 @@
             "row": 6,
             "col": 8
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5712,10 +4295,7 @@
             "row": 8,
             "col": 1
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -5723,10 +4303,7 @@
             "row": 7,
             "col": 4
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -5734,10 +4311,7 @@
             "row": 0,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5745,10 +4319,7 @@
             "row": 6,
             "col": 5
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -5756,10 +4327,7 @@
             "row": 1,
             "col": 0
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "slidingWall",
@@ -5804,57 +4372,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 12,
           "to": 1
         },
         {
-          "from": [
-            1
-          ],
+          "from": [1],
           "piece": 13,
           "to": 1
         }
       ],
-      "initial": [
-        1,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        1,
-        1,
-        1,
-        0,
-        0
-      ],
-      "solution": [
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
+      "initial": [1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0],
+      "solution": [1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -5903,10 +4434,7 @@
             "row": 6,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5914,10 +4442,7 @@
             "row": 6,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5925,10 +4450,7 @@
             "row": 4,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5936,10 +4458,7 @@
             "row": 4,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -5947,10 +4466,7 @@
             "row": 7,
             "col": 3
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -5958,10 +4474,7 @@
             "row": 6,
             "col": 7
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -5969,10 +4482,7 @@
             "row": 8,
             "col": 0
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -5980,10 +4490,7 @@
             "row": 0,
             "col": 3
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -5991,10 +4498,7 @@
             "row": 7,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6002,10 +4506,7 @@
             "row": 6,
             "col": 5
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -6013,10 +4514,7 @@
             "row": 8,
             "col": 7
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "slidingWall",
@@ -6061,57 +4559,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 12,
           "to": 1
         },
         {
-          "from": [
-            1
-          ],
+          "from": [1],
           "piece": 13,
           "to": 1
         }
       ],
-      "initial": [
-        2,
-        1,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0,
-        0,
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
-      "solution": [
-        2,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0,
-        0,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0
-      ],
+      "initial": [2, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0],
+      "solution": [2, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -6184,10 +4645,7 @@
             "row": 2,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6195,10 +4653,7 @@
             "row": 2,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6206,10 +4661,7 @@
             "row": 0,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6217,10 +4669,7 @@
             "row": 0,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6228,10 +4677,7 @@
             "row": 3,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6239,10 +4685,7 @@
             "row": 3,
             "col": 4
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -6250,10 +4693,7 @@
             "row": 8,
             "col": 5
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -6261,10 +4701,7 @@
             "row": 0,
             "col": 8
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -6272,10 +4709,7 @@
             "row": 3,
             "col": 0
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -6283,10 +4717,7 @@
             "row": 6,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -6312,44 +4743,15 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 10,
           "to": 1
         }
       ],
-      "initial": [
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        1,
-        0
-      ],
-      "solution": [
-        0,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0
-      ],
+      "initial": [0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0],
+      "solution": [0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "wallHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["wallHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -6372,10 +4774,7 @@
             "row": 1,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6383,10 +4782,7 @@
             "row": 4,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -6412,10 +4808,7 @@
             "row": 7,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6423,10 +4816,7 @@
             "row": 7,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6434,10 +4824,7 @@
             "row": 5,
             "col": 3
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -6445,10 +4832,7 @@
             "row": 4,
             "col": 8
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -6456,10 +4840,7 @@
             "row": 5,
             "col": 5
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -6467,10 +4848,7 @@
             "row": 4,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6478,10 +4856,7 @@
             "row": 8,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -6526,53 +4901,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 10,
           "to": 1
         },
         {
-          "from": [
-            1
-          ],
+          "from": [1],
           "piece": 11,
           "to": 1
         }
       ],
-      "initial": [
-        0,
-        0,
-        1,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
-      "solution": [
-        1,
-        0,
-        2,
-        1,
-        0,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0
-      ],
+      "initial": [0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0],
+      "solution": [1, 0, 2, 1, 0, 1, 1, 1, 1, 0, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -6610,10 +4952,7 @@
             "row": 6,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6621,10 +4960,7 @@
             "row": 4,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6632,10 +4968,7 @@
             "row": 4,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6643,10 +4976,7 @@
             "row": 6,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6654,10 +4984,7 @@
             "row": 6,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -6683,10 +5010,7 @@
             "row": 8,
             "col": 2
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -6694,10 +5018,7 @@
             "row": 4,
             "col": 0
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -6705,10 +5026,7 @@
             "row": 0,
             "col": 4
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -6716,10 +5034,7 @@
             "row": 4,
             "col": 7
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -6727,10 +5042,7 @@
             "row": 2,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6738,10 +5050,7 @@
             "row": 2,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -6786,57 +5095,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 12,
           "to": 1
         },
         {
-          "from": [
-            1
-          ],
+          "from": [1],
           "piece": 13,
           "to": 1
         }
       ],
-      "initial": [
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        0,
-        0
-      ],
-      "solution": [
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0
-      ],
+      "initial": [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0],
+      "solution": [0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -6902,10 +5174,7 @@
             "row": 6,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6913,10 +5182,7 @@
             "row": 6,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6924,10 +5190,7 @@
             "row": 8,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6935,10 +5198,7 @@
             "row": 8,
             "col": 8
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6946,10 +5206,7 @@
             "row": 5,
             "col": 8
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6957,10 +5214,7 @@
             "row": 5,
             "col": 5
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -6968,10 +5222,7 @@
             "row": 6,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6979,10 +5230,7 @@
             "row": 1,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -6990,10 +5238,7 @@
             "row": 8,
             "col": 4
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -7001,10 +5246,7 @@
             "row": 3,
             "col": 5
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "slidingWall",
@@ -7030,44 +5272,15 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 10,
           "to": 1
         }
       ],
-      "initial": [
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0
-      ],
-      "solution": [
-        0,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ],
+      "initial": [0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0],
+      "solution": [0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "wallHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["wallHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -7105,10 +5318,7 @@
             "row": 7,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7116,10 +5326,7 @@
             "row": 5,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7127,10 +5334,7 @@
             "row": 5,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7138,10 +5342,7 @@
             "row": 2,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7149,10 +5350,7 @@
             "row": 2,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -7178,10 +5376,7 @@
             "row": 5,
             "col": 8
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -7189,10 +5384,7 @@
             "row": 8,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7200,10 +5392,7 @@
             "row": 2,
             "col": 0
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -7211,10 +5400,7 @@
             "row": 4,
             "col": 7
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -7222,10 +5408,7 @@
             "row": 2,
             "col": 2
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -7233,10 +5416,7 @@
             "row": 4,
             "col": 0
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "slidingWall",
@@ -7281,57 +5461,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 12,
           "to": 1
         },
         {
-          "from": [
-            1
-          ],
+          "from": [1],
           "piece": 13,
           "to": 1
         }
       ],
-      "initial": [
-        0,
-        0,
-        0,
-        1,
-        1,
-        2,
-        0,
-        0,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0
-      ],
-      "solution": [
-        1,
-        1,
-        1,
-        0,
-        0,
-        1,
-        0,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0
-      ],
+      "initial": [0, 0, 0, 1, 1, 2, 0, 0, 1, 0, 1, 0, 0, 0],
+      "solution": [1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -7446,10 +5589,7 @@
             "row": 3,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7457,10 +5597,7 @@
             "row": 3,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -7486,10 +5623,7 @@
             "row": 5,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7497,10 +5631,7 @@
             "row": 2,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7508,10 +5639,7 @@
             "row": 2,
             "col": 1
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -7519,10 +5647,7 @@
             "row": 1,
             "col": 5
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -7530,10 +5655,7 @@
             "row": 7,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7541,10 +5663,7 @@
             "row": 2,
             "col": 8
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7552,41 +5671,13 @@
             "row": 0,
             "col": 1
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         }
       ],
-      "initial": [
-        0,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0,
-        1
-      ],
-      "solution": [
-        0,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0,
-        1,
-        1
-      ],
+      "initial": [0, 1, 1, 0, 0, 1, 1, 0, 0, 1],
+      "solution": [0, 0, 0, 1, 1, 0, 0, 0, 1, 1],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "wallHeavy",
-        "sliderHeavy"
-      ]
+      "modes": ["wallHeavy", "sliderHeavy"]
     },
     {
       "size": 9,
@@ -7609,10 +5700,7 @@
             "row": 2,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7620,10 +5708,7 @@
             "row": 2,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -7649,10 +5734,7 @@
             "row": 0,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7660,10 +5742,7 @@
             "row": 3,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7671,10 +5750,7 @@
             "row": 3,
             "col": 6
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -7682,10 +5758,7 @@
             "row": 2,
             "col": 0
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -7693,10 +5766,7 @@
             "row": 4,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7704,10 +5774,7 @@
             "row": 3,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7715,10 +5782,7 @@
             "row": 8,
             "col": 6
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -7726,10 +5790,7 @@
             "row": 5,
             "col": 6
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -7737,10 +5798,7 @@
             "row": 3,
             "col": 8
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "slidingWall",
@@ -7785,57 +5843,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 12,
           "to": 1
         },
         {
-          "from": [
-            1
-          ],
+          "from": [1],
           "piece": 13,
           "to": 1
         }
       ],
-      "initial": [
-        0,
-        1,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
-      "solution": [
-        1,
-        0,
-        0,
-        0,
-        1,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0
-      ],
+      "initial": [0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0],
+      "solution": [1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -7873,10 +5894,7 @@
             "row": 2,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7884,10 +5902,7 @@
             "row": 0,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7895,10 +5910,7 @@
             "row": 0,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7906,10 +5918,7 @@
             "row": 2,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7917,10 +5926,7 @@
             "row": 2,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -7946,10 +5952,7 @@
             "row": 8,
             "col": 6
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -7957,10 +5960,7 @@
             "row": 0,
             "col": 8
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -7968,10 +5968,7 @@
             "row": 7,
             "col": 1
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -7979,10 +5976,7 @@
             "row": 4,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -7990,10 +5984,7 @@
             "row": 4,
             "col": 8
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -8038,55 +6029,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 11,
           "to": 1
         },
         {
-          "from": [
-            1
-          ],
+          "from": [1],
           "piece": 12,
           "to": 1
         }
       ],
-      "initial": [
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0
-      ],
-      "solution": [
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0
-      ],
+      "initial": [0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+      "solution": [1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -8117,10 +6073,7 @@
             "row": 7,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8128,10 +6081,7 @@
             "row": 5,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8139,10 +6089,7 @@
             "row": 5,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8150,10 +6097,7 @@
             "row": 3,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8161,10 +6105,7 @@
             "row": 3,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -8190,10 +6131,7 @@
             "row": 5,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8201,10 +6139,7 @@
             "row": 7,
             "col": 4
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -8212,10 +6147,7 @@
             "row": 3,
             "col": 6
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -8223,10 +6155,7 @@
             "row": 8,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8234,10 +6163,7 @@
             "row": 6,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8245,10 +6171,7 @@
             "row": 6,
             "col": 8
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -8293,57 +6216,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 12,
           "to": 1
         },
         {
-          "from": [
-            1
-          ],
+          "from": [1],
           "piece": 13,
           "to": 1
         }
       ],
-      "initial": [
-        1,
-        1,
-        1,
-        1,
-        0,
-        2,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "solution": [
-        0,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0
-      ],
+      "initial": [1, 1, 1, 1, 0, 2, 1, 0, 1, 0, 0, 0, 0, 0],
+      "solution": [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -8384,10 +6270,7 @@
             "row": 5,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8395,10 +6278,7 @@
             "row": 8,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8406,10 +6286,7 @@
             "row": 8,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8417,10 +6294,7 @@
             "row": 6,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8428,10 +6302,7 @@
             "row": 6,
             "col": 4
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -8439,10 +6310,7 @@
             "row": 1,
             "col": 3
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -8450,10 +6318,7 @@
             "row": 8,
             "col": 8
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -8461,10 +6326,7 @@
             "row": 8,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8472,10 +6334,7 @@
             "row": 2,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -8520,53 +6379,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0
-          ],
+          "from": [0],
           "piece": 10,
           "to": 1
         },
         {
-          "from": [
-            1
-          ],
+          "from": [1],
           "piece": 11,
           "to": 1
         }
       ],
-      "initial": [
-        1,
-        1,
-        1,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0
-      ],
-      "solution": [
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0
-      ],
+      "initial": [1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0],
+      "solution": [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     }
   ],
   "wizard": [
@@ -8599,10 +6425,7 @@
             "row": 5,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8610,10 +6433,7 @@
             "row": 7,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8621,10 +6441,7 @@
             "row": 7,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8632,11 +6449,7 @@
             "row": 5,
             "col": 6
           },
-          "angles": [
-            2,
-            3,
-            6
-          ]
+          "angles": [2, 3, 6]
         },
         {
           "kind": "slidingMirror",
@@ -8662,11 +6475,7 @@
             "row": 8,
             "col": 8
           },
-          "angles": [
-            1,
-            4,
-            6
-          ]
+          "angles": [1, 4, 6]
         },
         {
           "kind": "turnMirror",
@@ -8674,10 +6483,7 @@
             "row": 0,
             "col": 3
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -8685,10 +6491,7 @@
             "row": 7,
             "col": 0
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -8696,10 +6499,7 @@
             "row": 2,
             "col": 3
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -8707,10 +6507,7 @@
             "row": 4,
             "col": 1
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -8718,10 +6515,7 @@
             "row": 0,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -8772,56 +6566,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0,
-            1
-          ],
+          "from": [0, 1],
           "piece": 11,
           "to": 1
         },
         {
-          "from": [
-            2
-          ],
+          "from": [2],
           "piece": 12,
           "to": 1
         }
       ],
-      "initial": [
-        0,
-        0,
-        1,
-        1,
-        1,
-        2,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "solution": [
-        1,
-        1,
-        0,
-        0,
-        2,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        0,
-        0
-      ],
+      "initial": [0, 0, 1, 1, 1, 2, 1, 0, 0, 0, 0, 0, 0],
+      "solution": [1, 1, 0, 0, 2, 0, 0, 0, 1, 1, 1, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -8877,10 +6635,7 @@
             "row": 2,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8888,10 +6643,7 @@
             "row": 0,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8899,10 +6651,7 @@
             "row": 0,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8910,11 +6659,7 @@
             "row": 3,
             "col": 5
           },
-          "angles": [
-            2,
-            4,
-            6
-          ]
+          "angles": [2, 4, 6]
         },
         {
           "kind": "turnMirror",
@@ -8922,11 +6667,7 @@
             "row": 3,
             "col": 8
           },
-          "angles": [
-            1,
-            2,
-            5
-          ]
+          "angles": [1, 2, 5]
         },
         {
           "kind": "turnMirror",
@@ -8934,10 +6675,7 @@
             "row": 8,
             "col": 7
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -8945,10 +6683,7 @@
             "row": 3,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8956,10 +6691,7 @@
             "row": 5,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8967,10 +6699,7 @@
             "row": 5,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -8978,10 +6707,7 @@
             "row": 5,
             "col": 3
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -8989,10 +6715,7 @@
             "row": 1,
             "col": 8
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -9000,10 +6723,7 @@
             "row": 5,
             "col": 7
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -9011,10 +6731,7 @@
             "row": 8,
             "col": 4
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "slidingWall",
@@ -9065,62 +6782,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0,
-            1
-          ],
+          "from": [0, 1],
           "piece": 14,
           "to": 1
         },
         {
-          "from": [
-            2
-          ],
+          "from": [2],
           "piece": 15,
           "to": 1
         }
       ],
-      "initial": [
-        1,
-        1,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
-      "solution": [
-        2,
-        0,
-        1,
-        0,
-        2,
-        2,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
+      "initial": [1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0],
+      "solution": [2, 0, 1, 0, 2, 2, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -9221,10 +6896,7 @@
             "row": 2,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -9232,10 +6904,7 @@
             "row": 2,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -9243,11 +6912,7 @@
             "row": 0,
             "col": 5
           },
-          "angles": [
-            2,
-            6,
-            7
-          ]
+          "angles": [2, 6, 7]
         },
         {
           "kind": "turnMirror",
@@ -9255,10 +6920,7 @@
             "row": 0,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -9266,10 +6928,7 @@
             "row": 3,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -9277,10 +6936,7 @@
             "row": 3,
             "col": 4
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -9288,10 +6944,7 @@
             "row": 8,
             "col": 5
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -9299,10 +6952,7 @@
             "row": 4,
             "col": 1
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -9310,10 +6960,7 @@
             "row": 0,
             "col": 8
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -9321,10 +6968,7 @@
             "row": 7,
             "col": 1
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -9332,10 +6976,7 @@
             "row": 5,
             "col": 0
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -9343,10 +6984,7 @@
             "row": 5,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -9354,10 +6992,7 @@
             "row": 3,
             "col": 0
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -9365,10 +7000,7 @@
             "row": 7,
             "col": 4
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "slidingWall",
@@ -9400,53 +7032,15 @@
       ],
       "wirings": [
         {
-          "from": [
-            0,
-            1
-          ],
+          "from": [0, 1],
           "piece": 14,
           "to": 1
         }
       ],
-      "initial": [
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0
-      ],
-      "solution": [
-        0,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        1,
-        0
-      ],
+      "initial": [1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0],
+      "solution": [0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "wallHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["wallHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -9469,10 +7063,7 @@
             "row": 5,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -9480,10 +7071,7 @@
             "row": 2,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -9509,11 +7097,7 @@
             "row": 0,
             "col": 1
           },
-          "angles": [
-            2,
-            6,
-            7
-          ]
+          "angles": [2, 6, 7]
         },
         {
           "kind": "turnMirror",
@@ -9521,11 +7105,7 @@
             "row": 0,
             "col": 4
           },
-          "angles": [
-            1,
-            2,
-            6
-          ]
+          "angles": [1, 2, 6]
         },
         {
           "kind": "turnMirror",
@@ -9533,10 +7113,7 @@
             "row": 3,
             "col": 4
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -9544,10 +7121,7 @@
             "row": 8,
             "col": 3
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -9555,10 +7129,7 @@
             "row": 2,
             "col": 8
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -9566,10 +7137,7 @@
             "row": 0,
             "col": 6
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -9577,10 +7145,7 @@
             "row": 3,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -9588,10 +7153,7 @@
             "row": 2,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -9599,10 +7161,7 @@
             "row": 7,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -9653,58 +7212,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0,
-            1
-          ],
+          "from": [0, 1],
           "piece": 12,
           "to": 1
         },
         {
-          "from": [
-            2
-          ],
+          "from": [2],
           "piece": 13,
           "to": 1
         }
       ],
-      "initial": [
-        1,
-        0,
-        2,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
-      "solution": [
-        0,
-        1,
-        0,
-        0,
-        2,
-        0,
-        0,
-        0,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0
-      ],
+      "initial": [1, 0, 2, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0],
+      "solution": [0, 1, 0, 0, 2, 0, 0, 0, 1, 0, 1, 0, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -9742,11 +7263,7 @@
             "row": 6,
             "col": 2
           },
-          "angles": [
-            2,
-            3,
-            6
-          ]
+          "angles": [2, 3, 6]
         },
         {
           "kind": "turnMirror",
@@ -9754,11 +7271,7 @@
             "row": 4,
             "col": 2
           },
-          "angles": [
-            2,
-            5,
-            6
-          ]
+          "angles": [2, 5, 6]
         },
         {
           "kind": "slidingMirror",
@@ -9784,11 +7297,7 @@
             "row": 6,
             "col": 4
           },
-          "angles": [
-            0,
-            2,
-            6
-          ]
+          "angles": [0, 2, 6]
         },
         {
           "kind": "turnMirror",
@@ -9796,10 +7305,7 @@
             "row": 6,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -9807,10 +7313,7 @@
             "row": 8,
             "col": 7
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -9818,10 +7321,7 @@
             "row": 4,
             "col": 0
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -9829,10 +7329,7 @@
             "row": 8,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -9840,10 +7337,7 @@
             "row": 8,
             "col": 0
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -9851,10 +7345,7 @@
             "row": 2,
             "col": 0
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -9862,10 +7353,7 @@
             "row": 2,
             "col": 2
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -9873,10 +7361,7 @@
             "row": 2,
             "col": 7
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -9884,10 +7369,7 @@
             "row": 4,
             "col": 7
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -9895,10 +7377,7 @@
             "row": 0,
             "col": 3
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -9906,10 +7385,7 @@
             "row": 0,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -9960,64 +7436,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0,
-            1
-          ],
+          "from": [0, 1],
           "piece": 15,
           "to": 1
         },
         {
-          "from": [
-            2
-          ],
+          "from": [2],
           "piece": 16,
           "to": 1
         }
       ],
-      "initial": [
-        2,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        0,
-        0
-      ],
-      "solution": [
-        0,
-        0,
-        2,
-        2,
-        1,
-        0,
-        1,
-        0,
-        1,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0
-      ],
+      "initial": [2, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0],
+      "solution": [0, 0, 2, 2, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -10118,10 +7550,7 @@
             "row": 6,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10129,10 +7558,7 @@
             "row": 6,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10140,11 +7566,7 @@
             "row": 8,
             "col": 6
           },
-          "angles": [
-            1,
-            2,
-            6
-          ]
+          "angles": [1, 2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10152,11 +7574,7 @@
             "row": 8,
             "col": 8
           },
-          "angles": [
-            2,
-            6,
-            7
-          ]
+          "angles": [2, 6, 7]
         },
         {
           "kind": "turnMirror",
@@ -10164,10 +7582,7 @@
             "row": 5,
             "col": 8
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10175,11 +7590,7 @@
             "row": 5,
             "col": 5
           },
-          "angles": [
-            1,
-            4,
-            6
-          ]
+          "angles": [1, 4, 6]
         },
         {
           "kind": "turnMirror",
@@ -10187,10 +7598,7 @@
             "row": 6,
             "col": 0
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -10198,10 +7606,7 @@
             "row": 2,
             "col": 4
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -10209,10 +7614,7 @@
             "row": 0,
             "col": 6
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -10220,10 +7622,7 @@
             "row": 3,
             "col": 1
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -10231,10 +7630,7 @@
             "row": 7,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10242,10 +7638,7 @@
             "row": 8,
             "col": 4
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -10253,10 +7646,7 @@
             "row": 5,
             "col": 1
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -10264,10 +7654,7 @@
             "row": 3,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10275,10 +7662,7 @@
             "row": 3,
             "col": 3
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "slidingWall",
@@ -10310,55 +7694,15 @@
       ],
       "wirings": [
         {
-          "from": [
-            0,
-            1
-          ],
+          "from": [0, 1],
           "piece": 15,
           "to": 1
         }
       ],
-      "initial": [
-        1,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0,
-        1,
-        0
-      ],
-      "solution": [
-        0,
-        1,
-        2,
-        0,
-        1,
-        0,
-        1,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        1,
-        0,
-        0
-      ],
+      "initial": [1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0],
+      "solution": [0, 1, 2, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "wallHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["wallHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -10389,11 +7733,7 @@
             "row": 7,
             "col": 6
           },
-          "angles": [
-            2,
-            4,
-            6
-          ]
+          "angles": [2, 4, 6]
         },
         {
           "kind": "turnMirror",
@@ -10401,10 +7741,7 @@
             "row": 5,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10412,11 +7749,7 @@
             "row": 5,
             "col": 4
           },
-          "angles": [
-            1,
-            2,
-            6
-          ]
+          "angles": [1, 2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10424,10 +7757,7 @@
             "row": 2,
             "col": 4
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -10453,10 +7783,7 @@
             "row": 0,
             "col": 7
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -10464,10 +7791,7 @@
             "row": 5,
             "col": 8
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10475,10 +7799,7 @@
             "row": 1,
             "col": 8
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10486,10 +7807,7 @@
             "row": 8,
             "col": 1
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -10497,10 +7815,7 @@
             "row": 8,
             "col": 4
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -10508,10 +7823,7 @@
             "row": 2,
             "col": 1
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -10519,10 +7831,7 @@
             "row": 7,
             "col": 2
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -10530,10 +7839,7 @@
             "row": 1,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10541,10 +7847,7 @@
             "row": 1,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -10595,62 +7898,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0,
-            1
-          ],
+          "from": [0, 1],
           "piece": 14,
           "to": 1
         },
         {
-          "from": [
-            2
-          ],
+          "from": [2],
           "piece": 15,
           "to": 1
         }
       ],
-      "initial": [
-        0,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0
-      ],
-      "solution": [
-        2,
-        1,
-        2,
-        0,
-        0,
-        1,
-        0,
-        1,
-        0,
-        0,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0
-      ],
+      "initial": [0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0],
+      "solution": [2, 1, 2, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -10772,10 +8033,7 @@
             "row": 3,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10783,10 +8041,7 @@
             "row": 3,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10794,10 +8049,7 @@
             "row": 5,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -10823,10 +8075,7 @@
             "row": 2,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10834,10 +8083,7 @@
             "row": 2,
             "col": 1
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -10845,10 +8091,7 @@
             "row": 1,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10856,10 +8099,7 @@
             "row": 1,
             "col": 8
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10867,10 +8107,7 @@
             "row": 5,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10878,10 +8115,7 @@
             "row": 7,
             "col": 7
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -10889,10 +8123,7 @@
             "row": 2,
             "col": 6
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -10900,10 +8131,7 @@
             "row": 4,
             "col": 8
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -10911,47 +8139,13 @@
             "row": 0,
             "col": 1
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         }
       ],
-      "initial": [
-        0,
-        1,
-        1,
-        1,
-        0,
-        0,
-        1,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1
-      ],
-      "solution": [
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0
-      ],
+      "initial": [0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1],
+      "solution": [0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "wallHeavy",
-        "sliderHeavy"
-      ]
+      "modes": ["wallHeavy", "sliderHeavy"]
     },
     {
       "size": 9,
@@ -10982,10 +8176,7 @@
             "row": 5,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -10993,10 +8184,7 @@
             "row": 5,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -11004,11 +8192,7 @@
             "row": 2,
             "col": 7
           },
-          "angles": [
-            2,
-            5,
-            6
-          ]
+          "angles": [2, 5, 6]
         },
         {
           "kind": "turnMirror",
@@ -11016,11 +8200,7 @@
             "row": 2,
             "col": 4
           },
-          "angles": [
-            2,
-            4,
-            6
-          ]
+          "angles": [2, 4, 6]
         },
         {
           "kind": "turnMirror",
@@ -11028,11 +8208,7 @@
             "row": 4,
             "col": 4
           },
-          "angles": [
-            1,
-            2,
-            6
-          ]
+          "angles": [1, 2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -11058,10 +8234,7 @@
             "row": 5,
             "col": 0
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -11069,10 +8242,7 @@
             "row": 7,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -11080,10 +8250,7 @@
             "row": 7,
             "col": 3
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -11091,10 +8258,7 @@
             "row": 0,
             "col": 5
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -11102,10 +8266,7 @@
             "row": 0,
             "col": 8
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -11113,10 +8274,7 @@
             "row": 2,
             "col": 2
           },
-          "angles": [
-            3,
-            6
-          ]
+          "angles": [3, 6]
         },
         {
           "kind": "turnMirror",
@@ -11124,10 +8282,7 @@
             "row": 4,
             "col": 8
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -11135,10 +8290,7 @@
             "row": 4,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -11189,62 +8341,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0,
-            1
-          ],
+          "from": [0, 1],
           "piece": 14,
           "to": 1
         },
         {
-          "from": [
-            2
-          ],
+          "from": [2],
           "piece": 15,
           "to": 1
         }
       ],
-      "initial": [
-        1,
-        1,
-        1,
-        2,
-        1,
-        1,
-        0,
-        1,
-        0,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0
-      ],
-      "solution": [
-        0,
-        0,
-        2,
-        0,
-        1,
-        0,
-        1,
-        0,
-        1,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0,
-        0
-      ],
+      "initial": [1, 1, 1, 2, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
+      "solution": [0, 0, 2, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -11293,10 +8403,7 @@
             "row": 2,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -11304,10 +8411,7 @@
             "row": 5,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -11315,10 +8419,7 @@
             "row": 5,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -11326,10 +8427,7 @@
             "row": 8,
             "col": 6
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -11337,11 +8435,7 @@
             "row": 8,
             "col": 8
           },
-          "angles": [
-            3,
-            4,
-            6
-          ]
+          "angles": [3, 4, 6]
         },
         {
           "kind": "turnMirror",
@@ -11349,10 +8443,7 @@
             "row": 0,
             "col": 3
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -11360,10 +8451,7 @@
             "row": 0,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -11371,10 +8459,7 @@
             "row": 5,
             "col": 0
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -11382,10 +8467,7 @@
             "row": 8,
             "col": 0
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -11393,10 +8475,7 @@
             "row": 8,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -11404,10 +8483,7 @@
             "row": 3,
             "col": 2
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -11415,10 +8491,7 @@
             "row": 1,
             "col": 0
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "slidingWall",
@@ -11469,60 +8542,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0,
-            1
-          ],
+          "from": [0, 1],
           "piece": 13,
           "to": 1
         },
         {
-          "from": [
-            2
-          ],
+          "from": [2],
           "piece": 14,
           "to": 1
         }
       ],
-      "initial": [
-        1,
-        1,
-        1,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "solution": [
-        0,
-        0,
-        1,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0
-      ],
+      "initial": [1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "solution": [0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -11545,11 +8578,7 @@
             "row": 5,
             "col": 5
           },
-          "angles": [
-            2,
-            3,
-            6
-          ]
+          "angles": [2, 3, 6]
         },
         {
           "kind": "slidingMirror",
@@ -11575,11 +8604,7 @@
             "row": 8,
             "col": 8
           },
-          "angles": [
-            2,
-            4,
-            6
-          ]
+          "angles": [2, 4, 6]
         },
         {
           "kind": "turnMirror",
@@ -11587,10 +8612,7 @@
             "row": 6,
             "col": 8
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -11598,11 +8620,7 @@
             "row": 6,
             "col": 6
           },
-          "angles": [
-            2,
-            6,
-            7
-          ]
+          "angles": [2, 6, 7]
         },
         {
           "kind": "turnMirror",
@@ -11610,10 +8628,7 @@
             "row": 3,
             "col": 6
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -11621,10 +8636,7 @@
             "row": 7,
             "col": 7
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -11632,10 +8644,7 @@
             "row": 0,
             "col": 5
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -11643,10 +8652,7 @@
             "row": 0,
             "col": 0
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -11654,10 +8660,7 @@
             "row": 3,
             "col": 8
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -11665,10 +8668,7 @@
             "row": 2,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -11676,10 +8676,7 @@
             "row": 2,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -11687,10 +8684,7 @@
             "row": 8,
             "col": 0
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingWall",
@@ -11741,60 +8735,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0,
-            1
-          ],
+          "from": [0, 1],
           "piece": 13,
           "to": 1
         },
         {
-          "from": [
-            2
-          ],
+          "from": [2],
           "piece": 14,
           "to": 1
         }
       ],
-      "initial": [
-        0,
-        2,
-        1,
-        0,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0
-      ],
-      "solution": [
-        0,
-        2,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
+      "initial": [0, 2, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0],
+      "solution": [0, 2, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     },
     {
       "size": 9,
@@ -11832,10 +8786,7 @@
             "row": 3,
             "col": 2
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "slidingMirror",
@@ -11861,11 +8812,7 @@
             "row": 1,
             "col": 5
           },
-          "angles": [
-            2,
-            6,
-            7
-          ]
+          "angles": [2, 6, 7]
         },
         {
           "kind": "turnMirror",
@@ -11873,10 +8820,7 @@
             "row": 3,
             "col": 5
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -11884,11 +8828,7 @@
             "row": 3,
             "col": 7
           },
-          "angles": [
-            2,
-            6,
-            7
-          ]
+          "angles": [2, 6, 7]
         },
         {
           "kind": "turnMirror",
@@ -11896,10 +8836,7 @@
             "row": 0,
             "col": 7
           },
-          "angles": [
-            2,
-            7
-          ]
+          "angles": [2, 7]
         },
         {
           "kind": "turnMirror",
@@ -11907,10 +8844,7 @@
             "row": 7,
             "col": 2
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -11918,10 +8852,7 @@
             "row": 4,
             "col": 8
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -11929,10 +8860,7 @@
             "row": 6,
             "col": 8
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "turnMirror",
@@ -11940,10 +8868,7 @@
             "row": 7,
             "col": 7
           },
-          "angles": [
-            2,
-            5
-          ]
+          "angles": [2, 5]
         },
         {
           "kind": "turnMirror",
@@ -11951,10 +8876,7 @@
             "row": 5,
             "col": 7
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -11962,10 +8884,7 @@
             "row": 5,
             "col": 1
           },
-          "angles": [
-            2,
-            6
-          ]
+          "angles": [2, 6]
         },
         {
           "kind": "turnMirror",
@@ -11973,10 +8892,7 @@
             "row": 8,
             "col": 1
           },
-          "angles": [
-            1,
-            6
-          ]
+          "angles": [1, 6]
         },
         {
           "kind": "slidingWall",
@@ -12027,60 +8943,20 @@
       ],
       "wirings": [
         {
-          "from": [
-            0,
-            1
-          ],
+          "from": [0, 1],
           "piece": 13,
           "to": 1
         },
         {
-          "from": [
-            2
-          ],
+          "from": [2],
           "piece": 14,
           "to": 1
         }
       ],
-      "initial": [
-        1,
-        0,
-        1,
-        0,
-        2,
-        0,
-        0,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0
-      ],
-      "solution": [
-        0,
-        2,
-        1,
-        1,
-        0,
-        1,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
+      "initial": [1, 0, 1, 0, 2, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0],
+      "solution": [0, 2, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0],
       "techniqueCap": "onlySurvivor",
-      "modes": [
-        "sliderHeavy",
-        "switchHeavy"
-      ]
+      "modes": ["sliderHeavy", "switchHeavy"]
     }
   ]
 }

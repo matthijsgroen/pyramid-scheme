@@ -27,6 +27,8 @@ import {
 import { isSudokuSolved, strandedNotes, sudokuConflicts } from "@/mods/puzzle/game/sudoku/sudokuStatus"
 import { boxCount, sudokuCellKey } from "@/mods/puzzle/game/sudoku/techniques"
 import { useCelebration } from "@/mods/core/app/useCelebration"
+import { usePlayOnRise } from "@/app/audio/usePlayOnRise"
+import { SCROLL_FURLS_SOUND } from "../sounds"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay, type InputEffect } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
@@ -82,7 +84,7 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
   // Which place this room is. The board, the pad, the name, the goal, the rules and every hint
   // sentence are drawn from it — including what a value LOOKS like, which is this family's second face.
   const skin = skinFor(role, theme, 0, room)
-  const [state, setState] = usePuzzleState(() => createSudokuState(puzzle), puzzle)
+  const [state, setState] = usePuzzleState(() => createSudokuState(puzzle), puzzle, skin.tap)
   const { selected, pencil, selectCell, focusCell, togglePencil, clearSelection } = useSudokuEntry()
   const [picked, setPicked] = useState<PadPick>()
 
@@ -141,6 +143,7 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
   // A roll asks for the whole second `useCelebration` allows, where a value only needs its flare: an
   // edge has to be slow enough to be read as one crossing (`sudoku.md`: a roll takes the full second).
   const celebration = useCelebration(finished, ticks, skin.scroll ? 1000 : undefined)
+  usePlayOnRise(finished && !!skin.scroll, SCROLL_FURLS_SOUND)
   const reached = celebration.progress > 0 ? Math.round(celebration.progress * ticks) : undefined
   const counted = skin.scroll ? undefined : reached
   const rolled = skin.scroll ? reached : undefined

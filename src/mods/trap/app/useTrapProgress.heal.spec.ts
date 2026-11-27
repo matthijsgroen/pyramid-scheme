@@ -30,7 +30,13 @@ describe("the heal sound", () => {
     expect(playSound).not.toHaveBeenCalled()
     await act(async () => result.current.takeTrapDamage())
     await act(async () => result.current.restoreHealth())
-    expect(playSound.mock.calls).toEqual([["trap.heal"]])
+    expect(playSound.mock.calls).toEqual([["trap.heartLost"], ["trap.heal"]])
+  })
+
+  it("every hit that costs hearts thuds once; with none left to lose it stays quiet", async () => {
+    const { result } = renderHook(() => useTrapProgress())
+    for (let i = 0; i < 8; i++) await act(async () => result.current.takeTrapDamage())
+    expect(playSound.mock.calls.filter(([name]) => name === "trap.heartLost").length).toBe(3)
   })
 
   it("a waterskin drunk at full health plays nothing", async () => {
@@ -39,6 +45,6 @@ describe("the heal sound", () => {
     expect(playSound).not.toHaveBeenCalled()
     await act(async () => result.current.takeTrapDamage())
     await act(async () => result.current.drinkWaterskin())
-    expect(playSound.mock.calls).toEqual([["trap.heal"]])
+    expect(playSound.mock.calls).toEqual([["trap.heartLost"], ["trap.heal"]])
   })
 })

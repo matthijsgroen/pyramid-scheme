@@ -3,7 +3,11 @@ import type { FamilyContext } from "@/app/families/familyRegistry"
 import { TRAP_TIME_LIMITS_SECONDS, TRAP_TIME_EXTENSION_PER_INSIGHT_STACK } from "@/mods/trap/game/trapConfig"
 import { TrapWarningScreen } from "@/mods/trap/app/TrapWarningScreen"
 import { useTrapProgress } from "./useTrapProgress"
+import { playSound } from "@/app/audio/audio"
+import { TRAP_FIRES_SOUND } from "./sounds"
 import type { SolveOutcome } from "@/app/reactions/reactionContributions"
+import { useDuckMusic } from "@/app/audio/useDuckMusic"
+import { QUICK_DUCK_FADE_S } from "@/app/audio/audioService"
 
 // Generic across any trap family — the warning/attempt/turn-around lifecycle has
 // nothing challenge-specific about it, so every family reuses it rather than re-deriving it.
@@ -20,6 +24,7 @@ type Props<T> = {
 export const TrapFamilyShell = <T,>({ question, ctx, onSolved, onCancel, ChallengeComponent }: Props<T>) => {
   const trap = useTrapProgress()
   const [attempting, setAttempting] = useState(false)
+  useDuckMusic(true, QUICK_DUCK_FADE_S)
 
   if (!attempting) {
     return (
@@ -50,6 +55,7 @@ export const TrapFamilyShell = <T,>({ question, ctx, onSolved, onCancel, Challen
         // not. Half the bar, so the perks that raise the ceiling raise the bar with it.
         onPass={() => onSolved({ close: trap.currentHealth <= trap.maxHealth / 2 })}
         onFail={() => {
+          playSound(TRAP_FIRES_SOUND)
           trap.takeTrapDamage()
           onCancel()
         }}

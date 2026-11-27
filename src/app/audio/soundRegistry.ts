@@ -14,3 +14,5 @@ export const soundNamed = (name: string): SoundSample | undefined => sounds.get(
 
 /** Whether any sound is registered: with none, the game has nothing to switch off. */
 export const hasSounds = (): boolean => sounds.size > 0
+
+export const registeredSamples = (): SoundSample[] => [...sounds.values()]

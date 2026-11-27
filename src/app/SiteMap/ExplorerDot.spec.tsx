@@ -54,6 +54,17 @@ describe("ExplorerDot", () => {
     expect(onArrive).toHaveBeenCalled()
   })
 
+  it("sets off once for a walk of many steps, and not at all on mount", () => {
+    const onSetOff = vi.fn()
+    const { rerender } = render(<ExplorerDot grid={grid} pos={[0, 0]} onSetOff={onSetOff} />)
+    expect(onSetOff).toHaveBeenCalledTimes(0)
+
+    rerender(<ExplorerDot grid={grid} pos={[0, 2]} onSetOff={onSetOff} />)
+    act(() => void vi.advanceTimersByTime(2000))
+
+    expect(onSetOff).toHaveBeenCalledTimes(1)
+  })
+
   it("rests at the spot its room stands it on, off the node's centre, and walks off from there", () => {
     const standAt = (r: number, c: number) => (r === 0 && c === 1 ? { dx: 10, dy: 20 } : { dx: 0, dy: 0 })
     const at = (container: HTMLElement) => container.querySelector("[data-explorer]")?.getAttribute("data-at")

@@ -1,4 +1,5 @@
 import "./tierFinish"
+import "./sounds" // the pluck of a found piece (self-gated)
 import { use } from "react"
 import { z } from "zod"
 import { FezContext } from "@/app/fez/context"

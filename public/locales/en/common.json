@@ -86,6 +86,7 @@
     "disableTutorials": "Disable tutorials",
     "soundEffects": "Sound effects",
     "music": "Music",
+    "credits": "Credits",
     "treasureTomb": "Treasure Location",
     "requiresMapPieces": "Requires map pieces",
     "mapPieces": "Map Pieces",
@@ -1818,6 +1819,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Drawing rewrites the text: every comment moves to the top"
+  },
+  "credits": {
+    "sounds": "Sounds and music",
+    "none": "No sounds are credited yet.",
+    "source": "Source",
+    "licence": "Licence"
   },
   "saveCard": {
     "title": "Travel card",

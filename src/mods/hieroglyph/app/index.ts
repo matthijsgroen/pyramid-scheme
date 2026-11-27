@@ -21,6 +21,7 @@ import { TableauInventory } from "./TableauInventory"
 import "./plugin"
 import "./collection"
 import "./tierFinish"
+import "./sounds" // a fragment found, a tile placed, the lock panel (self-gated)
 import { registerDevGrants } from "@/app/dev/devActionContributions"
 import { DEV_TOOLS } from "@/app/dev/devToolsBuild"
 import { GIVEN_REQUIRED, HIEROGLYPH_REQUIRED } from "../game/hieroglyphData"

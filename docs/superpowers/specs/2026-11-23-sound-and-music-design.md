@@ -22,14 +22,14 @@ settings gain a credits screen. They also gain a "what's new" screen showing the
 
 ## Non-goals
 
-- No sound for cell taps, UI buttons, modals, dialogue lines, stairs, the exit, or being blocked.
+- No sound for UI buttons, modals, dialogue lines, stairs, the exit, or being blocked.
 - No voice acting.
 - No per-sound volume sliders; the two switches are enough.
 - No haptics for now.
 
 ## Anti-goals (a failure even if it works)
 
-- Noise during thinking: a puzzle board that clicks on every tap, or music at full volume over a puzzle.
+- Noise during thinking: a loud or pitched click on every move, or music at full volume over a puzzle.
 - A footstep on every step of a long walk. Only the first step of a walk sounds, softly.
 - A first download that grows by megabytes because of music the player never turned on.
 - An audio file in the repo whose licence forbids redistribution from a public repo.
@@ -38,47 +38,52 @@ settings gain a credits screen. They also gain a "what's new" screen showing the
 
 R = a recorded sample, "R, pitched" = one sample played at a different pitch per step, – = silent.
 
-| Area   | Moment                                                            | Kind       | Notes                                                        |
-| ------ | ----------------------------------------------------------------- | ---------- | ------------------------------------------------------------ |
-| Map    | pyramid opens (stones fly in; zoom to the next level)             | R          | heavy stone sliding                                          |
-| Map    | level complete, journey complete                                  | R          | journey gets the bigger sound                                |
-| Site   | first step of a walk                                              | R          | soft footstep; later steps silent                            |
-| Site   | lever or handle thrown                                            | R          |                                                              |
-| Site   | stone lifted, stone set down, pressure plate                      | R          |                                                              |
-| Site   | sequence tile stepped on correctly                                | R, pitched | one quiet sample, pitched to the next note of a rising scale |
-| Site   | sequence tile wrong                                               | R          | its own sample; the scale starts over                        |
-| Site   | corridor opens behind a gate (reveal wave)                        | R          | stone grinding                                               |
-| Site   | **last door of a lock opens**                                     | R          | needs a new event; see below                                 |
-| Site   | zipline, squeeze                                                  | R          | whoosh, scrape                                               |
-| Site   | sand or water barrier recedes                                     | R          |                                                              |
-| Site   | chest opens                                                       | R          |                                                              |
-| Site   | loot: money                                                       | R          | coins                                                        |
-| Site   | loot: fragment, mosaic or map piece, treasure                     | R          | short sample, bigger for a bigger find                       |
-| Puzzle | solved                                                            | R          |                                                              |
-| Puzzle | family flavour: canister pour, balance settle, sudoku scroll furl | R          |                                                              |
-| Trap   | trap fires, heart lost                                            | R          | dull thud                                                    |
-| Trap   | heal (waterskin, rest)                                            | R          |                                                              |
-| Shop   | buy, sell                                                         | R          | coins                                                        |
-| Camp   | campfire crackle                                                  | R          | loop, while the camp is on screen                            |
-| Tomb   | tile placed                                                       | R          |                                                              |
-| Tomb   | lock panel slides open                                            | R          |                                                              |
-| Tomb   | tableau complete                                                  | R          |                                                              |
+| Area   | Moment                                                            | Kind       | Notes                                                                                                                                                    |
+| ------ | ----------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Map    | pyramid opens (stones fly in; zoom to the next level)             | R          | heavy stone sliding                                                                                                                                      |
+| Map    | level complete, journey complete                                  | R          | an oud note for a level, a long ney tone for a journey                                                                                                   |
+| Site   | first step of a walk                                              | R          | soft footstep; later steps silent                                                                                                                        |
+| Site   | lever or handle thrown                                            | R          |                                                                                                                                                          |
+| Site   | torch lit                                                         | R          | a soft whoosh as the flame takes, a few crackles                                                                                                         |
+| Site   | stone lifted, stone set down, pressure plate                      | R          |                                                                                                                                                          |
+| Site   | sequence tile stepped on correctly                                | R, pitched | one quiet sample, pitched to the next note of a rising scale                                                                                             |
+| Site   | sequence tile wrong                                               | R          | its own sample; the scale starts over                                                                                                                    |
+| Site   | corridor opens behind a gate (reveal wave)                        | R          | stone grinding                                                                                                                                           |
+| Site   | **last door of a lock opens**                                     | R          | a stone door settling; see below                                                                                                                         |
+| Site   | zipline, squeeze                                                  | R          | whoosh, scrape                                                                                                                                           |
+| Site   | sand or water barrier recedes                                     | R          |                                                                                                                                                          |
+| Site   | chest opens                                                       | R          |                                                                                                                                                          |
+| Site   | loot: money                                                       | R          | coins                                                                                                                                                    |
+| Site   | loot: fragment, mosaic or map piece, treasure                     | R          | a rising harp glissando; a treasure rings finger cymbals                                                                                                 |
+| Puzzle | move on the board                                                 | R, pitched | a soft tap, stone, or wood on a papyrus board, pitch varied a little; moves within 80 ms tap once; none where the move has its own sound (canister pour) |
+| Puzzle | solved                                                            | R          | a short plucked run rising to a ringing note, timed with the finish                                                                                      |
+| Puzzle | family flavour: canister pour, balance settle, sudoku scroll furl | R          |                                                                                                                                                          |
+| Trap   | trap fires, heart lost                                            | R          | dull thud                                                                                                                                                |
+| Trap   | heal (waterskin, rest)                                            | R          | a sip of water                                                                                                                                           |
+| Shop   | buy, sell                                                         | R          | coins                                                                                                                                                    |
+| Camp   | campfire crackle                                                  | R          | loop, while the camp is on screen                                                                                                                        |
+| Tomb   | tile placed                                                       | R          |                                                                                                                                                          |
+| Tomb   | lock panel slides open                                            | R          | a stone door sliding                                                                                                                                     |
+| Tomb   | tableau complete                                                  | –          |                                                                                                                                                          |
 
 Trigger points are in the appendix; the builder confirms each line before hooking it.
 
-### Missing events
+### Derived events
 
-- **Lock solved:** no event exists today for "the last door of this lock is open". The builder adds one,
-  derived from mechanism state and lock topology. It fires once per lock, on the transition, and never
-  again when the player reloads the floor.
-- **Ward gate or key used:** no discrete event exists either. It is not in this table, so no work is needed.
+- **Lock solved:** "the last door of this lock is open" is derived at runtime from mechanism state and lock
+  topology (`src/game/lockSolved.ts`). It fires once per lock, on the transition, and never again when the
+  player reloads the floor.
+- **Ward gate or key used:** no discrete event exists for it. It is not in this table, so no work is needed.
 
 ## Music
 
 - Track: "Egyptian Dawn (Full version)" by kaazoom on Pixabay, 4:53, Pixabay Content License.
 - Plays on the site map, the journey map and the camp, and loops.
-- During a puzzle or trap encounter it ducks to a lower volume (builder picks the level and fade) and comes
-  back when the encounter closes.
+- It plays well under the effects: footsteps must stay audible over it.
+- During a puzzle it fades out to silence over two seconds, and fades back when the board closes, or already when a solved board shows its time:
+  a tune distracts from a board.
+- During a trap it fades out within half a second: a trap runs against the clock.
+- A chest, the shop and other encounters keep the music playing.
 - It loads only when Music is on, never in the precache of the first download, and it streams.
 
 ## Controls and platform
@@ -138,6 +143,8 @@ Trigger points are in the appendix; the builder confirms each line before hookin
 - **Scale:** D Hijaz from D4, approved by ear.
 - Synthesised tones were tried and rejected (too emphatic, they hurt the ambience). Every moment uses a
   recorded sample or stays silent. The sequence tile pitches one quiet sample along the D Hijaz scale.
+- **Puzzle solved plays a soft sound:** played on a phone (2026-11-25) a silent solve felt missing.
+- **Tableau complete stays silent.**
 
 ## Scope and order (Claude's call)
 
@@ -156,8 +163,9 @@ service is split across files.
 ## Appendix: trigger points (code inventory 2026-11-23; verify before hooking)
 
 - Pyramid stones fly in `src/app/PyramidLevel/PyramidDisplay.tsx:132`; next-level zoom `src/app/PyramidExpedition.tsx:211-235`
-- Level complete: `levelNr` rising (`completeLevel` in `src/app/state/useJourneys.ts`); journey complete: `levelNr > levelCount`
-  at `src/app/PyramidExpedition.tsx:114`, which also holds on reload, so fire on the change only
+- Level complete: `levelNr` rising (`completeLevel` in `src/app/state/useJourneys.ts`); journey complete: `levelNr > levelCount`,
+  which also holds on reload, so both fire on the change only (`src/app/PyramidExpedition/useLevelSounds.ts`), a second
+  after it so the pyramid's stones finish sliding first
 - Walk steps `src/app/SiteMap/ExplorerDot.tsx:251`, delay `src/app/SiteMap/useSiteNavigation.ts:170`
 - Sequence tile: `walkPresses` in `walkTo`, `useSiteNavigation.ts:253` (state format in `src/game/sequence.ts`)
 - Lever `useSiteNavigation.ts:317-321`, `:492`
@@ -166,13 +174,11 @@ service is split across files.
 - Zipline / squeeze `useSiteNavigation.ts:184` (`takeSpan`), `src/app/SiteMap/useCrossing.ts`
 - Barrier recedes `src/app/SiteMap/useRegionBarrierCovers.ts:34-36`
 - Chest `src/mods/core/app/treasureChest/plugin.tsx:24`
-- Loot `src/app/SiteMap/useRewardOffer.ts:35`; reward types `src/mods/*/app/rewardDisplay.ts*`
-- Puzzle solved `src/mods/core/app/PuzzleFamilyShell.tsx:183`
+- Loot `src/app/SiteMap/useRewardOffer.ts:40`; each mod registers `rewardSound(type)` in its `app/sounds.ts`
 - Canister pour `CanistersBoard.tsx:142`; balance settle `BalanceBoard.tsx:192`; sudoku furl `SudokuScrolls.tsx:62`
 - Trap damage `src/mods/trap/app/TrapFamilyShell.tsx:52-53`; crocodile `crocodile/CrocodilePit.tsx:165`
 - Heal: waterskin `src/mods/trap/app/rewardContribution.ts:8`; rest `useTrapProgress.ts:70`
 - Buy / sell `src/mods/shop/app/fezShop/plugin.tsx:67`, `:98`
 - Camp `src/ui/atoms/CampScene.tsx`
-- Tomb tile `src/mods/hieroglyph/app/TombPuzzle.tsx:92`; lock panel `src/ui/molecules/TombLockPanel.tsx:17`; tableau: the right code in
-  `handleLockSubmit` (`TombPuzzle.tsx`)
+- Tomb tile `src/mods/hieroglyph/app/TombPuzzle.tsx:92`; lock panel `src/mods/hieroglyph/app/TombPuzzle.tsx:67` (the last tile placed)
 - Settings checkbox pattern `src/app/SettingsModal.tsx` (~96); precache globs `vite.config.ts:120`

@@ -5,6 +5,10 @@ import { describe, expect, it, vi, afterEach, beforeEach } from "vitest"
 // generic RewardFlow can look them up. Without this the popup would fall back to raw type labels.
 import "@/mods/registerModApps"
 import { RewardFlow } from "./RewardFlow"
+import { LOOT_BURST_MS } from "@/ui/atoms/LootPopup"
+
+const { playSound } = vi.hoisted(() => ({ playSound: vi.fn() }))
+vi.mock("@/app/audio/audio", () => ({ playSound }))
 
 // Isolated from the app's real i18n setup (never initialized in tests) — identity
 // passthrough is enough to assert which branch rendered and with what interpolated data.
@@ -27,6 +31,17 @@ const advanceThroughReveal = () => {
 describe("RewardFlow — money and sellable rewards", () => {
   beforeEach(() => vi.useFakeTimers())
   afterEach(() => vi.useRealTimers())
+
+  it("plays the reward's sound as the popup opens, timed to its card, and not before", () => {
+    playSound.mockClear()
+    render(
+      <RewardFlow pendingReward={{ reward: { type: "money", amount: 3 }, onCollect: vi.fn() }} onDismiss={() => {}} />
+    )
+    act(() => vi.advanceTimersByTime(599))
+    expect(playSound).not.toHaveBeenCalled()
+    act(() => vi.advanceTimersByTime(1))
+    expect(playSound.mock.calls).toEqual([["reward:money", { delay: LOOT_BURST_MS / 1000 }]])
+  })
 
   it("renders a money reward with the interpolated amount", () => {
     const onCollect = vi.fn()

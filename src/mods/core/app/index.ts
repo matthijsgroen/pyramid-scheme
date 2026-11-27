@@ -9,6 +9,7 @@ import { CorridorPanel } from "./CorridorPanel"
 // core's app entrypoint (side-effect): the families every world needs, always registered.
 import "./treasureChest/plugin"
 import "./keyGate/plugin"
+import "./sounds"
 
 // The corridor detector is the only perk core owns (a hidden corridor is core map structure,
 // collection-and-detector-design.md).

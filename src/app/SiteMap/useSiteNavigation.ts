@@ -1,4 +1,6 @@
 import { playWalkCues } from "./sequenceSounds"
+import { playSound } from "@/app/audio/audio"
+import { CORE_SOUNDS, stoneMoveSound, throwSound, traversalSound } from "@/app/audio/coreSounds"
 import { useCallback, useMemo, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { cellAddress } from "./cellIdentity"
@@ -190,6 +192,7 @@ export const useSiteNavigation = ({
       if (!landing || landing.type === "empty") return
       traversing.current = true
       flushSync(() => setExplorerHidden(true))
+      playSound(traversalSound(traversal.kind))
       try {
         await playTraversal(traversal)
       } finally {
@@ -320,7 +323,9 @@ export const useSiteNavigation = ({
         if (!target.mechanism) return
         const current = stateOf(target.mechanism)
         const next = throwMechanism(target.mechanism, current)
-        if (next !== current) journeys.setMechanismState(address, next)
+        if (next === current) return
+        journeys.setMechanismState(address, next)
+        if (target.family) playSound(throwSound(target.family))
       }
       // A SPENT MECHANISM (a lit torch) OFFERS NOTHING: with no legal target a throw would be an empty
       // prompt, so the room reads as plain floor the player walks through.
@@ -405,7 +410,11 @@ export const useSiteNavigation = ({
               col,
               () => {
                 const move = stoneMoveAt(grid, currentFloor, row, col, journeys.getMechanismStates(journeyId))
-                if (move) journeys.setMechanismState(move.address, move.state)
+                if (!move) return
+                journeys.setMechanismState(move.address, move.state)
+                playSound(stoneMoveSound(move.move))
+                // A stone set on a plate presses it, a beat after it lands.
+                if (move.move === "set") playSound(CORE_SOUNDS.platePressed, { delay: 0.12 })
               },
               undefined,
               undefined,

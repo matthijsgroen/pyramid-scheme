@@ -17,13 +17,13 @@ describe("useLevelSounds", () => {
     const { rerender } = atLevel(1)
     rerender({ levelNr: 2 })
     rerender({ levelNr: 2 })
-    expect(playSound.mock.calls).toEqual([["level.complete"]])
+    expect(playSound.mock.calls.map(([name]) => name)).toEqual(["level.complete"])
   })
 
   it("moving past the last level plays journey.complete instead", () => {
     const { rerender } = atLevel(3)
     rerender({ levelNr: 4 })
-    expect(playSound.mock.calls).toEqual([["journey.complete"]])
+    expect(playSound.mock.calls.map(([name]) => name)).toEqual(["journey.complete"])
   })
 
   it("mounting at any level plays nothing", () => {

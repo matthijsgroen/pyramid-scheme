@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react"
 import type { Direction, FloorGrid } from "@/game/siteTypes"
+import { playSound } from "@/app/audio/audio"
+import { CORE_SOUNDS } from "@/app/audio/coreSounds"
 import { prefersReducedMotion } from "./reducedMotion"
 
 /** How long one step of the wave waits after the one before it. */
@@ -63,20 +65,28 @@ export const revealWave = (before: ReadonlySet<string>, grid: FloorGrid): Reveal
 
 type Seen = { floor: string; shown: ReadonlySet<string> }
 
-/** The wave to draw over a corridor the player just opened on this floor. Never on a floor change, never under reduced motion. */
+/**
+ * The wave to draw over a corridor the player just opened on this floor. Never on a floor change, never under reduced
+ * motion. The opening sounds whether or not it is drawn, a beat after the lever or plate that opened it.
+ */
 export const useRevealWave = (grid: FloorGrid, floor: string): readonly RevealingCell[] => {
   const [seen, setSeen] = useState<Seen>(() => ({ floor, shown: shownCells(grid) }))
   const [wave, setWave] = useState<readonly RevealingCell[]>([])
+  const [openings, setOpenings] = useState(0)
 
   const shown = shownCells(grid)
   const changed = seen.floor !== floor || shown.size !== seen.shown.size || [...shown].some(key => !seen.shown.has(key))
   if (changed) {
     setSeen({ floor, shown })
-    if (seen.floor === floor && !prefersReducedMotion()) {
-      const next = revealWave(seen.shown, grid)
-      if (next.length > 0) setWave(next)
-    } else if (seen.floor !== floor) setWave([])
+    const next = seen.floor === floor ? revealWave(seen.shown, grid) : []
+    if (next.length > 0) setOpenings(openings + 1)
+    if (next.length > 0 && !prefersReducedMotion()) setWave(next)
+    else if (seen.floor !== floor) setWave([])
   }
+
+  useEffect(() => {
+    if (openings > 0) playSound(CORE_SOUNDS.corridorOpens, { delay: 0.25 })
+  }, [openings])
 
   useEffect(() => {
     if (wave.length === 0) return

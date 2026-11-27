@@ -86,6 +86,7 @@
     "disableTutorials": "Tutorials uitschakelen",
     "soundEffects": "Geluidseffecten",
     "music": "Muziek",
+    "credits": "Makers",
     "treasureTomb": "Schatlokatie",
     "requiresMapPieces": "Vereist kaartdelen",
     "mapPieces": "Kaartdelen",
@@ -1818,6 +1819,12 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Tekenen herschrijft de tekst: elk commentaar gaat naar boven"
+  },
+  "credits": {
+    "sounds": "Geluid en muziek",
+    "none": "Er zijn nog geen geluiden om te vermelden.",
+    "source": "Bron",
+    "licence": "Licentie"
   },
   "saveCard": {
     "title": "Reiskaart",

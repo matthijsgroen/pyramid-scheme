@@ -2,7 +2,9 @@ import { useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 
 import type { KeyColor, TreasureReward } from "@/game/siteTypes"
-import { LootPopup } from "@/ui/atoms/LootPopup"
+import { LOOT_BURST_MS, LootPopup } from "@/ui/atoms/LootPopup"
+import { playSound } from "@/app/audio/audio"
+import { rewardSound } from "@/app/audio/coreSounds"
 import { KeyIcon } from "@/ui/atoms/KeyIcon"
 import { useTimeout } from "@/support/useTimeout"
 import { rewardText } from "./rewardDisplay"
@@ -37,6 +39,9 @@ const floorKeyDisplay = (colors: readonly KeyColor[], t: TFn): RewardDisplay => 
   ),
 })
 
+/** The dark pause between an opened chest and its popup. */
+const LOOT_DELAY_MS = 600
+
 export const RewardFlow: FC<Props> = ({ pendingReward, onDismiss }) => {
   const { t } = useTranslation(["common", "inventory", "sellables", "treasures", "journeys"])
   const displays = useMergedRewardDisplays()
@@ -48,7 +53,11 @@ export const RewardFlow: FC<Props> = ({ pendingReward, onDismiss }) => {
   useEffect(() => {
     if (!pendingReward) return
     pendingReward.onCollect()
-    scheduleLoot(600, () => setShowLoot(true))
+    scheduleLoot(LOOT_DELAY_MS, () => {
+      setShowLoot(true)
+      // Heard as the card comes in, not over the dark pause or the burst before it.
+      playSound(rewardSound(pendingReward.reward.type), { delay: LOOT_BURST_MS / 1000 })
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fires once per pendingReward instance
   }, [pendingReward])
 

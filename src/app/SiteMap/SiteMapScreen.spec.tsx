@@ -160,7 +160,7 @@ describe(SiteMapScreen, () => {
   const showConversation = vi.fn()
   const renderScreen = async (
     onSiteComplete = () => {},
-    level: { exterior?: string; lastLevel?: boolean; onCancel?: () => void } = {}
+    level: { exterior?: string; lastLevel?: boolean; onCancel?: () => void; onSettings?: () => void } = {}
   ) => {
     const result = render(
       <FezContext.Provider value={{ showConversation }}>
@@ -173,6 +173,7 @@ describe(SiteMapScreen, () => {
           lastLevel={level.lastLevel ?? false}
           onSiteComplete={onSiteComplete}
           onCancel={level.onCancel ?? (() => {})}
+          onSettings={level.onSettings}
         />
       </FezContext.Provider>
     )
@@ -199,6 +200,13 @@ describe(SiteMapScreen, () => {
     fireEvent.click(goInPrompt(container))
     await settle()
   }
+
+  it("opens Settings from the floor", async () => {
+    const onSettings = vi.fn()
+    const { getByRole } = await renderScreen(undefined, { onSettings })
+    fireEvent.click(getByRole("button", { name: "ui.settings" }))
+    expect(onSettings).toHaveBeenCalledOnce()
+  })
 
   it("offers the way out beside the explorer, and asks nothing until it is taken", async () => {
     const onSiteComplete = vi.fn()

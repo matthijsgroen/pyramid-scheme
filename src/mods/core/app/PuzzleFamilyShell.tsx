@@ -1,4 +1,5 @@
-import { playSound } from "@/app/audio/audio"
+import { usePlayOnRise } from "@/app/audio/usePlayOnRise"
+import { useDuckMusic } from "@/app/audio/useDuckMusic"
 import { CORE_SOUNDS } from "@/app/audio/coreSounds"
 import { use, useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import clsx from "clsx"
@@ -124,6 +125,9 @@ const pillCls =
   "flex h-11 flex-1 items-center justify-center gap-1 rounded-full px-3 text-sm font-medium transition-colors"
 const spent = "bg-stone-800/50 text-stone-600"
 
+/** How long a solved board finishes before its banner; the solve sound is chosen to carry this long. */
+const SOLVE_MS = 800
+
 const shared = (action: SharedAction, label: string): ControlStep => ({
   keys: [ACTION_GLYPHS[action].keys],
   pad: [ACTION_GLYPHS[action].pad],
@@ -183,15 +187,19 @@ export const PuzzleFamilyShell = ({
   // itself takes it away before it has been looked at. So the dim is light enough to read the board through and
   // the player says when they are done with it.
   const handleSolved = useCallback(() => {
-    playSound(CORE_SOUNDS.puzzleSolved)
     setFinishing(true)
     setTookMs(elapsedMs())
-    scheduleSolve(800, () => setSolvedBanner(true))
+    scheduleSolve(SOLVE_MS, () => setSolvedBanner(true))
   }, [scheduleSolve, elapsedMs])
 
   useEffect(() => {
     if (solved) handleSolved()
   }, [solved, handleSolved])
+  // The solve sound starts with the board's own finish (a piece driving out), not after it, and still rings when the
+  // banner lands. A family without a finish of its own starts it at "solved".
+  usePlayOnRise(!!finished || finishing, CORE_SOUNDS.puzzleSolved)
+  // A board is thinking time until it shows its time.
+  useDuckMusic(!solvedBanner)
 
   // A board that fills the screen pushes the hint under the fold, where pressing the button looks
   // like it did nothing. Scrolled to on reveal only — not on every recomputed hint — so the view
