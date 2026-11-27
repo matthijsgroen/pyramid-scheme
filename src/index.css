@@ -848,35 +848,20 @@ body {
     }
   }
 
+  /* The stars, the frames below and the pieces never animate opacity or scale: either gives the element a
+     layer of its own and every piece drawn over it one too, which a pinch zoom redraws until the phone runs out
+     of memory. Colour and visibility only repaint. */
   --animate-camp-twinkle: camp-twinkle 4s ease-in-out infinite;
   @keyframes camp-twinkle {
     0%,
     100% {
-      opacity: 0.8;
-      scale: 1;
+      background-color: rgb(246 239 220 / 0.8);
     }
     50% {
-      opacity: 0.1;
-      scale: 0.6;
+      background-color: rgb(246 239 220 / 0.1);
     }
     70% {
-      opacity: 1;
-      scale: 1.3;
-    }
-  }
-
-  /* On the same 2.9s loop and delay as its fire glow's strength: shadow and shade deepen as the fire flares. */
-  --animate-camp-strength-flicker: camp-strength-flicker 2.9s ease-in-out infinite;
-  @keyframes camp-strength-flicker {
-    0%,
-    100% {
-      opacity: var(--camp-strength, 0.3);
-    }
-    30% {
-      opacity: calc(var(--camp-strength, 0.3) * 0.86);
-    }
-    60% {
-      opacity: calc(var(--camp-strength, 0.3) * 1.08);
+      background-color: rgb(246 239 220 / 1);
     }
   }
 
@@ -885,21 +870,21 @@ body {
   --animate-camp-frame-a: camp-frame-a 0.57s step-end infinite;
   @keyframes camp-frame-a {
     0% {
-      opacity: 0;
+      visibility: hidden;
     }
     42%,
     100% {
-      opacity: 1;
+      visibility: visible;
     }
   }
   --animate-camp-frame-b: camp-frame-b 0.57s step-end infinite;
   @keyframes camp-frame-b {
     0% {
-      opacity: 1;
+      visibility: visible;
     }
     42%,
     100% {
-      opacity: 0;
+      visibility: hidden;
     }
   }
 
