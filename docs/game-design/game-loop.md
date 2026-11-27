@@ -27,6 +27,8 @@ What follows from it:
 - No facet blocks another: a story player is never stuck on a board above their level, and a puzzler is never
   made to read.
 - A floor is a short session, a journey a long one.
+- There is no right or wrong: a player can always walk on, pick a journey or solve a board, so coming back after a
+  week needs no recap.
 - Every floor pulls toward the next with at least two different things (a story line, a collection piece,
   something for the camp, a new room), since different players are pulled by different things.
 - The first twenty minutes show every facet once.
