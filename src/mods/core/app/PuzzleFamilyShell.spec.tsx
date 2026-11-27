@@ -8,6 +8,7 @@ import { useInputLayer } from "@/app/input/useInputLayer"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { listenForPageLayers } from "@/app/input/pageLayers"
 import { layerOnMount } from "@/ui/atoms/dialogFocus"
+import { MusicReturnsContext } from "@/app/audio/useDuckMusic"
 
 vi.mock("react-i18next", () => ({ useTranslation: () => ({ t: (key: string) => key }) }))
 const { playSound } = vi.hoisted(() => ({ playSound: vi.fn() }))
@@ -33,6 +34,25 @@ describe("PuzzleFamilyShell", () => {
       </PuzzleFamilyShell>
     )
     expect(playSound.mock.calls).toEqual([["puzzle.solved"]])
+  })
+
+  it("lets the music back in when the solved banner shows the time, not before", () => {
+    vi.useFakeTimers()
+    try {
+      const musicReturns = vi.fn()
+      render(
+        <MusicReturnsContext value={musicReturns}>
+          <PuzzleFamilyShell onSolved={() => {}} onCancel={() => {}} solved onReset={() => {}} hint="do this">
+            {() => <button>cell</button>}
+          </PuzzleFamilyShell>
+        </MusicReturnsContext>
+      )
+      expect(musicReturns).not.toHaveBeenCalled()
+      act(() => vi.advanceTimersByTime(1000))
+      expect(musicReturns).toHaveBeenCalledOnce()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it("plays puzzle.solved as the board starts its own finish, and not again at solved", () => {

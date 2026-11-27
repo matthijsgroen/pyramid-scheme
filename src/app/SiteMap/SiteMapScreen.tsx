@@ -1,6 +1,6 @@
 import { useLockSolvedSound } from "./useLockSolvedSound"
-import { useDuckMusic } from "@/app/audio/useDuckMusic"
-import { use, useMemo, useState } from "react"
+import { MusicReturnsContext, useDuckMusic } from "@/app/audio/useDuckMusic"
+import { use, useCallback, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
 import { concealShutGround } from "@/game/concealment"
@@ -232,8 +232,12 @@ export const SiteMapScreen = ({
   // Escape asks before leaving: a stray key must not throw the player out of a site. The Back button leaves at once.
   const [confirmingLeave, setConfirmingLeave] = useState(false)
   // Keys reach the map only while nothing is open over it.
-  // Every encounter is thinking time, the shop included.
-  useDuckMusic(encounter.isOpen)
+  // Every encounter is thinking time, the shop included, until the encounter lets the music back in (a solved board).
+  // Kept as the room that let it in, so the next encounter holds it down again even when it opens in the same render.
+  const [musicBackIn, setMusicBackIn] = useState<string>()
+  const { roomKey } = encounter
+  const letMusicBack = useCallback(() => setMusicBackIn(roomKey), [roomKey])
+  useDuckMusic(encounter.isOpen && (roomKey === undefined || musicBackIn !== roomKey))
   const mapOnTop = !encounter.isOpen && !rewardOffer.pending && !exit.leaving && !fez.speaking && !confirmingLeave
 
   if (!grid) {
@@ -344,18 +348,20 @@ export const SiteMapScreen = ({
       {encounter.isOpen && ActiveEncounterComponent && encounter.ctx && (
         <EncounterModal tileset={encounter.ctx.tileset}>
           {/* The room the board belongs to — what an unfinished board is saved against. */}
-          <PuzzleRoomContext value={encounter.roomKey}>
-            <ActiveEncounterComponent
-              puzzle={encounter.puzzle}
-              ctx={encounter.ctx}
-              progression={progression}
-              journeys={floorJourneys}
-              inventory={inventory}
-              applyReward={applyReward}
-              onSolved={encounter.solved}
-              onCancel={encounter.cancel}
-            />
-          </PuzzleRoomContext>
+          <MusicReturnsContext value={letMusicBack}>
+            <PuzzleRoomContext value={encounter.roomKey}>
+              <ActiveEncounterComponent
+                puzzle={encounter.puzzle}
+                ctx={encounter.ctx}
+                progression={progression}
+                journeys={floorJourneys}
+                inventory={inventory}
+                applyReward={applyReward}
+                onSolved={encounter.solved}
+                onCancel={encounter.cancel}
+              />
+            </PuzzleRoomContext>
+          </MusicReturnsContext>
         </EncounterModal>
       )}
       <RewardFlow pendingReward={rewardOffer.pending} onDismiss={rewardOffer.dismiss} />
