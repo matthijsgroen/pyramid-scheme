@@ -241,8 +241,7 @@
       "wizard": "De Fear en it Hert"
     },
     "entrance": {
-      "title": "Mozayyk",
-      "toPlace": "Mozayyk · {{count}} te pleatsen"
+      "title": "Mozayyk"
     },
     "haul": {
       "pieces_one": "{{count}} mozayykstikje",

@@ -241,8 +241,7 @@
       "wizard": "Fjeren og hjertet"
     },
     "entrance": {
-      "title": "Mosaik",
-      "toPlace": "Mosaik · {{count}} venter"
+      "title": "Mosaik"
     },
     "haul": {
       "pieces_one": "{{count}} mosaikstykke",

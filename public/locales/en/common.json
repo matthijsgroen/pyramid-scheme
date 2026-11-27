@@ -245,8 +245,7 @@
       "wizard": "The Feather and the Heart"
     },
     "entrance": {
-      "title": "Mosaic",
-      "toPlace": "Mosaic · {{count}} to place"
+      "title": "Mosaic"
     },
     "haul": {
       "pieces_one": "{{count}} mosaic piece",

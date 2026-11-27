@@ -257,8 +257,7 @@
       "wizard": "Y Bluen a'r Galon"
     },
     "entrance": {
-      "title": "Mosaig",
-      "toPlace": "Mosaig · {{count}} i'w gosod"
+      "title": "Mosaig"
     },
     "haul": {
       "pieces_zero": "{{count}} o ddarnau mosaig",

@@ -245,8 +245,7 @@
       "wizard": "La piuma e il cuore"
     },
     "entrance": {
-      "title": "Mosaico",
-      "toPlace": "Mosaico · {{count}} da posizionare"
+      "title": "Mosaico"
     },
     "haul": {
       "pieces_one": "{{count}} tessera del mosaico",
