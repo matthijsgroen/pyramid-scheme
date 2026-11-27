@@ -1,5 +1,5 @@
 import { usePlayOnRise } from "@/app/audio/usePlayOnRise"
-import { useMusicReturns } from "@/app/audio/useDuckMusic"
+import { useDuckMusic } from "@/app/audio/useDuckMusic"
 import { CORE_SOUNDS } from "@/app/audio/coreSounds"
 import { use, useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import clsx from "clsx"
@@ -198,7 +198,8 @@ export const PuzzleFamilyShell = ({
   // The solve sound starts with the board's own finish (a piece driving out), not after it, and still rings when the
   // banner lands. A family without a finish of its own starts it at "solved".
   usePlayOnRise(!!finished || finishing, CORE_SOUNDS.puzzleSolved)
-  useMusicReturns(solvedBanner)
+  // A board is thinking time until it shows its time.
+  useDuckMusic(!solvedBanner)
 
   // A board that fills the screen pushes the hint under the fold, where pressing the button looks
   // like it did nothing. Scrolled to on reveal only — not on every recomputed hint — so the view

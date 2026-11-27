@@ -8,11 +8,10 @@ import { useInputLayer } from "@/app/input/useInputLayer"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { listenForPageLayers } from "@/app/input/pageLayers"
 import { layerOnMount } from "@/ui/atoms/dialogFocus"
-import { MusicReturnsContext } from "@/app/audio/useDuckMusic"
 
 vi.mock("react-i18next", () => ({ useTranslation: () => ({ t: (key: string) => key }) }))
-const { playSound } = vi.hoisted(() => ({ playSound: vi.fn() }))
-vi.mock("@/app/audio/audio", () => ({ playSound }))
+const { playSound, release } = vi.hoisted(() => ({ playSound: vi.fn(), release: vi.fn() }))
+vi.mock("@/app/audio/audio", () => ({ playSound, audio: { duck: () => release } }))
 
 const renderShell = (solved: boolean, onSolved: () => void = () => {}) =>
   render(
@@ -36,20 +35,18 @@ describe("PuzzleFamilyShell", () => {
     expect(playSound.mock.calls).toEqual([["puzzle.solved"]])
   })
 
-  it("lets the music back in when the solved banner shows the time, not before", () => {
+  it("holds the music down until the solved banner shows the time", () => {
     vi.useFakeTimers()
     try {
-      const musicReturns = vi.fn()
+      release.mockClear()
       render(
-        <MusicReturnsContext value={musicReturns}>
-          <PuzzleFamilyShell onSolved={() => {}} onCancel={() => {}} solved onReset={() => {}} hint="do this">
-            {() => <button>cell</button>}
-          </PuzzleFamilyShell>
-        </MusicReturnsContext>
+        <PuzzleFamilyShell onSolved={() => {}} onCancel={() => {}} solved onReset={() => {}} hint="do this">
+          {() => <button>cell</button>}
+        </PuzzleFamilyShell>
       )
-      expect(musicReturns).not.toHaveBeenCalled()
+      expect(release).not.toHaveBeenCalled()
       act(() => vi.advanceTimersByTime(1000))
-      expect(musicReturns).toHaveBeenCalledOnce()
+      expect(release).toHaveBeenCalledOnce()
     } finally {
       vi.useRealTimers()
     }

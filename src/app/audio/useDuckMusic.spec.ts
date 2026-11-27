@@ -21,7 +21,9 @@ const fakeService = () => {
 describe("useDuckMusic", () => {
   it("ducks while active and releases when it turns inactive", () => {
     const { service, release } = fakeService()
-    const { rerender } = renderHook(({ active }) => useDuckMusic(active, service), { initialProps: { active: true } })
+    const { rerender } = renderHook(({ active }) => useDuckMusic(active, undefined, service), {
+      initialProps: { active: true },
+    })
     expect(service.duck).toHaveBeenCalledTimes(1)
     rerender({ active: true })
     expect(service.duck).toHaveBeenCalledTimes(1)
@@ -31,14 +33,16 @@ describe("useDuckMusic", () => {
 
   it("releases on unmount", () => {
     const { service, release } = fakeService()
-    const { unmount } = renderHook(() => useDuckMusic(true, service))
+    const { unmount } = renderHook(() => useDuckMusic(true, undefined, service))
     unmount()
     expect(release).toHaveBeenCalledTimes(1)
   })
 
   it("never ducks while inactive", () => {
     const { service } = fakeService()
-    const { rerender } = renderHook(({ active }) => useDuckMusic(active, service), { initialProps: { active: false } })
+    const { rerender } = renderHook(({ active }) => useDuckMusic(active, undefined, service), {
+      initialProps: { active: false },
+    })
     rerender({ active: false })
     expect(service.duck).not.toHaveBeenCalled()
   })

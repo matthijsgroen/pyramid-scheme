@@ -6,6 +6,8 @@ import { useTrapProgress } from "./useTrapProgress"
 import { playSound } from "@/app/audio/audio"
 import { TRAP_FIRES_SOUND } from "./sounds"
 import type { SolveOutcome } from "@/app/reactions/reactionContributions"
+import { useDuckMusic } from "@/app/audio/useDuckMusic"
+import { QUICK_DUCK_FADE_S } from "@/app/audio/audioService"
 
 // Generic across any trap family — the warning/attempt/turn-around lifecycle has
 // nothing challenge-specific about it, so every family reuses it rather than re-deriving it.
@@ -22,6 +24,7 @@ type Props<T> = {
 export const TrapFamilyShell = <T,>({ question, ctx, onSolved, onCancel, ChallengeComponent }: Props<T>) => {
   const trap = useTrapProgress()
   const [attempting, setAttempting] = useState(false)
+  useDuckMusic(true, QUICK_DUCK_FADE_S)
 
   if (!attempting) {
     return (

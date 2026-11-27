@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Background music (Egyptian Dawn by kaazoom), off by default; switch it on in Settings. It fades out during puzzles and returns once the solved board shows your time.
+- Background music (Egyptian Dawn by kaazoom), off by default; switch it on in Settings. It fades out during puzzles and traps (quickly for a trap) and returns once a solved board shows your time.
 - A move on a puzzle board makes a soft tap.
 - Lighting a torch makes a sound.
 - Sound comes back after a phone call on iPhone at the next tap.

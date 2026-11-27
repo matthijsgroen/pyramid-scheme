@@ -80,8 +80,10 @@ Trigger points are in the appendix; the builder confirms each line before hookin
 - Track: "Egyptian Dawn (Full version)" by kaazoom on Pixabay, 4:53, Pixabay Content License.
 - Plays on the site map, the journey map and the camp, and loops.
 - It plays well under the effects: footsteps must stay audible over it.
-- During a puzzle or trap encounter it fades out to silence over two seconds, and fades back when the encounter closes, or already when a solved board shows its time:
+- During a puzzle it fades out to silence over two seconds, and fades back when the board closes, or already when a solved board shows its time:
   a tune distracts from a board.
+- During a trap it fades out within half a second: a trap runs against the clock.
+- A chest, the shop and other encounters keep the music playing.
 - It loads only when Music is on, never in the precache of the first download, and it streams.
 
 ## Controls and platform

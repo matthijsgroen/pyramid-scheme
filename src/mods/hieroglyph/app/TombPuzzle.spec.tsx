@@ -23,7 +23,7 @@ vi.mock("@/mods/hieroglyph/app/TombPuzzleView", () => ({
   },
 }))
 const { playSound } = vi.hoisted(() => ({ playSound: vi.fn() }))
-vi.mock("@/app/audio/audio", () => ({ playSound }))
+vi.mock("@/app/audio/audio", () => ({ playSound, audio: { duck: () => () => {} } }))
 
 const { TombPuzzle } = await import("./TombPuzzle")
 const { FezContext } = await import("@/app/fez/context")
