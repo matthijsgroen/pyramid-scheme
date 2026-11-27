@@ -97,7 +97,8 @@ to the ranks above is the oracle hall: the priest receives through the god, whos
 Footprints (`DECORATION_FOOTPRINTS`): sacredLake 3×2, the first two-deep kind, a stone-edged pool with steps down;
 barqueShrine 3×1 a cell taller, the god's shrine on its boat on carrying poles; embalmingTable 2×1; merkhet a cell
 taller; the rest 1×1. The fan is master's kind, worn in expert's palette. The two set pieces stand where a designed
-room draws them (`placePrefabs.ts`), so the lake and the oracle hall are rooms with the player walking round.
+room draws them (`placePrefabs.ts`), so the lake and the oracle hall are rooms with the player walking round. The
+oracle hall's hanging is the `hanging` prop, as the banquet's frieze is: it is no wall item.
 
 Decided 2026-11-13 with the designer. The embalming room is left to the priest (purification). The armoury became the
 Sed court: a pharaoh proves his rule by running, not by storing spears.

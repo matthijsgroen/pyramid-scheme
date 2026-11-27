@@ -144,6 +144,17 @@ export const DECORATION_KINDS = [
   "headrest",
   "grindstone",
   "breadOven",
+  // The priest's temple (docs/game-design/themed-rooms.md, expert).
+  "embalmingTable",
+  "linenRack",
+  "offeringStand",
+  "scrollChest",
+  "readingDesk",
+  "merkhet",
+  "waterClock",
+  "sacredLake",
+  "barqueShrine",
+  "ostracaBasket",
   // The pharaoh's own (docs/game-design/themed-rooms.md). Placed by designed rooms only until master's activities land.
   "chariot",
   "tributeHeap",
@@ -200,6 +211,14 @@ export const DECORATION_FOOTPRINTS: Partial<Record<DecorationKind, PropFootprint
   // A standing harp and a tree in its pot both rise a cell above the frame.
   harp: { cols: 1, rows: 1, tall: 1 },
   pottedTree: { cols: 1, rows: 1, tall: 1 },
+  // The priest's temple. The embalming table holds a body at full length, two cells across.
+  embalmingTable: { cols: 2, rows: 1, tall: 0 },
+  // A sighting rod on its plumb line rises a cell above the frame.
+  merkhet: { cols: 1, rows: 1, tall: 1 },
+  // The temple lake: a stone-edged pool with steps down, three cells across and two deep.
+  sacredLake: { cols: 3, rows: 2, tall: 0 },
+  // The god's shrine on its boat on carrying poles, three cells across and a cell taller.
+  barqueShrine: { cols: 3, rows: 1, tall: 1 },
   // The pharaoh's set pieces. A chariot stands on its two wheels with its pole out front, two cells by two.
   chariot: { cols: 2, rows: 2, tall: 0 },
   // A throne on its dais, and the Sed festival's double throne under its canopy, two cells across.

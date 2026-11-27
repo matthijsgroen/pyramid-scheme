@@ -23,6 +23,13 @@ export type ActivityId =
   | "gardenCourt"
   | "bedroom"
   | "bakeryBrewery"
+  | "purification"
+  | "offering"
+  | "sanctuary"
+  | "houseOfLife"
+  | "starWatching"
+  | "sacredLake"
+  | "oracleHall"
 
 export type Activity = {
   id: ActivityId
@@ -38,7 +45,8 @@ export type Activity = {
 //
 // The nobleman's rooms take their roles from the places his wings are authored as: the lamplit rooms
 // (banquet, the dressing room by its mirror, the shrine's lamp) serve `light`, the open court `water` and
-// `sky`, the bedroom on the roof `sky`, the brewery `water`.
+// `sky`, the bedroom on the roof `sky`, the brewery `water`. The priest's take the roles of a working temple:
+// the embalming and offering rooms `funerary`, the god's rooms `judgement`, the observatory `sky` and `cosmos`.
 export const ACTIVITIES: readonly Activity[] = [
   {
     id: "weighing",
@@ -94,6 +102,50 @@ export const ACTIVITIES: readonly Activity[] = [
   // No linen chest beside the bed: a chest on the map means treasure you can open.
   { id: "bedroom", props: ["bed", "headrest"], wall: [], roles: ["sky"], theme: "junior" },
   { id: "bakeryBrewery", props: ["grindstone", "breadOven", "jarRack"], wall: [], roles: ["water"], theme: "junior" },
+  {
+    id: "purification",
+    props: ["embalmingTable", "linenRack", "basin", "jarRack"],
+    wall: ["wallShrine"],
+    roles: ["funerary"],
+    theme: "expert",
+  },
+  {
+    id: "offering",
+    props: ["offeringTable", "offeringStand", "brazier"],
+    wall: ["stela"],
+    roles: ["funerary", "judgement"],
+    theme: "expert",
+  },
+  {
+    id: "sanctuary",
+    props: ["shrine", "statue", "lamp"],
+    wall: ["veil"],
+    roles: ["judgement", "cosmos"],
+    theme: "expert",
+  },
+  {
+    id: "houseOfLife",
+    props: ["scrollChest", "readingDesk", "shelf", "lamp"],
+    wall: ["niche", "tallyBoard"],
+    roles: ["scribe"],
+    theme: "expert",
+  },
+  {
+    id: "starWatching",
+    props: ["merkhet", "waterClock", "pillar"],
+    wall: ["starShaft"],
+    roles: ["sky", "cosmos"],
+    theme: "expert",
+  },
+  { id: "sacredLake", props: ["sacredLake", "jarRack", "mat"], wall: [], roles: ["water"], theme: "expert" },
+  // The oracle hall's frieze is the `hanging` prop, as the banquet's is.
+  {
+    id: "oracleHall",
+    props: ["barqueShrine", "ostracaBasket", "fan", "pillar", "hanging"],
+    wall: [],
+    roles: ["light", "judgement"],
+    theme: "expert",
+  },
 ]
 
 /**

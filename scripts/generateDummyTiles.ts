@@ -73,6 +73,16 @@ type Kind =
   | "headrest"
   | "grindstone"
   | "breadOven"
+  | "embalmingTable"
+  | "linenRack"
+  | "offeringStand"
+  | "scrollChest"
+  | "readingDesk"
+  | "merkhet"
+  | "waterClock"
+  | "sacredLake"
+  | "barqueShrine"
+  | "ostracaBasket"
   | "sand"
 
 // Every kind for every tier. A real art pass draws only what a rank's pool authors — a tier with no
@@ -124,6 +134,16 @@ const ALL_KINDS: Kind[] = [
   "headrest",
   "grindstone",
   "breadOven",
+  "embalmingTable",
+  "linenRack",
+  "offeringStand",
+  "scrollChest",
+  "readingDesk",
+  "merkhet",
+  "waterClock",
+  "sacredLake",
+  "barqueShrine",
+  "ostracaBasket",
 ]
 
 // Deterministic jitter — the same tier always rasterises to the same bytes.
@@ -452,6 +472,56 @@ const shapes: Record<Kind, (p: Palette) => string> = {
     <path d="M 8 ${BASE} Q 8 ${BASE - 44} 28 ${BASE - 44} Q 48 ${BASE - 44} 48 ${BASE} Z" fill="${p.prop}"/>
     <path d="M 20 ${BASE} Q 20 ${BASE - 18} 28 ${BASE - 18} Q 36 ${BASE - 18} 36 ${BASE} Z" fill="${p.outline}"/>
     <ellipse cx="28" cy="${BASE - 4}" rx="6" ry="3" fill="${p.accent}"/>`,
+  // The priest's temple (themed-rooms.md, expert): the embalming table two cells wide, the merkhet a cell
+  // taller, the barque shrine three cells wide and a cell taller, the sacred lake three wide and two deep.
+  embalmingTable: p => `
+    <rect x="8" y="${BASE - 22}" width="110" height="7" fill="${p.prop}"/>
+    ${[12, 106].map(x => `<rect x="${x}" y="${BASE - 15}" width="7" height="15" fill="${p.propDark}"/>`).join("")}
+    <path d="M 22 ${BASE - 22} Q 24 ${BASE - 34} 40 ${BASE - 32} L 96 ${BASE - 30} Q 104 ${BASE - 30} 104 ${BASE - 22} Z" fill="#efe6cf"/>`,
+  linenRack: p => `
+    <rect x="10" y="${BASE - 44}" width="4" height="44" fill="${p.propDark}"/>
+    <rect x="42" y="${BASE - 44}" width="4" height="44" fill="${p.propDark}"/>
+    <rect x="8" y="${BASE - 46}" width="40" height="4" fill="${p.prop}"/>
+    ${[16, 26, 36].map(x => `<rect x="${x}" y="${BASE - 42}" width="8" height="26" fill="#efe6cf"/>`).join("")}`,
+  offeringStand: p => `
+    <path d="M 20 ${BASE} L 36 ${BASE} L 31 ${BASE - 30} L 25 ${BASE - 30} Z" fill="${p.prop}"/>
+    <ellipse cx="28" cy="${BASE - 32}" rx="12" ry="4" fill="${p.propDark}"/>
+    <path d="M 20 ${BASE - 34} L 24 ${BASE - 46} L 28 ${BASE - 36} L 32 ${BASE - 46} L 36 ${BASE - 34} Z" fill="${p.accent}"/>`,
+  scrollChest: p => `
+    <rect x="10" y="${BASE - 24}" width="36" height="24" fill="${p.propDark}"/>
+    <path d="M 8 ${BASE - 24} L 48 ${BASE - 24} L 44 ${BASE - 32} L 12 ${BASE - 32} Z" fill="${p.prop}"/>
+    ${[16, 26, 36].map(x => `<circle cx="${x + 2}" cy="${BASE - 14}" r="4" fill="#efe6cf"/>`).join("")}`,
+  readingDesk: p => `
+    <rect x="14" y="${BASE - 16}" width="4" height="16" fill="${p.propDark}"/>
+    <rect x="38" y="${BASE - 16}" width="4" height="16" fill="${p.propDark}"/>
+    <path d="M 10 ${BASE - 16} L 46 ${BASE - 16} L 46 ${BASE - 30} Z" fill="${p.prop}"/>
+    <rect x="22" y="${BASE - 22}" width="12" height="4" fill="#efe6cf"/>
+    <rect x="12" y="${BASE - 22}" width="6" height="3" fill="${p.accent}"/>`,
+  merkhet: p => `
+    <rect x="18" y="${BASE - 6}" width="20" height="6" fill="${p.propDark}"/>
+    <rect x="26" y="${BASE - 110}" width="4" height="104" fill="${p.prop}"/>
+    <path d="M 18 ${BASE - 118} L 38 ${BASE - 118} L 30 ${BASE - 108} L 26 ${BASE - 108} Z" fill="${p.accent}"/>
+    <rect x="35" y="${BASE - 110}" width="1" height="60" fill="${p.outline}"/>
+    <circle cx="35.5" cy="${BASE - 48}" r="3" fill="${p.accent}"/>`,
+  waterClock: p => `
+    <path d="M 12 ${BASE - 40} L 44 ${BASE - 40} L 38 ${BASE} L 18 ${BASE} Z" fill="${p.prop}"/>
+    <ellipse cx="28" cy="${BASE - 40}" rx="16" ry="4" fill="${p.accent}"/>
+    ${[30, 22, 14].map(y => `<rect x="20" y="${BASE - y}" width="16" height="1" fill="${p.propDark}"/>`).join("")}
+    <rect x="27" y="${BASE - 6}" width="2" height="6" fill="${p.accent}"/>`,
+  sacredLake: p => `
+    <rect x="6" y="${BASE - 74}" width="184" height="74" fill="${p.prop}"/>
+    <rect x="16" y="${BASE - 64}" width="164" height="54" fill="#3f7fa0"/>
+    ${[0, 1, 2].map(i => `<rect x="${150 + i * 6}" y="${BASE - 64 + i * 8}" width="${30 - i * 6}" height="8" fill="${p.propDark}"/>`).join("")}
+    <ellipse cx="70" cy="${BASE - 36}" rx="18" ry="5" fill="#5f9fc0"/>`,
+  barqueShrine: p => `
+    <path d="M 8 ${BASE - 46} Q 98 ${BASE - 28} 188 ${BASE - 46} L 176 ${BASE - 34} Q 98 ${BASE - 20} 20 ${BASE - 34} Z" fill="${p.prop}"/>
+    ${[30, 166].map(x => `<rect x="${x}" y="${BASE - 28}" width="6" height="28" fill="${p.propDark}"/>`).join("")}
+    <rect x="4" y="${BASE - 26}" width="188" height="4" fill="${p.propDark}"/>
+    <rect x="76" y="${BASE - 100}" width="44" height="64" fill="${p.accent}"/>
+    <path d="M 70 ${BASE - 100} L 126 ${BASE - 100} L 120 ${BASE - 112} L 76 ${BASE - 112} Z" fill="${p.prop}"/>`,
+  ostracaBasket: p => `
+    <path d="M 12 ${BASE - 22} L 44 ${BASE - 22} L 40 ${BASE} L 16 ${BASE} Z" fill="${p.propDark}"/>
+    ${[18, 26, 34].map((x, i) => `<path d="M ${x} ${BASE - 22} L ${x + 6} ${BASE - 30 + i * 2} L ${x + 10} ${BASE - 22} Z" fill="#d9c7a3"/>`).join("")}`,
   // Floor scatter, so it lies FLAT on the cell's floor line rather than standing up off it: a low
   // drift with a soft edge, wider than it is tall, and nothing above the line at all.
   sand: p => `
