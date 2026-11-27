@@ -7,6 +7,32 @@ See also: `pyramid-interior-design.md` for loot economy, interior structure, and
 
 ---
 
+## What the game is
+
+The game is several things at once, so different players each find their own reason to play, in a session of
+four minutes or one of an hour:
+
+- **Exploring** is the spine. Pyramids, floors and locks carry everything else, and every other facet has its
+  place on a floor.
+- **Story** is the thread through it: it gives a sense of progress, and it guides the player through ancient
+  Egypt.
+- **Puzzles** are the stops along the way.
+- **Collecting** and **building the camp** are what a floor pays out.
+- **Arithmetic** and **Egypt** are learned on the way, never as a lesson: arithmetic in the boards;
+  hieroglyphs, gods, the role of cats, the ibis behind the calendar, writing on potsherds in the story and the
+  hieroglyph mod.
+
+What follows from it:
+
+- No facet blocks another: a story player is never stuck on a board above their level, and a puzzler is never
+  made to read.
+- A floor is a short session, a journey a long one.
+- Every floor pulls toward the next with at least two different things (a story line, a collection piece,
+  something for the camp, a new room), since different players are pulled by different things.
+- The first twenty minutes show every facet once.
+
+---
+
 ## The pitch
 
 Exploration in this world runs **both forward and backward**. Forward: new
