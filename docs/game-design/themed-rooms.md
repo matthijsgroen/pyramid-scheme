@@ -46,7 +46,7 @@ is its skin). Starter's, the merchant's house:
 
 Junior and up get their own activities when their rank is repainted. **The count grows by one per rank**, as the
 floors grow (designer, 2026-10-27): starter 5, junior 6, expert 7, master 8, wizard 9. The lists as they stand:
-purification, offering, sanctuary, House of Life, star-watching (expert); master's eight below; the weighing of the heart, Nut's sky, the sun barque, the primordial waters (wizard) — each
+expert's seven below; master's eight below; the weighing of the heart, Nut's sky, the sun barque, the primordial waters (wizard) — each
 filled to its count at its repaint. **Weighing returns at the end**: goods in the merchant's storehouse, the heart
 before the gods — the same scale.
 
@@ -77,7 +77,27 @@ merchant's amphorae with a junior look), as long as the activity fits its tier. 
 its **pyramid's** tier, whatever difficulty its section is played at: a junior side path in a merchant's pyramid carries
 his pool and stays his. A tier with no activities of its own yet wears the first themed tier's, starter's five.
 
-### Master — the pharaoh
+### Expert — the priest's temple
+
+Decided 2026-11-27 with the designer. A clean temple, light and cool, silver with lapis
+([visual-direction.md](visual-direction.md)). The rooms are what a working temple held, thought out from the temple
+first and matched to existing kinds after: the sanctuary needs no new kind at all. The reception the junior house left
+to the ranks above is the oracle hall: the priest receives through the god, whose carried barque nods yes or no.
+
+| Activity      | Props                                                         | Wall                | Roles               |
+| ------------- | ------------------------------------------------------------- | ------------------- | ------------------- |
+| purification  | **embalmingTable**, **linenRack**, basin (natron), jarRack    | wallShrine (Anubis) | funerary            |
+| offering      | offeringTable, **offeringStand** (lotus), brazier             | stela (offer list)  | funerary, judgement |
+| sanctuary     | shrine (a shut naos), statue, lamp                            | veil                | judgement, cosmos   |
+| House of Life | **scrollChest**, **readingDesk** (palettes, ink), shelf, lamp | niche, tallyBoard   | scribe              |
+| star-watching | **merkhet**, **waterClock**, pillar (djed)                    | starShaft           | sky, cosmos         |
+| sacred lake   | **sacredLake** (set piece), jarRack (libation jars), mat      | —                   | water               |
+| oracle hall   | **barqueShrine** (set piece), **ostracaBasket**, fan, pillar  | hanging             | light, judgement    |
+
+Footprints (`DECORATION_FOOTPRINTS`): sacredLake 3×2, the first two-deep kind, a stone-edged pool with steps down;
+barqueShrine 3×1 a cell taller, the god's shrine on its boat on carrying poles; embalmingTable 2×1; merkhet a cell
+taller; the rest 1×1. The fan is master's kind, worn in expert's palette. The two set pieces stand where a designed
+room draws them (`placePrefabs.ts`), so the lake and the oracle hall are rooms with the player walking round.
 
 Decided 2026-11-13 with the designer. The embalming room is left to the priest (purification). The armoury became the
 Sed court: a pharaoh proves his rule by running, not by storing spears.
