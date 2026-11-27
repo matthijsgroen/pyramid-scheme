@@ -1,4 +1,6 @@
 import { createContext, use, useCallback, useMemo, useState, type Dispatch, type SetStateAction } from "react"
+import { playSound } from "@/app/audio/audio"
+import { CORE_SOUNDS } from "@/app/audio/coreSounds"
 import { useGameStorage } from "@/support/useGameStorage"
 
 // One slot, one board: storage holds the in-progress state of the single room that is open, tagged
@@ -7,6 +9,17 @@ import { useGameStorage } from "@/support/useGameStorage"
 const STORAGE_KEY = "puzzleState"
 const NO_ROOM = ""
 const EMPTY: StoredPuzzleState = { room: NO_ROOM, state: null }
+
+// A move taps the board softly, a little higher or lower each time so a run of moves does not sound mechanical.
+// Moves closer together than TAP_GAP_MS (a drag across cells) tap once.
+const TAP_GAP_MS = 80
+let lastTapAt = -Infinity
+const tap = () => {
+  const now = performance.now()
+  if (now - lastTapAt < TAP_GAP_MS) return
+  lastTapAt = now
+  playSound(CORE_SOUNDS.puzzleTap, { playbackRate: 0.92 + Math.random() * 0.16 })
+}
 
 export type StoredPuzzleState = {
   room: string
@@ -64,6 +77,7 @@ export const usePuzzleState = <T,>(create: () => T, board: unknown): [T, Dispatc
 
   const setState = useCallback<Dispatch<SetStateAction<T>>>(
     update => {
+      tap()
       if (!room) {
         setLocal(update)
         return

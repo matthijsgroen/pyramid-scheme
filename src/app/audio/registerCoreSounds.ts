@@ -4,6 +4,7 @@ import footstepUrl from "@/assets/audio/footstep.m4a?url"
 import journeyCompleteUrl from "@/assets/audio/journey-complete.m4a?url"
 import levelCompleteUrl from "@/assets/audio/level-complete.m4a?url"
 import puzzleSolvedUrl from "@/assets/audio/puzzle-solved.m4a?url"
+import puzzleTapUrl from "@/assets/audio/puzzle-tap.m4a?url"
 import lockSolvedUrl from "@/assets/audio/lock-solved.m4a?url"
 import pyramidOpensUrl from "@/assets/audio/pyramid-opens.m4a?url"
 import { CORE_SOUNDS } from "./coreSounds"
@@ -19,3 +20,4 @@ registerSound(CORE_SOUNDS.levelComplete, { url: levelCompleteUrl, gain: 0.6 })
 registerSound(CORE_SOUNDS.journeyComplete, { url: journeyCompleteUrl, gain: 0.7 })
 registerSound(CORE_SOUNDS.lockSolved, { url: lockSolvedUrl, gain: 0.7 })
 registerSound(CORE_SOUNDS.puzzleSolved, { url: puzzleSolvedUrl, gain: 0.8 })
+registerSound(CORE_SOUNDS.puzzleTap, { url: puzzleTapUrl, gain: 0.35 })
