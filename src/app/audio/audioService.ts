@@ -31,7 +31,7 @@ export type AudioService = {
   unlock: () => void // call inside a user gesture
   setEffects: (on: boolean) => void
   setMusic: (on: boolean) => void
-  duck: () => () => void // returns release
+  duck: (fadeS?: number) => () => void // returns release; fadeS is how long the music takes to fade out
   /** What the service is doing right now, for the develop-mode readout. */
   diagnose: () => AudioDiagnosis
 }
@@ -43,6 +43,8 @@ export const MUSIC_GAIN = 0.08
 /** While an encounter is open the music fades out: any tune distracts from a board, and a slow fade to silence reads as a scene change where a step in volume reads as a glitch. */
 export const DUCK_LEVEL = 0
 export const DUCK_FADE_S = 2
+/** A trap is against the clock, so the music leaves it at once rather than fading under the countdown. */
+export const QUICK_DUCK_FADE_S = 0.4
 
 // Safari reports only the base latency, and neither counts a Bluetooth link.
 const latencyOf = (ctx: AudioContextLike | undefined): number | undefined => {
@@ -182,12 +184,12 @@ export const createAudioService = ({
     } else if (element && !element.paused) element.pause()
   }
 
-  const rampMusic = () => {
+  const rampMusic = (fadeS = DUCK_FADE_S) => {
     if (!context || !musicGain) return
     const now = context.currentTime
     musicGain.gain.cancelScheduledValues(now)
     musicGain.gain.setValueAtTime(musicGain.gain.value, now)
-    musicGain.gain.linearRampToValueAtTime(musicLevel(), now + DUCK_FADE_S)
+    musicGain.gain.linearRampToValueAtTime(musicLevel(), now + fadeS)
   }
 
   onHidden?.(isHidden => {
@@ -255,9 +257,9 @@ export const createAudioService = ({
       played,
       dropped: { ...dropped },
     }),
-    duck: () => {
+    duck: (fadeS = DUCK_FADE_S) => {
       ducks += 1
-      rampMusic()
+      rampMusic(fadeS)
       let released = false
       return () => {
         if (released) return

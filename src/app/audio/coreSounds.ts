@@ -1,5 +1,7 @@
 export const CORE_SOUNDS = {
   puzzleSolved: "puzzle.solved",
+  puzzleTapStone: "puzzle.tap.stone",
+  puzzleTapWood: "puzzle.tap.wood",
   levelComplete: "level.complete",
   journeyComplete: "journey.complete",
   pyramidOpens: "pyramid.opens",

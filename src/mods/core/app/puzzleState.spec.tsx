@@ -1,9 +1,13 @@
 // @vitest-environment jsdom
 import { act, renderHook } from "@testing-library/react"
-import { beforeEach, describe, expect, it } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import type { ReactNode } from "react"
 import { PuzzleRoomContext, usePuzzleState, useClearPuzzleState } from "./puzzleState"
 import { clearGameData, writeGameData } from "@/support/useGameStorage"
+import { playSound } from "@/app/audio/audio"
+import { CORE_SOUNDS } from "@/app/audio/coreSounds"
+
+vi.mock("@/app/audio/audio", () => ({ playSound: vi.fn() }))
 
 type Board = { moves: number[] }
 const create = (): Board => ({ moves: [] })
@@ -95,5 +99,28 @@ describe("usePuzzleState", () => {
 
     const result = await boardIn("room-a")
     expect(result.current[0].moves).toEqual([])
+  })
+})
+
+describe("the tap of a move", () => {
+  it("taps once for moves that land together, and again for the next move", async () => {
+    vi.mocked(playSound).mockClear()
+    const now = vi.spyOn(performance, "now")
+    const result = await boardIn(undefined)
+    now.mockReturnValue(10_000)
+    await act(async () => {
+      result.current[1](prev => ({ moves: [...prev.moves, 1] }))
+      result.current[1](prev => ({ moves: [...prev.moves, 2] }))
+    })
+    now.mockReturnValue(10_500)
+    await act(async () => {
+      result.current[1](prev => ({ moves: [...prev.moves, 3] }))
+    })
+    now.mockRestore()
+
+    expect(vi.mocked(playSound).mock.calls.map(([name]) => name)).toEqual([
+      CORE_SOUNDS.puzzleTapStone,
+      CORE_SOUNDS.puzzleTapStone,
+    ])
   })
 })

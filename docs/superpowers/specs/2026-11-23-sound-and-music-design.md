@@ -22,14 +22,14 @@ settings gain a credits screen. They also gain a "what's new" screen showing the
 
 ## Non-goals
 
-- No sound for cell taps, UI buttons, modals, dialogue lines, stairs, the exit, or being blocked.
+- No sound for UI buttons, modals, dialogue lines, stairs, the exit, or being blocked.
 - No voice acting.
 - No per-sound volume sliders; the two switches are enough.
 - No haptics for now.
 
 ## Anti-goals (a failure even if it works)
 
-- Noise during thinking: a puzzle board that clicks on every tap, or music at full volume over a puzzle.
+- Noise during thinking: a loud or pitched click on every move, or music at full volume over a puzzle.
 - A footstep on every step of a long walk. Only the first step of a walk sounds, softly.
 - A first download that grows by megabytes because of music the player never turned on.
 - An audio file in the repo whose licence forbids redistribution from a public repo.
@@ -38,31 +38,33 @@ settings gain a credits screen. They also gain a "what's new" screen showing the
 
 R = a recorded sample, "R, pitched" = one sample played at a different pitch per step, – = silent.
 
-| Area   | Moment                                                            | Kind       | Notes                                                               |
-| ------ | ----------------------------------------------------------------- | ---------- | ------------------------------------------------------------------- |
-| Map    | pyramid opens (stones fly in; zoom to the next level)             | R          | heavy stone sliding                                                 |
-| Map    | level complete, journey complete                                  | R          | an oud note for a level, a long ney tone for a journey              |
-| Site   | first step of a walk                                              | R          | soft footstep; later steps silent                                   |
-| Site   | lever or handle thrown                                            | R          |                                                                     |
-| Site   | stone lifted, stone set down, pressure plate                      | R          |                                                                     |
-| Site   | sequence tile stepped on correctly                                | R, pitched | one quiet sample, pitched to the next note of a rising scale        |
-| Site   | sequence tile wrong                                               | R          | its own sample; the scale starts over                               |
-| Site   | corridor opens behind a gate (reveal wave)                        | R          | stone grinding                                                      |
-| Site   | **last door of a lock opens**                                     | R          | a stone door settling; see below                                    |
-| Site   | zipline, squeeze                                                  | R          | whoosh, scrape                                                      |
-| Site   | sand or water barrier recedes                                     | R          |                                                                     |
-| Site   | chest opens                                                       | R          |                                                                     |
-| Site   | loot: money                                                       | R          | coins                                                               |
-| Site   | loot: fragment, mosaic or map piece, treasure                     | R          | a rising harp glissando; a treasure rings finger cymbals            |
-| Puzzle | solved                                                            | R          | a short plucked run rising to a ringing note, timed with the finish |
-| Puzzle | family flavour: canister pour, balance settle, sudoku scroll furl | R          |                                                                     |
-| Trap   | trap fires, heart lost                                            | R          | dull thud                                                           |
-| Trap   | heal (waterskin, rest)                                            | R          | a sip of water                                                      |
-| Shop   | buy, sell                                                         | R          | coins                                                               |
-| Camp   | campfire crackle                                                  | R          | loop, while the camp is on screen                                   |
-| Tomb   | tile placed                                                       | R          |                                                                     |
-| Tomb   | lock panel slides open                                            | R          | a stone door sliding                                                |
-| Tomb   | tableau complete                                                  | –          |                                                                     |
+| Area   | Moment                                                            | Kind       | Notes                                                                                                                                                    |
+| ------ | ----------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Map    | pyramid opens (stones fly in; zoom to the next level)             | R          | heavy stone sliding                                                                                                                                      |
+| Map    | level complete, journey complete                                  | R          | an oud note for a level, a long ney tone for a journey                                                                                                   |
+| Site   | first step of a walk                                              | R          | soft footstep; later steps silent                                                                                                                        |
+| Site   | lever or handle thrown                                            | R          |                                                                                                                                                          |
+| Site   | torch lit                                                         | R          | a soft whoosh as the flame takes, a few crackles                                                                                                         |
+| Site   | stone lifted, stone set down, pressure plate                      | R          |                                                                                                                                                          |
+| Site   | sequence tile stepped on correctly                                | R, pitched | one quiet sample, pitched to the next note of a rising scale                                                                                             |
+| Site   | sequence tile wrong                                               | R          | its own sample; the scale starts over                                                                                                                    |
+| Site   | corridor opens behind a gate (reveal wave)                        | R          | stone grinding                                                                                                                                           |
+| Site   | **last door of a lock opens**                                     | R          | a stone door settling; see below                                                                                                                         |
+| Site   | zipline, squeeze                                                  | R          | whoosh, scrape                                                                                                                                           |
+| Site   | sand or water barrier recedes                                     | R          |                                                                                                                                                          |
+| Site   | chest opens                                                       | R          |                                                                                                                                                          |
+| Site   | loot: money                                                       | R          | coins                                                                                                                                                    |
+| Site   | loot: fragment, mosaic or map piece, treasure                     | R          | a rising harp glissando; a treasure rings finger cymbals                                                                                                 |
+| Puzzle | move on the board                                                 | R, pitched | a soft tap, stone, or wood on a papyrus board, pitch varied a little; moves within 80 ms tap once; none where the move has its own sound (canister pour) |
+| Puzzle | solved                                                            | R          | a short plucked run rising to a ringing note, timed with the finish                                                                                      |
+| Puzzle | family flavour: canister pour, balance settle, sudoku scroll furl | R          |                                                                                                                                                          |
+| Trap   | trap fires, heart lost                                            | R          | dull thud                                                                                                                                                |
+| Trap   | heal (waterskin, rest)                                            | R          | a sip of water                                                                                                                                           |
+| Shop   | buy, sell                                                         | R          | coins                                                                                                                                                    |
+| Camp   | campfire crackle                                                  | R          | loop, while the camp is on screen                                                                                                                        |
+| Tomb   | tile placed                                                       | R          |                                                                                                                                                          |
+| Tomb   | lock panel slides open                                            | R          | a stone door sliding                                                                                                                                     |
+| Tomb   | tableau complete                                                  | –          |                                                                                                                                                          |
 
 Trigger points are in the appendix; the builder confirms each line before hooking it.
 
@@ -78,8 +80,10 @@ Trigger points are in the appendix; the builder confirms each line before hookin
 - Track: "Egyptian Dawn (Full version)" by kaazoom on Pixabay, 4:53, Pixabay Content License.
 - Plays on the site map, the journey map and the camp, and loops.
 - It plays well under the effects: footsteps must stay audible over it.
-- During a puzzle or trap encounter it fades out to silence over two seconds, and fades back when the encounter closes:
+- During a puzzle it fades out to silence over two seconds, and fades back when the board closes, or already when a solved board shows its time:
   a tune distracts from a board.
+- During a trap it fades out within half a second: a trap runs against the clock.
+- A chest, the shop and other encounters keep the music playing.
 - It loads only when Music is on, never in the precache of the first download, and it streams.
 
 ## Controls and platform

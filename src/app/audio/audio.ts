@@ -32,10 +32,11 @@ export const playSound = (name: string, options?: SoundOptions): void => audio.p
 /** Loops `name` until the returned stop is called. */
 export const loopSound = (name: string): (() => void) => audio.loop(name)
 
-const GESTURES = ["pointerdown", "keydown"] as const
+const GESTURES = ["pointerdown", "touchend", "click", "keydown"] as const
 
 // Browsers allow audio only after a user gesture, so every tap or key press offers the service a
-// chance to start (or, after the system suspended it, resume) its context.
+// chance to start (or, after the system suspended it, resume) its context. On a touch screen iOS counts the
+// end of a touch as the gesture and not its start, so a context a phone call interrupted resumes only there.
 export const resumeAudioOnGesture = (target: EventTarget, service: AudioService = audio): (() => void) => {
   const onGesture = () => service.unlock()
   for (const type of GESTURES) target.addEventListener(type, onGesture, { capture: true })
