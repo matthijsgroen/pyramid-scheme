@@ -227,6 +227,7 @@
     "title": "Structures",
     "progress": "{{found}} of {{total}}",
     "built": "built",
+    "waitsFor": "waits for {{name}}",
     "unknownPart": "???",
     "open": "Show parts",
     "close": "Hide parts"

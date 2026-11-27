@@ -227,6 +227,7 @@
     "title": "Constructies",
     "progress": "{{found}} van {{total}}",
     "built": "gebouwd",
+    "waitsFor": "wacht op {{name}}",
     "unknownPart": "???",
     "open": "Onderdelen tonen",
     "close": "Onderdelen verbergen"

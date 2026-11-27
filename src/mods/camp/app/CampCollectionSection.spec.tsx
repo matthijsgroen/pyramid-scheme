@@ -3,24 +3,47 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
 import { clearGameData, writeGameData } from "@/support/useGameStorage"
 import type { CampStepTable } from "@/mods/camp/game/campSteps"
+import type { CampCatalogue, CampStep } from "@/ui/atoms/campScene/campTypes"
 
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
-    t: (key: string, options?: { found?: number; total?: number }) =>
-      options?.found === undefined ? key : `${key}:${options.found}/${options.total}`,
+    t: (key: string | string[], options?: { found?: number; total?: number; name?: string }) =>
+      options?.name !== undefined
+        ? `${String(key)}:${options.name}`
+        : options?.found === undefined
+          ? String(key)
+          : `${String(key)}:${options.found}/${options.total}`,
   }),
 }))
 
 const { CampCollectionSection } = await import("./CampCollectionSection")
 
 const table: CampStepTable = [
-  { id: "hut", spot: "sleeping", tier: "junior", source: "structure", parts: ["poles", "cloth"] },
+  { id: "hut", spot: "fire", tier: "junior", source: "structure", parts: ["poles", "cloth"] },
   { id: "well", spot: "water", tier: "junior", source: "structure", parts: ["stones", "rope", "bucket"] },
   { id: "pit", spot: "fire", tier: "junior", source: "structure", parts: ["stones"] },
 ]
 
+// The pit is the fire spot's base; the hut stands on it.
+const layer = (id: string, layer?: CampStep["layer"]): CampStep => ({
+  chapter: "junior",
+  pieces: [{ id, dx: 0, dy: 0, width: 1, height: 1 }],
+  ...(layer && { layer }),
+})
+const catalogue: CampCatalogue = {
+  spots: [{ id: "fire", x: 0, y: 0, frame: 1, footprint: 1, steps: [layer("pit"), layer("hut", { on: "pit" })] }],
+  fixed: [],
+}
+
 const section = () => (
-  <CampCollectionSection selectedItem={null} onSelect={() => {}} isNew={() => false} newLabel="NEW" table={table} />
+  <CampCollectionSection
+    selectedItem={null}
+    onSelect={() => {}}
+    isNew={() => false}
+    newLabel="NEW"
+    table={table}
+    catalogue={catalogue}
+  />
 )
 
 const withSave = async (parts: Record<string, string[]>) =>
@@ -44,6 +67,18 @@ describe("CampCollectionSection", () => {
     expect(screen.getAllByRole("button")).toHaveLength(2)
     expect(screen.getByText("structures.hut")).toBeTruthy()
     expect(screen.queryByText("structures.pit")).toBeNull()
+  })
+
+  it("says what a built structure waits for while the one it stands on is not built", async () => {
+    await withSave({ hut: ["poles", "cloth"], pit: [] })
+    await act(async () => void render(section()))
+    expect(screen.getByText("collection.waitsFor:structures.pit,finds.pit")).toBeTruthy()
+  })
+
+  it("says built once the one it stands on is built too", async () => {
+    await withSave({ hut: ["poles", "cloth"], pit: ["stones"] })
+    await act(async () => void render(section()))
+    expect(screen.getAllByText("collection.built")).toHaveLength(2)
   })
 
   it("opens one row at a time, naming found parts and hiding the rest", async () => {

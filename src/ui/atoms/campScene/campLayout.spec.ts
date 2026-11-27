@@ -815,6 +815,22 @@ describe("spotSteps", () => {
     ])
   })
 
+  it("names the host not found yet that holds a found layer back, through the hosts under it", () => {
+    const waits = (found: string[]) =>
+      spotSteps(garden, "starter", found).flatMap(s => (s.waitsOn ? [[s.step.pieces[0].id, s.waitsOn]] : []))
+    expect(waits(["vase"])).toEqual([["vase", "seed"]])
+    expect(waits(["vase", "bird"])).toEqual([
+      ["vase", "seed"],
+      ["bird", "seed"],
+    ])
+    expect(waits(["seed", "bird"])).toEqual([["bird", "vase"]])
+  })
+
+  it("names no host for a layer whose base a later base replaced, nor for one that shows", () => {
+    expect(spotSteps(garden, "starter", ["vase", "tree"]).some(s => s.waitsOn)).toBe(false)
+    expect(spotSteps(garden, "starter", ["seed", "vase"]).some(s => s.waitsOn)).toBe(false)
+  })
+
   it("draws a layer that stands behind another just before it, whatever order they were painted in", () => {
     const water: CampSpot = {
       ...garden,
