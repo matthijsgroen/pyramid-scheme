@@ -119,8 +119,8 @@ describe("the tap of a move", () => {
     now.mockRestore()
 
     expect(vi.mocked(playSound).mock.calls.map(([name]) => name)).toEqual([
-      CORE_SOUNDS.puzzleTap,
-      CORE_SOUNDS.puzzleTap,
+      CORE_SOUNDS.puzzleTapStone,
+      CORE_SOUNDS.puzzleTapStone,
     ])
   })
 })

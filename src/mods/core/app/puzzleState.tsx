@@ -14,11 +14,12 @@ const EMPTY: StoredPuzzleState = { room: NO_ROOM, state: null }
 // Moves closer together than TAP_GAP_MS (a drag across cells) tap once.
 const TAP_GAP_MS = 80
 let lastTapAt = -Infinity
-const tap = () => {
+const tap = (sound: string | null) => {
+  if (!sound) return
   const now = performance.now()
   if (now - lastTapAt < TAP_GAP_MS) return
   lastTapAt = now
-  playSound(CORE_SOUNDS.puzzleTap, { playbackRate: 0.92 + Math.random() * 0.16 })
+  playSound(sound, { playbackRate: 0.92 + Math.random() * 0.16 })
 }
 
 export type StoredPuzzleState = {
@@ -66,10 +67,16 @@ const holds = (record: StoredPuzzleState, room: string | undefined, stamp: strin
  * started here", on every read and not only the first mount, so a state shaped for another board is never
  * handed to this one. It is required so that no family can skip it.
  *
+ * A move plays `tapSound`: stone unless the family says otherwise, `null` where the move has its own sound.
+ *
  * Solving clears the slot (core does it, see useClearPuzzleState): a solved room is never reopened,
  * so keeping its moves would only leave the next board to overwrite them.
  */
-export const usePuzzleState = <T,>(create: () => T, board: unknown): [T, Dispatch<SetStateAction<T>>] => {
+export const usePuzzleState = <T,>(
+  create: () => T,
+  board: unknown,
+  tapSound: string | null = CORE_SOUNDS.puzzleTapStone
+): [T, Dispatch<SetStateAction<T>>] => {
   const room = use(PuzzleRoomContext)
   const [stored, setStored] = useGameStorage<StoredPuzzleState>(STORAGE_KEY, EMPTY)
   const [local, setLocal] = useState(create)
@@ -77,7 +84,7 @@ export const usePuzzleState = <T,>(create: () => T, board: unknown): [T, Dispatc
 
   const setState = useCallback<Dispatch<SetStateAction<T>>>(
     update => {
-      tap()
+      tap(tapSound)
       if (!room) {
         setLocal(update)
         return
@@ -93,7 +100,7 @@ export const usePuzzleState = <T,>(create: () => T, board: unknown): [T, Dispatc
         }
       })
     },
-    [room, stamp, setStored, create]
+    [room, stamp, setStored, create, tapSound]
   )
 
   // The storage read lands a beat after mount; until it does — and for a board that has never been

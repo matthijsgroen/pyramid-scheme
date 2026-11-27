@@ -1,3 +1,4 @@
+import { CORE_SOUNDS } from "@/app/audio/coreSounds"
 import { SUDOKU_META } from "@/mods/puzzle/game/sudoku/meta"
 import { faceFor, withAmbience } from "../faceFor"
 import type { FC } from "react"
@@ -18,6 +19,8 @@ import { SIGN_CHARACTERS } from "./signs"
  * the pencil marks, the pad and every sentence a hint reaches for all ask the skin.
  */
 export type SudokuSkin = {
+  /** The sound a move makes on this ground; stone unless set. */
+  tap?: string
   /**
    * Which place this is, as its own name.
    *
@@ -177,6 +180,7 @@ const carved: SudokuSkin = {
  */
 const register: SudokuSkin = {
   name: "papyrus",
+  tap: CORE_SOUNDS.puzzleTapWood,
   Glyph: Sign,
   // A little larger than the carved board's figures, and no more than that: a sign carries more ink
   // across its box than a digit does, but the square has to stay a square the sign STANDS IN — set to

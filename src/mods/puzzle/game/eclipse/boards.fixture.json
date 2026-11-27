@@ -44,24 +44,7 @@
     },
     {
       "size": 4,
-      "given": [
-        null,
-        null,
-        "sun",
-        null,
-        null,
-        null,
-        null,
-        "sun",
-        null,
-        "moon",
-        "moon",
-        null,
-        "sun",
-        "sun",
-        null,
-        null
-      ],
+      "given": [null, null, "sun", null, null, null, null, "sun", null, "moon", "moon", null, "sun", "sun", null, null],
       "links": [],
       "solution": [
         "moon",
@@ -254,24 +237,7 @@
     },
     {
       "size": 4,
-      "given": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        "sun"
-      ],
+      "given": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, "sun"],
       "links": [
         {
           "a": 1,
@@ -342,24 +308,7 @@
     },
     {
       "size": 4,
-      "given": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        "sun",
-        null,
-        null,
-        null
-      ],
+      "given": [null, null, null, null, null, null, null, null, null, null, null, null, "sun", null, null, null],
       "links": [
         {
           "a": 0,
@@ -425,24 +374,7 @@
     },
     {
       "size": 4,
-      "given": [
-        null,
-        null,
-        null,
-        null,
-        "sun",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-      ],
+      "given": [null, null, null, null, "sun", null, null, null, null, null, null, null, null, null, null, null],
       "links": [
         {
           "a": 0,
@@ -503,24 +435,7 @@
     },
     {
       "size": 4,
-      "given": [
-        "sun",
-        null,
-        null,
-        null,
-        "sun",
-        "moon",
-        null,
-        null,
-        null,
-        "moon",
-        null,
-        "sun",
-        null,
-        null,
-        "sun",
-        null
-      ],
+      "given": ["sun", null, null, null, "sun", "moon", null, null, null, "moon", null, "sun", null, null, "sun", null],
       "links": [],
       "solution": [
         "sun",
@@ -587,24 +502,7 @@
     },
     {
       "size": 4,
-      "given": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        "moon",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-      ],
+      "given": [null, null, null, null, null, null, null, null, null, "moon", null, null, null, null, null, null],
       "links": [
         {
           "a": 2,
@@ -667,24 +565,7 @@
   "junior": [
     {
       "size": 4,
-      "given": [
-        null,
-        "sun",
-        null,
-        "sun",
-        null,
-        null,
-        null,
-        "sun",
-        null,
-        "sun",
-        "sun",
-        null,
-        null,
-        null,
-        null,
-        null
-      ],
+      "given": [null, "sun", null, "sun", null, null, null, "sun", null, "sun", "sun", null, null, null, null, null],
       "links": [],
       "solution": [
         "moon",
@@ -709,24 +590,7 @@
     },
     {
       "size": 4,
-      "given": [
-        null,
-        "sun",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        "sun",
-        null,
-        null,
-        "sun",
-        "sun",
-        "sun",
-        null,
-        null
-      ],
+      "given": [null, "sun", null, null, null, null, null, null, "sun", null, null, "sun", "sun", "sun", null, null],
       "links": [],
       "solution": [
         "moon",
@@ -793,24 +657,7 @@
     },
     {
       "size": 4,
-      "given": [
-        null,
-        "moon",
-        null,
-        null,
-        "sun",
-        null,
-        "sun",
-        null,
-        null,
-        null,
-        null,
-        null,
-        "sun",
-        null,
-        null,
-        null
-      ],
+      "given": [null, "moon", null, null, "sun", null, "sun", null, null, null, null, null, "sun", null, null, null],
       "links": [],
       "solution": [
         "moon",
@@ -835,24 +682,7 @@
     },
     {
       "size": 4,
-      "given": [
-        null,
-        null,
-        "moon",
-        null,
-        null,
-        "sun",
-        null,
-        "sun",
-        "moon",
-        "moon",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-      ],
+      "given": [null, null, "moon", null, null, "sun", null, "sun", "moon", "moon", null, null, null, null, null, null],
       "links": [],
       "solution": [
         "sun",
@@ -877,24 +707,7 @@
     },
     {
       "size": 4,
-      "given": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        "sun",
-        null,
-        "sun",
-        "sun",
-        "sun",
-        null,
-        null,
-        "sun",
-        null,
-        null,
-        null
-      ],
+      "given": [null, null, null, null, null, "sun", null, "sun", "sun", "sun", null, null, "sun", null, null, null],
       "links": [],
       "solution": [
         "moon",
@@ -919,24 +732,7 @@
     },
     {
       "size": 4,
-      "given": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        "sun"
-      ],
+      "given": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, "sun"],
       "links": [
         {
           "a": 1,
@@ -992,24 +788,7 @@
     },
     {
       "size": 4,
-      "given": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        "sun",
-        null,
-        null,
-        null
-      ],
+      "given": [null, null, null, null, null, null, null, null, null, null, null, null, "sun", null, null, null],
       "links": [
         {
           "a": 0,
@@ -1055,24 +834,7 @@
     },
     {
       "size": 4,
-      "given": [
-        null,
-        null,
-        null,
-        null,
-        "sun",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-      ],
+      "given": [null, null, null, null, "sun", null, null, null, null, null, null, null, null, null, null, null],
       "links": [
         {
           "a": 2,
@@ -1118,24 +880,7 @@
     },
     {
       "size": 4,
-      "given": [
-        null,
-        null,
-        "moon",
-        "moon",
-        "sun",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        "moon"
-      ],
+      "given": [null, null, "moon", "moon", "sun", null, null, null, null, null, null, null, null, null, null, "moon"],
       "links": [],
       "solution": [
         "sun",
@@ -1160,24 +905,7 @@
     },
     {
       "size": 4,
-      "given": [
-        null,
-        null,
-        "moon",
-        null,
-        "moon",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        "sun",
-        null,
-        null,
-        "moon",
-        "sun"
-      ],
+      "given": [null, null, "moon", null, "moon", null, null, null, null, null, null, "sun", null, null, "moon", "sun"],
       "links": [],
       "solution": [
         "sun",
@@ -1202,24 +930,7 @@
     },
     {
       "size": 4,
-      "given": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        "moon",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-      ],
+      "given": [null, null, null, null, null, null, null, null, null, "moon", null, null, null, null, null, null],
       "links": [
         {
           "a": 7,

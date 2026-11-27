@@ -43,7 +43,7 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
   const controls = useHidatoControls()
   // Which place this room is. The board, the goal, the rules and every hint sentence are drawn from it.
   const skin = skinFor(role, theme, 0, room)
-  const [state, setState] = usePuzzleState(() => createHidatoState(puzzle), puzzle)
+  const [state, setState] = usePuzzleState(() => createHidatoState(puzzle), puzzle, skin.tap)
   const last = puzzle.cells.length
 
   // Derived on every change: whether there is a hint at all is what shows the button. What the player is

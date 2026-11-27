@@ -5,104 +5,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          6,
-          5,
-          null,
-          null,
-          4,
-          null
-        ],
-        [
-          2,
-          4,
-          null,
-          3,
-          5,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          4,
-          null,
-          null
-        ],
-        [
-          1,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          4,
-          6,
-          null,
-          5,
-          1,
-          2
-        ],
-        [
-          5,
-          3,
-          2,
-          1,
-          6,
-          4
-        ]
+        [6, 5, null, null, 4, null],
+        [2, 4, null, 3, 5, null],
+        [null, null, null, 4, null, null],
+        [1, null, null, null, null, null],
+        [4, 6, null, 5, 1, 2],
+        [5, 3, 2, 1, 6, 4]
       ],
       "solution": [
-        [
-          6,
-          5,
-          1,
-          2,
-          4,
-          3
-        ],
-        [
-          2,
-          4,
-          6,
-          3,
-          5,
-          1
-        ],
-        [
-          3,
-          1,
-          5,
-          4,
-          2,
-          6
-        ],
-        [
-          1,
-          2,
-          4,
-          6,
-          3,
-          5
-        ],
-        [
-          4,
-          6,
-          3,
-          5,
-          1,
-          2
-        ],
-        [
-          5,
-          3,
-          2,
-          1,
-          6,
-          4
-        ]
+        [6, 5, 1, 2, 4, 3],
+        [2, 4, 6, 3, 5, 1],
+        [3, 1, 5, 4, 2, 6],
+        [1, 2, 4, 6, 3, 5],
+        [4, 6, 3, 5, 1, 2],
+        [5, 3, 2, 1, 6, 4]
       ],
       "techniqueCap": "nakedSingle"
     },
@@ -111,104 +27,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          5,
-          null,
-          6,
-          null,
-          null
-        ],
-        [
-          3,
-          null,
-          1,
-          null,
-          4,
-          6
-        ],
-        [
-          null,
-          6,
-          2,
-          4,
-          5,
-          3
-        ],
-        [
-          null,
-          null,
-          5,
-          null,
-          null,
-          2
-        ],
-        [
-          null,
-          3,
-          null,
-          2,
-          1,
-          4
-        ],
-        [
-          null,
-          1,
-          4,
-          null,
-          null,
-          5
-        ]
+        [null, 5, null, 6, null, null],
+        [3, null, 1, null, 4, 6],
+        [null, 6, 2, 4, 5, 3],
+        [null, null, 5, null, null, 2],
+        [null, 3, null, 2, 1, 4],
+        [null, 1, 4, null, null, 5]
       ],
       "solution": [
-        [
-          4,
-          5,
-          3,
-          6,
-          2,
-          1
-        ],
-        [
-          3,
-          2,
-          1,
-          5,
-          4,
-          6
-        ],
-        [
-          1,
-          6,
-          2,
-          4,
-          5,
-          3
-        ],
-        [
-          6,
-          4,
-          5,
-          1,
-          3,
-          2
-        ],
-        [
-          5,
-          3,
-          6,
-          2,
-          1,
-          4
-        ],
-        [
-          2,
-          1,
-          4,
-          3,
-          6,
-          5
-        ]
+        [4, 5, 3, 6, 2, 1],
+        [3, 2, 1, 5, 4, 6],
+        [1, 6, 2, 4, 5, 3],
+        [6, 4, 5, 1, 3, 2],
+        [5, 3, 6, 2, 1, 4],
+        [2, 1, 4, 3, 6, 5]
       ],
       "techniqueCap": "nakedSingle"
     },
@@ -217,104 +49,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          null,
-          null,
-          3,
-          6
-        ],
-        [
-          1,
-          6,
-          null,
-          3,
-          4,
-          2
-        ],
-        [
-          null,
-          3,
-          null,
-          null,
-          1,
-          5
-        ],
-        [
-          2,
-          null,
-          3,
-          1,
-          6,
-          4
-        ],
-        [
-          null,
-          null,
-          null,
-          6,
-          null,
-          null
-        ],
-        [
-          6,
-          1,
-          4,
-          5,
-          null,
-          null
-        ]
+        [null, null, null, null, 3, 6],
+        [1, 6, null, 3, 4, 2],
+        [null, 3, null, null, 1, 5],
+        [2, null, 3, 1, 6, 4],
+        [null, null, null, 6, null, null],
+        [6, 1, 4, 5, null, null]
       ],
       "solution": [
-        [
-          5,
-          2,
-          1,
-          4,
-          3,
-          6
-        ],
-        [
-          1,
-          6,
-          5,
-          3,
-          4,
-          2
-        ],
-        [
-          4,
-          3,
-          6,
-          2,
-          1,
-          5
-        ],
-        [
-          2,
-          5,
-          3,
-          1,
-          6,
-          4
-        ],
-        [
-          3,
-          4,
-          2,
-          6,
-          5,
-          1
-        ],
-        [
-          6,
-          1,
-          4,
-          5,
-          2,
-          3
-        ]
+        [5, 2, 1, 4, 3, 6],
+        [1, 6, 5, 3, 4, 2],
+        [4, 3, 6, 2, 1, 5],
+        [2, 5, 3, 1, 6, 4],
+        [3, 4, 2, 6, 5, 1],
+        [6, 1, 4, 5, 2, 3]
       ],
       "techniqueCap": "nakedSingle"
     },
@@ -323,104 +71,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          4,
-          2,
-          null,
-          null
-        ],
-        [
-          null,
-          4,
-          3,
-          5,
-          6,
-          1
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          4,
-          null
-        ],
-        [
-          null,
-          3,
-          2,
-          6,
-          null,
-          null
-        ],
-        [
-          1,
-          6,
-          null,
-          4,
-          2,
-          3
-        ],
-        [
-          4,
-          2,
-          null,
-          3,
-          null,
-          6
-        ]
+        [null, null, 4, 2, null, null],
+        [null, 4, 3, 5, 6, 1],
+        [null, null, null, null, 4, null],
+        [null, 3, 2, 6, null, null],
+        [1, 6, null, 4, 2, 3],
+        [4, 2, null, 3, null, 6]
       ],
       "solution": [
-        [
-          6,
-          1,
-          4,
-          2,
-          3,
-          5
-        ],
-        [
-          2,
-          4,
-          3,
-          5,
-          6,
-          1
-        ],
-        [
-          3,
-          5,
-          6,
-          1,
-          4,
-          2
-        ],
-        [
-          5,
-          3,
-          2,
-          6,
-          1,
-          4
-        ],
-        [
-          1,
-          6,
-          5,
-          4,
-          2,
-          3
-        ],
-        [
-          4,
-          2,
-          1,
-          3,
-          5,
-          6
-        ]
+        [6, 1, 4, 2, 3, 5],
+        [2, 4, 3, 5, 6, 1],
+        [3, 5, 6, 1, 4, 2],
+        [5, 3, 2, 6, 1, 4],
+        [1, 6, 5, 4, 2, 3],
+        [4, 2, 1, 3, 5, 6]
       ],
       "techniqueCap": "nakedSingle"
     },
@@ -429,104 +93,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          4,
-          null,
-          5,
-          3,
-          6,
-          1
-        ],
-        [
-          3,
-          5,
-          null,
-          6,
-          4,
-          null
-        ],
-        [
-          1,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          5,
-          null,
-          null,
-          1,
-          2,
-          4
-        ],
-        [
-          6,
-          4,
-          2,
-          5,
-          null,
-          3
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          5,
-          null
-        ]
+        [4, null, 5, 3, 6, 1],
+        [3, 5, null, 6, 4, null],
+        [1, null, null, null, null, null],
+        [5, null, null, 1, 2, 4],
+        [6, 4, 2, 5, null, 3],
+        [null, null, null, null, 5, null]
       ],
       "solution": [
-        [
-          4,
-          2,
-          5,
-          3,
-          6,
-          1
-        ],
-        [
-          3,
-          5,
-          1,
-          6,
-          4,
-          2
-        ],
-        [
-          1,
-          6,
-          4,
-          2,
-          3,
-          5
-        ],
-        [
-          5,
-          3,
-          6,
-          1,
-          2,
-          4
-        ],
-        [
-          6,
-          4,
-          2,
-          5,
-          1,
-          3
-        ],
-        [
-          2,
-          1,
-          3,
-          4,
-          5,
-          6
-        ]
+        [4, 2, 5, 3, 6, 1],
+        [3, 5, 1, 6, 4, 2],
+        [1, 6, 4, 2, 3, 5],
+        [5, 3, 6, 1, 2, 4],
+        [6, 4, 2, 5, 1, 3],
+        [2, 1, 3, 4, 5, 6]
       ],
       "techniqueCap": "nakedSingle"
     },
@@ -535,104 +115,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          3,
-          null,
-          2,
-          null,
-          null
-        ],
-        [
-          4,
-          2,
-          3,
-          5,
-          null,
-          6
-        ],
-        [
-          null,
-          null,
-          null,
-          6,
-          2,
-          3
-        ],
-        [
-          null,
-          5,
-          6,
-          4,
-          null,
-          null
-        ],
-        [
-          1,
-          null,
-          2,
-          3,
-          null,
-          4
-        ],
-        [
-          3,
-          4,
-          null,
-          null,
-          6,
-          null
-        ]
+        [null, 3, null, 2, null, null],
+        [4, 2, 3, 5, null, 6],
+        [null, null, null, 6, 2, 3],
+        [null, 5, 6, 4, null, null],
+        [1, null, 2, 3, null, 4],
+        [3, 4, null, null, 6, null]
       ],
       "solution": [
-        [
-          6,
-          3,
-          1,
-          2,
-          4,
-          5
-        ],
-        [
-          4,
-          2,
-          3,
-          5,
-          1,
-          6
-        ],
-        [
-          5,
-          1,
-          4,
-          6,
-          2,
-          3
-        ],
-        [
-          2,
-          5,
-          6,
-          4,
-          3,
-          1
-        ],
-        [
-          1,
-          6,
-          2,
-          3,
-          5,
-          4
-        ],
-        [
-          3,
-          4,
-          5,
-          1,
-          6,
-          2
-        ]
+        [6, 3, 1, 2, 4, 5],
+        [4, 2, 3, 5, 1, 6],
+        [5, 1, 4, 6, 2, 3],
+        [2, 5, 6, 4, 3, 1],
+        [1, 6, 2, 3, 5, 4],
+        [3, 4, 5, 1, 6, 2]
       ],
       "techniqueCap": "nakedSingle"
     },
@@ -641,104 +137,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          3,
-          null,
-          null,
-          6
-        ],
-        [
-          2,
-          3,
-          5,
-          6,
-          1,
-          null
-        ],
-        [
-          null,
-          null,
-          1,
-          2,
-          null,
-          5
-        ],
-        [
-          null,
-          2,
-          null,
-          3,
-          5,
-          1
-        ],
-        [
-          3,
-          null,
-          6,
-          null,
-          null,
-          2
-        ],
-        [
-          null,
-          null,
-          null,
-          1,
-          6,
-          3
-        ]
+        [null, null, 3, null, null, 6],
+        [2, 3, 5, 6, 1, null],
+        [null, null, 1, 2, null, 5],
+        [null, 2, null, 3, 5, 1],
+        [3, null, 6, null, null, 2],
+        [null, null, null, 1, 6, 3]
       ],
       "solution": [
-        [
-          1,
-          5,
-          3,
-          4,
-          2,
-          6
-        ],
-        [
-          2,
-          3,
-          5,
-          6,
-          1,
-          4
-        ],
-        [
-          4,
-          6,
-          1,
-          2,
-          3,
-          5
-        ],
-        [
-          6,
-          2,
-          4,
-          3,
-          5,
-          1
-        ],
-        [
-          3,
-          1,
-          6,
-          5,
-          4,
-          2
-        ],
-        [
-          5,
-          4,
-          2,
-          1,
-          6,
-          3
-        ]
+        [1, 5, 3, 4, 2, 6],
+        [2, 3, 5, 6, 1, 4],
+        [4, 6, 1, 2, 3, 5],
+        [6, 2, 4, 3, 5, 1],
+        [3, 1, 6, 5, 4, 2],
+        [5, 4, 2, 1, 6, 3]
       ],
       "techniqueCap": "nakedSingle"
     },
@@ -747,104 +159,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          3,
-          null,
-          null,
-          5,
-          null,
-          null
-        ],
-        [
-          4,
-          1,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          5,
-          null,
-          4,
-          3,
-          6,
-          null
-        ],
-        [
-          2,
-          null,
-          3,
-          1,
-          4,
-          null
-        ],
-        [
-          null,
-          null,
-          6,
-          4,
-          5,
-          2
-        ],
-        [
-          null,
-          null,
-          5,
-          2,
-          1,
-          3
-        ]
+        [3, null, null, 5, null, null],
+        [4, 1, null, null, null, null],
+        [5, null, 4, 3, 6, null],
+        [2, null, 3, 1, 4, null],
+        [null, null, 6, 4, 5, 2],
+        [null, null, 5, 2, 1, 3]
       ],
       "solution": [
-        [
-          3,
-          6,
-          1,
-          5,
-          2,
-          4
-        ],
-        [
-          4,
-          1,
-          2,
-          6,
-          3,
-          5
-        ],
-        [
-          5,
-          2,
-          4,
-          3,
-          6,
-          1
-        ],
-        [
-          2,
-          5,
-          3,
-          1,
-          4,
-          6
-        ],
-        [
-          1,
-          3,
-          6,
-          4,
-          5,
-          2
-        ],
-        [
-          6,
-          4,
-          5,
-          2,
-          1,
-          3
-        ]
+        [3, 6, 1, 5, 2, 4],
+        [4, 1, 2, 6, 3, 5],
+        [5, 2, 4, 3, 6, 1],
+        [2, 5, 3, 1, 4, 6],
+        [1, 3, 6, 4, 5, 2],
+        [6, 4, 5, 2, 1, 3]
       ],
       "techniqueCap": "nakedSingle"
     },
@@ -853,104 +181,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          3,
-          1,
-          6,
-          2,
-          null,
-          4
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          1
-        ],
-        [
-          null,
-          null,
-          1,
-          3,
-          null,
-          6
-        ],
-        [
-          null,
-          6,
-          null,
-          5,
-          null,
-          null
-        ],
-        [
-          null,
-          4,
-          2,
-          1,
-          6,
-          3
-        ],
-        [
-          null,
-          3,
-          4,
-          6,
-          null,
-          5
-        ]
+        [3, 1, 6, 2, null, 4],
+        [null, null, null, null, null, 1],
+        [null, null, 1, 3, null, 6],
+        [null, 6, null, 5, null, null],
+        [null, 4, 2, 1, 6, 3],
+        [null, 3, 4, 6, null, 5]
       ],
       "solution": [
-        [
-          3,
-          1,
-          6,
-          2,
-          5,
-          4
-        ],
-        [
-          6,
-          2,
-          5,
-          4,
-          3,
-          1
-        ],
-        [
-          4,
-          5,
-          1,
-          3,
-          2,
-          6
-        ],
-        [
-          1,
-          6,
-          3,
-          5,
-          4,
-          2
-        ],
-        [
-          5,
-          4,
-          2,
-          1,
-          6,
-          3
-        ],
-        [
-          2,
-          3,
-          4,
-          6,
-          1,
-          5
-        ]
+        [3, 1, 6, 2, 5, 4],
+        [6, 2, 5, 4, 3, 1],
+        [4, 5, 1, 3, 2, 6],
+        [1, 6, 3, 5, 4, 2],
+        [5, 4, 2, 1, 6, 3],
+        [2, 3, 4, 6, 1, 5]
       ],
       "techniqueCap": "nakedSingle"
     },
@@ -959,104 +203,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          5,
-          2,
-          6,
-          null,
-          null
-        ],
-        [
-          4,
-          2,
-          1,
-          null,
-          null,
-          null
-        ],
-        [
-          6,
-          3,
-          null,
-          5,
-          2,
-          1
-        ],
-        [
-          2,
-          4,
-          null,
-          1,
-          null,
-          3
-        ],
-        [
-          3,
-          null,
-          6,
-          null,
-          null,
-          5
-        ],
-        [
-          null,
-          null,
-          null,
-          4,
-          1,
-          null
-        ]
+        [null, 5, 2, 6, null, null],
+        [4, 2, 1, null, null, null],
+        [6, 3, null, 5, 2, 1],
+        [2, 4, null, 1, null, 3],
+        [3, null, 6, null, null, 5],
+        [null, null, null, 4, 1, null]
       ],
       "solution": [
-        [
-          1,
-          5,
-          2,
-          6,
-          3,
-          4
-        ],
-        [
-          4,
-          2,
-          1,
-          3,
-          5,
-          6
-        ],
-        [
-          6,
-          3,
-          4,
-          5,
-          2,
-          1
-        ],
-        [
-          2,
-          4,
-          5,
-          1,
-          6,
-          3
-        ],
-        [
-          3,
-          1,
-          6,
-          2,
-          4,
-          5
-        ],
-        [
-          5,
-          6,
-          3,
-          4,
-          1,
-          2
-        ]
+        [1, 5, 2, 6, 3, 4],
+        [4, 2, 1, 3, 5, 6],
+        [6, 3, 4, 5, 2, 1],
+        [2, 4, 5, 1, 6, 3],
+        [3, 1, 6, 2, 4, 5],
+        [5, 6, 3, 4, 1, 2]
       ],
       "techniqueCap": "nakedSingle"
     },
@@ -1065,104 +225,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          3,
-          5,
-          1,
-          2
-        ],
-        [
-          5,
-          3,
-          2,
-          1,
-          null,
-          null
-        ],
-        [
-          null,
-          1,
-          6,
-          4,
-          null,
-          3
-        ],
-        [
-          3,
-          null,
-          null,
-          null,
-          null,
-          6
-        ],
-        [
-          null,
-          2,
-          null,
-          null,
-          null,
-          5
-        ],
-        [
-          6,
-          4,
-          null,
-          null,
-          2,
-          1
-        ]
+        [null, null, 3, 5, 1, 2],
+        [5, 3, 2, 1, null, null],
+        [null, 1, 6, 4, null, 3],
+        [3, null, null, null, null, 6],
+        [null, 2, null, null, null, 5],
+        [6, 4, null, null, 2, 1]
       ],
       "solution": [
-        [
-          4,
-          6,
-          3,
-          5,
-          1,
-          2
-        ],
-        [
-          5,
-          3,
-          2,
-          1,
-          6,
-          4
-        ],
-        [
-          2,
-          1,
-          6,
-          4,
-          5,
-          3
-        ],
-        [
-          3,
-          5,
-          1,
-          2,
-          4,
-          6
-        ],
-        [
-          1,
-          2,
-          4,
-          6,
-          3,
-          5
-        ],
-        [
-          6,
-          4,
-          5,
-          3,
-          2,
-          1
-        ]
+        [4, 6, 3, 5, 1, 2],
+        [5, 3, 2, 1, 6, 4],
+        [2, 1, 6, 4, 5, 3],
+        [3, 5, 1, 2, 4, 6],
+        [1, 2, 4, 6, 3, 5],
+        [6, 4, 5, 3, 2, 1]
       ],
       "techniqueCap": "nakedSingle"
     },
@@ -1171,104 +247,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          5,
-          null,
-          6,
-          null,
-          2,
-          null
-        ],
-        [
-          null,
-          null,
-          4,
-          5,
-          6,
-          3
-        ],
-        [
-          3,
-          null,
-          1,
-          2,
-          5,
-          4
-        ],
-        [
-          6,
-          1,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          4,
-          null,
-          2,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          5,
-          3,
-          null,
-          4,
-          6
-        ]
+        [5, null, 6, null, 2, null],
+        [null, null, 4, 5, 6, 3],
+        [3, null, 1, 2, 5, 4],
+        [6, 1, null, null, null, null],
+        [4, null, 2, null, null, null],
+        [null, 5, 3, null, 4, 6]
       ],
       "solution": [
-        [
-          5,
-          4,
-          6,
-          3,
-          2,
-          1
-        ],
-        [
-          1,
-          2,
-          4,
-          5,
-          6,
-          3
-        ],
-        [
-          3,
-          6,
-          1,
-          2,
-          5,
-          4
-        ],
-        [
-          6,
-          1,
-          5,
-          4,
-          3,
-          2
-        ],
-        [
-          4,
-          3,
-          2,
-          6,
-          1,
-          5
-        ],
-        [
-          2,
-          5,
-          3,
-          1,
-          4,
-          6
-        ]
+        [5, 4, 6, 3, 2, 1],
+        [1, 2, 4, 5, 6, 3],
+        [3, 6, 1, 2, 5, 4],
+        [6, 1, 5, 4, 3, 2],
+        [4, 3, 2, 6, 1, 5],
+        [2, 5, 3, 1, 4, 6]
       ],
       "techniqueCap": "nakedSingle"
     }
@@ -1279,104 +271,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          5,
-          null,
-          2,
-          4,
-          null
-        ],
-        [
-          2,
-          null,
-          null,
-          3,
-          null,
-          null
-        ],
-        [
-          3,
-          null,
-          5,
-          null,
-          2,
-          null
-        ],
-        [
-          null,
-          null,
-          4,
-          null,
-          null,
-          5
-        ],
-        [
-          4,
-          null,
-          null,
-          null,
-          1,
-          2
-        ],
-        [
-          5,
-          null,
-          2,
-          null,
-          null,
-          4
-        ]
+        [null, 5, null, 2, 4, null],
+        [2, null, null, 3, null, null],
+        [3, null, 5, null, 2, null],
+        [null, null, 4, null, null, 5],
+        [4, null, null, null, 1, 2],
+        [5, null, 2, null, null, 4]
       ],
       "solution": [
-        [
-          6,
-          5,
-          1,
-          2,
-          4,
-          3
-        ],
-        [
-          2,
-          4,
-          6,
-          3,
-          5,
-          1
-        ],
-        [
-          3,
-          1,
-          5,
-          4,
-          2,
-          6
-        ],
-        [
-          1,
-          2,
-          4,
-          6,
-          3,
-          5
-        ],
-        [
-          4,
-          6,
-          3,
-          5,
-          1,
-          2
-        ],
-        [
-          5,
-          3,
-          2,
-          1,
-          6,
-          4
-        ]
+        [6, 5, 1, 2, 4, 3],
+        [2, 4, 6, 3, 5, 1],
+        [3, 1, 5, 4, 2, 6],
+        [1, 2, 4, 6, 3, 5],
+        [4, 6, 3, 5, 1, 2],
+        [5, 3, 2, 1, 6, 4]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -1385,104 +293,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          4,
-          5,
-          3,
-          6,
-          2,
-          1
-        ],
-        [
-          null,
-          null,
-          1,
-          5,
-          null,
-          null
-        ],
-        [
-          1,
-          null,
-          null,
-          null,
-          null,
-          3
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          6,
-          2,
-          null,
-          null
-        ],
-        [
-          2,
-          null,
-          4,
-          3,
-          null,
-          5
-        ]
+        [4, 5, 3, 6, 2, 1],
+        [null, null, 1, 5, null, null],
+        [1, null, null, null, null, 3],
+        [null, null, null, null, null, null],
+        [null, null, 6, 2, null, null],
+        [2, null, 4, 3, null, 5]
       ],
       "solution": [
-        [
-          4,
-          5,
-          3,
-          6,
-          2,
-          1
-        ],
-        [
-          3,
-          2,
-          1,
-          5,
-          4,
-          6
-        ],
-        [
-          1,
-          6,
-          2,
-          4,
-          5,
-          3
-        ],
-        [
-          6,
-          4,
-          5,
-          1,
-          3,
-          2
-        ],
-        [
-          5,
-          3,
-          6,
-          2,
-          1,
-          4
-        ],
-        [
-          2,
-          1,
-          4,
-          3,
-          6,
-          5
-        ]
+        [4, 5, 3, 6, 2, 1],
+        [3, 2, 1, 5, 4, 6],
+        [1, 6, 2, 4, 5, 3],
+        [6, 4, 5, 1, 3, 2],
+        [5, 3, 6, 2, 1, 4],
+        [2, 1, 4, 3, 6, 5]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -1491,104 +315,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          5,
-          null,
-          null,
-          null,
-          null,
-          6
-        ],
-        [
-          null,
-          6,
-          null,
-          null,
-          4,
-          null
-        ],
-        [
-          null,
-          3,
-          6,
-          2,
-          1,
-          null
-        ],
-        [
-          null,
-          5,
-          null,
-          null,
-          6,
-          null
-        ],
-        [
-          3,
-          null,
-          2,
-          6,
-          null,
-          1
-        ],
-        [
-          null,
-          null,
-          4,
-          5,
-          null,
-          null
-        ]
+        [5, null, null, null, null, 6],
+        [null, 6, null, null, 4, null],
+        [null, 3, 6, 2, 1, null],
+        [null, 5, null, null, 6, null],
+        [3, null, 2, 6, null, 1],
+        [null, null, 4, 5, null, null]
       ],
       "solution": [
-        [
-          5,
-          2,
-          1,
-          4,
-          3,
-          6
-        ],
-        [
-          1,
-          6,
-          5,
-          3,
-          4,
-          2
-        ],
-        [
-          4,
-          3,
-          6,
-          2,
-          1,
-          5
-        ],
-        [
-          2,
-          5,
-          3,
-          1,
-          6,
-          4
-        ],
-        [
-          3,
-          4,
-          2,
-          6,
-          5,
-          1
-        ],
-        [
-          6,
-          1,
-          4,
-          5,
-          2,
-          3
-        ]
+        [5, 2, 1, 4, 3, 6],
+        [1, 6, 5, 3, 4, 2],
+        [4, 3, 6, 2, 1, 5],
+        [2, 5, 3, 1, 6, 4],
+        [3, 4, 2, 6, 5, 1],
+        [6, 1, 4, 5, 2, 3]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -1597,104 +337,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          1,
-          null,
-          5,
-          3,
-          null,
-          4
-        ],
-        [
-          2,
-          null,
-          6,
-          1,
-          null,
-          5
-        ],
-        [
-          null,
-          null,
-          2,
-          4,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          1,
-          2,
-          null,
-          null
-        ],
-        [
-          null,
-          2,
-          null,
-          null,
-          5,
-          null
-        ],
-        [
-          6,
-          null,
-          null,
-          null,
-          null,
-          2
-        ]
+        [1, null, 5, 3, null, 4],
+        [2, null, 6, 1, null, 5],
+        [null, null, 2, 4, null, null],
+        [null, null, 1, 2, null, null],
+        [null, 2, null, null, 5, null],
+        [6, null, null, null, null, 2]
       ],
       "solution": [
-        [
-          1,
-          6,
-          5,
-          3,
-          2,
-          4
-        ],
-        [
-          2,
-          4,
-          6,
-          1,
-          3,
-          5
-        ],
-        [
-          5,
-          3,
-          2,
-          4,
-          1,
-          6
-        ],
-        [
-          4,
-          5,
-          1,
-          2,
-          6,
-          3
-        ],
-        [
-          3,
-          2,
-          4,
-          6,
-          5,
-          1
-        ],
-        [
-          6,
-          1,
-          3,
-          5,
-          4,
-          2
-        ]
+        [1, 6, 5, 3, 2, 4],
+        [2, 4, 6, 1, 3, 5],
+        [5, 3, 2, 4, 1, 6],
+        [4, 5, 1, 2, 6, 3],
+        [3, 2, 4, 6, 5, 1],
+        [6, 1, 3, 5, 4, 2]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -1703,104 +359,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          1,
-          null,
-          null,
-          2,
-          null
-        ],
-        [
-          null,
-          null,
-          5,
-          1,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          2,
-          6,
-          null,
-          null
-        ],
-        [
-          1,
-          3,
-          null,
-          null,
-          4,
-          2
-        ],
-        [
-          null,
-          2,
-          3,
-          4,
-          1,
-          null
-        ],
-        [
-          4,
-          null,
-          null,
-          null,
-          null,
-          3
-        ]
+        [null, 1, null, null, 2, null],
+        [null, null, 5, 1, null, null],
+        [null, null, 2, 6, null, null],
+        [1, 3, null, null, 4, 2],
+        [null, 2, 3, 4, 1, null],
+        [4, null, null, null, null, 3]
       ],
       "solution": [
-        [
-          5,
-          1,
-          4,
-          3,
-          2,
-          6
-        ],
-        [
-          2,
-          6,
-          5,
-          1,
-          3,
-          4
-        ],
-        [
-          3,
-          4,
-          2,
-          6,
-          5,
-          1
-        ],
-        [
-          1,
-          3,
-          6,
-          5,
-          4,
-          2
-        ],
-        [
-          6,
-          2,
-          3,
-          4,
-          1,
-          5
-        ],
-        [
-          4,
-          5,
-          1,
-          2,
-          6,
-          3
-        ]
+        [5, 1, 4, 3, 2, 6],
+        [2, 6, 5, 1, 3, 4],
+        [3, 4, 2, 6, 5, 1],
+        [1, 3, 6, 5, 4, 2],
+        [6, 2, 3, 4, 1, 5],
+        [4, 5, 1, 2, 6, 3]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -1809,104 +381,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          2,
-          6,
-          null,
-          null
-        ],
-        [
-          6,
-          2,
-          null,
-          1,
-          null,
-          null
-        ],
-        [
-          null,
-          1,
-          5,
-          null,
-          null,
-          2
-        ],
-        [
-          null,
-          null,
-          null,
-          5,
-          2,
-          3
-        ],
-        [
-          5,
-          null,
-          6,
-          2,
-          null,
-          null
-        ],
-        [
-          2,
-          null,
-          null,
-          null,
-          5,
-          null
-        ]
+        [null, null, 2, 6, null, null],
+        [6, 2, null, 1, null, null],
+        [null, 1, 5, null, null, 2],
+        [null, null, null, 5, 2, 3],
+        [5, null, 6, 2, null, null],
+        [2, null, null, null, 5, null]
       ],
       "solution": [
-        [
-          4,
-          5,
-          2,
-          6,
-          3,
-          1
-        ],
-        [
-          6,
-          2,
-          3,
-          1,
-          4,
-          5
-        ],
-        [
-          3,
-          1,
-          5,
-          4,
-          6,
-          2
-        ],
-        [
-          1,
-          6,
-          4,
-          5,
-          2,
-          3
-        ],
-        [
-          5,
-          3,
-          6,
-          2,
-          1,
-          4
-        ],
-        [
-          2,
-          4,
-          1,
-          3,
-          5,
-          6
-        ]
+        [4, 5, 2, 6, 3, 1],
+        [6, 2, 3, 1, 4, 5],
+        [3, 1, 5, 4, 6, 2],
+        [1, 6, 4, 5, 2, 3],
+        [5, 3, 6, 2, 1, 4],
+        [2, 4, 1, 3, 5, 6]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -1915,104 +403,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          4,
-          null,
-          3,
-          2,
-          null
-        ],
-        [
-          6,
-          null,
-          1,
-          null,
-          4,
-          null
-        ],
-        [
-          3,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          6,
-          3,
-          2
-        ],
-        [
-          null,
-          3,
-          null,
-          1,
-          6,
-          4
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          1,
-          5
-        ]
+        [null, 4, null, 3, 2, null],
+        [6, null, 1, null, 4, null],
+        [3, null, null, null, null, null],
+        [null, null, null, 6, 3, 2],
+        [null, 3, null, 1, 6, 4],
+        [null, null, null, null, 1, 5]
       ],
       "solution": [
-        [
-          5,
-          4,
-          6,
-          3,
-          2,
-          1
-        ],
-        [
-          6,
-          2,
-          1,
-          5,
-          4,
-          3
-        ],
-        [
-          3,
-          1,
-          2,
-          4,
-          5,
-          6
-        ],
-        [
-          1,
-          5,
-          4,
-          6,
-          3,
-          2
-        ],
-        [
-          2,
-          3,
-          5,
-          1,
-          6,
-          4
-        ],
-        [
-          4,
-          6,
-          3,
-          2,
-          1,
-          5
-        ]
+        [5, 4, 6, 3, 2, 1],
+        [6, 2, 1, 5, 4, 3],
+        [3, 1, 2, 4, 5, 6],
+        [1, 5, 4, 6, 3, 2],
+        [2, 3, 5, 1, 6, 4],
+        [4, 6, 3, 2, 1, 5]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -2021,104 +425,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          3,
-          null,
-          4,
-          null,
-          2
-        ],
-        [
-          null,
-          1,
-          null,
-          null,
-          4,
-          null
-        ],
-        [
-          null,
-          null,
-          1,
-          2,
-          3,
-          null
-        ],
-        [
-          null,
-          6,
-          4,
-          null,
-          2,
-          null
-        ],
-        [
-          null,
-          null,
-          2,
-          null,
-          null,
-          3
-        ],
-        [
-          null,
-          null,
-          null,
-          1,
-          6,
-          4
-        ]
+        [null, 3, null, 4, null, 2],
+        [null, 1, null, null, 4, null],
+        [null, null, 1, 2, 3, null],
+        [null, 6, 4, null, 2, null],
+        [null, null, 2, null, null, 3],
+        [null, null, null, 1, 6, 4]
       ],
       "solution": [
-        [
-          6,
-          3,
-          5,
-          4,
-          1,
-          2
-        ],
-        [
-          2,
-          1,
-          6,
-          3,
-          4,
-          5
-        ],
-        [
-          4,
-          5,
-          1,
-          2,
-          3,
-          6
-        ],
-        [
-          3,
-          6,
-          4,
-          5,
-          2,
-          1
-        ],
-        [
-          1,
-          4,
-          2,
-          6,
-          5,
-          3
-        ],
-        [
-          5,
-          2,
-          3,
-          1,
-          6,
-          4
-        ]
+        [6, 3, 5, 4, 1, 2],
+        [2, 1, 6, 3, 4, 5],
+        [4, 5, 1, 2, 3, 6],
+        [3, 6, 4, 5, 2, 1],
+        [1, 4, 2, 6, 5, 3],
+        [5, 2, 3, 1, 6, 4]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -2127,104 +447,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          6,
-          2,
-          null,
-          4,
-          3
-        ],
-        [
-          2,
-          null,
-          null,
-          null,
-          5,
-          6
-        ],
-        [
-          null,
-          null,
-          6,
-          null,
-          null,
-          1
-        ],
-        [
-          null,
-          null,
-          5,
-          null,
-          1,
-          null
-        ],
-        [
-          null,
-          4,
-          null,
-          null,
-          null,
-          5
-        ],
-        [
-          null,
-          null,
-          null,
-          6,
-          3,
-          2
-        ]
+        [null, 6, 2, null, 4, 3],
+        [2, null, null, null, 5, 6],
+        [null, null, 6, null, null, 1],
+        [null, null, 5, null, 1, null],
+        [null, 4, null, null, null, 5],
+        [null, null, null, 6, 3, 2]
       ],
       "solution": [
-        [
-          5,
-          6,
-          2,
-          1,
-          4,
-          3
-        ],
-        [
-          2,
-          1,
-          3,
-          4,
-          5,
-          6
-        ],
-        [
-          4,
-          3,
-          6,
-          5,
-          2,
-          1
-        ],
-        [
-          6,
-          2,
-          5,
-          3,
-          1,
-          4
-        ],
-        [
-          3,
-          4,
-          1,
-          2,
-          6,
-          5
-        ],
-        [
-          1,
-          5,
-          4,
-          6,
-          3,
-          2
-        ]
+        [5, 6, 2, 1, 4, 3],
+        [2, 1, 3, 4, 5, 6],
+        [4, 3, 6, 5, 2, 1],
+        [6, 2, 5, 3, 1, 4],
+        [3, 4, 1, 2, 6, 5],
+        [1, 5, 4, 6, 3, 2]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -2233,104 +469,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          null,
-          2,
-          null,
-          null
-        ],
-        [
-          null,
-          4,
-          null,
-          null,
-          null,
-          6
-        ],
-        [
-          null,
-          null,
-          4,
-          6,
-          2,
-          null
-        ],
-        [
-          3,
-          null,
-          2,
-          5,
-          null,
-          null
-        ],
-        [
-          null,
-          5,
-          null,
-          3,
-          6,
-          2
-        ],
-        [
-          null,
-          null,
-          6,
-          4,
-          null,
-          3
-        ]
+        [null, null, null, 2, null, null],
+        [null, 4, null, null, null, 6],
+        [null, null, 4, 6, 2, null],
+        [3, null, 2, 5, null, null],
+        [null, 5, null, 3, 6, 2],
+        [null, null, 6, 4, null, 3]
       ],
       "solution": [
-        [
-          6,
-          1,
-          3,
-          2,
-          4,
-          5
-        ],
-        [
-          2,
-          4,
-          5,
-          1,
-          3,
-          6
-        ],
-        [
-          5,
-          3,
-          4,
-          6,
-          2,
-          1
-        ],
-        [
-          3,
-          6,
-          2,
-          5,
-          1,
-          4
-        ],
-        [
-          4,
-          5,
-          1,
-          3,
-          6,
-          2
-        ],
-        [
-          1,
-          2,
-          6,
-          4,
-          5,
-          3
-        ]
+        [6, 1, 3, 2, 4, 5],
+        [2, 4, 5, 1, 3, 6],
+        [5, 3, 4, 6, 2, 1],
+        [3, 6, 2, 5, 1, 4],
+        [4, 5, 1, 3, 6, 2],
+        [1, 2, 6, 4, 5, 3]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -2339,104 +491,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          1,
-          null,
-          null,
-          null,
-          3,
-          null
-        ],
-        [
-          3,
-          5,
-          null,
-          null,
-          1,
-          6
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          2,
-          3,
-          null,
-          6,
-          null,
-          1
-        ],
-        [
-          5,
-          null,
-          null,
-          1,
-          null,
-          3
-        ],
-        [
-          null,
-          1,
-          3,
-          null,
-          2,
-          null
-        ]
+        [1, null, null, null, 3, null],
+        [3, 5, null, null, 1, 6],
+        [null, null, null, null, null, null],
+        [2, 3, null, 6, null, 1],
+        [5, null, null, 1, null, 3],
+        [null, 1, 3, null, 2, null]
       ],
       "solution": [
-        [
-          1,
-          2,
-          6,
-          5,
-          3,
-          4
-        ],
-        [
-          3,
-          5,
-          4,
-          2,
-          1,
-          6
-        ],
-        [
-          4,
-          6,
-          1,
-          3,
-          5,
-          2
-        ],
-        [
-          2,
-          3,
-          5,
-          6,
-          4,
-          1
-        ],
-        [
-          5,
-          4,
-          2,
-          1,
-          6,
-          3
-        ],
-        [
-          6,
-          1,
-          3,
-          4,
-          2,
-          5
-        ]
+        [1, 2, 6, 5, 3, 4],
+        [3, 5, 4, 2, 1, 6],
+        [4, 6, 1, 3, 5, 2],
+        [2, 3, 5, 6, 4, 1],
+        [5, 4, 2, 1, 6, 3],
+        [6, 1, 3, 4, 2, 5]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -2445,104 +513,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          null,
-          null,
-          2,
-          null
-        ],
-        [
-          null,
-          null,
-          4,
-          null,
-          6,
-          3
-        ],
-        [
-          3,
-          null,
-          1,
-          2,
-          5,
-          4
-        ],
-        [
-          6,
-          1,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          4,
-          null,
-          2,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          5,
-          3,
-          null,
-          null,
-          6
-        ]
+        [null, null, null, null, 2, null],
+        [null, null, 4, null, 6, 3],
+        [3, null, 1, 2, 5, 4],
+        [6, 1, null, null, null, null],
+        [4, null, 2, null, null, null],
+        [null, 5, 3, null, null, 6]
       ],
       "solution": [
-        [
-          5,
-          4,
-          6,
-          3,
-          2,
-          1
-        ],
-        [
-          1,
-          2,
-          4,
-          5,
-          6,
-          3
-        ],
-        [
-          3,
-          6,
-          1,
-          2,
-          5,
-          4
-        ],
-        [
-          6,
-          1,
-          5,
-          4,
-          3,
-          2
-        ],
-        [
-          4,
-          3,
-          2,
-          6,
-          1,
-          5
-        ],
-        [
-          2,
-          5,
-          3,
-          1,
-          4,
-          6
-        ]
+        [5, 4, 6, 3, 2, 1],
+        [1, 2, 4, 5, 6, 3],
+        [3, 6, 1, 2, 5, 4],
+        [6, 1, 5, 4, 3, 2],
+        [4, 3, 2, 6, 1, 5],
+        [2, 5, 3, 1, 4, 6]
       ],
       "techniqueCap": "hiddenSingle"
     }
@@ -2553,104 +537,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          5,
-          null,
-          2,
-          null,
-          null
-        ],
-        [
-          2,
-          null,
-          null,
-          3,
-          null,
-          null
-        ],
-        [
-          3,
-          null,
-          5,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          4,
-          null,
-          null,
-          5
-        ],
-        [
-          4,
-          null,
-          null,
-          null,
-          1,
-          2
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          4
-        ]
+        [null, 5, null, 2, null, null],
+        [2, null, null, 3, null, null],
+        [3, null, 5, null, null, null],
+        [null, null, 4, null, null, 5],
+        [4, null, null, null, 1, 2],
+        [null, null, null, null, null, 4]
       ],
       "solution": [
-        [
-          6,
-          5,
-          1,
-          2,
-          4,
-          3
-        ],
-        [
-          2,
-          4,
-          6,
-          3,
-          5,
-          1
-        ],
-        [
-          3,
-          1,
-          5,
-          4,
-          2,
-          6
-        ],
-        [
-          1,
-          2,
-          4,
-          6,
-          3,
-          5
-        ],
-        [
-          4,
-          6,
-          3,
-          5,
-          1,
-          2
-        ],
-        [
-          5,
-          3,
-          2,
-          1,
-          6,
-          4
-        ]
+        [6, 5, 1, 2, 4, 3],
+        [2, 4, 6, 3, 5, 1],
+        [3, 1, 5, 4, 2, 6],
+        [1, 2, 4, 6, 3, 5],
+        [4, 6, 3, 5, 1, 2],
+        [5, 3, 2, 1, 6, 4]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -2659,104 +559,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          3,
-          null,
-          1,
-          2,
-          null,
-          4
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          5,
-          3,
-          null,
-          null
-        ],
-        [
-          2,
-          null,
-          null,
-          null,
-          null,
-          1
-        ],
-        [
-          null,
-          1,
-          null,
-          null,
-          2,
-          null
-        ],
-        [
-          6,
-          null,
-          null,
-          null,
-          null,
-          3
-        ]
+        [3, null, 1, 2, null, 4],
+        [null, null, null, null, null, null],
+        [null, null, 5, 3, null, null],
+        [2, null, null, null, null, 1],
+        [null, 1, null, null, 2, null],
+        [6, null, null, null, null, 3]
       ],
       "solution": [
-        [
-          3,
-          5,
-          1,
-          2,
-          6,
-          4
-        ],
-        [
-          1,
-          2,
-          4,
-          6,
-          3,
-          5
-        ],
-        [
-          4,
-          6,
-          5,
-          3,
-          1,
-          2
-        ],
-        [
-          2,
-          3,
-          6,
-          5,
-          4,
-          1
-        ],
-        [
-          5,
-          1,
-          3,
-          4,
-          2,
-          6
-        ],
-        [
-          6,
-          4,
-          2,
-          1,
-          5,
-          3
-        ]
+        [3, 5, 1, 2, 6, 4],
+        [1, 2, 4, 6, 3, 5],
+        [4, 6, 5, 3, 1, 2],
+        [2, 3, 6, 5, 4, 1],
+        [5, 1, 3, 4, 2, 6],
+        [6, 4, 2, 1, 5, 3]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -2765,104 +581,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          5,
-          null,
-          null,
-          null,
-          null,
-          6
-        ],
-        [
-          null,
-          6,
-          null,
-          null,
-          4,
-          null
-        ],
-        [
-          null,
-          null,
-          6,
-          2,
-          null,
-          null
-        ],
-        [
-          null,
-          5,
-          null,
-          null,
-          6,
-          null
-        ],
-        [
-          3,
-          null,
-          null,
-          null,
-          null,
-          1
-        ],
-        [
-          null,
-          null,
-          4,
-          5,
-          null,
-          null
-        ]
+        [5, null, null, null, null, 6],
+        [null, 6, null, null, 4, null],
+        [null, null, 6, 2, null, null],
+        [null, 5, null, null, 6, null],
+        [3, null, null, null, null, 1],
+        [null, null, 4, 5, null, null]
       ],
       "solution": [
-        [
-          5,
-          2,
-          1,
-          4,
-          3,
-          6
-        ],
-        [
-          1,
-          6,
-          5,
-          3,
-          4,
-          2
-        ],
-        [
-          4,
-          3,
-          6,
-          2,
-          1,
-          5
-        ],
-        [
-          2,
-          5,
-          3,
-          1,
-          6,
-          4
-        ],
-        [
-          3,
-          4,
-          2,
-          6,
-          5,
-          1
-        ],
-        [
-          6,
-          1,
-          4,
-          5,
-          2,
-          3
-        ]
+        [5, 2, 1, 4, 3, 6],
+        [1, 6, 5, 3, 4, 2],
+        [4, 3, 6, 2, 1, 5],
+        [2, 5, 3, 1, 6, 4],
+        [3, 4, 2, 6, 5, 1],
+        [6, 1, 4, 5, 2, 3]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -2871,104 +603,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          2,
-          null,
-          null,
-          1,
-          null
-        ],
-        [
-          4,
-          null,
-          null,
-          null,
-          null,
-          2
-        ],
-        [
-          null,
-          5,
-          4,
-          1,
-          3,
-          null
-        ],
-        [
-          null,
-          null,
-          5,
-          3,
-          null,
-          null
-        ],
-        [
-          null,
-          3,
-          null,
-          null,
-          4,
-          null
-        ]
+        [null, null, null, null, null, null],
+        [null, 2, null, null, 1, null],
+        [4, null, null, null, null, 2],
+        [null, 5, 4, 1, 3, null],
+        [null, null, 5, 3, null, null],
+        [null, 3, null, null, 4, null]
       ],
       "solution": [
-        [
-          3,
-          6,
-          1,
-          2,
-          5,
-          4
-        ],
-        [
-          5,
-          2,
-          6,
-          4,
-          1,
-          3
-        ],
-        [
-          4,
-          1,
-          3,
-          5,
-          6,
-          2
-        ],
-        [
-          2,
-          5,
-          4,
-          1,
-          3,
-          6
-        ],
-        [
-          6,
-          4,
-          5,
-          3,
-          2,
-          1
-        ],
-        [
-          1,
-          3,
-          2,
-          6,
-          4,
-          5
-        ]
+        [3, 6, 1, 2, 5, 4],
+        [5, 2, 6, 4, 1, 3],
+        [4, 1, 3, 5, 6, 2],
+        [2, 5, 4, 1, 3, 6],
+        [6, 4, 5, 3, 2, 1],
+        [1, 3, 2, 6, 4, 5]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -2977,104 +625,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          6,
-          5,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          2,
-          null,
-          null,
-          6,
-          null
-        ],
-        [
-          null,
-          null,
-          4,
-          6,
-          null,
-          null
-        ],
-        [
-          5,
-          null,
-          null,
-          null,
-          null,
-          1
-        ],
-        [
-          null,
-          4,
-          5,
-          1,
-          2,
-          null
-        ]
+        [null, null, 6, 5, null, null],
+        [null, null, null, null, null, null],
+        [null, 2, null, null, 6, null],
+        [null, null, 4, 6, null, null],
+        [5, null, null, null, null, 1],
+        [null, 4, 5, 1, 2, null]
       ],
       "solution": [
-        [
-          4,
-          3,
-          6,
-          5,
-          1,
-          2
-        ],
-        [
-          6,
-          5,
-          1,
-          2,
-          3,
-          4
-        ],
-        [
-          1,
-          2,
-          3,
-          4,
-          6,
-          5
-        ],
-        [
-          2,
-          1,
-          4,
-          6,
-          5,
-          3
-        ],
-        [
-          5,
-          6,
-          2,
-          3,
-          4,
-          1
-        ],
-        [
-          3,
-          4,
-          5,
-          1,
-          2,
-          6
-        ]
+        [4, 3, 6, 5, 1, 2],
+        [6, 5, 1, 2, 3, 4],
+        [1, 2, 3, 4, 6, 5],
+        [2, 1, 4, 6, 5, 3],
+        [5, 6, 2, 3, 4, 1],
+        [3, 4, 5, 1, 2, 6]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -3083,104 +647,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          1,
-          null,
-          null,
-          5
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          5,
-          1,
-          null,
-          6,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          6,
-          null,
-          null,
-          null
-        ],
-        [
-          1,
-          6,
-          2,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          4,
-          null,
-          null,
-          6,
-          2
-        ]
+        [null, null, 1, null, null, 5],
+        [null, null, null, null, null, null],
+        [5, 1, null, 6, null, null],
+        [null, null, 6, null, null, null],
+        [1, 6, 2, null, null, null],
+        [null, 4, null, null, 6, 2]
       ],
       "solution": [
-        [
-          6,
-          3,
-          1,
-          2,
-          4,
-          5
-        ],
-        [
-          4,
-          2,
-          3,
-          5,
-          1,
-          6
-        ],
-        [
-          5,
-          1,
-          4,
-          6,
-          2,
-          3
-        ],
-        [
-          2,
-          5,
-          6,
-          4,
-          3,
-          1
-        ],
-        [
-          1,
-          6,
-          2,
-          3,
-          5,
-          4
-        ],
-        [
-          3,
-          4,
-          5,
-          1,
-          6,
-          2
-        ]
+        [6, 3, 1, 2, 4, 5],
+        [4, 2, 3, 5, 1, 6],
+        [5, 1, 4, 6, 2, 3],
+        [2, 5, 6, 4, 3, 1],
+        [1, 6, 2, 3, 5, 4],
+        [3, 4, 5, 1, 6, 2]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -3189,104 +669,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          null,
-          3,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          5,
-          null,
-          null,
-          4
-        ],
-        [
-          null,
-          null,
-          4,
-          1,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          4,
-          6
-        ],
-        [
-          6,
-          null,
-          null,
-          4,
-          2,
-          5
-        ],
-        [
-          null,
-          2,
-          null,
-          null,
-          null,
-          null
-        ]
+        [null, null, null, 3, null, null],
+        [null, null, 5, null, null, 4],
+        [null, null, 4, 1, null, null],
+        [null, null, null, null, 4, 6],
+        [6, null, null, 4, 2, 5],
+        [null, 2, null, null, null, null]
       ],
       "solution": [
-        [
-          5,
-          4,
-          2,
-          3,
-          6,
-          1
-        ],
-        [
-          2,
-          1,
-          5,
-          6,
-          3,
-          4
-        ],
-        [
-          3,
-          6,
-          4,
-          1,
-          5,
-          2
-        ],
-        [
-          1,
-          5,
-          3,
-          2,
-          4,
-          6
-        ],
-        [
-          6,
-          3,
-          1,
-          4,
-          2,
-          5
-        ],
-        [
-          4,
-          2,
-          6,
-          5,
-          1,
-          3
-        ]
+        [5, 4, 2, 3, 6, 1],
+        [2, 1, 5, 6, 3, 4],
+        [3, 6, 4, 1, 5, 2],
+        [1, 5, 3, 2, 4, 6],
+        [6, 3, 1, 4, 2, 5],
+        [4, 2, 6, 5, 1, 3]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -3295,104 +691,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          null,
-          5,
-          null,
-          null
-        ],
-        [
-          4,
-          1,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          5,
-          null,
-          4,
-          null,
-          6,
-          null
-        ],
-        [
-          null,
-          null,
-          3,
-          null,
-          4,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          5,
-          null
-        ],
-        [
-          null,
-          null,
-          5,
-          2,
-          1,
-          null
-        ]
+        [null, null, null, 5, null, null],
+        [4, 1, null, null, null, null],
+        [5, null, 4, null, 6, null],
+        [null, null, 3, null, 4, null],
+        [null, null, null, null, 5, null],
+        [null, null, 5, 2, 1, null]
       ],
       "solution": [
-        [
-          3,
-          6,
-          1,
-          5,
-          2,
-          4
-        ],
-        [
-          4,
-          1,
-          2,
-          6,
-          3,
-          5
-        ],
-        [
-          5,
-          2,
-          4,
-          3,
-          6,
-          1
-        ],
-        [
-          2,
-          5,
-          3,
-          1,
-          4,
-          6
-        ],
-        [
-          1,
-          3,
-          6,
-          4,
-          5,
-          2
-        ],
-        [
-          6,
-          4,
-          5,
-          2,
-          1,
-          3
-        ]
+        [3, 6, 1, 5, 2, 4],
+        [4, 1, 2, 6, 3, 5],
+        [5, 2, 4, 3, 6, 1],
+        [2, 5, 3, 1, 4, 6],
+        [1, 3, 6, 4, 5, 2],
+        [6, 4, 5, 2, 1, 3]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -3401,104 +713,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          1,
-          6,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          1,
-          3,
-          null,
-          6
-        ],
-        [
-          null,
-          6,
-          null,
-          5,
-          null,
-          null
-        ],
-        [
-          null,
-          4,
-          null,
-          1,
-          null,
-          3
-        ],
-        [
-          null,
-          null,
-          null,
-          6,
-          null,
-          5
-        ]
+        [null, 1, 6, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, 1, 3, null, 6],
+        [null, 6, null, 5, null, null],
+        [null, 4, null, 1, null, 3],
+        [null, null, null, 6, null, 5]
       ],
       "solution": [
-        [
-          3,
-          1,
-          6,
-          2,
-          5,
-          4
-        ],
-        [
-          6,
-          2,
-          5,
-          4,
-          3,
-          1
-        ],
-        [
-          4,
-          5,
-          1,
-          3,
-          2,
-          6
-        ],
-        [
-          1,
-          6,
-          3,
-          5,
-          4,
-          2
-        ],
-        [
-          5,
-          4,
-          2,
-          1,
-          6,
-          3
-        ],
-        [
-          2,
-          3,
-          4,
-          6,
-          1,
-          5
-        ]
+        [3, 1, 6, 2, 5, 4],
+        [6, 2, 5, 4, 3, 1],
+        [4, 5, 1, 3, 2, 6],
+        [1, 6, 3, 5, 4, 2],
+        [5, 4, 2, 1, 6, 3],
+        [2, 3, 4, 6, 1, 5]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -3507,104 +735,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          5,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          1,
-          null,
-          null,
-          6
-        ],
-        [
-          6,
-          null,
-          null,
-          5,
-          null,
-          1
-        ],
-        [
-          2,
-          4,
-          5,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          2,
-          4,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          2
-        ]
+        [null, 5, null, null, null, null],
+        [null, null, 1, null, null, 6],
+        [6, null, null, 5, null, 1],
+        [2, 4, 5, null, null, null],
+        [null, null, null, 2, 4, null],
+        [null, null, null, null, null, 2]
       ],
       "solution": [
-        [
-          1,
-          5,
-          2,
-          6,
-          3,
-          4
-        ],
-        [
-          4,
-          2,
-          1,
-          3,
-          5,
-          6
-        ],
-        [
-          6,
-          3,
-          4,
-          5,
-          2,
-          1
-        ],
-        [
-          2,
-          4,
-          5,
-          1,
-          6,
-          3
-        ],
-        [
-          3,
-          1,
-          6,
-          2,
-          4,
-          5
-        ],
-        [
-          5,
-          6,
-          3,
-          4,
-          1,
-          2
-        ]
+        [1, 5, 2, 6, 3, 4],
+        [4, 2, 1, 3, 5, 6],
+        [6, 3, 4, 5, 2, 1],
+        [2, 4, 5, 1, 6, 3],
+        [3, 1, 6, 2, 4, 5],
+        [5, 6, 3, 4, 1, 2]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -3613,104 +757,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          1,
-          null,
-          null,
-          null,
-          null,
-          6
-        ],
-        [
-          null,
-          4,
-          null,
-          1,
-          null,
-          3
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          1,
-          null
-        ],
-        [
-          5,
-          null,
-          null,
-          null,
-          null,
-          1
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          6,
-          null
-        ],
-        [
-          4,
-          null,
-          6,
-          null,
-          null,
-          5
-        ]
+        [1, null, null, null, null, 6],
+        [null, 4, null, 1, null, 3],
+        [null, null, null, null, 1, null],
+        [5, null, null, null, null, 1],
+        [null, null, null, null, 6, null],
+        [4, null, 6, null, null, 5]
       ],
       "solution": [
-        [
-          1,
-          2,
-          5,
-          3,
-          4,
-          6
-        ],
-        [
-          6,
-          4,
-          2,
-          1,
-          5,
-          3
-        ],
-        [
-          3,
-          5,
-          4,
-          6,
-          1,
-          2
-        ],
-        [
-          5,
-          6,
-          3,
-          4,
-          2,
-          1
-        ],
-        [
-          2,
-          3,
-          1,
-          5,
-          6,
-          4
-        ],
-        [
-          4,
-          1,
-          6,
-          2,
-          3,
-          5
-        ]
+        [1, 2, 5, 3, 4, 6],
+        [6, 4, 2, 1, 5, 3],
+        [3, 5, 4, 6, 1, 2],
+        [5, 6, 3, 4, 2, 1],
+        [2, 3, 1, 5, 6, 4],
+        [4, 1, 6, 2, 3, 5]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -3719,104 +779,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          4,
-          null,
-          null,
-          3
-        ],
-        [
-          3,
-          null,
-          1,
-          2,
-          5,
-          4
-        ],
-        [
-          null,
-          1,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          4,
-          null,
-          2,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          3,
-          null,
-          null,
-          6
-        ]
+        [null, null, null, null, null, null],
+        [null, null, 4, null, null, 3],
+        [3, null, 1, 2, 5, 4],
+        [null, 1, null, null, null, null],
+        [4, null, 2, null, null, null],
+        [null, null, 3, null, null, 6]
       ],
       "solution": [
-        [
-          5,
-          4,
-          6,
-          3,
-          2,
-          1
-        ],
-        [
-          1,
-          2,
-          4,
-          5,
-          6,
-          3
-        ],
-        [
-          3,
-          6,
-          1,
-          2,
-          5,
-          4
-        ],
-        [
-          6,
-          1,
-          5,
-          4,
-          3,
-          2
-        ],
-        [
-          4,
-          3,
-          2,
-          6,
-          1,
-          5
-        ],
-        [
-          2,
-          5,
-          3,
-          1,
-          4,
-          6
-        ]
+        [5, 4, 6, 3, 2, 1],
+        [1, 2, 4, 5, 6, 3],
+        [3, 6, 1, 2, 5, 4],
+        [6, 1, 5, 4, 3, 2],
+        [4, 3, 2, 6, 1, 5],
+        [2, 5, 3, 1, 4, 6]
       ],
       "techniqueCap": "hiddenSingle"
     }
@@ -3827,104 +803,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          5,
-          null,
-          2,
-          null,
-          null
-        ],
-        [
-          2,
-          null,
-          null,
-          3,
-          null,
-          null
-        ],
-        [
-          3,
-          null,
-          5,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          4,
-          null,
-          null,
-          null
-        ],
-        [
-          4,
-          null,
-          null,
-          null,
-          1,
-          2
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          4
-        ]
+        [null, 5, null, 2, null, null],
+        [2, null, null, 3, null, null],
+        [3, null, 5, null, null, null],
+        [null, null, 4, null, null, null],
+        [4, null, null, null, 1, 2],
+        [null, null, null, null, null, 4]
       ],
       "solution": [
-        [
-          6,
-          5,
-          1,
-          2,
-          4,
-          3
-        ],
-        [
-          2,
-          4,
-          6,
-          3,
-          5,
-          1
-        ],
-        [
-          3,
-          1,
-          5,
-          4,
-          2,
-          6
-        ],
-        [
-          1,
-          2,
-          4,
-          6,
-          3,
-          5
-        ],
-        [
-          4,
-          6,
-          3,
-          5,
-          1,
-          2
-        ],
-        [
-          5,
-          3,
-          2,
-          1,
-          6,
-          4
-        ]
+        [6, 5, 1, 2, 4, 3],
+        [2, 4, 6, 3, 5, 1],
+        [3, 1, 5, 4, 2, 6],
+        [1, 2, 4, 6, 3, 5],
+        [4, 6, 3, 5, 1, 2],
+        [5, 3, 2, 1, 6, 4]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -3933,104 +825,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          3,
-          null,
-          1,
-          2,
-          null,
-          4
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          5,
-          3,
-          null,
-          null
-        ],
-        [
-          2,
-          null,
-          null,
-          null,
-          null,
-          1
-        ],
-        [
-          null,
-          1,
-          null,
-          null,
-          2,
-          null
-        ],
-        [
-          6,
-          null,
-          null,
-          null,
-          null,
-          3
-        ]
+        [3, null, 1, 2, null, 4],
+        [null, null, null, null, null, null],
+        [null, null, 5, 3, null, null],
+        [2, null, null, null, null, 1],
+        [null, 1, null, null, 2, null],
+        [6, null, null, null, null, 3]
       ],
       "solution": [
-        [
-          3,
-          5,
-          1,
-          2,
-          6,
-          4
-        ],
-        [
-          1,
-          2,
-          4,
-          6,
-          3,
-          5
-        ],
-        [
-          4,
-          6,
-          5,
-          3,
-          1,
-          2
-        ],
-        [
-          2,
-          3,
-          6,
-          5,
-          4,
-          1
-        ],
-        [
-          5,
-          1,
-          3,
-          4,
-          2,
-          6
-        ],
-        [
-          6,
-          4,
-          2,
-          1,
-          5,
-          3
-        ]
+        [3, 5, 1, 2, 6, 4],
+        [1, 2, 4, 6, 3, 5],
+        [4, 6, 5, 3, 1, 2],
+        [2, 3, 6, 5, 4, 1],
+        [5, 1, 3, 4, 2, 6],
+        [6, 4, 2, 1, 5, 3]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -4039,104 +847,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          5,
-          null,
-          null,
-          null,
-          null,
-          6
-        ],
-        [
-          null,
-          6,
-          null,
-          null,
-          4,
-          null
-        ],
-        [
-          null,
-          null,
-          6,
-          2,
-          null,
-          null
-        ],
-        [
-          null,
-          5,
-          null,
-          null,
-          6,
-          null
-        ],
-        [
-          3,
-          null,
-          null,
-          null,
-          null,
-          1
-        ],
-        [
-          null,
-          null,
-          4,
-          5,
-          null,
-          null
-        ]
+        [5, null, null, null, null, 6],
+        [null, 6, null, null, 4, null],
+        [null, null, 6, 2, null, null],
+        [null, 5, null, null, 6, null],
+        [3, null, null, null, null, 1],
+        [null, null, 4, 5, null, null]
       ],
       "solution": [
-        [
-          5,
-          2,
-          1,
-          4,
-          3,
-          6
-        ],
-        [
-          1,
-          6,
-          5,
-          3,
-          4,
-          2
-        ],
-        [
-          4,
-          3,
-          6,
-          2,
-          1,
-          5
-        ],
-        [
-          2,
-          5,
-          3,
-          1,
-          6,
-          4
-        ],
-        [
-          3,
-          4,
-          2,
-          6,
-          5,
-          1
-        ],
-        [
-          6,
-          1,
-          4,
-          5,
-          2,
-          3
-        ]
+        [5, 2, 1, 4, 3, 6],
+        [1, 6, 5, 3, 4, 2],
+        [4, 3, 6, 2, 1, 5],
+        [2, 5, 3, 1, 6, 4],
+        [3, 4, 2, 6, 5, 1],
+        [6, 1, 4, 5, 2, 3]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -4145,104 +869,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          2,
-          null,
-          null,
-          1,
-          null
-        ],
-        [
-          4,
-          null,
-          null,
-          null,
-          null,
-          2
-        ],
-        [
-          null,
-          5,
-          4,
-          1,
-          3,
-          null
-        ],
-        [
-          null,
-          null,
-          5,
-          3,
-          null,
-          null
-        ],
-        [
-          null,
-          3,
-          null,
-          null,
-          4,
-          null
-        ]
+        [null, null, null, null, null, null],
+        [null, 2, null, null, 1, null],
+        [4, null, null, null, null, 2],
+        [null, 5, 4, 1, 3, null],
+        [null, null, 5, 3, null, null],
+        [null, 3, null, null, 4, null]
       ],
       "solution": [
-        [
-          3,
-          6,
-          1,
-          2,
-          5,
-          4
-        ],
-        [
-          5,
-          2,
-          6,
-          4,
-          1,
-          3
-        ],
-        [
-          4,
-          1,
-          3,
-          5,
-          6,
-          2
-        ],
-        [
-          2,
-          5,
-          4,
-          1,
-          3,
-          6
-        ],
-        [
-          6,
-          4,
-          5,
-          3,
-          2,
-          1
-        ],
-        [
-          1,
-          3,
-          2,
-          6,
-          4,
-          5
-        ]
+        [3, 6, 1, 2, 5, 4],
+        [5, 2, 6, 4, 1, 3],
+        [4, 1, 3, 5, 6, 2],
+        [2, 5, 4, 1, 3, 6],
+        [6, 4, 5, 3, 2, 1],
+        [1, 3, 2, 6, 4, 5]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -4251,104 +891,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          6,
-          5,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          2,
-          null,
-          null,
-          6,
-          null
-        ],
-        [
-          null,
-          null,
-          4,
-          6,
-          null,
-          null
-        ],
-        [
-          5,
-          null,
-          null,
-          null,
-          null,
-          1
-        ],
-        [
-          null,
-          4,
-          null,
-          null,
-          2,
-          null
-        ]
+        [null, null, 6, 5, null, null],
+        [null, null, null, null, null, null],
+        [null, 2, null, null, 6, null],
+        [null, null, 4, 6, null, null],
+        [5, null, null, null, null, 1],
+        [null, 4, null, null, 2, null]
       ],
       "solution": [
-        [
-          4,
-          3,
-          6,
-          5,
-          1,
-          2
-        ],
-        [
-          6,
-          5,
-          1,
-          2,
-          3,
-          4
-        ],
-        [
-          1,
-          2,
-          3,
-          4,
-          6,
-          5
-        ],
-        [
-          2,
-          1,
-          4,
-          6,
-          5,
-          3
-        ],
-        [
-          5,
-          6,
-          2,
-          3,
-          4,
-          1
-        ],
-        [
-          3,
-          4,
-          5,
-          1,
-          2,
-          6
-        ]
+        [4, 3, 6, 5, 1, 2],
+        [6, 5, 1, 2, 3, 4],
+        [1, 2, 3, 4, 6, 5],
+        [2, 1, 4, 6, 5, 3],
+        [5, 6, 2, 3, 4, 1],
+        [3, 4, 5, 1, 2, 6]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -4357,104 +913,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          1,
-          null,
-          null,
-          5
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          5,
-          1,
-          null,
-          6,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          1,
-          null,
-          2,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          4,
-          null,
-          null,
-          6,
-          2
-        ]
+        [null, null, 1, null, null, 5],
+        [null, null, null, null, null, null],
+        [5, 1, null, 6, null, null],
+        [null, null, null, null, null, null],
+        [1, null, 2, null, null, null],
+        [null, 4, null, null, 6, 2]
       ],
       "solution": [
-        [
-          6,
-          3,
-          1,
-          2,
-          4,
-          5
-        ],
-        [
-          4,
-          2,
-          3,
-          5,
-          1,
-          6
-        ],
-        [
-          5,
-          1,
-          4,
-          6,
-          2,
-          3
-        ],
-        [
-          2,
-          5,
-          6,
-          4,
-          3,
-          1
-        ],
-        [
-          1,
-          6,
-          2,
-          3,
-          5,
-          4
-        ],
-        [
-          3,
-          4,
-          5,
-          1,
-          6,
-          2
-        ]
+        [6, 3, 1, 2, 4, 5],
+        [4, 2, 3, 5, 1, 6],
+        [5, 1, 4, 6, 2, 3],
+        [2, 5, 6, 4, 3, 1],
+        [1, 6, 2, 3, 5, 4],
+        [3, 4, 5, 1, 6, 2]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -4463,104 +935,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          null,
-          3,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          5,
-          null,
-          null,
-          4
-        ],
-        [
-          null,
-          null,
-          4,
-          1,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          4,
-          6
-        ],
-        [
-          6,
-          null,
-          null,
-          null,
-          null,
-          5
-        ],
-        [
-          null,
-          2,
-          null,
-          null,
-          null,
-          null
-        ]
+        [null, null, null, 3, null, null],
+        [null, null, 5, null, null, 4],
+        [null, null, 4, 1, null, null],
+        [null, null, null, null, 4, 6],
+        [6, null, null, null, null, 5],
+        [null, 2, null, null, null, null]
       ],
       "solution": [
-        [
-          5,
-          4,
-          2,
-          3,
-          6,
-          1
-        ],
-        [
-          2,
-          1,
-          5,
-          6,
-          3,
-          4
-        ],
-        [
-          3,
-          6,
-          4,
-          1,
-          5,
-          2
-        ],
-        [
-          1,
-          5,
-          3,
-          2,
-          4,
-          6
-        ],
-        [
-          6,
-          3,
-          1,
-          4,
-          2,
-          5
-        ],
-        [
-          4,
-          2,
-          6,
-          5,
-          1,
-          3
-        ]
+        [5, 4, 2, 3, 6, 1],
+        [2, 1, 5, 6, 3, 4],
+        [3, 6, 4, 1, 5, 2],
+        [1, 5, 3, 2, 4, 6],
+        [6, 3, 1, 4, 2, 5],
+        [4, 2, 6, 5, 1, 3]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -4569,104 +957,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          4,
-          1,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          5,
-          null,
-          4,
-          null,
-          6,
-          null
-        ],
-        [
-          null,
-          null,
-          3,
-          null,
-          4,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          5,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          2,
-          1,
-          null
-        ]
+        [null, null, null, null, null, null],
+        [4, 1, null, null, null, null],
+        [5, null, 4, null, 6, null],
+        [null, null, 3, null, 4, null],
+        [null, null, null, null, 5, null],
+        [null, null, null, 2, 1, null]
       ],
       "solution": [
-        [
-          3,
-          6,
-          1,
-          5,
-          2,
-          4
-        ],
-        [
-          4,
-          1,
-          2,
-          6,
-          3,
-          5
-        ],
-        [
-          5,
-          2,
-          4,
-          3,
-          6,
-          1
-        ],
-        [
-          2,
-          5,
-          3,
-          1,
-          4,
-          6
-        ],
-        [
-          1,
-          3,
-          6,
-          4,
-          5,
-          2
-        ],
-        [
-          6,
-          4,
-          5,
-          2,
-          1,
-          3
-        ]
+        [3, 6, 1, 5, 2, 4],
+        [4, 1, 2, 6, 3, 5],
+        [5, 2, 4, 3, 6, 1],
+        [2, 5, 3, 1, 4, 6],
+        [1, 3, 6, 4, 5, 2],
+        [6, 4, 5, 2, 1, 3]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -4675,104 +979,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          1,
-          6,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          1,
-          3,
-          null,
-          null
-        ],
-        [
-          null,
-          6,
-          null,
-          5,
-          null,
-          null
-        ],
-        [
-          null,
-          4,
-          null,
-          1,
-          null,
-          3
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          5
-        ]
+        [null, 1, 6, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, 1, 3, null, null],
+        [null, 6, null, 5, null, null],
+        [null, 4, null, 1, null, 3],
+        [null, null, null, null, null, 5]
       ],
       "solution": [
-        [
-          3,
-          1,
-          6,
-          2,
-          5,
-          4
-        ],
-        [
-          6,
-          2,
-          5,
-          4,
-          3,
-          1
-        ],
-        [
-          4,
-          5,
-          1,
-          3,
-          2,
-          6
-        ],
-        [
-          1,
-          6,
-          3,
-          5,
-          4,
-          2
-        ],
-        [
-          5,
-          4,
-          2,
-          1,
-          6,
-          3
-        ],
-        [
-          2,
-          3,
-          4,
-          6,
-          1,
-          5
-        ]
+        [3, 1, 6, 2, 5, 4],
+        [6, 2, 5, 4, 3, 1],
+        [4, 5, 1, 3, 2, 6],
+        [1, 6, 3, 5, 4, 2],
+        [5, 4, 2, 1, 6, 3],
+        [2, 3, 4, 6, 1, 5]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -4781,104 +1001,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          5,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          1,
-          null,
-          null,
-          6
-        ],
-        [
-          6,
-          null,
-          null,
-          5,
-          null,
-          1
-        ],
-        [
-          2,
-          4,
-          5,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          2,
-          4,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ]
+        [null, 5, null, null, null, null],
+        [null, null, 1, null, null, 6],
+        [6, null, null, 5, null, 1],
+        [2, 4, 5, null, null, null],
+        [null, null, null, 2, 4, null],
+        [null, null, null, null, null, null]
       ],
       "solution": [
-        [
-          1,
-          5,
-          2,
-          6,
-          3,
-          4
-        ],
-        [
-          4,
-          2,
-          1,
-          3,
-          5,
-          6
-        ],
-        [
-          6,
-          3,
-          4,
-          5,
-          2,
-          1
-        ],
-        [
-          2,
-          4,
-          5,
-          1,
-          6,
-          3
-        ],
-        [
-          3,
-          1,
-          6,
-          2,
-          4,
-          5
-        ],
-        [
-          5,
-          6,
-          3,
-          4,
-          1,
-          2
-        ]
+        [1, 5, 2, 6, 3, 4],
+        [4, 2, 1, 3, 5, 6],
+        [6, 3, 4, 5, 2, 1],
+        [2, 4, 5, 1, 6, 3],
+        [3, 1, 6, 2, 4, 5],
+        [5, 6, 3, 4, 1, 2]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -4887,104 +1023,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          1,
-          null,
-          null,
-          null,
-          null,
-          6
-        ],
-        [
-          null,
-          4,
-          null,
-          1,
-          null,
-          3
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          5,
-          null,
-          null,
-          null,
-          null,
-          1
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          6,
-          null
-        ],
-        [
-          4,
-          null,
-          6,
-          null,
-          null,
-          5
-        ]
+        [1, null, null, null, null, 6],
+        [null, 4, null, 1, null, 3],
+        [null, null, null, null, null, null],
+        [5, null, null, null, null, 1],
+        [null, null, null, null, 6, null],
+        [4, null, 6, null, null, 5]
       ],
       "solution": [
-        [
-          1,
-          2,
-          5,
-          3,
-          4,
-          6
-        ],
-        [
-          6,
-          4,
-          2,
-          1,
-          5,
-          3
-        ],
-        [
-          3,
-          5,
-          4,
-          6,
-          1,
-          2
-        ],
-        [
-          5,
-          6,
-          3,
-          4,
-          2,
-          1
-        ],
-        [
-          2,
-          3,
-          1,
-          5,
-          6,
-          4
-        ],
-        [
-          4,
-          1,
-          6,
-          2,
-          3,
-          5
-        ]
+        [1, 2, 5, 3, 4, 6],
+        [6, 4, 2, 1, 5, 3],
+        [3, 5, 4, 6, 1, 2],
+        [5, 6, 3, 4, 2, 1],
+        [2, 3, 1, 5, 6, 4],
+        [4, 1, 6, 2, 3, 5]
       ],
       "techniqueCap": "hiddenSingle"
     },
@@ -4993,104 +1045,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          4,
-          null,
-          null,
-          3
-        ],
-        [
-          3,
-          null,
-          1,
-          null,
-          5,
-          null
-        ],
-        [
-          null,
-          1,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          4,
-          null,
-          2,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          3,
-          null,
-          null,
-          6
-        ]
+        [null, null, null, null, null, null],
+        [null, null, 4, null, null, 3],
+        [3, null, 1, null, 5, null],
+        [null, 1, null, null, null, null],
+        [4, null, 2, null, null, null],
+        [null, null, 3, null, null, 6]
       ],
       "solution": [
-        [
-          5,
-          4,
-          6,
-          3,
-          2,
-          1
-        ],
-        [
-          1,
-          2,
-          4,
-          5,
-          6,
-          3
-        ],
-        [
-          3,
-          6,
-          1,
-          2,
-          5,
-          4
-        ],
-        [
-          6,
-          1,
-          5,
-          4,
-          3,
-          2
-        ],
-        [
-          4,
-          3,
-          2,
-          6,
-          1,
-          5
-        ],
-        [
-          2,
-          5,
-          3,
-          1,
-          4,
-          6
-        ]
+        [5, 4, 6, 3, 2, 1],
+        [1, 2, 4, 5, 6, 3],
+        [3, 6, 1, 2, 5, 4],
+        [6, 1, 5, 4, 3, 2],
+        [4, 3, 2, 6, 1, 5],
+        [2, 5, 3, 1, 4, 6]
       ],
       "techniqueCap": "hiddenSingle"
     }
@@ -5101,104 +1069,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          6,
-          null,
-          null,
-          null,
-          2,
-          null
-        ],
-        [
-          null,
-          4,
-          3,
-          null,
-          null,
-          1
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          2
-        ],
-        [
-          null,
-          null,
-          4,
-          null,
-          1,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          2,
-          null,
-          3
-        ]
+        [null, null, null, null, null, null],
+        [6, null, null, null, 2, null],
+        [null, 4, 3, null, null, 1],
+        [null, null, null, null, null, 2],
+        [null, null, 4, null, 1, null],
+        [null, null, null, 2, null, 3]
       ],
       "solution": [
-        [
-          1,
-          5,
-          2,
-          6,
-          3,
-          4
-        ],
-        [
-          6,
-          3,
-          1,
-          4,
-          2,
-          5
-        ],
-        [
-          2,
-          4,
-          3,
-          5,
-          6,
-          1
-        ],
-        [
-          3,
-          6,
-          5,
-          1,
-          4,
-          2
-        ],
-        [
-          5,
-          2,
-          4,
-          3,
-          1,
-          6
-        ],
-        [
-          4,
-          1,
-          6,
-          2,
-          5,
-          3
-        ]
+        [1, 5, 2, 6, 3, 4],
+        [6, 3, 1, 4, 2, 5],
+        [2, 4, 3, 5, 6, 1],
+        [3, 6, 5, 1, 4, 2],
+        [5, 2, 4, 3, 1, 6],
+        [4, 1, 6, 2, 5, 3]
       ],
       "techniqueCap": "boxLine"
     },
@@ -5207,104 +1091,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          5,
-          3,
-          6,
-          2,
-          null
-        ],
-        [
-          null,
-          null,
-          1,
-          5,
-          null,
-          null
-        ],
-        [
-          1,
-          null,
-          null,
-          null,
-          null,
-          3
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          6,
-          2,
-          null,
-          null
-        ],
-        [
-          2,
-          null,
-          4,
-          3,
-          null,
-          5
-        ]
+        [null, 5, 3, 6, 2, null],
+        [null, null, 1, 5, null, null],
+        [1, null, null, null, null, 3],
+        [null, null, null, null, null, null],
+        [null, null, 6, 2, null, null],
+        [2, null, 4, 3, null, 5]
       ],
       "solution": [
-        [
-          4,
-          5,
-          3,
-          6,
-          2,
-          1
-        ],
-        [
-          3,
-          2,
-          1,
-          5,
-          4,
-          6
-        ],
-        [
-          1,
-          6,
-          2,
-          4,
-          5,
-          3
-        ],
-        [
-          6,
-          4,
-          5,
-          1,
-          3,
-          2
-        ],
-        [
-          5,
-          3,
-          6,
-          2,
-          1,
-          4
-        ],
-        [
-          2,
-          1,
-          4,
-          3,
-          6,
-          5
-        ]
+        [4, 5, 3, 6, 2, 1],
+        [3, 2, 1, 5, 4, 6],
+        [1, 6, 2, 4, 5, 3],
+        [6, 4, 5, 1, 3, 2],
+        [5, 3, 6, 2, 1, 4],
+        [2, 1, 4, 3, 6, 5]
       ],
       "techniqueCap": "boxLine"
     },
@@ -5313,104 +1113,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          1,
-          6,
-          null,
-          null,
-          4,
-          2
-        ],
-        [
-          null,
-          null,
-          6,
-          2,
-          null,
-          null
-        ],
-        [
-          null,
-          5,
-          null,
-          null,
-          6,
-          null
-        ],
-        [
-          3,
-          null,
-          null,
-          null,
-          null,
-          1
-        ],
-        [
-          null,
-          null,
-          4,
-          5,
-          null,
-          null
-        ]
+        [null, null, null, null, null, null],
+        [1, 6, null, null, 4, 2],
+        [null, null, 6, 2, null, null],
+        [null, 5, null, null, 6, null],
+        [3, null, null, null, null, 1],
+        [null, null, 4, 5, null, null]
       ],
       "solution": [
-        [
-          5,
-          2,
-          1,
-          4,
-          3,
-          6
-        ],
-        [
-          1,
-          6,
-          5,
-          3,
-          4,
-          2
-        ],
-        [
-          4,
-          3,
-          6,
-          2,
-          1,
-          5
-        ],
-        [
-          2,
-          5,
-          3,
-          1,
-          6,
-          4
-        ],
-        [
-          3,
-          4,
-          2,
-          6,
-          5,
-          1
-        ],
-        [
-          6,
-          1,
-          4,
-          5,
-          2,
-          3
-        ]
+        [5, 2, 1, 4, 3, 6],
+        [1, 6, 5, 3, 4, 2],
+        [4, 3, 6, 2, 1, 5],
+        [2, 5, 3, 1, 6, 4],
+        [3, 4, 2, 6, 5, 1],
+        [6, 1, 4, 5, 2, 3]
       ],
       "techniqueCap": "boxLine"
     },
@@ -5419,104 +1135,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          6,
-          null,
-          null,
-          null,
-          null,
-          5
-        ],
-        [
-          2,
-          null,
-          null,
-          null,
-          null,
-          1
-        ],
-        [
-          null,
-          5,
-          null,
-          null,
-          4,
-          null
-        ],
-        [
-          null,
-          null,
-          2,
-          6,
-          null,
-          null
-        ],
-        [
-          1,
-          null,
-          null,
-          null,
-          null,
-          3
-        ],
-        [
-          null,
-          2,
-          null,
-          null,
-          5,
-          null
-        ]
+        [6, null, null, null, null, 5],
+        [2, null, null, null, null, 1],
+        [null, 5, null, null, 4, null],
+        [null, null, 2, 6, null, null],
+        [1, null, null, null, null, 3],
+        [null, 2, null, null, 5, null]
       ],
       "solution": [
-        [
-          6,
-          1,
-          4,
-          2,
-          3,
-          5
-        ],
-        [
-          2,
-          4,
-          3,
-          5,
-          6,
-          1
-        ],
-        [
-          3,
-          5,
-          6,
-          1,
-          4,
-          2
-        ],
-        [
-          5,
-          3,
-          2,
-          6,
-          1,
-          4
-        ],
-        [
-          1,
-          6,
-          5,
-          4,
-          2,
-          3
-        ],
-        [
-          4,
-          2,
-          1,
-          3,
-          5,
-          6
-        ]
+        [6, 1, 4, 2, 3, 5],
+        [2, 4, 3, 5, 6, 1],
+        [3, 5, 6, 1, 4, 2],
+        [5, 3, 2, 6, 1, 4],
+        [1, 6, 5, 4, 2, 3],
+        [4, 2, 1, 3, 5, 6]
       ],
       "techniqueCap": "boxLine"
     },
@@ -5525,104 +1157,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          4,
-          null,
-          null,
-          null,
-          null,
-          1
-        ],
-        [
-          null,
-          5,
-          1,
-          6,
-          4,
-          null
-        ],
-        [
-          null,
-          6,
-          null,
-          null,
-          3,
-          null
-        ],
-        [
-          5,
-          null,
-          null,
-          null,
-          null,
-          4
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          3,
-          4,
-          null,
-          null
-        ]
+        [4, null, null, null, null, 1],
+        [null, 5, 1, 6, 4, null],
+        [null, 6, null, null, 3, null],
+        [5, null, null, null, null, 4],
+        [null, null, null, null, null, null],
+        [null, null, 3, 4, null, null]
       ],
       "solution": [
-        [
-          4,
-          2,
-          5,
-          3,
-          6,
-          1
-        ],
-        [
-          3,
-          5,
-          1,
-          6,
-          4,
-          2
-        ],
-        [
-          1,
-          6,
-          4,
-          2,
-          3,
-          5
-        ],
-        [
-          5,
-          3,
-          6,
-          1,
-          2,
-          4
-        ],
-        [
-          6,
-          4,
-          2,
-          5,
-          1,
-          3
-        ],
-        [
-          2,
-          1,
-          3,
-          4,
-          5,
-          6
-        ]
+        [4, 2, 5, 3, 6, 1],
+        [3, 5, 1, 6, 4, 2],
+        [1, 6, 4, 2, 3, 5],
+        [5, 3, 6, 1, 2, 4],
+        [6, 4, 2, 5, 1, 3],
+        [2, 1, 3, 4, 5, 6]
       ],
       "techniqueCap": "boxLine"
     },
@@ -5631,104 +1179,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          1,
-          null,
-          null,
-          5
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          1,
-          4,
-          6,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          1,
-          null,
-          2,
-          null,
-          5,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          6,
-          2
-        ]
+        [null, null, 1, null, null, 5],
+        [null, null, null, null, null, null],
+        [null, 1, 4, 6, null, null],
+        [null, null, null, null, null, null],
+        [1, null, 2, null, 5, null],
+        [null, null, null, null, 6, 2]
       ],
       "solution": [
-        [
-          6,
-          3,
-          1,
-          2,
-          4,
-          5
-        ],
-        [
-          4,
-          2,
-          3,
-          5,
-          1,
-          6
-        ],
-        [
-          5,
-          1,
-          4,
-          6,
-          2,
-          3
-        ],
-        [
-          2,
-          5,
-          6,
-          4,
-          3,
-          1
-        ],
-        [
-          1,
-          6,
-          2,
-          3,
-          5,
-          4
-        ],
-        [
-          3,
-          4,
-          5,
-          1,
-          6,
-          2
-        ]
+        [6, 3, 1, 2, 4, 5],
+        [4, 2, 3, 5, 1, 6],
+        [5, 1, 4, 6, 2, 3],
+        [2, 5, 6, 4, 3, 1],
+        [1, 6, 2, 3, 5, 4],
+        [3, 4, 5, 1, 6, 2]
       ],
       "techniqueCap": "boxLine"
     },
@@ -5737,104 +1201,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          3,
-          null,
-          null,
-          null
-        ],
-        [
-          2,
-          null,
-          null,
-          6,
-          1,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          5
-        ],
-        [
-          null,
-          2,
-          null,
-          3,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          1,
-          6,
-          3
-        ]
+        [null, null, 3, null, null, null],
+        [2, null, null, 6, 1, null],
+        [null, null, null, null, null, 5],
+        [null, 2, null, 3, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, 1, 6, 3]
       ],
       "solution": [
-        [
-          1,
-          5,
-          3,
-          4,
-          2,
-          6
-        ],
-        [
-          2,
-          3,
-          5,
-          6,
-          1,
-          4
-        ],
-        [
-          4,
-          6,
-          1,
-          2,
-          3,
-          5
-        ],
-        [
-          6,
-          2,
-          4,
-          3,
-          5,
-          1
-        ],
-        [
-          3,
-          1,
-          6,
-          5,
-          4,
-          2
-        ],
-        [
-          5,
-          4,
-          2,
-          1,
-          6,
-          3
-        ]
+        [1, 5, 3, 4, 2, 6],
+        [2, 3, 5, 6, 1, 4],
+        [4, 6, 1, 2, 3, 5],
+        [6, 2, 4, 3, 5, 1],
+        [3, 1, 6, 5, 4, 2],
+        [5, 4, 2, 1, 6, 3]
       ],
       "techniqueCap": "boxLine"
     },
@@ -5843,104 +1223,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          null,
-          null,
-          2,
-          null
-        ],
-        [
-          3,
-          null,
-          null,
-          1,
-          null,
-          6
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          5,
-          null,
-          null,
-          4,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          6,
-          null,
-          null
-        ],
-        [
-          null,
-          1,
-          null,
-          5,
-          null,
-          null
-        ]
+        [null, null, null, null, 2, null],
+        [3, null, null, 1, null, 6],
+        [null, null, null, null, null, null],
+        [null, 5, null, null, 4, null],
+        [null, null, null, 6, null, null],
+        [null, 1, null, 5, null, null]
       ],
       "solution": [
-        [
-          1,
-          6,
-          5,
-          3,
-          2,
-          4
-        ],
-        [
-          3,
-          4,
-          2,
-          1,
-          5,
-          6
-        ],
-        [
-          5,
-          2,
-          6,
-          4,
-          3,
-          1
-        ],
-        [
-          6,
-          5,
-          1,
-          2,
-          4,
-          3
-        ],
-        [
-          2,
-          3,
-          4,
-          6,
-          1,
-          5
-        ],
-        [
-          4,
-          1,
-          3,
-          5,
-          6,
-          2
-        ]
+        [1, 6, 5, 3, 2, 4],
+        [3, 4, 2, 1, 5, 6],
+        [5, 2, 6, 4, 3, 1],
+        [6, 5, 1, 2, 4, 3],
+        [2, 3, 4, 6, 1, 5],
+        [4, 1, 3, 5, 6, 2]
       ],
       "techniqueCap": "boxLine"
     },
@@ -5949,104 +1245,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          1,
-          6,
-          null,
-          null,
-          4
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          1,
-          3,
-          null,
-          null
-        ],
-        [
-          null,
-          6,
-          null,
-          5,
-          null,
-          null
-        ],
-        [
-          null,
-          4,
-          null,
-          1,
-          null,
-          3
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ]
+        [null, 1, 6, null, null, 4],
+        [null, null, null, null, null, null],
+        [null, null, 1, 3, null, null],
+        [null, 6, null, 5, null, null],
+        [null, 4, null, 1, null, 3],
+        [null, null, null, null, null, null]
       ],
       "solution": [
-        [
-          3,
-          1,
-          6,
-          2,
-          5,
-          4
-        ],
-        [
-          6,
-          2,
-          5,
-          4,
-          3,
-          1
-        ],
-        [
-          4,
-          5,
-          1,
-          3,
-          2,
-          6
-        ],
-        [
-          1,
-          6,
-          3,
-          5,
-          4,
-          2
-        ],
-        [
-          5,
-          4,
-          2,
-          1,
-          6,
-          3
-        ],
-        [
-          2,
-          3,
-          4,
-          6,
-          1,
-          5
-        ]
+        [3, 1, 6, 2, 5, 4],
+        [6, 2, 5, 4, 3, 1],
+        [4, 5, 1, 3, 2, 6],
+        [1, 6, 3, 5, 4, 2],
+        [5, 4, 2, 1, 6, 3],
+        [2, 3, 4, 6, 1, 5]
       ],
       "techniqueCap": "boxLine"
     },
@@ -6055,104 +1267,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          5,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          1,
-          null,
-          null,
-          6
-        ],
-        [
-          6,
-          null,
-          null,
-          5,
-          null,
-          1
-        ],
-        [
-          2,
-          4,
-          5,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          2,
-          4,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ]
+        [null, 5, null, null, null, null],
+        [null, null, 1, null, null, 6],
+        [6, null, null, 5, null, 1],
+        [2, 4, 5, null, null, null],
+        [null, null, null, 2, 4, null],
+        [null, null, null, null, null, null]
       ],
       "solution": [
-        [
-          1,
-          5,
-          2,
-          6,
-          3,
-          4
-        ],
-        [
-          4,
-          2,
-          1,
-          3,
-          5,
-          6
-        ],
-        [
-          6,
-          3,
-          4,
-          5,
-          2,
-          1
-        ],
-        [
-          2,
-          4,
-          5,
-          1,
-          6,
-          3
-        ],
-        [
-          3,
-          1,
-          6,
-          2,
-          4,
-          5
-        ],
-        [
-          5,
-          6,
-          3,
-          4,
-          1,
-          2
-        ]
+        [1, 5, 2, 6, 3, 4],
+        [4, 2, 1, 3, 5, 6],
+        [6, 3, 4, 5, 2, 1],
+        [2, 4, 5, 1, 6, 3],
+        [3, 1, 6, 2, 4, 5],
+        [5, 6, 3, 4, 1, 2]
       ],
       "techniqueCap": "boxLine"
     },
@@ -6161,104 +1289,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          null,
-          5,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          6,
-          4
-        ],
-        [
-          null,
-          1,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          5,
-          1,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          4,
-          null,
-          3,
-          null
-        ],
-        [
-          6,
-          null,
-          null,
-          null,
-          null,
-          1
-        ]
+        [null, null, null, 5, null, null],
+        [null, null, null, null, 6, 4],
+        [null, 1, null, null, null, null],
+        [null, 5, 1, null, null, null],
+        [null, null, 4, null, 3, null],
+        [6, null, null, null, null, 1]
       ],
       "solution": [
-        [
-          4,
-          6,
-          3,
-          5,
-          1,
-          2
-        ],
-        [
-          5,
-          3,
-          2,
-          1,
-          6,
-          4
-        ],
-        [
-          2,
-          1,
-          6,
-          4,
-          5,
-          3
-        ],
-        [
-          3,
-          5,
-          1,
-          2,
-          4,
-          6
-        ],
-        [
-          1,
-          2,
-          4,
-          6,
-          3,
-          5
-        ],
-        [
-          6,
-          4,
-          5,
-          3,
-          2,
-          1
-        ]
+        [4, 6, 3, 5, 1, 2],
+        [5, 3, 2, 1, 6, 4],
+        [2, 1, 6, 4, 5, 3],
+        [3, 5, 1, 2, 4, 6],
+        [1, 2, 4, 6, 3, 5],
+        [6, 4, 5, 3, 2, 1]
       ],
       "techniqueCap": "boxLine"
     },
@@ -6267,104 +1311,20 @@
       "boxWidth": 2,
       "boxHeight": 3,
       "givens": [
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          4
-        ],
-        [
-          3,
-          null,
-          4,
-          null,
-          2,
-          null
-        ],
-        [
-          null,
-          null,
-          6,
-          null,
-          null,
-          null
-        ],
-        [
-          1,
-          null,
-          null,
-          5,
-          null,
-          null
-        ],
-        [
-          null,
-          2,
-          null,
-          null,
-          3,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ]
+        [null, null, null, null, null, 4],
+        [3, null, 4, null, 2, null],
+        [null, null, 6, null, null, null],
+        [1, null, null, 5, null, null],
+        [null, 2, null, null, 3, null],
+        [null, null, null, null, null, null]
       ],
       "solution": [
-        [
-          2,
-          6,
-          5,
-          3,
-          1,
-          4
-        ],
-        [
-          3,
-          5,
-          4,
-          1,
-          2,
-          6
-        ],
-        [
-          4,
-          1,
-          6,
-          2,
-          5,
-          3
-        ],
-        [
-          1,
-          4,
-          3,
-          5,
-          6,
-          2
-        ],
-        [
-          6,
-          2,
-          1,
-          4,
-          3,
-          5
-        ],
-        [
-          5,
-          3,
-          2,
-          6,
-          4,
-          1
-        ]
+        [2, 6, 5, 3, 1, 4],
+        [3, 5, 4, 1, 2, 6],
+        [4, 1, 6, 2, 5, 3],
+        [1, 4, 3, 5, 6, 2],
+        [6, 2, 1, 4, 3, 5],
+        [5, 3, 2, 6, 4, 1]
       ],
       "techniqueCap": "boxLine"
     }

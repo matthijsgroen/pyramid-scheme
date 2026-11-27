@@ -1,3 +1,4 @@
+import { CORE_SOUNDS } from "@/app/audio/coreSounds"
 import { HIDATO_META } from "@/mods/puzzle/game/hidato/meta"
 import { faceFor, withAmbience } from "../faceFor"
 import type { FC } from "react"
@@ -24,6 +25,8 @@ export type CellLook = {
 }
 
 export type HidatoSkin = {
+  /** The sound a move makes on this ground; stone unless set. */
+  tap?: string
   /**
    * Which place this is, as its own name.
    *
@@ -140,6 +143,7 @@ const channel: HidatoSkin = {
  */
 const sheet: HidatoSkin = {
   name: "scribe",
+  tap: CORE_SOUNDS.puzzleTapWood,
   cell: ({ lit }) => (lit ? "fill-amber-200 stroke-amber-400" : "fill-amber-100 stroke-amber-300"),
   // **The figures are darker than the line they sit on**, which is the other way round from the skins
   // drawn on stone. There the line is the bright thing against a dark board; here both are ink on the
