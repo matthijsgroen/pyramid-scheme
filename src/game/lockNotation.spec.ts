@@ -183,6 +183,18 @@ describe("parseLock", () => {
     expect(refused).toEqual(["line 3: G owns no gate"])
     expect(lock.mechanics.G).toEqual({ control: "toggle", in: "in", starts: "a", opens: { a: [], b: [] } })
   })
+
+  it.each([
+    [
+      "an activator",
+      "K activator @hall",
+      ["line 5: activatorUnderBarrier: K stands in hall, which water or sand covers; write it as a torch"],
+    ],
+    ["a torch", "K torch @hall", []],
+  ])("refuses %s under water only if the water cannot put it out", (_, line, refusals) => {
+    const text = `in -- hall\nin -[K]- out\nhall -[S:b]\nS toggle @in\n${line}`
+    expect(parseLock(text).refused).toEqual(refusals)
+  })
 })
 
 describe("weights", () => {

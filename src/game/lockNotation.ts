@@ -556,6 +556,14 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     refused.push(
       `line ${extra.n}: nestSpotsRepeated: a lock has one nest spot, and ${spots[0].from} -&> ${spots[0].to} is one already`
     )
+  // AN ACTIVATOR STANDS ON DRY GROUND: it is drawn as a torch, and water or sand over its region puts a torch out but
+  // never an activator, so one under a barrier would look like a flame the flood cannot reach. A `torch` douses.
+  const barred = new Set(Object.values(gates).flatMap(gate => ("region" in gate ? [gate.region] : [])))
+  for (const [id, what] of declared)
+    if (what.control === "activator" && "in" in what && barred.has(what.in))
+      refused.push(
+        `line ${what.n}: activatorUnderBarrier: ${id} stands in ${what.in}, which water or sand covers; write it as a torch`
+      )
   // The spot is the corridor another lock is spliced into, so its pair carries no second connection.
   const kept = spots[0]
   if (kept && joins.filter(j => [kept.from, kept.to].every(r => j.between.includes(r))).length > 1)

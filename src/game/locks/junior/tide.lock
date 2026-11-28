@@ -1,10 +1,11 @@
 // designed by: Claude
-// junior. The lever floods one hall and drains
-// the other; carry the key home against the water.
+// junior. The lever floods one hall and drains the other. The way out wants the lever past the far hall and the
+// torch in the near one; light it on the way home, after the far hall has had its water.
 
 in -- hall1 -- mid -- hall2
-in -[K]- out
+in -[T+K]- out
 hall1 -[S:a]
 hall2 -[S:b]
 S toggle @mid
-K activator @hall2
+T torch @hall1
+K toggle @hall2
