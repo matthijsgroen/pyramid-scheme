@@ -1,0 +1,31 @@
+// designed by: Claude
+// master. The pharaoh's curse: the board in the hall lets you into one wing at a time, and each wing's lever works
+// the doors of the other. The curse throws you out of the inner chambers down into the other wing. Three seals and
+// two torches open the way out. The north's torch room is under water unless a stone on the dam holds it dry, and
+// the south's torch burns only on high water. So the south's stone is carried to the north's dam before the water
+// may stay high.
+in -- hall
+hall -[K1+K2+K3+T1+T2]- out
+hall -[Y]- north
+hall -[Y]- south
+north -[A:a]- n1
+north -[A:b]- n2
+south -[B:a]- s1
+south -[B:b]- s2
+n1 >> south
+s1 >> north
+Y fork @hall
+A toggle @south
+B toggle @north
+K1 activator @n1
+K2 activator @s1
+K3 activator @n2
+T1 torch @n2
+T2 torch @s2
+W toggle @hall low high
+n2 -[W:low|d]
+s2 -[W:high]
+d plate @north
+q plate @s2 stone
+south >> hall
+north >> hall

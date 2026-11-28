@@ -1,0 +1,26 @@
+// designed by: Claude
+// master. Nefertari's house of eternity: two floors joined by a crawl that takes no stone. The goddesses are visited
+// in order, the shrine, the crypt, the east hall, and entering one too early starts the walk again. The crypt is dry
+// only on high water and the east hall only on low, so the shrine's sluice is turned twice. The annex stone opens the
+// crypt's plate, but the annex is opened from the east hall and the stone goes down the pipe. The shrine opens only
+// with the key from the west room.
+in -- upper
+upper -[K1]- shrine
+upper -- west
+west -[L:b]- annex
+lower -[unladen]- upper
+lower -- east
+lower -- south
+south -[p]- crypt
+lower -[G+K2+K3]- out
+east -[W:low]
+crypt -[W:high]
+L toggle @east
+W toggle @shrine low high
+q plate @annex stone
+p plate @south
+P pipe @annex @east
+K1 activator @west
+K2 activator @crypt
+K3 activator @shrine
+G sequence shrine crypt east
