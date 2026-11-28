@@ -9,6 +9,9 @@ Fez teaches the mechanics too: he is the expert of the pair. Before he is met
 (the exterior and floor 0 of `starter_1`, [story/review.md](story/review.md))
 the explorer hints only where a board does not show its own rules.
 
+Every puzzle board shows its goal and rules under the board, and offers a hint from its technique solver once
+the board sits still (`src/mods/core/app/PuzzleFamilyShell.tsx`).
+
 The copy that ships in the meantime is audited in [story/shipped-copy.md](story/shipped-copy.md) — 37 of
 Fez's 59 lines predate the explorer, and rewriting them is a different fix from the one below rather than a
 substitute for it.
@@ -17,7 +20,6 @@ substitute for it.
 
 One-shot flags in `useProgression` (or a `useTutorials` slice), `seenTutorials: Set<string>`. Each mechanic checks its flag before showing, sets it on dismiss.
 
-- **Puzzle rules** — first encounter with each family (Sumplete, Tableau, Crocodile); explain win condition, skip on revisit.
 - **Traps** — first trap room: timed challenge, health cost on fail, blocked at 1 half-heart.
 - **Hidden passages** — first reveal prompt: what a hidden passage is, that some hold rare loot.
 - **Ward keys / gated sections** — first gate: a ward key from a tomb unlocks it.
