@@ -14,9 +14,10 @@ export type RelaidPyramid = {
 /** Which re-laying of shipped pyramids a save has been through. 1: the doubleBack on the Valley of the Kings' last
  * pyramid and the stoneGate on Djoser's. 2: the junior pyramids whose side passage of another difficulty hangs as a
  * branch of its own off the lock instead of standing on one of its corridors. 3: the first pyramid of the game, whose
- * first floor gained a board right after Fez's stall, which a save that got past him has got past too. A later re-lay adds its pyramids to
+ * first floor gained a board right after Fez's stall, which a save that got past him has got past too. 4: the Lighthouse of
+ * Alexandria's sluice and tide, whose torch became a flame the water puts out. A later re-lay adds its pyramids to
  * RELAID_PYRAMIDS with `since` set to the bumped version, and leaves the earlier entries as they are. */
-export const RELAID_FLOORS_VERSION = 3
+export const RELAID_FLOORS_VERSION = 4
 
 /** Every re-laid pyramid, each with the version that re-laid it. */
 export const RELAID_PYRAMIDS: readonly RelaidPyramid[] = [
@@ -27,6 +28,8 @@ export const RELAID_PYRAMIDS: readonly RelaidPyramid[] = [
   { journeyId: "junior_3", levelNr: 2, since: 2 },
   { journeyId: "junior_4", levelNr: 3, since: 2 },
   { journeyId: "starter_1", levelNr: 1, since: 3, alsoExplored: [{ from: "main#0/p0", to: "main#0/p1" }] },
+  { journeyId: "junior_4", levelNr: 2, since: 4 },
+  { journeyId: "junior_4", levelNr: 5, since: 4 },
 ]
 
 /** The levels of a save's journey re-laid after the version it is stamped with: a position it remembers there names

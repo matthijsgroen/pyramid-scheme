@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 731328228
+export const worldContentHash = 111247693
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -8576,7 +8576,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "banquetRoom", min: 0, max: 1, central: 0.8 },
         ],
         packing: 0.2,
-        seed: 625093920,
+        seed: 625093924,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art2", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined],
         locks: [
@@ -8594,10 +8594,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
                 ["in", "hub"],
                 ["hub", "hall"],
                 ["hub", "vault"],
-                { between: ["vault", "out"], barriers: ["vault-out"] },
+                { between: ["hub", "out"], barriers: ["hub-out"] },
               ],
               gates: {
-                "vault-out": { from: "vault", to: "out", owners: ["gold"] },
+                "hub-out": { from: "hub", to: "out", owners: ["T", "L"] },
                 "hall:barred": { region: "hall", owners: ["S"] },
                 "vault:barred": { region: "vault", owners: ["S"] },
               },
@@ -8608,14 +8608,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
                   starts: "hall",
                   opens: { hall: ["hall:barred"], vault: ["vault:barred"] },
                 },
-                gold: { control: "activator", in: "hall", starts: "off", opens: { off: [], on: ["vault-out"] } },
+                T: { control: "flame", in: "hall", starts: "off", opens: { off: [], on: ["hub-out"] } },
+                L: { control: "toggle", in: "vault", starts: "a", opens: { a: [], b: ["hub-out"] } },
               },
               in: "in",
               out: "out",
             },
           },
         ],
-        realisations: { toggle: "handle", activator: "torch", "region-barrier": "water" },
+        realisations: { toggle: "handle", flame: "torch", "region-barrier": "water" },
       },
     ],
     [
@@ -9804,20 +9805,21 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
                 { between: ["in", "out"], barriers: ["in-out"] },
               ],
               gates: {
-                "in-out": { from: "in", to: "out", owners: ["K"] },
+                "in-out": { from: "in", to: "out", owners: ["T", "K"] },
                 "hall1:barred": { region: "hall1", owners: ["S"] },
                 "hall2:barred": { region: "hall2", owners: ["S"] },
               },
               mechanics: {
                 S: { control: "toggle", in: "mid", starts: "a", opens: { a: ["hall1:barred"], b: ["hall2:barred"] } },
-                K: { control: "activator", in: "hall2", starts: "off", opens: { off: [], on: ["in-out"] } },
+                T: { control: "flame", in: "hall1", starts: "off", opens: { off: [], on: ["in-out"] } },
+                K: { control: "toggle", in: "hall2", starts: "a", opens: { a: [], b: ["in-out"] } },
               },
               in: "in",
               out: "out",
             },
           },
         ],
-        realisations: { toggle: "handle", activator: "torch", "region-barrier": "water" },
+        realisations: { toggle: "handle", flame: "torch", "region-barrier": "water" },
       },
       {
         pathPuzzles: 1,

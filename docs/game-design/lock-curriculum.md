@@ -57,8 +57,8 @@ lock, not a sampler.
 | --------------------------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
 | board picks the way (fork-switch)             | `boardPicksTheWay`                   | dropHome, twoLamps, doubleBack, lamplighter, observatory, clockwork, starWell                                                    |
 | lever (toggle, can go back)                   | `leverOpensADoor`, `leverSwapsDoors` | all but plates                                                                                                                   |
-| torch (lit by the player, put out by a flood) | `torch`                              | relay, stoneGate, highWater                                                                                                      |
-| key or prize (activator, once)                | — (a floor key, met in the world)    | cellar, keyring, observatory, sluice, tide, highWater, lockChamber, starWell                                                     |
+| torch (lit by the player, put out by a flood) | `torch`                              | relay, stoneGate, highWater, sluice, tide                                                                                        |
+| key or prize (activator, once)                | — (a floor key, met in the world)    | cellar, keyring, observatory, highWater, lockChamber, starWell                                                                   |
 | one-way drop                                  | `dropDown`                           | beforeYouJump, dropHome, cellar, doubleBack, overlook, seesaw, lamplighter, observatory, relay, clockwork, emptyHanded, starWell |
 | a door that waits for several                 | `doorWaitsForTwo`                    | beforeYouJump, twoLamps, seesaw, lamplighter, observatory, relay, clockwork, starWell                                            |
 | water or sand (region gate)                   | `waterMoves`                         | sluice, tide, sandHalls (sand), highWater, lockChamber                                                                           |
@@ -97,8 +97,8 @@ lock, not a sampler.
 | relay              | expert                   | a chain of airlocks; the drop home opens on the last torch                                                                                                  |
 | clockwork          | expert                   | the board must point two ways, and the lever behind one of them shuts it                                                                                    |
 | observatory        | unplaced                 | a three-way board, two prizes, one shortcut                                                                                                                 |
-| tide               | junior                   | carry the key home against the water                                                                                                                        |
-| sluice             | junior                   | drain the hall for the gold, then the vault for the way out                                                                                                 |
+| tide               | junior                   | the far hall's lever first, then the near hall's torch on the way home                                                                                      |
+| sluice             | junior                   | the vault's lever before the hall's torch: the water moving over puts it out                                                                                |
 | plates             | expert                   | four tiles across three rooms; the door resets them                                                                                                         |
 | twoStones          | unplaced                 | one stone holds the vault while you fetch the second, then presses the exit: a stone spent twice                                                            |
 | masonsRamp         | master, once buildable   | one stone holds the chute door for the other; you squeeze back up the narrow passage, where no stone fits                                                   |

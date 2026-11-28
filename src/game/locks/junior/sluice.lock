@@ -1,13 +1,14 @@
 // designed by: Claude
-// junior. Water moved from one room to
-// another: drain the hall for the gold, then the vault for the way out.
+// junior. Water moved from one room to another, and a torch it puts out: the way out wants the torch in the hall and
+// the lever in the vault. Light the torch first and it drowns when the water goes over to the vault; pull the lever
+// first, then drain the hall and light it.
 
 in -- hub
 hub -- hall
 hub -- vault
-vault -[gold]- out
+hub -[T+L]- out
 hall -[S:hall]
 vault -[S:vault]
 S toggle @hub hall vault
-gold activator @hall
-vault $
+T torch @hall
+L toggle @vault

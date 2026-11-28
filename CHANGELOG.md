@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- In the Lighthouse of Alexandria, the torch in pyramids 2 and 5 goes out under water, like every torch.
 - A built camp structure that stands on one not built yet says what it waits for.
 - The camp mosaic shows how many pieces are waiting to be placed in a badge, like the chest.
 
