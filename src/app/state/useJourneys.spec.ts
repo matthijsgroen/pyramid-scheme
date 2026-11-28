@@ -810,6 +810,18 @@ describe("the re-laid pyramids step", () => {
     })
   })
 
+  it("writes the explored cells the re-lay hands it", () => {
+    const { api, current } = stateful(standing)
+
+    api.setRelaidFloors(REAL_ID, false, [], { "1:main": ["0/p0", "0/p1"] })
+
+    expect(current()).toEqual({
+      ...standing,
+      exploredCells: { "1:main": ["0/p0", "0/p1"] },
+      relaidFloorsVersion: RELAID_FLOORS_VERSION,
+    })
+  })
+
   it("only stamps a save that stands elsewhere", () => {
     const { api, current } = stateful(standing)
 

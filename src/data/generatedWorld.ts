@@ -3,13 +3,13 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 900433189
+export const worldContentHash = 731328228
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
     [
       {
-        pathPuzzles: 1,
+        pathPuzzles: 2,
         difficulty: "starter",
         end: "treasure",
         exitOrStaircase: "exit",
@@ -215,7 +215,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         clutter: 0.35,
         wallDecorations: ["niche", "tallyBoard"],
         role: "puzzle",
-        encountersByIndex: { 0: "conversation" },
+        encountersByIndex: { 0: "conversation", 1: "balance-scale" },
         activitiesByIndex: { 0: "selling" },
         prefabs: {
           storeroom: {
@@ -315,15 +315,24 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "sellingRoom", min: 0, max: 2, central: 1 },
         ],
         prefabsByIndex: { 0: "fezStall" },
+        lootByIndex: { 1: false },
         actorByIndex: { 0: false },
         packing: 0.1,
         seed: 2975698674563320,
         carveFrom: {
-          attempt: 15,
-          rung: { n: 19, startingN: 17, packing: 0.2, targetDistance: 8, chainWind: 1, chainFloor: 0, recovery: false },
+          attempt: 11,
+          rung: {
+            n: 17,
+            startingN: 17,
+            packing: 0.2,
+            targetDistance: 10,
+            chainWind: 1,
+            chainFloor: 0,
+            recovery: false,
+          },
         },
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
-        rewards: [undefined],
+        rewards: [undefined, undefined],
       },
       {
         pathPuzzles: 2,
