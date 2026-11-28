@@ -27,10 +27,43 @@ const floorHolding = (section: string, reward?: TreasureReward): FloorGrid =>
   ({
     rows: 1,
     cols: 2,
+    entrancePos: [0, 0],
+    staircases: {},
     cells: [
       [
-        { type: "room", roomType: "encounter", family: "madeUp", pathIndex: 0, sectionAddress: section, reward },
-        { type: "corridor", sectionAddress: section, ordinal: "1" },
+        {
+          type: "room",
+          roomType: "encounter",
+          family: "madeUp",
+          pathIndex: 0,
+          sectionAddress: section,
+          reward,
+          dirs: new Set(["e"]),
+        },
+        { type: "corridor", sectionAddress: section, ordinal: "1", dirs: new Set(["w"]) },
+      ],
+    ],
+  }) as unknown as FloorGrid
+
+// A corridor, a ward gate sealed by `keyId`, and a room holding a coin behind it.
+const floorBehindWard = (keyId: string): FloorGrid =>
+  ({
+    rows: 1,
+    cols: 3,
+    entrancePos: [0, 0],
+    staircases: {},
+    cells: [
+      [
+        { type: "corridor", sectionAddress: "main", ordinal: "0", dirs: new Set(["e"]) },
+        {
+          type: "room",
+          roomType: "encounter",
+          sectionAddress: "s0",
+          gateVariant: "tomb-key",
+          requiredKeyId: keyId,
+          dirs: new Set(["w", "e"]),
+        },
+        { type: "room", roomType: "encounter", sectionAddress: "s0", reward: { type: "coin" }, dirs: new Set(["w"]) },
       ],
     ],
   }) as unknown as FloorGrid
@@ -109,5 +142,23 @@ describe("finishing a tier", () => {
     finish()
 
     expect(claim).toHaveBeenCalledTimes(2)
+  })
+
+  it.each([
+    ["starter_a_1", 1],
+    ["junior_a_1", 0],
+  ])("behind a ward gate sealed by %s, claims %i rewards", (keyId, claims) => {
+    const { api } = setUp()
+    const claim = vi.fn(() => true)
+
+    finishTier({
+      tier: "starter",
+      journeys: [journey("starter_a", "starter", 1)],
+      assemble: () => () => floorBehindWard(keyId),
+      progress: api(),
+      claim,
+    })
+
+    expect(claim).toHaveBeenCalledTimes(claims)
   })
 })
