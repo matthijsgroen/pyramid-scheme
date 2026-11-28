@@ -27,6 +27,9 @@ export const fakeAudioContext = () => {
       resumes += 1
       state = "running"
     },
+    close: async () => {
+      state = "closed"
+    },
     decodeAudioData: async (bytes: ArrayBuffer) => {
       decodes += 1
       return new TextDecoder().decode(bytes)
