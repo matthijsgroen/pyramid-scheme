@@ -1,4 +1,5 @@
 import { useLockSolvedSound } from "./useLockSolvedSound"
+import { useGateOpensSound } from "./useGateOpensSound"
 import { use, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
@@ -128,6 +129,7 @@ export const SiteMapScreen = ({
     [journeyId, levelIndex, currentFloor]
   )
   useLockSolvedSound({ locks: floorConfig?.locks, openGateKeys, floorRef })
+  useGateOpensSound(openGateKeys, `${journeyId}#${levelIndex}#${currentFloor}`)
   // Every mechanism write on this floor goes through here, so a flood's douse is saved with the move that caused it.
   const floorJourneys = useDousedJourneys({ journeys, journeyId, floor: baseGrid, currentFloor, heldKeys })
 
