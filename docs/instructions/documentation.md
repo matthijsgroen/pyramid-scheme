@@ -69,6 +69,13 @@ Flow maps, friction reviews, onboarding findings. These describe the _current ob
 
 ---
 
+## docs/game-reviews/ — whole-game critic reviews
+
+A reviewer's opinion of the game as a player meets it, one file per review, named `YYYY-MM-DD-<topic>.md` by
+the day it was played. Opinion, not design decisions; a later review gets its own file.
+
+---
+
 ## Handover documents
 
 Transient briefs for the next agent or session — what to build, what's already done, what decisions are resolved. Named `handover-<topic>.md` and placed in `docs/`.
@@ -146,6 +153,7 @@ has been walked into (state it as a hazard, not as an incident report).
 | Phased build plan for a mechanic   | `docs/<topic>-implementation-plan.md` (delete once shipped, extract durable facts first) |
 | "How to work in area X" guidelines | `docs/instructions/<topic>.md`                                                           |
 | UX flow maps, friction findings    | `docs/ux/<topic>.md`                                                                     |
+| Critic review of the whole game    | `docs/game-reviews/YYYY-MM-DD-<topic>.md`                                                |
 | Transient handover brief           | `docs/handover-<topic>.md` (delete on completion)                                        |
 | Durable design decisions & backlog | `docs/game-design/design-decisions.md`                                                   |
 | Agent entry point                  | `CLAUDE.md` (root, pointer only)                                                         |
