@@ -175,3 +175,46 @@ describe("createAudioService", () => {
     expect(fake.resumes).toBe(2)
   })
 })
+
+describe("back from the background", () => {
+  const backgrounded = async () => {
+    const fake = fakeAudioContext()
+    const loader = fakeLoader()
+    const createContext = vi.fn(() => fake.context)
+    let hide: (hidden: boolean) => void = () => {}
+    const service = createAudioService({
+      createContext,
+      lookup: name => SAMPLES[name],
+      load: loader.load,
+      samples: () => Object.values(SAMPLES),
+      anySound: () => true,
+      onHidden: callback => {
+        hide = callback
+        return () => {}
+      },
+    })
+    service.unlock()
+    await loader.settle()
+    hide(true)
+    hide(false)
+    return { fake, loader, createContext, service }
+  }
+
+  it("makes a new context at the first tap, since iOS may hand back one that never sounds again", async () => {
+    const { service, createContext } = await backgrounded()
+    expect(createContext).toHaveBeenCalledTimes(1)
+    service.unlock()
+    expect(createContext).toHaveBeenCalledTimes(2)
+    service.unlock()
+    expect(createContext).toHaveBeenCalledTimes(2)
+  })
+
+  it("plays on the new context without fetching what was already decoded", async () => {
+    const { service, fake, loader } = await backgrounded()
+    service.unlock()
+    await loader.settle()
+    service.play("test.chime")
+    expect(loader.calls).toEqual(["chime.ogg", "knock.ogg"])
+    expect(fake.sources.map(source => source.buffer)).toEqual(["chime.ogg"])
+  })
+})

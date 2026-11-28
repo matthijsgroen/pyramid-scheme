@@ -5,6 +5,7 @@ export type AudioContextLike = Pick<
   | "currentTime"
   | "state"
   | "resume"
+  | "close"
   | "createBufferSource"
   | "createGain"
   | "createMediaElementSource"
@@ -80,6 +81,9 @@ export const createAudioService = ({
   let tapped = false
   let created = false
   let hidden = false
+  // The page came back from the background since the context was made. iOS can hand back a context that never
+  // sounds again, whatever resume says, so the next gesture makes a new one.
+  let stale = false
   let ducks = 0
   let context: AudioContextLike | undefined
   let master: GainNode | undefined
@@ -150,7 +154,8 @@ export const createAudioService = ({
         master = context.createGain()
         master.gain.value = EFFECTS_GAIN
         master.connect(context.destination)
-        for (const url of new Set(samples().map(sample => sample.url))) fetchSample(context, url)
+        // A decoded buffer belongs to no context, so a replaced context keeps what the last one decoded.
+        for (const url of new Set(samples().map(sample => sample.url))) if (!buffers.has(url)) fetchSample(context, url)
       }
     } catch {
       context = undefined
@@ -192,8 +197,24 @@ export const createAudioService = ({
     musicGain.gain.linearRampToValueAtTime(musicLevel(), now + fadeS)
   }
 
+  const replaceContext = () => {
+    for (const playing of loops.values()) {
+      playing.source?.stop()
+      playing.source = undefined
+    }
+    // The element is wired into the old context and plays nowhere else, so the music gets a new one too.
+    element?.pause()
+    element = undefined
+    musicGain = undefined
+    void context?.close().catch(() => {})
+    context = undefined
+    master = undefined
+    created = false
+  }
+
   onHidden?.(isHidden => {
     hidden = isHidden
+    if (!isHidden && context) stale = true
     syncMusic()
     syncLoops()
   })
@@ -201,6 +222,10 @@ export const createAudioService = ({
   return {
     unlock: () => {
       tapped = true
+      if (stale) {
+        stale = false
+        replaceContext()
+      }
       ensureContext()
       if (context && context.state !== "running") void context.resume().catch(() => {})
       syncMusic()

@@ -141,3 +141,17 @@ describe("music", () => {
     expect(createElement).toHaveBeenCalledTimes(1)
   })
 })
+
+describe("music back from the background", () => {
+  it("plays from a new element on the new context, the old one left paused", () => {
+    const { service, elements, hide } = setup()
+    service.unlock()
+    service.setMusic(true)
+    hide(true)
+    hide(false)
+    service.unlock()
+    expect(elements).toHaveLength(2)
+    expect(elements[0].paused).toBe(true)
+    expect(elements[1].paused).toBe(false)
+  })
+})
