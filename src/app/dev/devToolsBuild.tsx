@@ -7,6 +7,11 @@ import { lazy } from "react"
  */
 export const DEV_TOOLS: boolean = import.meta.env.DEV || import.meta.env.VITE_DEV_TOOLS === "true"
 
+/** `?skipIntro` in the address, in a build with the developer tools: Fez does not greet on the camp, so a check
+ * on a fresh profile starts at the camp itself. */
+export const SKIP_INTRO: boolean =
+  DEV_TOOLS && typeof location !== "undefined" && new URLSearchParams(location.search).has("skipIntro")
+
 // The tools' screens are loaded behind the same constant, in this module, where the bundler folds it before it
 // follows the import: a release then emits no chunk for them at all.
 

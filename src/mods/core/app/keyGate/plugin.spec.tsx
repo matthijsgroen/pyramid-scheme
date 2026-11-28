@@ -1,8 +1,11 @@
 // @vitest-environment jsdom
-import { render, cleanup } from "@testing-library/react"
+import { render, cleanup, fireEvent } from "@testing-library/react"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import type { FamilyContext } from "@/app/families/familyRegistry"
 import { registerKeyDisplay } from "@/app/SiteMap/keyProviders"
+
+const playSound = vi.fn()
+vi.mock("@/app/audio/audio", () => ({ playSound: (...args: unknown[]) => playSound(...args) }))
 
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
@@ -111,5 +114,15 @@ describe("floor-key door", () => {
     expect(queryByText("keys.blue")).toBeNull()
     expect(queryByText("gate.locked")).not.toBeNull()
     expect(queryByText("gate.lockedColor")).toBeNull()
+  })
+})
+
+describe("passing a gate", () => {
+  it("sounds the stone door settling open", () => {
+    const { getByText } = renderGate({ requiredKeyId: "starter_a_1", ownedKeys: new Set(["starter_a_1"]) })
+
+    fireEvent.click(getByText("gate.pass"))
+
+    expect(playSound).toHaveBeenCalledWith("lock.solved")
   })
 })
