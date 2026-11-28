@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import type { Direction, FloorGrid } from "@/game/siteTypes"
-import { playSound } from "@/app/audio/audio"
-import { CORE_SOUNDS } from "@/app/audio/coreSounds"
+import { playOpeningSound } from "./openingSound"
 import { prefersReducedMotion } from "./reducedMotion"
 
 /** How long one step of the wave waits after the one before it. */
@@ -85,7 +84,7 @@ export const useRevealWave = (grid: FloorGrid, floor: string): readonly Revealin
   }
 
   useEffect(() => {
-    if (openings > 0) playSound(CORE_SOUNDS.corridorOpens, { delay: 0.25 })
+    if (openings > 0) playOpeningSound()
   }, [openings])
 
   useEffect(() => {
