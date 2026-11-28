@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { authoredKindsFor } from "./authoredKinds"
 import type { Difficulty } from "@/data/difficultyLevels"
+import { WALL_DECORATION_KINDS } from "@/game/siteTypes"
 
 const TIERS: Difficulty[] = ["starter", "junior", "expert", "master", "wizard"]
 
@@ -19,6 +20,7 @@ describe("what each rank is furnished with", () => {
 
   it("narrows rather than listing the whole vocabulary", () => {
     // Every rank drawing every kind would mean the scan is picking up a catalogue instead of the pools.
-    for (const tier of TIERS) expect(authoredKindsFor(tier).wallItems.length, `${tier}`).toBeLessThan(8)
+    for (const tier of TIERS)
+      expect(authoredKindsFor(tier).wallItems.length, `${tier}`).toBeLessThan(WALL_DECORATION_KINDS.length)
   })
 })

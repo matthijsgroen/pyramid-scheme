@@ -114,7 +114,9 @@ const wardRules: Rule[] = EXPERT_PYRAMIDS.flatMap(([jid, n], ji) => {
 const masterBetweenTableaus = { where: 2, encounter: "puzzle", difficulty: "master" } as const
 
 export const expertRules: Rule[] = [
-  // a priest's temple: canopic jars, an altar, the sacred pool, a veil before the shrine.
+  // a priest's temple: the embalming table and its linen, the offering stand, the House of Life's scroll chest and
+  // reading desk, the star-watchers' merkhet and water clock, the sacred lake, the oracle's barque shrine
+  // (activities.ts, expert's rooms).
   tier("expert", {
     difficulty: "expert",
     decorations: [
@@ -131,9 +133,21 @@ export const expertRules: Rule[] = [
       "brazier",
       "rubblePile",
       "mat",
+      "fan",
+      "embalmingTable",
+      "linenRack",
+      "offeringStand",
+      "scrollChest",
+      "readingDesk",
+      "merkhet",
+      "waterClock",
+      "sacredLake",
+      "barqueShrine",
+      "ostracaBasket",
     ],
-    // a priest's wing: the veil before the shrine, a wall shrine, a hanging lamp.
-    wallDecorations: ["veil", "wallShrine", "sconce"],
+    // a priest's wing: the veil before the shrine, a wall shrine, a hanging lamp, the offering list, the House of
+    // Life's niche and tally, a shaft onto the stars.
+    wallDecorations: ["veil", "wallShrine", "sconce", "stela", "niche", "tallyBoard", "starShaft"],
   }),
 
   tier("expert").set({

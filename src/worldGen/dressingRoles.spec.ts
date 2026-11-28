@@ -44,8 +44,8 @@ describe("a role furnishes the place it is", () => {
     const funerary = dress(floor({ role: "funerary" }))
     expect(funerary.decorations).toContain("sarcophagus")
     expect(funerary.decorations).toContain("shrine")
-    expect(funerary.decorations).not.toContain("jarRack")
-    expect(funerary.decorations).not.toContain("basin")
+    expect(funerary.decorations).not.toContain("shelf")
+    expect(funerary.decorations).not.toContain("lamp")
 
     const trade = dress(floor({ role: "trade" }))
     expect(trade.decorations).toContain("jarRack")
@@ -69,7 +69,7 @@ describe("a role furnishes the place it is", () => {
   it("narrows to a single kind when that kind IS the place", () => {
     // Every dead end of a funerary wing holding the same coffin is a necropolis, not a bug: the
     // repetition is the place asserting itself. Only the kinds that belong nowhere are padding.
-    const funerary = dress(floor({ role: "funerary", decorations: ["sarcophagus", "jarRack", "basin"] }))
+    const funerary = dress(floor({ role: "funerary", decorations: ["sarcophagus", "shelf", "lamp"] }))
     expect(funerary.decorations).toEqual(["sarcophagus"])
   })
 
@@ -121,6 +121,6 @@ describe("a role furnishes the place it is", () => {
     expect(dressed.sideSections[0].decorations).toContain("basin")
     expect(dressed.sideSections[0].decorations).not.toContain("sarcophagus")
     expect(dressed.sideSections[0].sideSections?.[0].decorations).toContain("sarcophagus")
-    expect(dressed.sideSections[0].sideSections?.[0].decorations).not.toContain("basin")
+    expect(dressed.sideSections[0].sideSections?.[0].decorations).not.toContain("shelf")
   })
 })
