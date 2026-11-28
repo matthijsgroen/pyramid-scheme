@@ -1,0 +1,28 @@
+// designed by: Claude
+// master. The Great Pyramid from the robbers' way in: you drop into the pit under the rock, and the well shaft lets you
+// climb up into the Grand Gallery but never back down. Three granite slabs hold the antechamber shut, and each wants
+// a stone. The queen's stone is carried. The pit's two stones go up the air shaft one at a time, so you walk down
+// for the second through the ascending passage, once its plugs are raised. The queen's lever opens her niche or the
+// antechamber, never both. The king's way out wants the seal from her niche and the one in the relieving chambers.
+in -- entry
+entry >> pit
+pit >> well
+well -- gallery
+entry -[R:open]- gallery
+gallery -- queens
+queens -[A:a]- niche
+gallery -[A:b]- ante
+ante -[p1+p2+p3]- kings
+kings -[unladen]- relief
+kings -[K1+K2]- out
+R toggle @gallery shut open
+A toggle @queens
+q plate @niche stone
+s1 plate @pit stone
+s2 plate @pit stone
+Q pipe @pit @gallery
+p1 plate @ante
+p2 plate @ante
+p3 plate @ante
+K1 activator @niche
+K2 activator @relief

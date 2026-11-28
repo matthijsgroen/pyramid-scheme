@@ -1,0 +1,26 @@
+// designed by: Claude
+// master. The twelve hours of the night: Ra's barque goes through the underworld, and the door to dawn opens only
+// after the hours are walked in order: west, the island, the vault, east. The river floats only on high water, and
+// the cavern is dry only on low water, where its torch burns and its lever turns west into east. The vault's plate
+// wants the stone from the west, sent through the pipe because the crawl to the cavern takes no stone. Light the
+// torch only after the last high water, or the flood puts it out.
+in -- court
+court -[H+T+K1+K2]- out
+court -[A:a]- west
+court -[A:b]- east
+court -- river
+court -[unladen]- cavern
+cavern -- deep
+deep -[d]- vault
+river -- isle
+river -[W:high]
+cavern -[W:low]
+W toggle @court low high
+A toggle @cavern
+q plate @west stone
+d plate @deep
+Q pipe @west @deep
+T torch @cavern
+K1 activator @isle
+K2 activator @vault
+H sequence west isle vault east

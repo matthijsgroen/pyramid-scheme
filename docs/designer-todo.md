@@ -46,6 +46,18 @@ No stand-ins left: you chose emptyHanded, starWell and stoneSteps from `docs/rev
   board and its gates). Nothing to reshape; it waits for a master floor to stand on. Its six-step `Gate` can become a
   procession door by writing `procession` for `sequence` on its line (your file; not touched).
 
+## Big master drafts
+
+Claude's, unplaced, each mixing six to eight mechanics with two or three keys. Not yet tried on a floor: try one in
+the Lock editor with Carve and play.
+
+| Lock            | Journey               | Actions | Trick                                                                                        |
+| --------------- | --------------------- | ------- | -------------------------------------------------------------------------------------------- |
+| kingsChamber    | Great Pyramid         | 14      | three portcullis stones; the pit's two go up the air shaft one at a time, so walk down twice |
+| twelveHours     | Book of the Dead      | 14      | the hours in order across high and low water; light the cavern torch after the last flood    |
+| sevenSeals      | Curse of the Pharaohs | 12      | the board lets you into one wing, whose levers work the other; a stone dams the north        |
+| houseOfEternity | Tomb of Nefertari     | 15      | two floors joined by a crawl; the goddesses in order, the sluice turned twice                |
+
 ## The procession door
 
 Built: `P procession hall vault [reset hall-vault]` is a sequence whose door is a procession board (contract,
