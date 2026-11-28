@@ -11,7 +11,7 @@ import { useAvailableJourneyIds } from "@/app/pages/useAvailableJourneyIds"
 import { SettingsModal } from "@/app/SettingsModal"
 import { hudWidgets } from "@/app/SiteMap/hudRegistry"
 import { useHeldKeysLoaded, useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
-import { DEV_TOOLS, LockEditorHost } from "@/app/dev/devToolsBuild"
+import { DEV_TOOLS, LockEditorHost, SKIP_INTRO } from "@/app/dev/devToolsBuild"
 import { useSecretTaps } from "@/app/dev/useSecretTaps"
 import { FezContext } from "@/app/fez/context"
 import { chapterToAnnounce, needsChapterRecord } from "@/game/homeSave"
@@ -82,7 +82,7 @@ export const Base = ({
 
   // Fez greets once the player has unpacked, not behind the coming-home screen.
   useEffect(() => {
-    if (!cameHome && greet) showConversation("welcome")
+    if (!cameHome && greet && !SKIP_INTRO) showConversation("welcome")
   }, [showConversation, cameHome, greet])
 
   // Seven taps on the title toggles develop mode, in a build that carries the developer tools: phone

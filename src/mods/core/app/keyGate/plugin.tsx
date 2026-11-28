@@ -5,6 +5,8 @@ import { KEY_GATE_META } from "@/mods/core/game/keyGate/meta"
 import { wardKeyDifficulty } from "@/data/difficultyLevels"
 import { useMergedKeyDisplay } from "@/app/SiteMap/keyProviders"
 import { KeyIcon } from "@/ui/atoms/KeyIcon"
+import { playSound } from "@/app/audio/audio"
+import { CORE_SOUNDS } from "@/app/audio/coreSounds"
 import { doorArt } from "./doorArt"
 
 type KeyGatePuzzle = { satisfied: boolean }
@@ -66,7 +68,11 @@ const KeyGateComponent: FamilyPlugin["Component"] = ({ puzzle, ctx, onSolved, on
       <div className="flex flex-col items-center gap-3">
         {satisfied && (
           <button
-            onClick={() => onSolved()}
+            onClick={() => {
+              // A gate is a stone door like a lock's last one, so it settles open the same way.
+              playSound(CORE_SOUNDS.lockSolved)
+              onSolved()
+            }}
             className="rounded bg-amber-700 px-6 py-2 text-amber-100 hover:bg-amber-600"
           >
             {t("gate.pass")}
