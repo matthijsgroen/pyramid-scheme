@@ -159,7 +159,12 @@ export type JourneyAPI = {
   journeysNeedingRelaidFloors: () => StoredJourneyStateV3[]
   /** Stamps the save; with `resumeAtEntrance` it also forgets where the save stands and keeps the level it is on, and
    *  it forgets the remembered position of each pyramid in `relaidLevels`. */
-  setRelaidFloors: (journeyId: string, resumeAtEntrance: boolean, relaidLevels?: readonly number[]) => void
+  setRelaidFloors: (
+    journeyId: string,
+    resumeAtEntrance: boolean,
+    relaidLevels?: readonly number[],
+    exploredCells?: Record<string, string[]>
+  ) => void
   /** This level's exploration, by section: the cell keys the map restores from. */
   getExploredCells: (journeyId: string) => Record<string, string[]>
   /** Records `address` as the live cell the player is standing on (`standingKey`), and — unless it
@@ -541,13 +546,19 @@ export const createJourneysV3Api = ({
   // Stamped on every journey, standing or not, so the stamp is the exact record of which saves came through.
   const journeysNeedingRelaidFloors = () => journeys.filter(j => j.relaidFloorsVersion !== RELAID_FLOORS_VERSION)
 
-  const setRelaidFloors = (journeyId: string, resumeAtEntrance: boolean, relaidLevels: readonly number[] = []) => {
+  const setRelaidFloors = (
+    journeyId: string,
+    resumeAtEntrance: boolean,
+    relaidLevels: readonly number[] = [],
+    exploredCells?: Record<string, string[]>
+  ) => {
     setJourneys(prev =>
       prev.map(j =>
         j.journeyId === journeyId
           ? {
               ...j,
               ...(resumeAtEntrance ? { positionKey: null, standingKey: null } : {}),
+              ...(exploredCells ? { exploredCells } : {}),
               ...relaidLevels.reduce<Partial<StoredJourneyStateV3>>(
                 (kept, levelNr) => ({ ...kept, ...forgetting({ ...j, ...kept }, levelNr) }),
                 {}

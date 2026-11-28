@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Background music (Egyptian Dawn by kaazoom), off by default; switch it on in Settings. It fades out during puzzles and traps (quickly for a trap) and returns once a solved board shows your time.
 - A move on a puzzle board makes a soft tap.
 - Lighting a torch makes a sound.
+- A first small puzzle right after meeting Fez in the very first pyramid.
 - Quiet sounds for levers, stones, chests, coins, traps, the campfire, finds, healing, opened locks and solved puzzles.
 - Settings open from inside an expedition.
 

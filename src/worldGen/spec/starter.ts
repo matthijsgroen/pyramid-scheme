@@ -139,10 +139,14 @@ export const starterRules: Rule[] = [
       // Fez's stall, where the explorer meets him (story/review.md, The opening): a room of his own,
       // authored one room longer so the beat is added rather than standing in for a puzzle.
       // `pathPuzzles` is structural and re-carves this floor; the encounter itself is free
-      // (docs/game-design/world-spec-stability.md). LAST, as in starter_treasure_tomb below, so the
-      // rooms ahead of him keep their place along the path.
-      pathPuzzles: 1,
-      nodes: [{ where: "last", encounter: "conversation", activity: "selling", room: "fezStall", actor: false }],
+      // (docs/game-design/world-spec-stability.md).
+      // The first board of the game stands right after him, so he can set it: a balance, the trade's own puzzle,
+      // without loot, since the door it opens is the reward.
+      pathPuzzles: 2,
+      nodes: [
+        { where: "first", encounter: "conversation", activity: "selling", room: "fezStall", actor: false },
+        { where: "last", encounter: "balance-scale", loot: false },
+      ],
       sideSections: [
         // Shares the starter→junior tier-unlock key — narratively you need it anyway.
         wardPath({ puzzles: 1, tomb: "starter_treasure_tomb", index: 0 }),

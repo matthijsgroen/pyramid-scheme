@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { StoredJourneyStateV3 } from "@/app/state/useJourneys"
-import { standsInRelaidPyramid, type RelaidPyramid } from "./relaidPyramids"
+import { relaidExploredCells, standsInRelaidPyramid, type RelaidPyramid } from "./relaidPyramids"
 
 const RELAID: readonly RelaidPyramid[] = [{ journeyId: "made_up", levelNr: 2, since: 1 }]
 
@@ -43,5 +43,31 @@ describe("standsInRelaidPyramid", () => {
   it("holds for a save stamped before the version that re-laid the pyramid", () => {
     const later: readonly RelaidPyramid[] = [{ journeyId: "made_up", levelNr: 2, since: 2 }]
     expect(standsInRelaidPyramid(save({ relaidFloorsVersion: 1 }), later)).toBe(true)
+  })
+})
+
+describe("relaidExploredCells", () => {
+  const MOVED: readonly RelaidPyramid[] = [
+    { journeyId: "made_up", levelNr: 2, since: 1, alsoExplored: [{ from: "main#0/p0", to: "main#0/p1" }] },
+  ]
+
+  it("marks the moved room explored where a save got past it before", () => {
+    const explored = relaidExploredCells(save({ exploredCells: { "2:main": ["0/p0", "0/end"] } }), MOVED)
+    expect(explored).toEqual({ "2:main": ["0/p0", "0/end", "0/p1"] })
+  })
+
+  it("leaves a save that never got past it as it is", () => {
+    const exploredCells = { "2:main": ["0/entrance"] }
+    expect(relaidExploredCells(save({ exploredCells }), MOVED)).toBe(exploredCells)
+  })
+
+  it("leaves the same room of another pyramid alone", () => {
+    const exploredCells = { "3:main": ["0/p0"] }
+    expect(relaidExploredCells(save({ exploredCells }), MOVED)).toBe(exploredCells)
+  })
+
+  it("leaves a save already stamped with the version that moved it alone", () => {
+    const exploredCells = { "2:main": ["0/p0"] }
+    expect(relaidExploredCells(save({ exploredCells, relaidFloorsVersion: 1 }), MOVED)).toBe(exploredCells)
   })
 })
