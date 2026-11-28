@@ -6,17 +6,16 @@ import { CORE_SOUNDS } from "@/app/audio/coreSounds"
 const AFTER_STONES_S = 1
 
 /**
- * Plays on the change only: a finished journey still reads `levelNr > levelCount` on every reload, so
- * mounting plays nothing, and only a rising `levelNr` (one `completeLevel`) does.
+ * Plays when the journey's last pyramid is finished; a pyramid before it finishes in silence. Plays on the change
+ * only: a finished journey still reads `levelNr > levelCount` on every reload, so mounting plays nothing, and only
+ * a rising `levelNr` (one `completeLevel`) does.
  */
 export const useLevelSounds = (levelNr: number, levelCount: number): void => {
   const previous = useRef(levelNr)
   useEffect(() => {
     const was = previous.current
     previous.current = levelNr
-    if (levelNr <= was) return
-    playSound(levelNr > levelCount ? CORE_SOUNDS.journeyComplete : CORE_SOUNDS.levelComplete, {
-      delay: AFTER_STONES_S,
-    })
+    if (levelNr <= was || levelNr <= levelCount) return
+    playSound(CORE_SOUNDS.journeyComplete, { delay: AFTER_STONES_S })
   }, [levelNr, levelCount])
 }

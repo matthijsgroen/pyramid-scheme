@@ -2,7 +2,6 @@ import campfireUrl from "@/assets/audio/campfire.m4a?url"
 import corridorOpensUrl from "@/assets/audio/corridor-opens.m4a?url"
 import footstepUrl from "@/assets/audio/footstep.m4a?url"
 import journeyCompleteUrl from "@/assets/audio/journey-complete.m4a?url"
-import levelCompleteUrl from "@/assets/audio/level-complete.m4a?url"
 import puzzleSolvedUrl from "@/assets/audio/puzzle-solved.m4a?url"
 import puzzleTapStoneUrl from "@/assets/audio/puzzle-tap-stone.m4a?url"
 import puzzleTapWoodUrl from "@/assets/audio/puzzle-tap-wood.m4a?url"
@@ -17,7 +16,6 @@ registerSound(CORE_SOUNDS.pyramidOpens, { url: pyramidOpensUrl, gain: 0.8 })
 registerSound(CORE_SOUNDS.corridorOpens, { url: corridorOpensUrl, gain: 0.7 })
 registerSound(CORE_SOUNDS.footstep, { url: footstepUrl, gain: 0.5 })
 registerSound(CORE_SOUNDS.campfire, { url: campfireUrl, gain: 0.2 })
-registerSound(CORE_SOUNDS.levelComplete, { url: levelCompleteUrl, gain: 0.6 })
 registerSound(CORE_SOUNDS.journeyComplete, { url: journeyCompleteUrl, gain: 0.7 })
 registerSound(CORE_SOUNDS.lockSolved, { url: lockSolvedUrl, gain: 0.7 })
 registerSound(CORE_SOUNDS.puzzleSolved, { url: puzzleSolvedUrl, gain: 0.8 })

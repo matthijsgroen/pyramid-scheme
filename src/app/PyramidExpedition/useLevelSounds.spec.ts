@@ -13,15 +13,15 @@ const atLevel = (levelNr: number, levelCount = 3) =>
 beforeEach(() => playSound.mockClear())
 
 describe("useLevelSounds", () => {
-  it("moving on to the next level plays level.complete once", () => {
+  it("moving on to the next level plays nothing", () => {
     const { rerender } = atLevel(1)
     rerender({ levelNr: 2 })
-    rerender({ levelNr: 2 })
-    expect(playSound.mock.calls.map(([name]) => name)).toEqual(["level.complete"])
+    expect(playSound).not.toHaveBeenCalled()
   })
 
-  it("moving past the last level plays journey.complete instead", () => {
+  it("moving past the last level plays journey.complete once", () => {
     const { rerender } = atLevel(3)
+    rerender({ levelNr: 4 })
     rerender({ levelNr: 4 })
     expect(playSound.mock.calls.map(([name]) => name)).toEqual(["journey.complete"])
   })
